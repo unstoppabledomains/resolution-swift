@@ -1,6 +1,0 @@
-framework module resolution {
-  umbrella header "resolution-umbrella.h"
-
-  export *
-  module * { export * }
-}
