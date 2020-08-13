@@ -3,9 +3,11 @@
 // This file was generated from JSON Schema using quicktype, do not modify it directly.
 // To parse the JSON, add this file to your project and do:
 //
-//   let registryElement = try RegistryElement(json)
+//   let abi = try jsonDecoder.decode(ABI.self, from: json);
 
 import Foundation
+
+typealias ABI = [ABIElement]
 
 // MARK: - ABIElement
 struct ABIElement: Codable {
@@ -54,9 +56,4 @@ enum Type: String, Codable {
     case event = "event"
     case function = "function"
 }
-
-
-
-typealias ABI = [ABIElement]
-
 

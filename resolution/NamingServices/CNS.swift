@@ -78,7 +78,7 @@ class CNS:NamingService {
                 let data = try Data(contentsOf: filePath);
                 let jsonDecoder = JSONDecoder();
                 let dataFromJson = try jsonDecoder.decode(ABI.self, from: data);
-                return dataFromJson as ABI;
+                return dataFromJson;
             } catch {
                 print(error);
             }
