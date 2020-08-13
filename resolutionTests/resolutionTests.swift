@@ -18,14 +18,8 @@ class resolutionTests: XCTestCase {
     override func tearDownWithError() throws {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
-
-    func testExample() throws {
-        let resolution = try Resolution(providerUrl: "https://main-rpc.linkpool.io", network: "mainnet");
-        let service = try resolution.doSomethingWith(domain: "brad.crypto");
-        print(service);
-    }
     
-    func namehash() throws {
+    func testNamehash() throws {
         let resolution = try Resolution(providerUrl: "https://main-rpc.linkpool.io", network: "mainnet");
         let firstHashTest = try resolution.namehash(domain: "test.crypto");
         let secondHashTest = try resolution.namehash(domain: "mongral.crypto");
@@ -34,7 +28,12 @@ class resolutionTests: XCTestCase {
         assert(secondHashTest == "0x2038e73f23cbe8c0774c901fbfa77d3ac21c0b13b8f6456f89030d4f13eebba9")
         assert(thirdHashTest == "0x756e4e998dbffd803c21d23b06cd855cdc7a4b57706c95964a37e24b47c10fc9")
     }
-
+    
+    func testGetOwner() throws {
+        let resolution = try Resolution(providerUrl: "https://main-rpc.linkpool.io", network: "mainnet");
+        let owner = try resolution.owner(domain: "brad.crypto");
+    }
+    
     func testPerformanceExample() throws {
         // This is an example of a performance test case.
         self.measure {

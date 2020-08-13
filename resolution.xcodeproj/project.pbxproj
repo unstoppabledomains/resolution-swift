@@ -7,10 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3E65912224E3708700D7EC35 /* NamingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E65912124E3708700D7EC35 /* NamingService.swift */; };
-		3E65912624E37AB800D7EC35 /* CNS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E65912524E37AB800D7EC35 /* CNS.swift */; };
+		3E2AC91C24E4FA28008EBC39 /* CNS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E2AC91B24E4FA28008EBC39 /* CNS.swift */; };
+		3E2AC91F24E4FA35008EBC39 /* NamingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E2AC91E24E4FA35008EBC39 /* NamingService.swift */; };
+		3E2AC93E24E4FC9F008EBC39 /* cnsResolver.json in Resources */ = {isa = PBXBuildFile; fileRef = 3E2AC93C24E4FC9F008EBC39 /* cnsResolver.json */; };
+		3E2AC93F24E4FC9F008EBC39 /* cnsRegistry.json in Resources */ = {isa = PBXBuildFile; fileRef = 3E2AC93D24E4FC9F008EBC39 /* cnsRegistry.json */; };
+		3E2AC94124E5EE9A008EBC39 /* ABIElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E2AC94024E5EE9A008EBC39 /* ABIElement.swift */; };
 		3E65912824E381E900D7EC35 /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E65912724E381E900D7EC35 /* Errors.swift */; };
 		3E65912B24E386D500D7EC35 /* CryptoSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 3E65912A24E386D500D7EC35 /* CryptoSwift */; };
+		3E65913124E4ADAC00D7EC35 /* Contract.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E65913024E4ADAC00D7EC35 /* Contract.swift */; };
 		3EE4DA0D24E367720097540B /* resolution.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3EE4DA0324E367720097540B /* resolution.framework */; };
 		3EE4DA1224E367720097540B /* resolutionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EE4DA1124E367720097540B /* resolutionTests.swift */; };
 		3EE4DA1424E367720097540B /* resolution.h in Headers */ = {isa = PBXBuildFile; fileRef = 3EE4DA0624E367720097540B /* resolution.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -28,9 +32,13 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		3E65912124E3708700D7EC35 /* NamingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NamingService.swift; path = Protocols/NamingService.swift; sourceTree = "<group>"; };
-		3E65912524E37AB800D7EC35 /* CNS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CNS.swift; path = NamingServices/CNS.swift; sourceTree = "<group>"; };
+		3E2AC91B24E4FA28008EBC39 /* CNS.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CNS.swift; sourceTree = "<group>"; };
+		3E2AC91E24E4FA35008EBC39 /* NamingService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NamingService.swift; sourceTree = "<group>"; };
+		3E2AC93C24E4FC9F008EBC39 /* cnsResolver.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = cnsResolver.json; sourceTree = "<group>"; };
+		3E2AC93D24E4FC9F008EBC39 /* cnsRegistry.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = cnsRegistry.json; sourceTree = "<group>"; };
+		3E2AC94024E5EE9A008EBC39 /* ABIElement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ABIElement.swift; sourceTree = "<group>"; };
 		3E65912724E381E900D7EC35 /* Errors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
+		3E65913024E4ADAC00D7EC35 /* Contract.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Contract.swift; sourceTree = "<group>"; };
 		3EE4DA0324E367720097540B /* resolution.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = resolution.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3EE4DA0624E367720097540B /* resolution.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = resolution.h; sourceTree = "<group>"; };
 		3EE4DA0724E367720097540B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -60,6 +68,40 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		3E2AC91A24E4FA28008EBC39 /* NamingServices */ = {
+			isa = PBXGroup;
+			children = (
+				3E2AC91B24E4FA28008EBC39 /* CNS.swift */,
+			);
+			path = NamingServices;
+			sourceTree = "<group>";
+		};
+		3E2AC91D24E4FA35008EBC39 /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				3E2AC91E24E4FA35008EBC39 /* NamingService.swift */,
+			);
+			path = Protocols;
+			sourceTree = "<group>";
+		};
+		3E2AC92024E4FA3E008EBC39 /* ABI */ = {
+			isa = PBXGroup;
+			children = (
+				3E2AC92124E4FA3E008EBC39 /* CNS */,
+			);
+			path = ABI;
+			sourceTree = "<group>";
+		};
+		3E2AC92124E4FA3E008EBC39 /* CNS */ = {
+			isa = PBXGroup;
+			children = (
+				3E2AC93D24E4FC9F008EBC39 /* cnsRegistry.json */,
+				3E2AC93C24E4FC9F008EBC39 /* cnsResolver.json */,
+				3E2AC94024E5EE9A008EBC39 /* ABIElement.swift */,
+			);
+			path = CNS;
+			sourceTree = "<group>";
+		};
 		3EE4D9F924E367720097540B = {
 			isa = PBXGroup;
 			children = (
@@ -81,15 +123,17 @@
 		3EE4DA0524E367720097540B /* resolution */ = {
 			isa = PBXGroup;
 			children = (
+				3E2AC92024E4FA3E008EBC39 /* ABI */,
+				3E2AC91D24E4FA35008EBC39 /* Protocols */,
+				3E2AC91A24E4FA28008EBC39 /* NamingServices */,
 				3EE4DA0624E367720097540B /* resolution.h */,
 				3EE4DA0724E367720097540B /* Info.plist */,
 				3EE4DA1D24E367D40097540B /* Resolution.swift */,
-				3E65912124E3708700D7EC35 /* NamingService.swift */,
-				3E65912524E37AB800D7EC35 /* CNS.swift */,
 				3E65912724E381E900D7EC35 /* Errors.swift */,
+				3E65913024E4ADAC00D7EC35 /* Contract.swift */,
 			);
 			path = resolution;
-			sourceTree = "<group>";
+			sourceTree = SOURCE_ROOT;
 		};
 		3EE4DA1024E367720097540B /* resolutionTests */ = {
 			isa = PBXGroup;
@@ -199,6 +243,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3E2AC93E24E4FC9F008EBC39 /* cnsResolver.json in Resources */,
+				3E2AC93F24E4FC9F008EBC39 /* cnsRegistry.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -216,10 +262,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3E2AC91C24E4FA28008EBC39 /* CNS.swift in Sources */,
+				3E2AC91F24E4FA35008EBC39 /* NamingService.swift in Sources */,
+				3E2AC94124E5EE9A008EBC39 /* ABIElement.swift in Sources */,
 				3E65912824E381E900D7EC35 /* Errors.swift in Sources */,
 				3EE4DA1E24E367D40097540B /* Resolution.swift in Sources */,
-				3E65912224E3708700D7EC35 /* NamingService.swift in Sources */,
-				3E65912624E37AB800D7EC35 /* CNS.swift in Sources */,
+				3E65913124E4ADAC00D7EC35 /* Contract.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -415,6 +463,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = resolutionTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -423,6 +472,7 @@
 					"@loader_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.unstoppabledomains.resolutionTests;
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=macosx*]" = com.unstoppabledomains.resolution;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -433,6 +483,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = resolutionTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -441,6 +492,7 @@
 					"@loader_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.unstoppabledomains.resolutionTests;
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=macosx*]" = com.unstoppabledomains.resolution;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

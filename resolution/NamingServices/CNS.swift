@@ -13,13 +13,25 @@ class CNS:NamingService {
     let name: String = "CNS";
     let network: String;
     let providerUrl: String;
+    let registryAddress: String;
+    
+    let RegistryMap: [String: String] = [
+        "mainnet": "0xD1E5b0FF1287aA9f9A268759062E4Ab08b9Dacbe",
+        "kovan": "0x22c2738cdA28C5598b1a68Fb1C89567c2364936F"
+    ]
+    
+    enum ContractType {
+        case Registry;
+        case Resolver;
+    }
     
     init(network: String, providerUrl: String) throws {
-        if (network != "mainnet" ) {
-            throw ResolutionError.UnsupportedNetwork;
+        guard let registryAddress = RegistryMap[network] else {
+            throw ResolutionError.UnsupportedNetwork
         }
         self.network = network;
         self.providerUrl = providerUrl;
+        self.registryAddress = registryAddress;
     }
     
     func namehash(domain: String) -> String {
@@ -35,5 +47,42 @@ class CNS:NamingService {
     
     func isSupported(domain: String) -> Bool {
         return domain.hasSuffix(".crypto");
+    }
+    
+    func owner(domain: String) throws -> String {
+        let tokenId = namehash(domain: domain);
+        let registryContract: Contract = buildContract(address: self.registryAddress, type: ContractType.Registry);
+        registryContract.fetchMethod(methodName: "ownerOf", args: [tokenId]);
+        
+        // return result or throw an error
+        return "ownerAddress"
+    }
+    
+    private func buildContract(address: String, type: ContractType) -> Contract {
+        var jsonFileName: String;
+        
+        switch type {
+            case .Registry:
+                jsonFileName = "cnsRegistry"
+            case .Resolver:
+                jsonFileName = "cnsResolver"
+        }
+        
+        let abi: ABI = parseAbi(forName: jsonFileName)!;
+        return Contract(providerUrl: self.providerUrl, address: address, ABI: abi);
+    }
+    
+    private func parseAbi(forName name: String) -> ABI? {
+        if let filePath = Bundle(for: type(of: self)).url(forResource: name, withExtension: "json") {
+            do {
+                let data = try Data(contentsOf: filePath);
+                let jsonDecoder = JSONDecoder();
+                let dataFromJson = try jsonDecoder.decode(ABI.self, from: data);
+                return dataFromJson;
+            } catch {
+                print(error);
+            }
+        }
+        return nil
     }
 }
