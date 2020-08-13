@@ -50,13 +50,8 @@ class CNS:NamingService {
     }
     
     func owner(domain: String) throws -> String {
-        // build registry contract
-        print("START TO GETTING OWNER");
         let tokenId = namehash(domain: domain);
-        print("GOT NAMEHASH \(tokenId)")
         let registryContract: Contract = buildContract(address: self.registryAddress, type: ContractType.Registry);
-        
-        // call registry contract method
         registryContract.fetchMethod(methodName: "ownerOf", args: [tokenId]);
         
         // return result or throw an error
@@ -67,44 +62,27 @@ class CNS:NamingService {
         var jsonFileName: String;
         
         switch type {
-        case .Registry:
-            jsonFileName = "/NamingServices/CNS_ABI/cnsRegistry.json"
-        case .Resolver:
-            jsonFileName = "/NamingServices/CNS_ABI/cnsResolver.json"
-        }
-        
-        let jsonData: Data = readLocalFile(forName: jsonFileName)!;
-        let abi: ABI = parse(jsonData: jsonData, type: type)!;
-        return Contract(providerUrl: self.providerUrl, address: address, ABI: abi);
-        
-    }
-    
-    private func readLocalFile(forName name: String) -> Data? {
-        print("TRYING TO READ FILE \(name)")
-        do {
-            if let bundlePath = Bundle.main.path(forResource: name,
-                                                 ofType: "json"),
-            let jsonData = try String(contentsOfFile: bundlePath).data(using: .utf8) {
-                return jsonData
-            }
-        } catch {
-            print(error)
-        }
-        
-        return nil
-    }
-    
-    private func parse(jsonData: Data, type: ContractType) -> ABI? {
-        do {
-            switch type {
             case .Registry:
-                return try JSONDecoder().decode(Registry.self, from: jsonData)
+                jsonFileName = "cnsRegistry"
             case .Resolver:
-                return try JSONDecoder().decode(Resolver.self, from: jsonData)
-            }
-        } catch {
-            print("decode error")
-            return nil;
+                jsonFileName = "cnsResolver"
         }
+        
+        let abi: ABI = parseAbi(forName: jsonFileName)!;
+        return Contract(providerUrl: self.providerUrl, address: address, ABI: abi);
+    }
+    
+    private func parseAbi(forName name: String) -> ABI? {
+        if let filePath = Bundle(for: type(of: self)).url(forResource: name, withExtension: "json") {
+            do {
+                let data = try Data(contentsOf: filePath);
+                let jsonDecoder = JSONDecoder();
+                let dataFromJson = try jsonDecoder.decode(ABI.self, from: data);
+                return dataFromJson as ABI;
+            } catch {
+                print(error);
+            }
+        }
+        return nil
     }
 }

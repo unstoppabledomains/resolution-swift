@@ -18,24 +18,16 @@ internal class Contract {
         self.providerUrl = providerUrl
     }
     
-    func fetchMethod(methodName: String, args: [String]) {
-        print("FETCHING METHOD \(methodName) WITH ARGS = \(args)");
-        // I need to find an appropriate ABI element from the self.ABI
-        let element: ABIElement = findAbiElement(methodName: methodName, args: args, abi: self.ABI)
-        // I need to encode that element
-        let encodedData = encodeAbiElement(element: element)
-        // I need to send POST request to the providerURL with encoded data in params
-        
-        // I need to decode the result and return the answer
+    func fetchMethod(methodName: String, args: [String]) -> Any? {
+        let element: ABIElement? = findAbiElement(methodName: methodName, args: args, abi: self.ABI)
+        if (element == nil) { return nil; }
+        let encodedData = encodeAbiElement(element: element!)
+        return nil;
     }
     
-    private func findAbiElement(methodName: String, args: [String], abi: ABI) -> ABIElement {
-        // Need to look over the abi struct and find a method with methodNAme and args.length should be the same
-        
-        print("TRYING TO FIND ABIELEMENT WITH NAME \(methodName) AND ARGS.LENGTH = \(args.count)");
-        
-        
-        return abi.first!;
+    private func findAbiElement(methodName: String, args: [String], abi: ABI) -> ABIElement? {
+        let method = abi.first(where: {$0.name == methodName && $0.inputs.count == args.count});
+        return method ?? nil;
     }
     
     private func encodeAbiElement(element: ABIElement) -> String {
