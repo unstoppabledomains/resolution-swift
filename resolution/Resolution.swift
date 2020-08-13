@@ -20,19 +20,13 @@ public class Resolution {
     }
     
     public func namehash(domain: String) throws -> String {
-        return try getServiceOf(domain: domain).namehash(domain: domain)
+        let preparedDomain = prepare(domain: domain);
+        return try getServiceOf(domain: preparedDomain).namehash(domain: preparedDomain)
     }
     
-    public func doSomething() -> String {
-        return "this is my services \(self.services)"
-    }
-    
-    public func doSomethingWith(domain: String) throws -> String {
-        let service: NamingService = try getServiceOf(domain: domain)
-        print(service.name);
-        let namehash = service.namehash(domain: domain);
-        print(namehash);
-        return namehash;
+    public func owner(domain: String) throws -> String {
+        let preparedDomain = prepare(domain: domain);
+        return try getServiceOf(domain: preparedDomain).owner(domain: preparedDomain);
     }
     
     private func getServiceOf(domain: String) throws -> NamingService  {

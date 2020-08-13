@@ -15,4 +15,6 @@ protocol NamingService {
     
     func namehash(domain: String) -> String
     func isSupported(domain: String) -> Bool
+    
+    func owner(domain: String) throws -> String
 }
