@@ -69,7 +69,7 @@ class CNS:NamingService {
         }
         
         let abi: ABI = parseAbi(forName: jsonFileName)!;
-        return Contract(providerUrl: self.providerUrl, address: address, ABI: abi);
+        return Contract(providerUrl: self.providerUrl, address: address, abi: abi);
     }
     
     private func parseAbi(forName name: String) -> ABI? {

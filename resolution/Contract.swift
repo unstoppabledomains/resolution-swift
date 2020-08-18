@@ -9,31 +9,26 @@
 import Foundation
 internal class Contract {
     let address: String;
-    let ABI: ABI;
     let providerUrl: String;
+    let coder: ABICoder;
     
-    init(providerUrl: String, address: String, ABI: ABI) {
+    init(providerUrl: String, address: String, abi: ABI) {
         self.address = address;
-        self.ABI = ABI;
-        self.providerUrl = providerUrl
+        self.providerUrl = providerUrl;
+        self.coder = ABICoder(abi);
     }
     
     func fetchMethod(methodName: String, args: [String]) -> Any? {
-        let element: ABIElement? = findAbiElement(methodName: methodName, args: args, abi: self.ABI)
-        if (element == nil) { return nil; }
-        let encodedData = encodeAbiElement(element: element!)
+        do {
+            let encodedData = try self.coder.encode(method: methodName, args: args);
+            print(encodedData);
+            return nil;
+        } catch {
+            print(error);
+        }
         return nil;
     }
     
-    private func findAbiElement(methodName: String, args: [String], abi: ABI) -> ABIElement? {
-        let method = abi.first(where: {$0.name == methodName && $0.inputs.count == args.count});
-        return method ?? nil;
-    }
-    
-    private func encodeAbiElement(element: ABIElement) -> String {
-        // Need to encode the data somehow, probably look for some ABIEncoder swift package
-        return "encoded data ?? "
-    }
     
     private func postRequest(url: URL, params: String) -> Any {
         // Need to perform a post request
