@@ -11,14 +11,14 @@ typealias ABI = [ABIElement]
 
 // MARK: - ABIElement
 struct ABIElement: Codable {
-    let constant: String?
+    let constant: Bool?
     let inputs: [Put]
     let name: String?
     let outputs: [Put]?
-    let payable: String?
+    let payable: Bool?
     let stateMutability: StateMutability?
     let type: Type
-    let anonymous: String?
+    let anonymous: Bool?
 }
 
 // MARK: - Put
@@ -26,7 +26,7 @@ struct Put: Codable {
     let internalType: InternalTypeEnum
     let name: String
     let type: InternalTypeEnum
-    let indexed: String?
+    let indexed: Bool?
 }
 
 // MARK: - StateMutability
@@ -56,4 +56,3 @@ enum Type: String, Codable {
     case event = "event"
     case function = "function"
 }
-

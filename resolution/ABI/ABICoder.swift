@@ -7,70 +7,114 @@
 //
 
 import Foundation
-import SwiftKeccak
-
+import CryptoSwift
 
 class ABICoder {
     let abi: ABI;
+    let errorSignature: String;
+    struct CodingOperations {
+        var signatureBytes: String = "";
+        var Dynamic:[String] = [];
+        var Static:[String] = [];
+    }
     
     enum ABICoderError: Error {
         case WrongABIInterfaceForMethod(method: String)
         case UnsupportedEncodingType(type: String)
         case CouldNotEncode(type: String, value: String)
+        case CouldNotDecode(type: String, value: String)
     }
     
     init(_ abi: ABI) {
         self.abi = abi;
+        self.errorSignature = "0x08c379a";
     }
     
     public func encode(method: String, args: [String]) throws -> String {
-        let element: ABIElement = try getElement(method: method, argsCount: args.count);
-        let signature: String = getSignature(element);
-        var encoded = "\(signature)";
-        var argEncoding:[String: String];
-        for (index, input) in element.inputs.enumerated() {
-            let encodedArg = try encodeType(data: args[index], type: input.type)
-            // Need to store it in some data structure taht separates static types and dynamics ones.
+        let element: ABIElement = try getElement(method: method);
+        let operations = try parseEncoding(element, args);
+        var encoded = operations.signatureBytes;
+        guard operations.Dynamic.isEmpty else {
+            let offset = String(operations.Static.reduce(0, {$1.count}), radix: 16).leftPadding(toLength: 64, withPad: "0");
+            encoded.append(offset);
+            operations.Static.forEach({encoded.append($0)});
+            operations.Dynamic.forEach({encoded.append($0)});
+            return encoded;
         }
-        
-        // Need to check if dynamic is exists
-        // if so, I need to take the size of all statics part, append it after signature
-        // append static encoded data after
-        // append dynamic encoded data after
-        // ???
-        // PROFIT!!!
-        
+        operations.Static.forEach({encoded.append($0)})
         return encoded;
     }
     
-    public func decode(data: String) throws -> String {
-        return "";
+    public func decode(_ data: String, from method: String) throws -> String? {
+        let element: ABIElement = try getElement(method: method);
+        guard let output = element.outputs?[0] else {
+            throw ABICoderError.CouldNotDecode(type: "Not Found", value: data);
+        }
+        
+        switch output.type {
+        case .address:
+            guard !data.starts(with: errorSignature) else {
+                return "0x0000000000000000000000000000000000000000"
+            }
+            return data.removeLeadingZeros()
+        case .string:
+            if let offset = data.getNumberFromAbi(inBytes: false) {
+                let messageFullData = String(data.dropFirst(2 + offset));
+                if let messageLength = messageFullData.getNumberFromAbi(inBytes: false) {
+                    let messageData = String(messageFullData.dropFirst(64)).prefix(messageLength)
+                    if let message = String(messageData).hexToString() {
+                        return message;
+                    }
+                }
+            }
+            throw ABICoderError.CouldNotDecode(type: output.type.rawValue, value: data);
+        default:
+            throw ABICoderError.UnsupportedEncodingType(type: output.type.rawValue)
+        }
     }
     
+    private func parseEncoding(_ element: ABIElement, _ args: [String]) throws -> CodingOperations {
+        var operations = CodingOperations();
+        operations.signatureBytes = getSignature(element);
+        for (index, input) in element.inputs.enumerated() {
+            let encodedArg = try encodeType(data: args[index], type: input.type)
+            guard isDynamicType(type: input.type) else {
+                operations.Static.append(encodedArg);
+                continue ;
+            }
+            operations.Dynamic.append(encodedArg)
+        }
+        return operations;
+    }
+    
+    private func isDynamicType(type: InternalTypeEnum) -> Bool {
+        return type == InternalTypeEnum.string || type == InternalTypeEnum.typeString;
+    }
+    
+    // MARK: - Encode Type
     private func encodeType(data: String, type: InternalTypeEnum) throws -> String {
         switch type {
-            case .address, .uint256:
-                let returnee = data.prefix(2) == "0x" ? String(data.dropFirst(2)) : data;
-                guard returnee.count == 64 else {
-                    throw ABICoderError.CouldNotEncode(type: type.rawValue, value: data)
-                }
-                return returnee;
-            case .string:
-                let utf8Encoded = data.toUtf8HexString();
-                let size = String(utf8Encoded.count / 2, radix: 16).leftPadding(toLength: 64, withPad: "0");
-                let utf8PaddedResult = utf8Encoded.padding(toLength: 64, withPad: "0", startingAt: 0);
-                return "\(size)\(utf8PaddedResult)";
+        case .address, .uint256:
+            let returnee = data.prefix(2) == "0x" ? String(data.dropFirst(2)) : data;
+            guard returnee.count == 64 else {
+                throw ABICoderError.CouldNotEncode(type: type.rawValue, value: data)
+            }
+            return returnee;
+        case .string:
+            let utf8Encoded = data.toUtf8HexString();
+            let size = String(utf8Encoded.count / 2, radix: 16).leftPadding(toLength: 64, withPad: "0");
+            let utf8PaddedResult = utf8Encoded.padding(toLength: 64, withPad: "0", startingAt: 0);
+            return "\(size)\(utf8PaddedResult)";
         default:
             throw ABICoderError.UnsupportedEncodingType(type: type.rawValue)
         }
     }
     
-    private func getElement(method: String, argsCount: Int) throws -> ABIElement {
-        guard let element = abi.first(where: {$0.name == method && $0.inputs.count == argsCount}) else {
+    private func getElement(method: String) throws -> ABIElement {
+        guard let element = abi.first(where: {$0.name == method}) else {
             throw ABICoderError.WrongABIInterfaceForMethod(method: method);
         }
         return element;
-        
     }
     
     private func getSignature(_ element: ABIElement) -> String {
@@ -81,18 +125,20 @@ class ABICoder {
         }
         functionSignature.removeLast();
         functionSignature.append(")");
-        let encoded = keccak256(functionSignature).toHexString().prefix(8);
+        let encoded = functionSignature.sha3(.keccak256).prefix(8);
         return "0x" + String(encoded);
     }
 }
 
 // MARK: - String Utils
-extension String {
+fileprivate extension String {
+    /// Converts data to utf8 in hex format
     func toUtf8HexString() -> String {
         let messageData = self.data(using: .utf8)!
         return messageData.toHexString();
     }
     
+    /// Pads a beging of a string with a `character` up to `toLength`
     func leftPadding(toLength: Int, withPad character: Character) -> String {
         let stringLength = self.count
         if stringLength < toLength {
@@ -100,5 +146,56 @@ extension String {
         } else {
             return String(self.suffix(toLength))
         }
+    }
+    
+    /// remove leading zeros from hexString
+    func removeLeadingZeros() -> String {
+        return "0x" + self.dropFirst(2).replacingOccurrences(of: "^0+", with: "", options: .regularExpression)
+    }
+    
+    /// Splits a string into groups of `every` n characters, grouping from left-to-right
+    func splitByLength(_ every: Int) -> [String] {
+        var result = [String]()
+        
+        for i in stride(from: 0, to: self.count, by: every) {
+            let startIndex = self.index(self.startIndex, offsetBy: i)
+            let endIndex = self.index(startIndex, offsetBy: every, limitedBy: self.endIndex) ?? self.endIndex
+            result.append(String(self[startIndex..<endIndex]))
+        }
+        return result
+    }
+    
+    func getNumberFromAbi(inBytes: Bool) -> Int? {
+        let tempStr = self.prefix(2) == "0x" ? String(self.dropFirst(2)) : self;
+        let endIndex = tempStr.index(tempStr.startIndex, offsetBy: 64, limitedBy: tempStr.endIndex) ?? tempStr.endIndex;
+        if let dynamic = Int(String(tempStr[tempStr.startIndex..<endIndex]), radix: 16) {
+            return inBytes ? dynamic : dynamic * 2;
+        }
+        return nil;
+    }
+    
+    func hexToString(prefix: Bool = false) -> String? {
+        guard self.count % 2 == 0 else {
+            return nil
+        }
+        
+        var bytes = [CChar]()
+        
+        var startIndex = self.index(self.startIndex, offsetBy: prefix ? 2 : 0)
+        while startIndex < self.endIndex {
+            let endIndex = self.index(startIndex, offsetBy: 2)
+            let substr = String(self[startIndex..<endIndex])
+            
+            if let byte = Int8(substr, radix: 16) {
+                bytes.append(byte)
+            } else {
+                return nil
+            }
+            
+            startIndex = endIndex
+        }
+        
+        bytes.append(0)
+        return String(cString: bytes)
     }
 }
