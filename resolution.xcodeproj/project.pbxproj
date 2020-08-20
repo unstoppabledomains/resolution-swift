@@ -16,8 +16,10 @@
 		3E65912B24E386D500D7EC35 /* CryptoSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 3E65912A24E386D500D7EC35 /* CryptoSwift */; };
 		3E65913124E4ADAC00D7EC35 /* Contract.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E65913024E4ADAC00D7EC35 /* Contract.swift */; };
 		3EAFA3F724EB59DA008791E9 /* ABICoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EAFA3F624EB59DA008791E9 /* ABICoder.swift */; };
-		3EAFA3FA24EB6650008791E9 /* KeccakTiny in Frameworks */ = {isa = PBXBuildFile; productRef = 3EAFA3F924EB6650008791E9 /* KeccakTiny */; };
-		3EAFA3FC24EB6650008791E9 /* SwiftKeccak in Frameworks */ = {isa = PBXBuildFile; productRef = 3EAFA3FB24EB6650008791E9 /* SwiftKeccak */; };
+		3EAFA3FE24EE03E0008791E9 /* JSON_RPC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EAFA3FD24EE03E0008791E9 /* JSON_RPC.swift */; };
+		3EAFA40024EE0CFD008791E9 /* APIRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EAFA3FF24EE0CFD008791E9 /* APIRequest.swift */; };
+		3EAFA40224EE312A008791E9 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EAFA40124EE312A008791E9 /* Utilities.swift */; };
+		3EAFA40424EE32B2008791E9 /* CommonNamingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EAFA40324EE32B2008791E9 /* CommonNamingService.swift */; };
 		3EE4DA0D24E367720097540B /* resolution.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3EE4DA0324E367720097540B /* resolution.framework */; };
 		3EE4DA1224E367720097540B /* resolutionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EE4DA1124E367720097540B /* resolutionTests.swift */; };
 		3EE4DA1424E367720097540B /* resolution.h in Headers */ = {isa = PBXBuildFile; fileRef = 3EE4DA0624E367720097540B /* resolution.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -43,6 +45,10 @@
 		3E65912724E381E900D7EC35 /* Errors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
 		3E65913024E4ADAC00D7EC35 /* Contract.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Contract.swift; sourceTree = "<group>"; };
 		3EAFA3F624EB59DA008791E9 /* ABICoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ABICoder.swift; sourceTree = "<group>"; };
+		3EAFA3FD24EE03E0008791E9 /* JSON_RPC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSON_RPC.swift; sourceTree = "<group>"; };
+		3EAFA3FF24EE0CFD008791E9 /* APIRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIRequest.swift; sourceTree = "<group>"; };
+		3EAFA40124EE312A008791E9 /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
+		3EAFA40324EE32B2008791E9 /* CommonNamingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonNamingService.swift; sourceTree = "<group>"; };
 		3EE4DA0324E367720097540B /* resolution.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = resolution.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3EE4DA0624E367720097540B /* resolution.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = resolution.h; sourceTree = "<group>"; };
 		3EE4DA0724E367720097540B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -57,8 +63,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3EAFA3FA24EB6650008791E9 /* KeccakTiny in Frameworks */,
-				3EAFA3FC24EB6650008791E9 /* SwiftKeccak in Frameworks */,
 				3E65912B24E386D500D7EC35 /* CryptoSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -78,6 +82,7 @@
 			isa = PBXGroup;
 			children = (
 				3E2AC91B24E4FA28008EBC39 /* CNS.swift */,
+				3EAFA40324EE32B2008791E9 /* CommonNamingService.swift */,
 			);
 			path = NamingServices;
 			sourceTree = "<group>";
@@ -95,6 +100,7 @@
 			children = (
 				3E2AC92124E4FA3E008EBC39 /* CNS */,
 				3EAFA3F624EB59DA008791E9 /* ABICoder.swift */,
+				3EAFA3FD24EE03E0008791E9 /* JSON_RPC.swift */,
 			);
 			path = ABI;
 			sourceTree = "<group>";
@@ -138,6 +144,8 @@
 				3EE4DA1D24E367D40097540B /* Resolution.swift */,
 				3E65912724E381E900D7EC35 /* Errors.swift */,
 				3E65913024E4ADAC00D7EC35 /* Contract.swift */,
+				3EAFA3FF24EE0CFD008791E9 /* APIRequest.swift */,
+				3EAFA40124EE312A008791E9 /* Utilities.swift */,
 			);
 			path = resolution;
 			sourceTree = SOURCE_ROOT;
@@ -181,8 +189,6 @@
 			name = resolution;
 			packageProductDependencies = (
 				3E65912A24E386D500D7EC35 /* CryptoSwift */,
-				3EAFA3F924EB6650008791E9 /* KeccakTiny */,
-				3EAFA3FB24EB6650008791E9 /* SwiftKeccak */,
 			);
 			productName = resolution;
 			productReference = 3EE4DA0324E367720097540B /* resolution.framework */;
@@ -236,7 +242,6 @@
 			mainGroup = 3EE4D9F924E367720097540B;
 			packageReferences = (
 				3E65912924E386D500D7EC35 /* XCRemoteSwiftPackageReference "CryptoSwift" */,
-				3EAFA3F824EB6650008791E9 /* XCRemoteSwiftPackageReference "SwiftKeccak" */,
 			);
 			productRefGroup = 3EE4DA0424E367720097540B /* Products */;
 			projectDirPath = "";
@@ -273,12 +278,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				3E2AC91C24E4FA28008EBC39 /* CNS.swift in Sources */,
+				3EAFA40424EE32B2008791E9 /* CommonNamingService.swift in Sources */,
 				3E2AC91F24E4FA35008EBC39 /* NamingService.swift in Sources */,
 				3E2AC94124E5EE9A008EBC39 /* ABIElement.swift in Sources */,
 				3E65912824E381E900D7EC35 /* Errors.swift in Sources */,
 				3EAFA3F724EB59DA008791E9 /* ABICoder.swift in Sources */,
 				3EE4DA1E24E367D40097540B /* Resolution.swift in Sources */,
 				3E65913124E4ADAC00D7EC35 /* Contract.swift in Sources */,
+				3EAFA40024EE0CFD008791E9 /* APIRequest.swift in Sources */,
+				3EAFA40224EE312A008791E9 /* Utilities.swift in Sources */,
+				3EAFA3FE24EE03E0008791E9 /* JSON_RPC.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -551,14 +560,6 @@
 				minimumVersion = 1.3.1;
 			};
 		};
-		3EAFA3F824EB6650008791E9 /* XCRemoteSwiftPackageReference "SwiftKeccak" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/bitflying/SwiftKeccak.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.1.2;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -566,16 +567,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 3E65912924E386D500D7EC35 /* XCRemoteSwiftPackageReference "CryptoSwift" */;
 			productName = CryptoSwift;
-		};
-		3EAFA3F924EB6650008791E9 /* KeccakTiny */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 3EAFA3F824EB6650008791E9 /* XCRemoteSwiftPackageReference "SwiftKeccak" */;
-			productName = KeccakTiny;
-		};
-		3EAFA3FB24EB6650008791E9 /* SwiftKeccak */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 3EAFA3F824EB6650008791E9 /* XCRemoteSwiftPackageReference "SwiftKeccak" */;
-			productName = SwiftKeccak;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -9,18 +9,16 @@
 import XCTest
 @testable import resolution
 
+var resolution: Resolution!;
+
 class resolutionTests: XCTestCase {
     
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
-
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+    override func setUp() {
+        super.setUp();
+        resolution = try! Resolution(providerUrl: "https://main-rpc.linkpool.io", network: "mainnet");
     }
     
     func testNamehash() throws {
-        let resolution = try Resolution(providerUrl: "https://main-rpc.linkpool.io", network: "mainnet");
         let firstHashTest = try resolution.namehash(domain: "test.crypto");
         let secondHashTest = try resolution.namehash(domain: "mongral.crypto");
         let thirdHashTest = try resolution.namehash(domain: "brad.crypto");
@@ -30,8 +28,48 @@ class resolutionTests: XCTestCase {
     }
     
     func testGetOwner() throws {
-        let resolution = try Resolution(providerUrl: "https://main-rpc.linkpool.io", network: "mainnet");
         let owner = try resolution.owner(domain: "brad.crypto");
+        assert(owner == "0x8aaD44321A86b170879d7A244c1e8d360c99DdA8".lowercased() );
+        
+        checkError(completion: {
+            let _ = try resolution.owner(domain: "unregistered.crypto");
+        }, expectedError: ResolutionError.UnregisteredDomain)
+    }
+    
+    func testGetResolver() throws {
+        let resolverAddress = try resolution.resolver(domain: "brad.crypto");
+        assert(resolverAddress == "0xb66DcE2DA6afAAa98F2013446dBCB0f4B0ab2842".lowercased());
+        
+        checkError(completion: {
+            let _ = try resolution.resolver(domain: "unregistered.crypto");
+        }, expectedError: ResolutionError.UnconfiguredDomain)
+    }
+    
+    func testAddr() throws {
+        let ethAddress = try resolution.addr(domain: "brad.crypto", ticker: "eth");
+        assert(ethAddress == "0x8aaD44321A86b170879d7A244c1e8d360c99DdA8");
+        
+        checkError(completion: {
+            let _ = try resolution.addr(domain: "brad.crypto", ticker: "unknown");
+        }, expectedError: ResolutionError.RecordNotFound)
+    }
+    
+    func testIpfs() throws {
+        let hash = try resolution.ipfsHash(domain: "brad.crypto");
+        assert(hash == "Qme54oEzRkgooJbCDr78vzKAWcv6DDEZqRhhDyDtzgrZP6");
+        
+        checkError(completion: {
+            let _ = try resolution.ipfsHash(domain: "unregistered.crypto")
+        }, expectedError: ResolutionError.UnconfiguredDomain)
+    }
+    
+    func testCustomRecord() throws {
+        let ipfshash = try resolution.getCustomRecord(domain: "brad.crypto", key: "ipfs.html.value");
+        assert (ipfshash == "Qme54oEzRkgooJbCDr78vzKAWcv6DDEZqRhhDyDtzgrZP6")
+        
+        checkError(completion: {
+            let _ = try resolution.getCustomRecord(domain: "brad.crypto", key: "unknown.value");
+        }, expectedError: ResolutionError.RecordNotFound)
     }
     
     func testPerformanceExample() throws {
@@ -40,5 +78,18 @@ class resolutionTests: XCTestCase {
             // Put the code you want to measure the time of here.
         }
     }
-
+    
+    func checkError(completion: @escaping() throws -> Void, expectedError: ResolutionError)  {
+        do {
+            try completion()
+            XCTFail("Expected \(expectedError), but got none")
+        } catch {
+            if let catched = error as? ResolutionError {
+                assert(catched == expectedError, "Expected \(expectedError), but got \(catched)");
+                return ;
+            }
+            XCTFail("Expected ResolutionError, but got different \(error)");
+        }
+    }
+    
 }
