@@ -156,18 +156,6 @@ fileprivate extension String {
         return "0x" + self.dropFirst(2).replacingOccurrences(of: "^0+", with: "", options: .regularExpression)
     }
     
-    /// Splits a string into groups of `every` n characters, grouping from left-to-right
-    func splitByLength(_ every: Int) -> [String] {
-        var result = [String]()
-        
-        for i in stride(from: 0, to: self.count, by: every) {
-            let startIndex = self.index(self.startIndex, offsetBy: i)
-            let endIndex = self.index(startIndex, offsetBy: every, limitedBy: self.endIndex) ?? self.endIndex
-            result.append(String(self[startIndex..<endIndex]))
-        }
-        return result
-    }
-    
     /// This parses 64 characters from abi response to get a number. Usually it is a length in bytes
     /// option inBytes controls whether we want the character count from string or the actual value of a number
     func getNumberFromAbi(inBytes: Bool) -> Int? {
