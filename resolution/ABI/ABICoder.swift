@@ -30,21 +30,7 @@ class ABICoder {
         self.errorSignature = "0x08c379a";
     }
     
-    public func encode(method: String, args: [String]) throws -> String {
-        let element: ABIElement = try getElement(method: method);
-        let operations = try parseEncoding(element, args);
-        var encoded = operations.signatureBytes;
-        guard operations.Dynamic.isEmpty else {
-            let offset = String(operations.Static.reduce(0, {$1.count}), radix: 16).leftPadding(toLength: 64, withPad: "0");
-            encoded.append(offset);
-            operations.Static.forEach({encoded.append($0)});
-            operations.Dynamic.forEach({encoded.append($0)});
-            return encoded;
-        }
-        operations.Static.forEach({encoded.append($0)})
-        return encoded;
-    }
-    
+    // MARK: - Decode Block
     public func decode(_ data: String, from method: String) throws -> String? {
         let element: ABIElement = try getElement(method: method);
         guard let output = element.outputs?[0] else {
@@ -73,6 +59,23 @@ class ABICoder {
         }
     }
     
+    
+    // MARK: - Encode Block
+    public func encode(method: String, args: [String]) throws -> String {
+        let element: ABIElement = try getElement(method: method);
+        let operations = try parseEncoding(element, args);
+        var encoded = operations.signatureBytes;
+        guard operations.Dynamic.isEmpty else {
+            let offset = String(operations.Static.reduce(0, {$1.count}), radix: 16).leftPadding(toLength: 64, withPad: "0");
+            encoded.append(offset);
+            operations.Static.forEach({encoded.append($0)});
+            operations.Dynamic.forEach({encoded.append($0)});
+            return encoded;
+        }
+        operations.Static.forEach({encoded.append($0)})
+        return encoded;
+    }
+    
     private func parseEncoding(_ element: ABIElement, _ args: [String]) throws -> CodingOperations {
         var operations = CodingOperations();
         operations.signatureBytes = getSignature(element);
@@ -91,7 +94,6 @@ class ABICoder {
         return type == InternalTypeEnum.string || type == InternalTypeEnum.typeString;
     }
     
-    // MARK: - Encode Type
     private func encodeType(data: String, type: InternalTypeEnum) throws -> String {
         switch type {
         case .address, .uint256:
@@ -110,6 +112,7 @@ class ABICoder {
         }
     }
     
+    // MARK: - General ABI functions
     private func getElement(method: String) throws -> ABIElement {
         guard let element = abi.first(where: {$0.name == method}) else {
             throw ABICoderError.WrongABIInterfaceForMethod(method: method);
@@ -165,6 +168,8 @@ fileprivate extension String {
         return result
     }
     
+    /// This parses 64 characters from abi response to get a number. Usually it is a length in bytes
+    /// option inBytes controls whether we want the character count from string or the actual value of a number
     func getNumberFromAbi(inBytes: Bool) -> Int? {
         let tempStr = self.prefix(2) == "0x" ? String(self.dropFirst(2)) : self;
         let endIndex = tempStr.index(tempStr.startIndex, offsetBy: 64, limitedBy: tempStr.endIndex) ?? tempStr.endIndex;
@@ -174,6 +179,7 @@ fileprivate extension String {
         return nil;
     }
     
+    /// converts utf-8 encoded hex string to ascii characters
     func hexToString(prefix: Bool = false) -> String? {
         guard self.count % 2 == 0 else {
             return nil
