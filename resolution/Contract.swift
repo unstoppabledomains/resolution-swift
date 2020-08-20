@@ -18,20 +18,44 @@ internal class Contract {
         self.coder = ABICoder(abi);
     }
     
-    func fetchMethod(methodName: String, args: [String]) -> Any? {
+    func fetchMethod(methodName: String, args: [String]) -> String? {
         do {
             let encodedData = try self.coder.encode(method: methodName, args: args);
-            print(encodedData);
-            return nil;
+            let body: JSON_RPC_REQUEST = JSON_RPC_REQUEST(
+                jsonrpc: "2.0",
+                id: "1",
+                method: "eth_call",
+                params: [
+                    ParamElement.paramClass(ParamClass(data: encodedData, to: address)),
+                    ParamElement.string("latest")
+                ]
+            );
+            let response = try postRequest(body)!;
+            return try self.coder.decode(response, from: methodName);
         } catch {
             print(error);
         }
         return nil;
     }
     
-    
-    private func postRequest(url: URL, params: String) -> Any {
-        // Need to perform a post request
-        return "some data from the providerUrl"
+    private func postRequest(_ body: JSON_RPC_REQUEST) throws -> String? {
+        let postRequest = APIRequest(providerUrl);
+        var resp:JSON_RPC_RESPONSE?;
+        var err: Error?;
+        let semaphore = DispatchSemaphore(value: 0)
+        postRequest.post(body, completion: {result in
+            switch result {
+            case .success(let response):
+                resp = response;
+            case .failure(let error):
+                err = error;
+            }
+            semaphore.signal()
+        })
+        semaphore.wait()
+        guard err == nil else {
+            throw err!;
+        }
+        return resp?.result;
     }
 }
