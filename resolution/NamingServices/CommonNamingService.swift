@@ -23,33 +23,29 @@ class CommonNamingService {
         self.providerUrl = providerUrl
     }
     
-    func buildContract(address: String, type: ContractType) -> Contract {
-           var jsonFileName: String;
-           
-           switch type {
-           case .Registry:
+    func buildContract(address: String, type: ContractType) throws -> Contract {
+        var jsonFileName: String;
+        
+        switch type {
+        case .Registry:
             jsonFileName = "\(name.lowercased())Registry"
-           case .Resolver:
+        case .Resolver:
             jsonFileName = "\(name.lowercased())Resolver"
-           }
-           
-           let abi: ABI = parseAbi(fromFile: jsonFileName)!;
-           return Contract(providerUrl: self.providerUrl, address: address, abi: abi);
-       }
-       
-    func parseAbi(fromFile name: String) -> ABI? {
-           if let filePath = Bundle(for: type(of: self)).url(forResource: name, withExtension: "json") {
-               do {
-                   let data = try Data(contentsOf: filePath);
-                   let jsonDecoder = JSONDecoder();
-                   let dataFromJson = try jsonDecoder.decode(ABI.self, from: data);
-                   return dataFromJson;
-               } catch {
-                   print(error);
-               }
-           }
-           return nil
-       }
+        }
+        
+        let abi: ABI = try parseAbi(fromFile: jsonFileName)!;
+        return Contract(providerUrl: self.providerUrl, address: address, abi: abi);
+    }
+    
+    func parseAbi(fromFile name: String) throws -> ABI? {
+        if let filePath = Bundle(for: type(of: self)).url(forResource: name, withExtension: "json") {
+            let data = try Data(contentsOf: filePath);
+            let jsonDecoder = JSONDecoder();
+            let dataFromJson = try jsonDecoder.decode(ABI.self, from: data);
+            return dataFromJson;
+        }
+        return nil
+    }
     
     func namehash(domain: String) -> String {
         var node = Array<UInt8>.init(repeating: 0x0, count: 32)

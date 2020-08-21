@@ -18,8 +18,7 @@ internal class Contract {
         self.coder = ABICoder(abi);
     }
     
-    func fetchMethod(methodName: String, args: [String]) -> String? {
-        do {
+    func fetchMethod(methodName: String, args: [String]) throws -> String? {
             let encodedData = try self.coder.encode(method: methodName, args: args);
             let body: JSON_RPC_REQUEST = JSON_RPC_REQUEST(
                 jsonrpc: "2.0",
@@ -32,10 +31,6 @@ internal class Contract {
             );
             let response = try postRequest(body)!;
             return try self.coder.decode(response, from: methodName);
-        } catch {
-            print(error);
-        }
-        return nil;
     }
     
     private func postRequest(_ body: JSON_RPC_REQUEST) throws -> String? {

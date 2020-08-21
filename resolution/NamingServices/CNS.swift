@@ -54,8 +54,8 @@ internal class CNS: CommonNamingService, NamingService {
     
     func getRecord(tokenId: String, key: String) throws -> String {
         let resolverAddress = try resolver(tokenId: tokenId);
-        let resolverContract = super.buildContract(address: resolverAddress, type: .Resolver);
-        guard let result = resolverContract.fetchMethod(methodName: "get", args: [key, tokenId]),
+        let resolverContract = try super.buildContract(address: resolverAddress, type: .Resolver);
+        guard let result = try resolverContract.fetchMethod(methodName: "get", args: [key, tokenId]),
             Utillities.isNotEmpty(result) else {
                 throw ResolutionError.RecordNotFound;
         }
@@ -78,7 +78,7 @@ internal class CNS: CommonNamingService, NamingService {
     
     // MARK: - Helper functions
     private func askRegistryContract(for methodName: String, with args: [String]) throws -> String? {
-        let registryContract: Contract = super.buildContract(address: self.registryAddress, type: .Registry);
-        return registryContract.fetchMethod(methodName: methodName, args: args);
+        let registryContract: Contract = try super.buildContract(address: self.registryAddress, type: .Registry);
+        return try registryContract.fetchMethod(methodName: methodName, args: args);
     }
 }
