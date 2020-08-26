@@ -80,6 +80,7 @@ class resolutionTests: XCTestCase {
         assert(manyResults[0] == "Qme54oEzRkgooJbCDr78vzKAWcv6DDEZqRhhDyDtzgrZP6");
         assert(manyResults[1] == "bc1q359khn0phg58xgezyqsuuaha28zkwx047c0c3y");
         assert(manyResults[2] == "0x8aaD44321A86b170879d7A244c1e8d360c99DdA8");
+        assert(manyResults[3] == "");
     }
     
     func testPerformanceExample() throws {
