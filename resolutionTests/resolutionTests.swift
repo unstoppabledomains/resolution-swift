@@ -72,6 +72,16 @@ class resolutionTests: XCTestCase {
         }, expectedError: ResolutionError.RecordNotFound)
     }
     
+    func testGetMany() throws {
+        let keys = ["ipfs.html.value", "crypto.BTC.address", "crypto.ETH.address", "someweirdstuf"];
+        let domain = "brad.crypto";
+        let manyResults = try resolution.getMany(domain: domain, keys: keys);
+        print(manyResults);
+        assert(manyResults[0] == "Qme54oEzRkgooJbCDr78vzKAWcv6DDEZqRhhDyDtzgrZP6");
+        assert(manyResults[1] == "bc1q359khn0phg58xgezyqsuuaha28zkwx047c0c3y");
+        assert(manyResults[2] == "0x8aaD44321A86b170879d7A244c1e8d360c99DdA8");
+    }
+    
     func testPerformanceExample() throws {
         // This is an example of a performance test case.
         self.measure {

@@ -46,7 +46,7 @@ enum InternalTypeEnum: String, Codable {
     case uint256 = "uint256"
     case contractMintingController = "contract MintingController"
     case contractRegistry = "contract Registry"
-    case typeString = "string[]"
+    case stringArray = "string[]"
     case typeUint256 = "uint256[]"
 }
 

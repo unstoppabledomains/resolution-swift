@@ -12,6 +12,7 @@ import CryptoSwift
 class ABICoder {
     let abi: ABI;
     let errorSignature: String;
+    
     struct CodingOperations {
         var signatureBytes: String = "";
         var Dynamic:[String] = [];
@@ -21,6 +22,7 @@ class ABICoder {
     enum ABICoderError: Error {
         case WrongABIInterfaceForMethod(method: String)
         case UnsupportedEncodingType(type: String)
+        case UnsupportedDecodingType(type: String)
         case CouldNotEncode(type: String, value: String)
         case CouldNotDecode(type: String, value: String)
     }
@@ -31,8 +33,8 @@ class ABICoder {
     }
     
     // MARK: - Decode Block
-    public func decode(_ data: String, from method: String) throws -> String? {
-        let element: ABIElement = try getElement(method: method);
+    public func decode(_ data: String, from method: String) throws -> Any {
+        let element: ABIElement = try getElement(method);
         guard let output = element.outputs?[0] else {
             throw ABICoderError.CouldNotDecode(type: "Not Found", value: data);
         }
@@ -54,15 +56,40 @@ class ABICoder {
                 }
             }
             throw ABICoderError.CouldNotDecode(type: output.type.rawValue, value: data);
+        case .stringArray:
+            let data = String(data.dropFirst(2));
+            if let dynamicOffset = data.getNumberFromAbi(inBytes: false) {
+                let encodedArray = String(data.dropFirst(dynamicOffset))
+                if let arraySize = encodedArray.getNumberFromAbi(inBytes: true) {
+                    let arrayData = String(encodedArray.dropFirst(64));
+                    let parsedArrayData = parseDynamicArray(arr: arrayData, size: arraySize);
+                    var resultedArray: [String] = [];
+                    parsedArrayData.forEach({ resultedArray.append($0.hexToString(prefix: false)!)});
+                    return resultedArray;
+                }
+            }
+            throw ABICoderError.CouldNotDecode(type: output.type.rawValue, value: data);
         default:
-            throw ABICoderError.UnsupportedEncodingType(type: output.type.rawValue)
+            throw ABICoderError.UnsupportedDecodingType(type: output.type.rawValue)
         }
     }
     
+    private func parseDynamicArray(arr: String, size: Int) -> [String] {
+        var parsedArray: [String] = [];
+        for i in 0..<size {
+            let temp = String(arr.dropFirst(i * 64))
+            let offset = temp.getNumberFromAbi(inBytes: false)!;
+            let data = String(arr.dropFirst(offset));
+            let dataSize = data.getNumberFromAbi(inBytes: false)!;
+            let actualData = String(data.dropFirst(64).prefix(dataSize));
+            parsedArray.append(actualData);
+        }
+        return parsedArray;
+    }
     
     // MARK: - Encode Block
-    public func encode(method: String, args: [String]) throws -> String {
-        let element: ABIElement = try getElement(method: method);
+    public func encode(method: String, args: [Any]) throws -> String {
+        let element: ABIElement = try getElement(method);
         let operations = try parseEncoding(element, args);
         var encoded = operations.signatureBytes;
         guard operations.Dynamic.isEmpty else {
@@ -76,11 +103,18 @@ class ABICoder {
         return encoded;
     }
     
-    private func parseEncoding(_ element: ABIElement, _ args: [String]) throws -> CodingOperations {
+    private func parseEncoding(_ element: ABIElement, _ args: [Any]) throws -> CodingOperations {
         var operations = CodingOperations();
         operations.signatureBytes = getSignature(element);
         for (index, input) in element.inputs.enumerated() {
-            let encodedArg = try encodeType(data: args[index], type: input.type)
+            var encodedArg = "";
+            let rawArg = args[index];
+            switch rawArg {
+            case is String, is [String]:
+                encodedArg = try encodeType(data: rawArg, type: input.type)
+            default:
+                throw ABICoderError.UnsupportedEncodingType(type: input.type.rawValue)
+            }
             guard isDynamicType(type: input.type) else {
                 operations.Static.append(encodedArg);
                 continue ;
@@ -91,29 +125,49 @@ class ABICoder {
     }
     
     private func isDynamicType(type: InternalTypeEnum) -> Bool {
-        return type == InternalTypeEnum.string || type == InternalTypeEnum.typeString;
+        return type == InternalTypeEnum.string || type == InternalTypeEnum.stringArray;
     }
     
-    private func encodeType(data: String, type: InternalTypeEnum) throws -> String {
-        switch type {
-        case .address, .uint256:
+    private func encodeType(data: Any, type: InternalTypeEnum) throws -> String {
+        let dataTuple = (data, type);
+        switch dataTuple {
+        case let (data, type) where type == .address || type == .uint256:
+            let data = data as! String;
             let returnee = data.prefix(2) == "0x" ? String(data.dropFirst(2)) : data;
             guard returnee.count == 64 else {
                 throw ABICoderError.CouldNotEncode(type: type.rawValue, value: data)
             }
             return returnee;
-        case .string:
+        case let (data, type) where type == .string:
+            let data = data as! String;
             let utf8Encoded = data.toUtf8HexString();
             let size = String(utf8Encoded.count / 2, radix: 16).leftPadding(toLength: 64, withPad: "0");
             let utf8PaddedResult = utf8Encoded.padding(toLength: 64, withPad: "0", startingAt: 0);
             return "\(size)\(utf8PaddedResult)";
+        case let (data, type) where type == .stringArray:
+            let data = data as! [String];
+            let size = String(data.count, radix: 16).leftPadding(toLength: 64, withPad: "0");
+            var encodedArgs: [String] = [];
+            try data.forEach({try encodedArgs.append(self.encodeType(data: $0, type: .string)) });
+            var encoded = size;
+            for i in 0..<data.count {
+                let staticOffset = data.count * 32; // in bytes. each offset takes 32 bytes!
+                let howManyArgsToCalculate = data.count - (data.count - i);
+                var dynamicOffset = 0;
+                for j in 0..<howManyArgsToCalculate {
+                    dynamicOffset = dynamicOffset + encodedArgs[j].count / 2;
+                };
+                encoded.append(String(staticOffset + dynamicOffset, radix: 16).leftPadding(toLength: 64, withPad: "0"));
+            }
+            encodedArgs.forEach({encoded.append($0)});
+            return encoded;
         default:
-            throw ABICoderError.UnsupportedEncodingType(type: type.rawValue)
+            throw ABICoderError.UnsupportedEncodingType(type: type.rawValue);
         }
     }
     
     // MARK: - General ABI functions
-    private func getElement(method: String) throws -> ABIElement {
+    private func getElement(_ method: String) throws -> ABIElement {
         guard let element = abi.first(where: {$0.name == method}) else {
             throw ABICoderError.WrongABIInterfaceForMethod(method: method);
         }

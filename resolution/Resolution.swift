@@ -79,6 +79,13 @@ public class Resolution {
         return try getServiceOf(domain: preparedDomain).getRecord(domain: preparedDomain, key: key);
     }
     
+    /// Allows to get Many records from a `domain` in a single transaction
+    /// `keys` is an array of keys
+    public func getMany(domain: String, keys: [String]) throws -> [String] {
+        let preparedDomain = prepare(domain: domain);
+        return try getServiceOf(domain: preparedDomain).getMany(keys: keys, for: preparedDomain);
+    }
+    
     // MARK: - Uttilities function
     /// This returns the correct naming service based on the `domain` asked for
     private func getServiceOf(domain: String) throws -> NamingService  {
