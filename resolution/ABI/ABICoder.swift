@@ -9,7 +9,7 @@
 import Foundation
 import CryptoSwift
 
-class ABICoder {
+internal class ABICoder {
     let abi: ABI;
     let errorSignature: String;
     
@@ -93,7 +93,11 @@ class ABICoder {
         let operations = try parseEncoding(element, args);
         var encoded = operations.signatureBytes;
         guard operations.Dynamic.isEmpty else {
-            let offset = String(operations.Static.reduce(0, {$1.count}), radix: 16).leftPadding(toLength: 64, withPad: "0");
+            var offset = String(operations.Static.reduce(0, {$1.count}), radix: 16).leftPadding(toLength: 64, withPad: "0");
+            // if there is no static headers then standart offset is 32 bytes
+            if (offset == "0000000000000000000000000000000000000000000000000000000000000000") {
+                offset = "0000000000000000000000000000000000000000000000000000000000000020";
+            }
             encoded.append(offset);
             operations.Static.forEach({encoded.append($0)});
             operations.Dynamic.forEach({encoded.append($0)});
@@ -129,22 +133,18 @@ class ABICoder {
     }
     
     private func encodeType(data: Any, type: InternalTypeEnum) throws -> String {
-        let dataTuple = (data, type);
-        switch dataTuple {
-        case let (data, type) where type == .address || type == .uint256:
+        switch type {
+        case .address, .uint256:
             let data = data as! String;
             let returnee = data.prefix(2) == "0x" ? String(data.dropFirst(2)) : data;
-            guard returnee.count == 64 else {
-                throw ABICoderError.CouldNotEncode(type: type.rawValue, value: data)
-            }
-            return returnee;
-        case let (data, type) where type == .string:
+            return returnee.leftPadding(toLength: 64, withPad: "0")
+        case .string:
             let data = data as! String;
             let utf8Encoded = data.toUtf8HexString();
             let size = String(utf8Encoded.count / 2, radix: 16).leftPadding(toLength: 64, withPad: "0");
             let utf8PaddedResult = utf8Encoded.padding(toLength: 64, withPad: "0", startingAt: 0);
             return "\(size)\(utf8PaddedResult)";
-        case let (data, type) where type == .stringArray:
+        case .stringArray:
             let data = data as! [String];
             let size = String(data.count, radix: 16).leftPadding(toLength: 64, withPad: "0");
             var encodedArgs: [String] = [];
@@ -174,7 +174,7 @@ class ABICoder {
         return element;
     }
     
-    private func getSignature(_ element: ABIElement) -> String {
+    public func getSignature(_ element: ABIElement) -> String {
         let inputs = element.inputs;
         var functionSignature = element.name! + "(";
         for input in inputs {

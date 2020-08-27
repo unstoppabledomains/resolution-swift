@@ -10,7 +10,7 @@ import Foundation
 typealias ABI = [ABIElement]
 
 // MARK: - ABIElement
-struct ABIElement: Codable {
+public struct ABIElement: Codable {
     let constant: Bool?
     let inputs: [Put]
     let name: String?
