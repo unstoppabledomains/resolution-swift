@@ -7,7 +7,7 @@
 //
 
 import XCTest
-@testable import resolution
+@testable import Resolution
 
 var resolution: Resolution!;
 
