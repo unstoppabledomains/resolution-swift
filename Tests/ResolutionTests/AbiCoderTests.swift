@@ -9,7 +9,7 @@
 import Foundation
 import XCTest
 
-@testable import resolution
+@testable import Resolution
 
 class AbiCoderTestCases: XCTestCase {
     enum AbiTestNames {

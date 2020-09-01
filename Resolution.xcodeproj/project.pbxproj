@@ -20,7 +20,7 @@
 		3EAFA40024EE0CFD008791E9 /* APIRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EAFA3FF24EE0CFD008791E9 /* APIRequest.swift */; };
 		3EAFA40224EE312A008791E9 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EAFA40124EE312A008791E9 /* Utilities.swift */; };
 		3EAFA40424EE32B2008791E9 /* CommonNamingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EAFA40324EE32B2008791E9 /* CommonNamingService.swift */; };
-		3EE4DA0D24E367720097540B /* resolution.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3EE4DA0324E367720097540B /* resolution.framework */; };
+		3EE4DA0D24E367720097540B /* Resolution.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3EE4DA0324E367720097540B /* Resolution.framework */; };
 		3EE4DA1224E367720097540B /* resolutionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EE4DA1124E367720097540B /* resolutionTests.swift */; };
 		3EE4DA1424E367720097540B /* resolution.h in Headers */ = {isa = PBXBuildFile; fileRef = 3EE4DA0624E367720097540B /* resolution.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3EE4DA1E24E367D40097540B /* Resolution.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EE4DA1D24E367D40097540B /* Resolution.swift */; };
@@ -50,10 +50,10 @@
 		3EAFA3FF24EE0CFD008791E9 /* APIRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIRequest.swift; sourceTree = "<group>"; };
 		3EAFA40124EE312A008791E9 /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
 		3EAFA40324EE32B2008791E9 /* CommonNamingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonNamingService.swift; sourceTree = "<group>"; };
-		3EE4DA0324E367720097540B /* resolution.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = resolution.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		3EE4DA0324E367720097540B /* Resolution.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Resolution.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3EE4DA0624E367720097540B /* resolution.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = resolution.h; sourceTree = "<group>"; };
 		3EE4DA0724E367720097540B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		3EE4DA0C24E367720097540B /* resolutionTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = resolutionTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		3EE4DA0C24E367720097540B /* ResolutionTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ResolutionTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3EE4DA1124E367720097540B /* resolutionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = resolutionTests.swift; sourceTree = "<group>"; };
 		3EE4DA1324E367720097540B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3EE4DA1D24E367D40097540B /* Resolution.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Resolution.swift; sourceTree = "<group>"; };
@@ -73,7 +73,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3EE4DA0D24E367720097540B /* resolution.framework in Frameworks */,
+				3EE4DA0D24E367720097540B /* Resolution.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -120,8 +120,8 @@
 		3EE4D9F924E367720097540B = {
 			isa = PBXGroup;
 			children = (
-				3EE4DA0524E367720097540B /* resolution */,
-				3EE4DA1024E367720097540B /* resolutionTests */,
+				840B552D24F94B5A00618935 /* Sources */,
+				849E07CB24F946CA00A793D3 /* Tests */,
 				3EE4DA0424E367720097540B /* Products */,
 			);
 			sourceTree = "<group>";
@@ -129,37 +129,54 @@
 		3EE4DA0424E367720097540B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				3EE4DA0324E367720097540B /* resolution.framework */,
-				3EE4DA0C24E367720097540B /* resolutionTests.xctest */,
+				3EE4DA0324E367720097540B /* Resolution.framework */,
+				3EE4DA0C24E367720097540B /* ResolutionTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		3EE4DA0524E367720097540B /* resolution */ = {
+		3EE4DA0524E367720097540B /* Resolution */ = {
 			isa = PBXGroup;
 			children = (
 				3E2AC92024E4FA3E008EBC39 /* ABI */,
 				3E2AC91D24E4FA35008EBC39 /* Protocols */,
 				3E2AC91A24E4FA28008EBC39 /* NamingServices */,
 				3EE4DA0624E367720097540B /* resolution.h */,
-				3EE4DA0724E367720097540B /* Info.plist */,
 				3EE4DA1D24E367D40097540B /* Resolution.swift */,
 				3E65912724E381E900D7EC35 /* Errors.swift */,
 				3E65913024E4ADAC00D7EC35 /* Contract.swift */,
 				3EAFA3FF24EE0CFD008791E9 /* APIRequest.swift */,
 				3EAFA40124EE312A008791E9 /* Utilities.swift */,
 			);
-			path = resolution;
+			name = Resolution;
+			path = Sources/Resolution;
 			sourceTree = SOURCE_ROOT;
 		};
-		3EE4DA1024E367720097540B /* resolutionTests */ = {
+		3EE4DA1024E367720097540B /* ResolutionTests */ = {
 			isa = PBXGroup;
 			children = (
 				3EE4DA1124E367720097540B /* resolutionTests.swift */,
 				3EE4DA1324E367720097540B /* Info.plist */,
 				3EF4D83424F77E300022B33C /* AbiCoderTests.swift */,
 			);
-			path = resolutionTests;
+			path = ResolutionTests;
+			sourceTree = "<group>";
+		};
+		840B552D24F94B5A00618935 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				3EE4DA0724E367720097540B /* Info.plist */,
+				3EE4DA0524E367720097540B /* Resolution */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		849E07CB24F946CA00A793D3 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				3EE4DA1024E367720097540B /* ResolutionTests */,
+			);
+			path = Tests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -176,9 +193,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		3EE4DA0224E367720097540B /* resolution */ = {
+		3EE4DA0224E367720097540B /* Resolution */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 3EE4DA1724E367720097540B /* Build configuration list for PBXNativeTarget "resolution" */;
+			buildConfigurationList = 3EE4DA1724E367720097540B /* Build configuration list for PBXNativeTarget "Resolution" */;
 			buildPhases = (
 				3EE4D9FE24E367720097540B /* Headers */,
 				3EE4D9FF24E367720097540B /* Sources */,
@@ -189,17 +206,17 @@
 			);
 			dependencies = (
 			);
-			name = resolution;
+			name = Resolution;
 			packageProductDependencies = (
 				3E65912A24E386D500D7EC35 /* CryptoSwift */,
 			);
 			productName = resolution;
-			productReference = 3EE4DA0324E367720097540B /* resolution.framework */;
+			productReference = 3EE4DA0324E367720097540B /* Resolution.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		3EE4DA0B24E367720097540B /* resolutionTests */ = {
+		3EE4DA0B24E367720097540B /* ResolutionTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 3EE4DA1A24E367720097540B /* Build configuration list for PBXNativeTarget "resolutionTests" */;
+			buildConfigurationList = 3EE4DA1A24E367720097540B /* Build configuration list for PBXNativeTarget "ResolutionTests" */;
 			buildPhases = (
 				3EE4DA0824E367720097540B /* Sources */,
 				3EE4DA0924E367720097540B /* Frameworks */,
@@ -210,9 +227,9 @@
 			dependencies = (
 				3EE4DA0F24E367720097540B /* PBXTargetDependency */,
 			);
-			name = resolutionTests;
+			name = ResolutionTests;
 			productName = resolutionTests;
-			productReference = 3EE4DA0C24E367720097540B /* resolutionTests.xctest */;
+			productReference = 3EE4DA0C24E367720097540B /* ResolutionTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -234,7 +251,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 3EE4D9FD24E367720097540B /* Build configuration list for PBXProject "resolution" */;
+			buildConfigurationList = 3EE4D9FD24E367720097540B /* Build configuration list for PBXProject "Resolution" */;
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -250,8 +267,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				3EE4DA0224E367720097540B /* resolution */,
-				3EE4DA0B24E367720097540B /* resolutionTests */,
+				3EE4DA0224E367720097540B /* Resolution */,
+				3EE4DA0B24E367720097540B /* ResolutionTests */,
 			);
 		};
 /* End PBXProject section */
@@ -308,7 +325,7 @@
 /* Begin PBXTargetDependency section */
 		3EE4DA0F24E367720097540B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 3EE4DA0224E367720097540B /* resolution */;
+			target = 3EE4DA0224E367720097540B /* Resolution */;
 			targetProxy = 3EE4DA0E24E367720097540B /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -443,7 +460,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = resolution/Info.plist;
+				INFOPLIST_FILE = Sources/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -451,7 +468,7 @@
 					"@loader_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.unstoppabledomains.resolution;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PRODUCT_NAME = Resolution;
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -468,7 +485,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = resolution/Info.plist;
+				INFOPLIST_FILE = Sources/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -476,7 +493,7 @@
 					"@loader_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.unstoppabledomains.resolution;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PRODUCT_NAME = Resolution;
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -489,7 +506,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = resolutionTests/Info.plist;
+				INFOPLIST_FILE = Tests/ResolutionTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -509,7 +526,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = resolutionTests/Info.plist;
+				INFOPLIST_FILE = Tests/ResolutionTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -526,7 +543,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		3EE4D9FD24E367720097540B /* Build configuration list for PBXProject "resolution" */ = {
+		3EE4D9FD24E367720097540B /* Build configuration list for PBXProject "Resolution" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3EE4DA1524E367720097540B /* Debug */,
@@ -535,7 +552,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		3EE4DA1724E367720097540B /* Build configuration list for PBXNativeTarget "resolution" */ = {
+		3EE4DA1724E367720097540B /* Build configuration list for PBXNativeTarget "Resolution" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3EE4DA1824E367720097540B /* Debug */,
@@ -544,7 +561,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		3EE4DA1A24E367720097540B /* Build configuration list for PBXNativeTarget "resolutionTests" */ = {
+		3EE4DA1A24E367720097540B /* Build configuration list for PBXNativeTarget "ResolutionTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3EE4DA1B24E367720097540B /* Debug */,
