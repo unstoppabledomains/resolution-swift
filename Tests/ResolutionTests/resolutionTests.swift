@@ -13,6 +13,8 @@ var resolution: Resolution!;
 
 class resolutionTests: XCTestCase {
     
+    let timeout: TimeInterval = 10
+    
     override func setUp() {
         super.setUp();
         resolution = try! Resolution(providerUrl: "https://main-rpc.linkpool.io", network: "mainnet");
@@ -28,12 +30,35 @@ class resolutionTests: XCTestCase {
     }
     
     func testGetOwner() throws {
-        let owner = try resolution.owner(domain: "brad.crypto");
-        assert(owner == "0x8aaD44321A86b170879d7A244c1e8d360c99DdA8".lowercased() );
         
-        checkError(completion: {
-            let _ = try resolution.owner(domain: "unregistered.crypto");
-        }, expectedError: ResolutionError.UnregisteredDomain)
+        // Given
+        let domainReceived = expectation(description: "Exist domain should be received")
+        let unregisteredReceived = expectation(description: "Unregistered domain should be received")
+        
+        var owner = ""
+        var unregisteredResult: Result<String, ResolutionError>!
+        
+        // When
+        resolution.owner(domain: "brad.crypto") { (result) in
+            switch result {
+            case .success(let returnValue):
+                domainReceived.fulfill()
+                owner = returnValue
+            case .failure(let error):
+                XCTFail("Expected owner, but got \(error)")
+            }
+        }
+        
+        resolution.owner(domain: "unregistered.crypto") {
+            unregisteredResult = $0
+            unregisteredReceived.fulfill()
+        }
+        
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        XCTAssertEqual(owner, "0x8aaD44321A86b170879d7A244c1e8d360c99DdA8".lowercased());
+        self.checkError(result: unregisteredResult, expectedError: ResolutionError.UnregisteredDomain)
     }
     
     func testGetResolver() throws {
@@ -95,6 +120,19 @@ class resolutionTests: XCTestCase {
             try completion()
             XCTFail("Expected \(expectedError), but got none")
         } catch {
+            if let catched = error as? ResolutionError {
+                assert(catched == expectedError, "Expected \(expectedError), but got \(catched)");
+                return ;
+            }
+            XCTFail("Expected ResolutionError, but got different \(error)");
+        }
+    }
+    
+    func checkError(result: Result<String, ResolutionError>, expectedError: ResolutionError)  {
+        switch result {
+        case .success:
+            XCTFail("Expected \(expectedError), but got none")
+        case .failure(let error):
             if let catched = error as? ResolutionError {
                 assert(catched == expectedError, "Expected \(expectedError), but got \(catched)");
                 return ;
