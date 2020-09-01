@@ -171,7 +171,6 @@ class resolutionTests: XCTestCase {
             case .failure(let error):
                 XCTFail("Expected ipfsHash, but got \(error)")
             }
-            
         }
         
         resolution.getCustomRecord(domain: "brad.crypto", key: "unknown.value") {
@@ -187,9 +186,27 @@ class resolutionTests: XCTestCase {
     }
     
     func testGetMany() throws {
+        
+        // Given
+        let domainReceived = expectation(description: "Exist domain should be received")
         let keys = ["ipfs.html.value", "crypto.BTC.address", "crypto.ETH.address", "someweirdstuf"];
         let domain = "brad.crypto";
-        let manyResults = try resolution.getMany(domain: domain, keys: keys);
+        var manyResults = [String]()
+        
+        // When
+        resolution.getMany(domain: domain, keys: keys) { (result) in
+            switch result {
+            case .success(let returnValue):
+                domainReceived.fulfill()
+                manyResults = returnValue
+            case .failure(let error):
+                XCTFail("Expected ipfsHash, but got \(error)")
+            }
+        }
+        
+        waitForExpectations(timeout: timeout, handler: nil)
+        
+        // Then
         print(manyResults);
         assert(manyResults[0] == "Qme54oEzRkgooJbCDr78vzKAWcv6DDEZqRhhDyDtzgrZP6");
         assert(manyResults[1] == "bc1q359khn0phg58xgezyqsuuaha28zkwx047c0c3y");

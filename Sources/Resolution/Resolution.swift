@@ -26,6 +26,7 @@ public class Resolution {
     }
     
     public typealias StringResult = (Result<String, ResolutionError>) -> Void
+    public typealias StringArrayResult = (Result<[String], ResolutionError>) -> Void
     
     /// Resolves an owner address of a `domain`
     public func owner(domain: String, completion:@escaping StringResult ) {
@@ -146,9 +147,16 @@ public class Resolution {
     
     /// Allows to get Many records from a `domain` in a single transaction
     /// `keys` is an array of keys
-    public func getMany(domain: String, keys: [String]) throws -> [String] {
+    public func getMany(domain: String, keys: [String], completion:@escaping StringArrayResult ) {
         let preparedDomain = prepare(domain: domain);
-        return try getServiceOf(domain: preparedDomain).getMany(keys: keys, for: preparedDomain);
+        DispatchQueue.global(qos: .utility).async {
+            do {
+                let result = try self.getServiceOf(domain: preparedDomain).getMany(keys: keys, for: preparedDomain);
+                completion(.success(result))
+            } catch {
+                self.catchError(error, completion: completion)
+            }
+        }
     }
     
     // MARK: - Uttilities function
@@ -166,6 +174,15 @@ public class Resolution {
     }
     
     /// Process the 'error'
+    private func catchError(_ error: Error, completion:@escaping StringArrayResult ) {
+        guard let catched = error as? ResolutionError else {
+            completion(.failure(.UnknownError(error)))
+            return
+        }
+        
+        completion(.failure(catched))
+    }
+    
     private func catchError(_ error: Error, completion:@escaping StringResult ) {
         guard let catched = error as? ResolutionError else {
             completion(.failure(.UnknownError(error)))
