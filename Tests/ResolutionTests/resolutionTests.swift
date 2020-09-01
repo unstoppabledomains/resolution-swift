@@ -57,44 +57,133 @@ class resolutionTests: XCTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        XCTAssertEqual(owner, "0x8aaD44321A86b170879d7A244c1e8d360c99DdA8".lowercased());
+        assert(owner == "0x8aaD44321A86b170879d7A244c1e8d360c99DdA8".lowercased());
         self.checkError(result: unregisteredResult, expectedError: ResolutionError.UnregisteredDomain)
     }
     
     func testGetResolver() throws {
-        let resolverAddress = try resolution.resolver(domain: "brad.crypto");
-        assert(resolverAddress == "0xb66DcE2DA6afAAa98F2013446dBCB0f4B0ab2842".lowercased());
+        // Given
+        let domainReceived = expectation(description: "Exist domain should be received")
+        let unregisteredReceived = expectation(description: "Unregistered domain should be received")
         
-        checkError(completion: {
-            let _ = try resolution.resolver(domain: "unregistered.crypto");
-        }, expectedError: ResolutionError.UnconfiguredDomain)
+        var resolverAddress = ""
+        var unregisteredResult: Result<String, ResolutionError>!
+        
+        // When
+        resolution.resolver(domain: "brad.crypto") { (result) in
+            switch result {
+            case .success(let returnValue):
+                domainReceived.fulfill()
+                resolverAddress = returnValue
+            case .failure(let error):
+                XCTFail("Expected resolver Address, but got \(error)")
+            }
+        }
+        
+        resolution.resolver(domain: "unregistered.crypto") {
+            unregisteredResult = $0
+            unregisteredReceived.fulfill()
+        }
+        
+        waitForExpectations(timeout: timeout, handler: nil)
+    
+        // Then
+        assert(resolverAddress == "0xb66DcE2DA6afAAa98F2013446dBCB0f4B0ab2842".lowercased());
+        self.checkError(result: unregisteredResult, expectedError: ResolutionError.UnconfiguredDomain)
     }
     
     func testAddr() throws {
-        let ethAddress = try resolution.addr(domain: "brad.crypto", ticker: "eth");
-        assert(ethAddress == "0x8aaD44321A86b170879d7A244c1e8d360c99DdA8");
+        // Given
+        let domainReceived = expectation(description: "Exist domain should be received")
+        let unregisteredReceived = expectation(description: "Unregistered domain should be received")
         
-        checkError(completion: {
-            let _ = try resolution.addr(domain: "brad.crypto", ticker: "unknown");
-        }, expectedError: ResolutionError.RecordNotFound)
+        var ethAddress = ""
+        var unregisteredResult: Result<String, ResolutionError>!
+        
+        // When
+        resolution.addr(domain: "brad.crypto", ticker: "eth") { (result) in
+            switch result {
+            case .success(let returnValue):
+                domainReceived.fulfill()
+                ethAddress = returnValue
+            case .failure(let error):
+                XCTFail("Expected Eth Address, but got \(error)")
+            }
+        }
+        
+        resolution.addr(domain: "brad.crypto", ticker: "unknown") {
+            unregisteredResult = $0
+            unregisteredReceived.fulfill()
+        }
+        
+        waitForExpectations(timeout: timeout, handler: nil)
+        
+        // Then
+        assert(ethAddress == "0x8aaD44321A86b170879d7A244c1e8d360c99DdA8");
+        self.checkError(result: unregisteredResult, expectedError: ResolutionError.RecordNotFound)
     }
     
     func testIpfs() throws {
-        let hash = try resolution.ipfsHash(domain: "brad.crypto");
-        assert(hash == "Qme54oEzRkgooJbCDr78vzKAWcv6DDEZqRhhDyDtzgrZP6");
+        // Given
+        let domainReceived = expectation(description: "Exist domain should be received")
+        let unregisteredReceived = expectation(description: "Unregistered domain should be received")
         
-        checkError(completion: {
-            let _ = try resolution.ipfsHash(domain: "unregistered.crypto")
-        }, expectedError: ResolutionError.UnconfiguredDomain)
+        var hash = ""
+        var unregisteredResult: Result<String, ResolutionError>!
+        
+        // When
+        resolution.ipfsHash(domain: "brad.crypto") { (result) in
+            switch result {
+            case .success(let returnValue):
+                domainReceived.fulfill()
+                hash = returnValue
+            case .failure(let error):
+                XCTFail("Expected ipfsHash, but got \(error)")
+            }
+        }
+        
+        resolution.ipfsHash(domain: "unregistered.crypto") {
+            unregisteredResult = $0
+            unregisteredReceived.fulfill()
+        }
+        
+        waitForExpectations(timeout: timeout, handler: nil)
+        
+        // Then
+        assert(hash == "Qme54oEzRkgooJbCDr78vzKAWcv6DDEZqRhhDyDtzgrZP6");
+        self.checkError(result: unregisteredResult, expectedError: ResolutionError.UnconfiguredDomain)
     }
     
     func testCustomRecord() throws {
-        let ipfshash = try resolution.getCustomRecord(domain: "brad.crypto", key: "ipfs.html.value");
-        assert (ipfshash == "Qme54oEzRkgooJbCDr78vzKAWcv6DDEZqRhhDyDtzgrZP6")
+        // Given
+        let domainReceived = expectation(description: "Exist domain should be received")
+        let unregisteredReceived = expectation(description: "Unregistered domain should be received")
         
-        checkError(completion: {
-            let _ = try resolution.getCustomRecord(domain: "brad.crypto", key: "unknown.value");
-        }, expectedError: ResolutionError.RecordNotFound)
+        var ipfshash = ""
+        var unregisteredResult: Result<String, ResolutionError>!
+        
+        // When
+        resolution.getCustomRecord(domain: "brad.crypto", key: "ipfs.html.value") { (result) in
+            switch result {
+            case .success(let returnValue):
+                domainReceived.fulfill()
+                ipfshash = returnValue
+            case .failure(let error):
+                XCTFail("Expected ipfsHash, but got \(error)")
+            }
+            
+        }
+        
+        resolution.getCustomRecord(domain: "brad.crypto", key: "unknown.value") {
+            unregisteredResult = $0
+            unregisteredReceived.fulfill()
+        }
+        
+        waitForExpectations(timeout: timeout, handler: nil)
+        
+        // Then
+        assert (ipfshash == "Qme54oEzRkgooJbCDr78vzKAWcv6DDEZqRhhDyDtzgrZP6")
+        self.checkError(result: unregisteredResult, expectedError: ResolutionError.RecordNotFound)
     }
     
     func testGetMany() throws {
