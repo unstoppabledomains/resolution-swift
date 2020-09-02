@@ -94,7 +94,7 @@ public class Resolution {
     }
     
     /// Resolves a gunDB username of a `domain` owner
-    public func gunDBchat(domain: String, completion:@escaping StringResult ) {
+    public func gunDBChat(domain: String, completion:@escaping StringResult ) {
         let preparedDomain = prepare(domain: domain)
         DispatchQueue.global(qos: .utility).async {
             do {
@@ -133,7 +133,7 @@ public class Resolution {
     }
     
     /// Resolves custom record of a `domain`
-    public func getCustomRecord(domain: String, key: String, completion:@escaping StringResult ) {
+    public func record(domain: String, key: String, completion:@escaping StringResult ) {
         let preparedDomain = prepare(domain: domain)
         DispatchQueue.global(qos: .utility).async {
             do {

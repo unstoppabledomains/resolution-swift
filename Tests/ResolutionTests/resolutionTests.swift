@@ -163,7 +163,7 @@ class resolutionTests: XCTestCase {
         var unregisteredResult: Result<String, ResolutionError>!
         
         // When
-        resolution.getCustomRecord(domain: "brad.crypto", key: "ipfs.html.value") { (result) in
+        resolution.record(domain: "brad.crypto", key: "ipfs.html.value") { (result) in
             switch result {
             case .success(let returnValue):
                 domainReceived.fulfill()
@@ -173,7 +173,7 @@ class resolutionTests: XCTestCase {
             }
         }
         
-        resolution.getCustomRecord(domain: "brad.crypto", key: "unknown.value") {
+        resolution.record(domain: "brad.crypto", key: "unknown.value") {
             unregisteredResult = $0
             unregisteredReceived.fulfill()
         }
@@ -247,4 +247,26 @@ class resolutionTests: XCTestCase {
         }
     }
     
+}
+
+extension ResolutionError: Equatable {
+    public static func == (lhs: ResolutionError, rhs: ResolutionError) -> Bool {
+        
+        switch (lhs, rhs) {
+        case ( .UnregisteredDomain, .UnregisteredDomain):
+            return true
+        case ( .UnsupportedDomain, .UnsupportedDomain):
+            return true
+        case ( .UnconfiguredDomain, .UnconfiguredDomain):
+            return true
+        case ( .RecordNotFound, .RecordNotFound):
+            return true
+        case ( .UnsupportedNetwork, .UnsupportedNetwork):
+            return true
+        case ( .UnknownError(_), .UnknownError(_)):
+            return false
+        default:
+            return false
+        }
+    }
 }
