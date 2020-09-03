@@ -41,18 +41,18 @@ internal class CNS: CommonNamingService, NamingService {
     func addr(domain: String, ticker: String) throws -> String {
         let tokenId = super.namehash(domain: domain);
         let key = "crypto.\(ticker.uppercased()).address";
-        let result = try getRecord(tokenId: tokenId, key: key);
+        let result = try record(tokenId: tokenId, key: key);
         return result;
     }
     
     
     // MARK: - Get Record
-    func getRecord(domain: String, key: String) throws -> String {
+    func record(domain: String, key: String) throws -> String {
         let tokenId = super.namehash(domain: domain);
-        return try self.getRecord(tokenId: tokenId, key: key);
+        return try self.record(tokenId: tokenId, key: key);
     }
     
-    func getRecord(tokenId: String, key: String) throws -> String {
+    func record(tokenId: String, key: String) throws -> String {
         let resolverAddress = try resolver(tokenId: tokenId);
         let resolverContract = try super.buildContract(address: resolverAddress, type: .Resolver);
         guard let result = try resolverContract.fetchMethod(methodName: "get", args: [key, tokenId]) as? String,
@@ -62,7 +62,7 @@ internal class CNS: CommonNamingService, NamingService {
         return result;
     }
     
-    func getMany(keys: [String], for domain: String) throws -> [String: String] {
+    func records(keys: [String], for domain: String) throws -> [String: String] {
         let tokenId = super.namehash(domain: domain);
         let resolverAddress = try resolver(tokenId: tokenId);
         let resolverContract = try super.buildContract(address: resolverAddress, type: .Resolver);

@@ -72,7 +72,7 @@ public class Resolution {
         let preparedDomain = prepare(domain: domain)
         DispatchQueue.global(qos: .utility).async {
             do {
-                let result = try self.getServiceOf(domain: preparedDomain).getRecord(domain: preparedDomain, key: "ipfs.html.value")
+                let result = try self.getServiceOf(domain: preparedDomain).record(domain: preparedDomain, key: "ipfs.html.value")
                 completion(.success(result))
             } catch {
                 self.catchError(error, completion: completion)
@@ -85,7 +85,7 @@ public class Resolution {
         let preparedDomain = prepare(domain: domain)
         DispatchQueue.global(qos: .utility).async {
             do {
-                let result = try self.getServiceOf(domain: preparedDomain).getRecord(domain: preparedDomain, key: "whois.email.value")
+                let result = try self.getServiceOf(domain: preparedDomain).record(domain: preparedDomain, key: "whois.email.value")
                 completion(.success(result))
             } catch {
                 self.catchError(error, completion: completion)
@@ -98,7 +98,7 @@ public class Resolution {
         let preparedDomain = prepare(domain: domain)
         DispatchQueue.global(qos: .utility).async {
             do {
-                let result = try self.getServiceOf(domain: preparedDomain).getRecord(domain: preparedDomain, key: "gundb.username.value")
+                let result = try self.getServiceOf(domain: preparedDomain).record(domain: preparedDomain, key: "gundb.username.value")
                 completion(.success(result))
             } catch {
                 self.catchError(error, completion: completion)
@@ -111,7 +111,7 @@ public class Resolution {
         let preparedDomain = prepare(domain: domain);
         DispatchQueue.global(qos: .utility).async {
             do {
-                let result = try self.getServiceOf(domain: preparedDomain).getRecord(domain: preparedDomain, key: "gundb.public_key.value")
+                let result = try self.getServiceOf(domain: preparedDomain).record(domain: preparedDomain, key: "gundb.public_key.value")
                 completion(.success(result))
             } catch {
                 self.catchError(error, completion: completion)
@@ -124,7 +124,7 @@ public class Resolution {
         let preparedDomain = prepare(domain: domain)
         DispatchQueue.global(qos: .utility).async {
             do {
-                let result = try self.getServiceOf(domain: preparedDomain).getRecord(domain: preparedDomain, key: "ipfs.redirect_domain.value")
+                let result = try self.getServiceOf(domain: preparedDomain).record(domain: preparedDomain, key: "ipfs.redirect_domain.value")
                 completion(.success(result))
             } catch {
                 self.catchError(error, completion: completion)
@@ -137,7 +137,7 @@ public class Resolution {
         let preparedDomain = prepare(domain: domain)
         DispatchQueue.global(qos: .utility).async {
             do {
-                let result = try self.getServiceOf(domain: preparedDomain).getRecord(domain: preparedDomain, key: key)
+                let result = try self.getServiceOf(domain: preparedDomain).record(domain: preparedDomain, key: key)
                 completion(.success(result))
             } catch {
                 self.catchError(error, completion: completion)
@@ -151,7 +151,7 @@ public class Resolution {
         let preparedDomain = prepare(domain: domain);
         DispatchQueue.global(qos: .utility).async {
             do {
-                let result = try self.getServiceOf(domain: preparedDomain).getMany(keys: keys, for: preparedDomain);
+                let result = try self.getServiceOf(domain: preparedDomain).records(keys: keys, for: preparedDomain);
                 completion(.success(result))
             } catch {
                 self.catchError(error, completion: completion)
