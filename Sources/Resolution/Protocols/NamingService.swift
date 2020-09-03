@@ -21,5 +21,5 @@ protocol NamingService {
     func resolver(domain: String) throws -> String
     
     func getRecord(domain: String, key: String) throws -> String
-    func getMany(keys: [String], for domain: String) throws -> [String]
+    func getMany(keys: [String], for domain: String) throws -> [String: String]
 }

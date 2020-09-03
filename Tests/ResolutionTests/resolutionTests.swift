@@ -191,27 +191,27 @@ class resolutionTests: XCTestCase {
         let domainReceived = expectation(description: "Exist domain should be received")
         let keys = ["ipfs.html.value", "crypto.BTC.address", "crypto.ETH.address", "someweirdstuf"];
         let domain = "brad.crypto";
-        var manyResults = [String]()
-        
+        var values = [String: String]()
+
         // When
-        resolution.getMany(domain: domain, keys: keys) { (result) in
+        resolution.records(domain: domain, keys: keys) { (result) in
             switch result {
             case .success(let returnValue):
                 domainReceived.fulfill()
-                manyResults = returnValue
+                values = returnValue
             case .failure(let error):
                 XCTFail("Expected ipfsHash, but got \(error)")
             }
         }
-        
+
         waitForExpectations(timeout: timeout, handler: nil)
-        
+
         // Then
-        print(manyResults);
-        assert(manyResults[0] == "Qme54oEzRkgooJbCDr78vzKAWcv6DDEZqRhhDyDtzgrZP6");
-        assert(manyResults[1] == "bc1q359khn0phg58xgezyqsuuaha28zkwx047c0c3y");
-        assert(manyResults[2] == "0x8aaD44321A86b170879d7A244c1e8d360c99DdA8");
-        assert(manyResults[3] == "");
+        print(values);
+        assert(values["ipfs.html.value"] == "Qme54oEzRkgooJbCDr78vzKAWcv6DDEZqRhhDyDtzgrZP6");
+        assert(values["crypto.BTC.address"] == "bc1q359khn0phg58xgezyqsuuaha28zkwx047c0c3y");
+        assert(values["crypto.ETH.address"] == "0x8aaD44321A86b170879d7A244c1e8d360c99DdA8");
+        assert(values["someweirdstuf"] == "");
     }
     
     func testPerformanceExample() throws {

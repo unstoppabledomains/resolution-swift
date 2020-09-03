@@ -62,7 +62,7 @@ internal class CNS: CommonNamingService, NamingService {
         return result;
     }
     
-    func getMany(keys: [String], for domain: String) throws -> [String] {
+    func getMany(keys: [String], for domain: String) throws -> [String: String] {
         let tokenId = super.namehash(domain: domain);
         let resolverAddress = try resolver(tokenId: tokenId);
         let resolverContract = try super.buildContract(address: resolverAddress, type: .Resolver);
@@ -70,7 +70,13 @@ internal class CNS: CommonNamingService, NamingService {
             else {
                 throw ResolutionError.RecordNotFound;
         }
-        return result;
+        
+        let returnValue = zip(keys, result).reduce(into: [String: String]()) { dict, pair in
+            let (key, value) = pair
+            dict[key] = value
+        }
+
+        return returnValue
     }
     
     // MARK: - get Resolver
