@@ -263,9 +263,13 @@ extension ResolutionError: Equatable {
             return true
         case ( .UnsupportedNetwork, .UnsupportedNetwork):
             return true
-        case ( .UnknownError(_), .UnknownError(_)):
-            return false
-        default:
+        // We don't use `default` here on purpose, so we don't forget updating this method on adding new variants.
+        case (.UnregisteredDomain, _),
+            (.UnsupportedDomain, _),
+            (.UnconfiguredDomain, _),
+            (.RecordNotFound, _),
+            (.UnsupportedNetwork, _),
+            (.UnknownError(_), _ ):
             return false
         }
     }
