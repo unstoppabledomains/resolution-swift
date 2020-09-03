@@ -25,65 +25,138 @@ public class Resolution {
         return try getServiceOf(domain: preparedDomain).namehash(domain: preparedDomain)
     }
     
+    public typealias StringResult = (Result<String, ResolutionError>) -> Void
+    public typealias DictionaryResult = (Result<[String: String], ResolutionError>) -> Void
+    
     /// Resolves an owner address of a `domain`
-    public func owner(domain: String) throws -> String {
-        let preparedDomain = prepare(domain: domain);
-        return try getServiceOf(domain: preparedDomain).owner(domain: preparedDomain);
+    public func owner(domain: String, completion:@escaping StringResult ) {
+        let preparedDomain = prepare(domain: domain)
+        DispatchQueue.global(qos: .utility).async {
+            do {
+                let result = try self.getServiceOf(domain: preparedDomain).owner(domain: preparedDomain)
+                completion(.success(result))
+            } catch {
+                self.catchError(error, completion: completion)
+            }
+        }
     }
     
     /// Resolves `ticker` cryptoaddress of a `domain`
-    public func addr(domain: String, ticker: String) throws -> String {
-        let preparedDomain = prepare(domain: domain);
-        return try getServiceOf(domain: domain).addr(domain: preparedDomain, ticker: ticker);
+    public func addr(domain: String, ticker: String, completion:@escaping StringResult ) {
+        let preparedDomain = prepare(domain: domain)
+        DispatchQueue.global(qos: .utility).async {
+            do {
+                let result = try self.getServiceOf(domain: domain).addr(domain: preparedDomain, ticker: ticker)
+                completion(.success(result))
+            } catch {
+                self.catchError(error, completion: completion)
+            }
+        }
     }
     
     /// Resolves a resolver address of a `domain`
-    public func resolver(domain: String) throws -> String {
-        let preparedDomain = prepare(domain: domain);
-        return try getServiceOf(domain: preparedDomain).resolver(domain: preparedDomain);
+    public func resolver(domain: String, completion:@escaping StringResult ) {
+        let preparedDomain = prepare(domain: domain)
+        DispatchQueue.global(qos: .utility).async {
+            do {
+                let result = try self.getServiceOf(domain: preparedDomain).resolver(domain: preparedDomain)
+                completion(.success(result))
+            } catch {
+                self.catchError(error, completion: completion)
+            }
+        }
     }
     
     /// Resolves an ipfs hash of a `domain`
-    public func ipfsHash(domain: String) throws -> String {
-        let preparedDomain = prepare(domain: domain);
-        return try getServiceOf(domain: preparedDomain).getRecord(domain: preparedDomain, key: "ipfs.html.value");
+    public func ipfsHash(domain: String, completion:@escaping StringResult ) {
+        let preparedDomain = prepare(domain: domain)
+        DispatchQueue.global(qos: .utility).async {
+            do {
+                let result = try self.getServiceOf(domain: preparedDomain).record(domain: preparedDomain, key: "ipfs.html.value")
+                completion(.success(result))
+            } catch {
+                self.catchError(error, completion: completion)
+            }
+        }
     }
     
     /// Resolves an email of a `domain` owner
-    public func email(domain: String) throws -> String {
-        let preparedDomain = prepare(domain: domain);
-        return try getServiceOf(domain: preparedDomain).getRecord(domain: preparedDomain, key: "whois.email.value");
+    public func email(domain: String, completion:@escaping StringResult ) {
+        let preparedDomain = prepare(domain: domain)
+        DispatchQueue.global(qos: .utility).async {
+            do {
+                let result = try self.getServiceOf(domain: preparedDomain).record(domain: preparedDomain, key: "whois.email.value")
+                completion(.success(result))
+            } catch {
+                self.catchError(error, completion: completion)
+            }
+        }
     }
     
     /// Resolves a gunDB username of a `domain` owner
-    public func gunDBchat(domain: String) throws -> String {
-        let preparedDomain = prepare(domain: domain);
-        return try getServiceOf(domain: preparedDomain).getRecord(domain: preparedDomain, key: "gundb.username.value");
+    public func gunDBChat(domain: String, completion:@escaping StringResult ) {
+        let preparedDomain = prepare(domain: domain)
+        DispatchQueue.global(qos: .utility).async {
+            do {
+                let result = try self.getServiceOf(domain: preparedDomain).record(domain: preparedDomain, key: "gundb.username.value")
+                completion(.success(result))
+            } catch {
+                self.catchError(error, completion: completion)
+            }
+        }
     }
     
     /// Resolves a gunDB private key of a `domain` owner
-    public func gunDBPk(domain: String) throws -> String {
-        let preapredDomain = prepare(domain: domain);
-        return try getServiceOf(domain: preapredDomain).getRecord(domain: preapredDomain, key: "gundb.public_key.value");
+    public func gunDBPk(domain: String, completion:@escaping StringResult ) {
+        let preparedDomain = prepare(domain: domain);
+        DispatchQueue.global(qos: .utility).async {
+            do {
+                let result = try self.getServiceOf(domain: preparedDomain).record(domain: preparedDomain, key: "gundb.public_key.value")
+                completion(.success(result))
+            } catch {
+                self.catchError(error, completion: completion)
+            }
+        }
     }
     
     /// Resolves redirect url of a `domain`
-    public func redirectUrl(domain: String) throws -> String {
-        let preparedDomain = prepare(domain: domain);
-        return try getServiceOf(domain: preparedDomain).getRecord(domain: preparedDomain, key: "ipfs.redirect_domain.value");
+    public func redirectUrl(domain: String, completion:@escaping StringResult ) {
+        let preparedDomain = prepare(domain: domain)
+        DispatchQueue.global(qos: .utility).async {
+            do {
+                let result = try self.getServiceOf(domain: preparedDomain).record(domain: preparedDomain, key: "ipfs.redirect_domain.value")
+                completion(.success(result))
+            } catch {
+                self.catchError(error, completion: completion)
+            }
+        }
     }
     
     /// Resolves custom record of a `domain`
-    public func getCustomRecord(domain: String, key: String) throws -> String {
-        let preparedDomain = prepare(domain: domain);
-        return try getServiceOf(domain: preparedDomain).getRecord(domain: preparedDomain, key: key);
+    public func record(domain: String, key: String, completion:@escaping StringResult ) {
+        let preparedDomain = prepare(domain: domain)
+        DispatchQueue.global(qos: .utility).async {
+            do {
+                let result = try self.getServiceOf(domain: preparedDomain).record(domain: preparedDomain, key: key)
+                completion(.success(result))
+            } catch {
+                self.catchError(error, completion: completion)
+            }
+        }
     }
     
     /// Allows to get Many records from a `domain` in a single transaction
     /// `keys` is an array of keys
-    public func getMany(domain: String, keys: [String]) throws -> [String] {
+    public func records(domain: String, keys: [String], completion:@escaping DictionaryResult ) {
         let preparedDomain = prepare(domain: domain);
-        return try getServiceOf(domain: preparedDomain).getMany(keys: keys, for: preparedDomain);
+        DispatchQueue.global(qos: .utility).async {
+            do {
+                let result = try self.getServiceOf(domain: preparedDomain).records(keys: keys, for: preparedDomain);
+                completion(.success(result))
+            } catch {
+                self.catchError(error, completion: completion)
+            }
+        }
     }
     
     // MARK: - Uttilities function
@@ -98,5 +171,24 @@ public class Resolution {
     /// Preproccess the `domain`
     private func prepare(domain: String) -> String {
         return domain.lowercased()
+    }
+    
+    /// Process the 'error'
+    private func catchError(_ error: Error, completion:@escaping DictionaryResult ) {
+        guard let catched = error as? ResolutionError else {
+            completion(.failure(.UnknownError(error)))
+            return
+        }
+        
+        completion(.failure(catched))
+    }
+    
+    private func catchError(_ error: Error, completion:@escaping StringResult ) {
+        guard let catched = error as? ResolutionError else {
+            completion(.failure(.UnknownError(error)))
+            return
+        }
+        
+        completion(.failure(catched))
     }
 }

@@ -14,4 +14,5 @@ public enum ResolutionError: Error {
     case UnconfiguredDomain
     case RecordNotFound
     case UnsupportedNetwork
+    case UnknownError(Error)
 }
