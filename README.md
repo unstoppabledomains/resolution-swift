@@ -1,4 +1,6 @@
 # resolution-swift
+[![Chat on Telegram](https://img.shields.io/badge/Chat%20on-Telegram-brightgreen.svg)](https://t.me/unstoppabledev)
+
 Swift framework for resolving unstoppable domains
 
 This framework helps to resolve a decentralized domain name such as `brad.crypto`
