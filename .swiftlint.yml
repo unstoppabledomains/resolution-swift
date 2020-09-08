@@ -1,0 +1,13 @@
+line_length:
+  warning: 140
+  error: 200
+  ignores_comments: true
+  ignores_urls: true
+  ignores_function_declarations: true
+  ### works up until this config rule
+  ignores_interpolated_strings: true
+
+excluded:
+  - Pods
+  - .build
+  - Tests

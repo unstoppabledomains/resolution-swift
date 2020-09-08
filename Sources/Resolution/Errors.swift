@@ -9,10 +9,10 @@
 import Foundation
 
 public enum ResolutionError: Error {
-    case UnregisteredDomain
-    case UnsupportedDomain
-    case UnconfiguredDomain
-    case RecordNotFound
-    case UnsupportedNetwork
-    case UnknownError(Error)
+    case unregisteredDomain
+    case unsupportedDomain
+    case unconfiguredDomain
+    case recordNotFound
+    case unsupportedNetwork
+    case unknownError(Error)
 }

@@ -50,11 +50,11 @@ This framework helps to resolve a decentralized domain name such as `brad.crypto
  It is adviced to check for the errors and show the users an appropriate localized message
 
 ```
- enum ResolutionError: Error {
-    case UnregisteredDomain
-    case UnsupportedDomain
-    case UnconfiguredDomain
-    case RecordNotFound
-    case UnsupportedNetwork
+enum ResolutionError: Error {
+    case unregisteredDomain
+    case unsupportedDomain
+    case unconfiguredDomain
+    case recordNotFound
+    case unsupportedNetwork
 }
 ```
