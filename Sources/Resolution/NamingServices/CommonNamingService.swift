@@ -10,45 +10,45 @@ import Foundation
 import CryptoSwift
 
 class CommonNamingService {
-    let name: String;
-    let providerUrl: String;
-    
+    let name: String
+    let providerUrl: String
+
     enum ContractType {
-        case Registry;
-        case Resolver;
+        case registry
+        case resolver
     }
-    
+
     init(name: String, providerUrl: String) {
-        self.name = name;
+        self.name = name
         self.providerUrl = providerUrl
     }
-    
+
     func buildContract(address: String, type: ContractType) throws -> Contract {
-        var jsonFileName: String;
-        
+        var jsonFileName: String
+
         switch type {
-        case .Registry:
+        case .registry:
             jsonFileName = "\(name.lowercased())Registry"
-        case .Resolver:
+        case .resolver:
             jsonFileName = "\(name.lowercased())Resolver"
         }
-        
-        let abi: ABI = try parseAbi(fromFile: jsonFileName)!;
-        return Contract(providerUrl: self.providerUrl, address: address, abi: abi);
+
+        let abi: ABI = try parseAbi(fromFile: jsonFileName)!
+        return Contract(providerUrl: self.providerUrl, address: address, abi: abi)
     }
-    
+
     func parseAbi(fromFile name: String) throws -> ABI? {
         if let filePath = Bundle(for: type(of: self)).url(forResource: name, withExtension: "json") {
-            let data = try Data(contentsOf: filePath);
-            let jsonDecoder = JSONDecoder();
-            let dataFromJson = try jsonDecoder.decode(ABI.self, from: data);
-            return dataFromJson;
+            let data = try Data(contentsOf: filePath)
+            let jsonDecoder = JSONDecoder()
+            let dataFromJson = try jsonDecoder.decode(ABI.self, from: data)
+            return dataFromJson
         }
         return nil
     }
-    
+
     func namehash(domain: String) -> String {
-        var node = Array<UInt8>.init(repeating: 0x0, count: 32)
+        var node = [UInt8].init(repeating: 0x0, count: 32)
         if domain.count > 0 {
             node = domain.split(separator: ".")
                 .map { Array($0.utf8).sha3(.keccak256) }

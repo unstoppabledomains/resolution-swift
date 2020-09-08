@@ -21,7 +21,7 @@
 		3EAFA40224EE312A008791E9 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EAFA40124EE312A008791E9 /* Utilities.swift */; };
 		3EAFA40424EE32B2008791E9 /* CommonNamingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EAFA40324EE32B2008791E9 /* CommonNamingService.swift */; };
 		3EE4DA0D24E367720097540B /* Resolution.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3EE4DA0324E367720097540B /* Resolution.framework */; };
-		3EE4DA1224E367720097540B /* resolutionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EE4DA1124E367720097540B /* resolutionTests.swift */; };
+		3EE4DA1224E367720097540B /* ResolutionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EE4DA1124E367720097540B /* ResolutionTests.swift */; };
 		3EE4DA1424E367720097540B /* resolution.h in Headers */ = {isa = PBXBuildFile; fileRef = 3EE4DA0624E367720097540B /* resolution.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3EE4DA1E24E367D40097540B /* Resolution.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EE4DA1D24E367D40097540B /* Resolution.swift */; };
 		3EF4D83524F77E300022B33C /* AbiCoderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EF4D83424F77E300022B33C /* AbiCoderTests.swift */; };
@@ -54,7 +54,7 @@
 		3EE4DA0624E367720097540B /* resolution.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = resolution.h; sourceTree = "<group>"; };
 		3EE4DA0724E367720097540B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3EE4DA0C24E367720097540B /* ResolutionTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ResolutionTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		3EE4DA1124E367720097540B /* resolutionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = resolutionTests.swift; sourceTree = "<group>"; };
+		3EE4DA1124E367720097540B /* ResolutionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResolutionTests.swift; sourceTree = "<group>"; };
 		3EE4DA1324E367720097540B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3EE4DA1D24E367D40097540B /* Resolution.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Resolution.swift; sourceTree = "<group>"; };
 		3EF4D83424F77E300022B33C /* AbiCoderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AbiCoderTests.swift; sourceTree = "<group>"; };
@@ -157,7 +157,7 @@
 		3EE4DA1024E367720097540B /* ResolutionTests */ = {
 			isa = PBXGroup;
 			children = (
-				3EE4DA1124E367720097540B /* resolutionTests.swift */,
+				3EE4DA1124E367720097540B /* ResolutionTests.swift */,
 				3EE4DA1324E367720097540B /* Info.plist */,
 				3EF4D83424F77E300022B33C /* AbiCoderTests.swift */,
 			);
@@ -201,6 +201,7 @@
 			buildPhases = (
 				3EE4D9FE24E367720097540B /* Headers */,
 				3EE4D9FF24E367720097540B /* Sources */,
+				84412BFF25029A0E0025EE78 /* Run swiftlint */,
 				3EE4DA0024E367720097540B /* Frameworks */,
 				3EE4DA0124E367720097540B /* Resources */,
 			);
@@ -294,6 +295,27 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		84412BFF25029A0E0025EE78 /* Run swiftlint */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Run swiftlint";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if which swiftlint >/dev/null; then\n  swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		3EE4D9FF24E367720097540B /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -318,7 +340,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3EF4D83524F77E300022B33C /* AbiCoderTests.swift in Sources */,
-				3EE4DA1224E367720097540B /* resolutionTests.swift in Sources */,
+				3EE4DA1224E367720097540B /* ResolutionTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

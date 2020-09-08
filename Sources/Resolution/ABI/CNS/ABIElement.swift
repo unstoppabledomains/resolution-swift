@@ -31,9 +31,9 @@ struct Put: Codable {
 
 // MARK: - StateMutability
 enum StateMutability: String, Codable {
-    case nonpayable = "nonpayable"
-    case pure = "pure"
-    case view = "view"
+    case nonpayable
+    case pure
+    case view
 }
 
 // MARK: - InternalTypeEnum
@@ -52,7 +52,7 @@ enum InternalTypeEnum: String, Codable {
 
 // MARK: - Type
 enum Type: String, Codable {
-    case constructor = "constructor"
-    case event = "event"
-    case function = "function"
+    case constructor
+    case event
+    case function
 }

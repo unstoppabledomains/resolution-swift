@@ -8,6 +8,7 @@
 
 import Foundation
 
+// swiftlint:disable type_name identifier_name
 struct JSON_RPC_REQUEST: Codable {
     let jsonrpc, id, method: String
     let params: [ParamElement]
@@ -16,7 +17,7 @@ struct JSON_RPC_REQUEST: Codable {
 enum ParamElement: Codable {
     case paramClass(ParamClass)
     case string(String)
-    
+
     init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
         if let elem = try? container.decode(String.self) {
@@ -27,9 +28,13 @@ enum ParamElement: Codable {
             self = .paramClass(elem)
             return
         }
-        throw DecodingError.typeMismatch(ParamElement.self, DecodingError.Context(codingPath: decoder.codingPath, debugDescription: "Wrong type for ParamElement"))
+        throw DecodingError.typeMismatch(ParamElement.self,
+                                         DecodingError.Context(
+                                            codingPath: decoder.codingPath,
+                                            debugDescription: "Wrong type for ParamElement")
+        )
     }
-    
+
     func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
         switch self {

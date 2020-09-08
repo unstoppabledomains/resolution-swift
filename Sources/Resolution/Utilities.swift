@@ -14,7 +14,7 @@ internal class Utillities {
         "0x",
         "0x0000000000000000000000000000000000000000",
         "0x0000000000000000000000000000000000000000000000000000000000000000"
-        ];
+        ]
         return !(value.isEmpty || nullValues.contains(value))
     }
 }
