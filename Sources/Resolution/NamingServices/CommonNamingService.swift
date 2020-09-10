@@ -51,10 +51,15 @@ class CommonNamingService {
         var node = [UInt8].init(repeating: 0x0, count: 32)
         if domain.count > 0 {
             node = domain.split(separator: ".")
-                .map { Array($0.utf8).sha3(.keccak256) }
+                .map { Array($0.utf8)}
                 .reversed()
-                .reduce(node) { return ($0 + $1).sha3(.keccak256) }
+                .reduce(node) { return self.childHash(parent: $0, label: $1)}
         }
         return "0x" + node.toHexString()
+    }
+
+    func childHash(parent: [UInt8], label: [UInt8]) -> [UInt8] {
+        let childHash = label.sha3(.keccak256)
+        return (parent + childHash).sha3(.keccak256)
     }
 }

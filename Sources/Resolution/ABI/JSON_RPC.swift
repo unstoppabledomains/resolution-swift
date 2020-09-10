@@ -12,11 +12,20 @@ import Foundation
 struct JSON_RPC_REQUEST: Codable {
     let jsonrpc, id, method: String
     let params: [ParamElement]
+
+    enum CodingKeys: String, CodingKey {
+      case jsonrpc
+      case id
+      case method
+      case params
+    }
 }
 
 enum ParamElement: Codable {
     case paramClass(ParamClass)
     case string(String)
+    case array([ParamElement])
+    case dictionary([String: ParamElement])
 
     init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
@@ -28,6 +37,15 @@ enum ParamElement: Codable {
             self = .paramClass(elem)
             return
         }
+        if let elem = try? container.decode(Array<ParamElement>.self) {
+            self = .array(elem)
+            return
+        }
+        if let elem = try? container.decode([String: ParamElement].self) {
+            self = .dictionary(elem)
+            return
+        }
+
         throw DecodingError.typeMismatch(ParamElement.self,
                                          DecodingError.Context(
                                             codingPath: decoder.codingPath,
@@ -42,14 +60,21 @@ enum ParamElement: Codable {
             try container.encode(elem)
         case .string(let elem):
             try container.encode(elem)
+        case .array(let array):
+            try container.encode(array)
+        case .dictionary(let dict):
+            try container.encode(dict)
         }
     }
 }
 
 struct ParamClass: Codable {
-    let data, to: String
+    let data: String
+    let to: String
 }
 
 struct JSON_RPC_RESPONSE: Codable {
-    let jsonrpc, id, result: String
+    let jsonrpc: String
+    let id: String
+    let result: ParamElement
 }

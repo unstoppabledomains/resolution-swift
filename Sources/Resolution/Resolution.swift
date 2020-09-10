@@ -16,7 +16,8 @@ public class Resolution {
     init(providerUrl: String, network: String) throws {
         self.providerUrl = providerUrl
         let cns = try CNS(network: network, providerUrl: providerUrl)
-        self.services = [cns]
+        let zns = try ZNS(network: network, providerUrl: "https://api.zilliqa.com/")
+        self.services = [cns, zns]
     }
 
     /// Resolves a hash  of the `domain` according to https://github.com/ethereum/EIPs/blob/master/EIPS/eip-137.md
@@ -24,9 +25,6 @@ public class Resolution {
         let preparedDomain = prepare(domain: domain)
         return try getServiceOf(domain: preparedDomain).namehash(domain: preparedDomain)
     }
-
-    public typealias StringResult = (Result<String, ResolutionError>) -> Void
-    public typealias DictionaryResult = (Result<[String: String], ResolutionError>) -> Void
 
     /// Resolves an owner address of a `domain`
     public func owner(domain: String, completion:@escaping StringResult ) {

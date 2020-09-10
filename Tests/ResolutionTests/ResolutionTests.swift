@@ -21,33 +21,51 @@ class ResolutionTests: XCTestCase {
     }
 
     func testNamehash() throws {
+        // Given // When
         let firstHashTest = try resolution.namehash(domain: "test.crypto")
         let secondHashTest = try resolution.namehash(domain: "mongral.crypto")
         let thirdHashTest = try resolution.namehash(domain: "brad.crypto")
+        let zilHashTest = try resolution.namehash(domain: "hello.zil")
+        
+        // Then
         assert(firstHashTest == "0xb72f443a17edf4a55f766cf3c83469e6f96494b16823a41a4acb25800f303103")
         assert(secondHashTest == "0x2038e73f23cbe8c0774c901fbfa77d3ac21c0b13b8f6456f89030d4f13eebba9")
         assert(thirdHashTest == "0x756e4e998dbffd803c21d23b06cd855cdc7a4b57706c95964a37e24b47c10fc9")
+        assert(zilHashTest == "0xd7587a5c8caad4941c598440d34f3a454e79889c48e510d13c7c5d1dfc6eab45")
     }
 
     func testGetOwner() throws {
 
         // Given
-        let domainReceived = expectation(description: "Exist domain should be received")
+        let domainCryptoReceived = expectation(description: "Exist Crypto domain should be received")
+        let domainZilReceived = expectation(description: "Exist ziliq domain should be received")
         let unregisteredReceived = expectation(description: "Unregistered domain should be received")
 
         var owner = ""
+        var zilOwner = ""
         var unregisteredResult: Result<String, ResolutionError>!
 
         // When
         resolution.owner(domain: "brad.crypto") { (result) in
             switch result {
             case .success(let returnValue):
-                domainReceived.fulfill()
+                domainCryptoReceived.fulfill()
                 owner = returnValue
             case .failure(let error):
                 XCTFail("Expected owner, but got \(error)")
             }
         }
+        
+        resolution.owner(domain: "brad.zil") { (result) in
+            switch result {
+            case .success(let returnValue):
+                domainZilReceived.fulfill()
+                zilOwner = returnValue
+            case .failure(let error):
+                XCTFail("Expected owner, but got \(error)")
+            }
+        }
+        
 
         resolution.owner(domain: "unregistered.crypto") {
             unregisteredResult = $0
@@ -58,6 +76,7 @@ class ResolutionTests: XCTestCase {
 
         // Then
         assert(owner == "0x8aaD44321A86b170879d7A244c1e8d360c99DdA8".lowercased())
+        assert(zilOwner == "0x2d418942dce1afa02d0733a2000c71b371a6ac07".lowercased())
         self.checkError(result: unregisteredResult, expectedError: ResolutionError.unregisteredDomain)
     }
 
@@ -263,13 +282,16 @@ extension ResolutionError: Equatable {
             return true
         case ( .unsupportedNetwork, .unsupportedNetwork):
             return true
+        case (.unspecifiedResolver, .unspecifiedResolver):
+            return true
         // We don't use `default` here on purpose, so we don't forget updating this method on adding new variants.
         case (.unregisteredDomain, _),
             (.unsupportedDomain, _),
             (.unconfiguredDomain, _),
             (.recordNotFound, _),
             (.unsupportedNetwork, _),
-            (.unknownError, _ ):
+            (.unknownError, _ ),
+            (.unspecifiedResolver, _):
             return false
         }
     }

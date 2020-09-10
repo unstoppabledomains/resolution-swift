@@ -51,6 +51,11 @@ internal class Contract {
         guard err == nil else {
             throw err!
         }
-        return resp?.result
+        switch resp?.result {
+        case .string(let result):
+            return result
+        default:
+            return nil
+        }
     }
 }
