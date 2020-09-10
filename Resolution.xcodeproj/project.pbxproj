@@ -260,7 +260,7 @@
 			attributes = {
 				LastSwiftUpdateCheck = 1160;
 				LastUpgradeCheck = 1160;
-				ORGANIZATIONNAME = "Johnny Good";
+				ORGANIZATIONNAME = "Unstoppable Domains";
 				TargetAttributes = {
 					3EE4DA0224E367720097540B = {
 						CreatedOnToolsVersion = 11.6;

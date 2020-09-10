@@ -3,7 +3,7 @@
 //  resolution
 //
 //  Created by Serg Merenkov on 9/8/20.
-//  Copyright © 2020 Johnny Good. All rights reserved.
+//  Copyright © 2020 Unstoppable Domains. All rights reserved.
 //
 
 import Foundation

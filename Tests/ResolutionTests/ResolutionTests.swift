@@ -3,7 +3,7 @@
 //  resolutionTests
 //
 //  Created by Johnny Good on 8/11/20.
-//  Copyright © 2020 Johnny Good. All rights reserved.
+//  Copyright © 2020 Unstoppable Domains. All rights reserved.
 //
 
 import XCTest
