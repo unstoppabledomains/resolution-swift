@@ -46,7 +46,7 @@ internal class ABICoder {
                 return "0x0000000000000000000000000000000000000000"
             }
             return data.removeLeadingZeros()
-        case .string:
+        case .string, .bytes:
             if let offset = data.getNumberFromAbi(inBytes: false) {
                 let messageFullData = String(data.dropFirst(2 + offset))
                 if let messageLength = messageFullData.getNumberFromAbi(inBytes: false) {
@@ -140,7 +140,7 @@ internal class ABICoder {
             let data = data as! String
             let returnee = data.prefix(2) == "0x" ? String(data.dropFirst(2)) : data
             return returnee.leftPadding(toLength: 64, withPad: "0")
-        case .string:
+        case .string, .bytes:
             let data = data as! String
             let utf8Encoded = data.toUtf8HexString()
             let size = String(utf8Encoded.count / 2, radix: 16).leftPadding(toLength: 64, withPad: "0")
