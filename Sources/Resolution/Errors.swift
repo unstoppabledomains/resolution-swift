@@ -17,3 +17,7 @@ public enum ResolutionError: Error {
     case unspecifiedResolver
     case unknownError(Error)
 }
+
+enum OtherError: Error {
+    case runtimeError(String)
+}

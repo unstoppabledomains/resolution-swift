@@ -9,7 +9,7 @@
 import Foundation
 
 // swiftlint:disable type_name identifier_name
-struct JSON_RPC_REQUEST: Codable {
+struct JsonRpcPayload: Codable {
     let jsonrpc, id, method: String
     let params: [ParamElement]
 
@@ -73,7 +73,7 @@ struct ParamClass: Codable {
     let to: String
 }
 
-struct JSON_RPC_RESPONSE: Codable {
+struct JsonRpcResponse: Codable {
     let jsonrpc: String
     let id: String
     let result: ParamElement

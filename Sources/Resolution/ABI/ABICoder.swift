@@ -136,7 +136,7 @@ internal class ABICoder {
 // swiftlint:disable force_cast
     private func encodeType(data: Any, type: InternalTypeEnum) throws -> String {
         switch type {
-        case .address, .uint256:
+        case .address, .uint256, .bytes32:
             let data = data as! String
             let returnee = data.prefix(2) == "0x" ? String(data.dropFirst(2)) : data
             return returnee.leftPadding(toLength: 64, withPad: "0")

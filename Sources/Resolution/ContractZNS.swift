@@ -19,7 +19,7 @@ internal class ContractZNS {
 
     func fetchSubState(field: String, keys: [String]) throws -> Any {
 
-        let body: JSON_RPC_REQUEST = JSON_RPC_REQUEST(
+        let body: JsonRpcPayload = JsonRpcPayload(
             jsonrpc: "2.0",
             id: "1",
             method: "GetSmartContractSubState",
@@ -40,9 +40,9 @@ internal class ContractZNS {
         return results
     }
 
-    private func postRequest(_ body: JSON_RPC_REQUEST) throws -> Any? {
+    private func postRequest(_ body: JsonRpcPayload) throws -> Any? {
         let postRequest = APIRequest(providerUrl)
-        var resp: JSON_RPC_RESPONSE?
+        var resp: JsonRpcResponse?
         var err: Error?
         let semaphore = DispatchSemaphore(value: 0)
         postRequest.post(body, completion: {result in

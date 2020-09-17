@@ -2,18 +2,20 @@
 //  CNS.swift
 //  resolution
 //
-//  Created by Johnny Good on 8/11/20.
+//  Created by Serg Merenkov on 9/14/20.
 //  Copyright © 2020 Unstoppable Domains. All rights reserved.
 //
 
 import Foundation
 
-internal class CNS: CommonNamingService, NamingService {
+internal class ENS: CommonNamingService, NamingService {
     let network: String
     let registryAddress: String
     let registryMap: [String: String] = [
-        "mainnet": "0xD1E5b0FF1287aA9f9A268759062E4Ab08b9Dacbe",
-        "kovan": "0x22c2738cdA28C5598b1a68Fb1C89567c2364936F"
+        "mainnet": "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e",
+        "ropsten": "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e",
+        "rinkeby": "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e",
+        "goerli": "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e"
     ]
 
     init(network: String, providerUrl: String) throws {
@@ -22,16 +24,17 @@ internal class CNS: CommonNamingService, NamingService {
         }
         self.network = network
         self.registryAddress = registryAddress
-        super.init(name: "CNS", providerUrl: providerUrl)
+        super.init(name: "ENS", providerUrl: providerUrl)
     }
 
     func isSupported(domain: String) -> Bool {
-        return domain.hasSuffix(".crypto")
+        //Add additional domains
+        return domain.hasSuffix(".eth")
     }
 
     func owner(domain: String) throws -> String {
         let tokenId = super.namehash(domain: domain)
-        guard let ownerAddress = try askRegistryContract(for: "ownerOf", with: [tokenId]),
+        guard let ownerAddress = try askRegistryContract(for: "owner", with: [tokenId]),
             Utillities.isNotEmpty(ownerAddress) else {
                 throw ResolutionError.unregisteredDomain
         }
@@ -52,9 +55,17 @@ internal class CNS: CommonNamingService, NamingService {
     }
 
     func record(tokenId: String, key: String) throws -> String {
+        if key == "ipfs.html.value" {
+            let hash = try self.getContentHash(tokenId: tokenId)
+            return hash
+        }
+
         let resolverAddress = try resolver(tokenId: tokenId)
         let resolverContract = try super.buildContract(address: resolverAddress, type: .resolver)
-        guard let result = try resolverContract.callMethod(methodName: "get", args: [key, tokenId]) as? String,
+
+        let ensKeyName = self.fromUDNameToENS(record: key)
+
+        guard let result = try resolverContract.callMethod(methodName: "text", args: [tokenId, ensKeyName]) as? String,
             Utillities.isNotEmpty(result) else {
                 throw ResolutionError.recordNotFound
         }
@@ -62,20 +73,7 @@ internal class CNS: CommonNamingService, NamingService {
     }
 
     func records(keys: [String], for domain: String) throws -> [String: String] {
-        let tokenId = super.namehash(domain: domain)
-        let resolverAddress = try resolver(tokenId: tokenId)
-        let resolverContract = try super.buildContract(address: resolverAddress, type: .resolver)
-        guard let result = try resolverContract.callMethod(methodName: "getMany", args: [keys, tokenId]) as? [String]
-            else {
-                throw ResolutionError.recordNotFound
-        }
-
-        let returnValue = zip(keys, result).reduce(into: [String: String]()) { dict, pair in
-            let (key, value) = pair
-            dict[key] = value
-        }
-
-        return returnValue
+        throw OtherError.runtimeError("Method not implemented.")
     }
 
     // MARK: - get Resolver
@@ -85,7 +83,7 @@ internal class CNS: CommonNamingService, NamingService {
     }
 
     func resolver(tokenId: String) throws -> String {
-        guard let resolverAddress = try askRegistryContract(for: "resolverOf", with: [tokenId]),
+        guard let resolverAddress = try askRegistryContract(for: "resolver", with: [tokenId]),
             Utillities.isNotEmpty(resolverAddress) else {
                 throw ResolutionError.unconfiguredDomain
         }
@@ -97,4 +95,31 @@ internal class CNS: CommonNamingService, NamingService {
         let registryContract: Contract = try super.buildContract(address: self.registryAddress, type: .registry)
         return try registryContract.callMethod(methodName: methodName, args: args) as? String
     }
+
+    private func fromUDNameToENS(record: String) -> String {
+        let mapper: [String: String] = [
+            "ipfs.redirect_domain.value": "url",
+            "whois.email.value": "email",
+            "gundb.username.value": "gundb_username",
+            "gundb.public_key.value": "gundb_public_key"
+        ]
+        return mapper[record] ?? record
+    }
+
+    private func getContentHash(tokenId: String) throws -> String {
+
+        let resolverAddress = try resolver(tokenId: tokenId)
+        let resolverContract = try super.buildContract(address: resolverAddress, type: .resolver)
+
+        guard let contentHashEncoded = try resolverContract.callMethod(methodName: "contenthash", args: [tokenId]) as? String else {
+            throw OtherError.runtimeError("Content hash is NULL")
+        }
+
+        //      const codec = contentHash.getCodec(contentHashEncoded);
+        //      if (codec !== 'ipfs-ns') return undefined;
+        //      return contentHash.decode(contentHashEncoded);
+
+        return contentHashEncoded
+    }
+
 }

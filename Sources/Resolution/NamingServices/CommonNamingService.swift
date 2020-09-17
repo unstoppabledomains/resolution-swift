@@ -38,12 +38,17 @@ class CommonNamingService {
     }
 
     func parseAbi(fromFile name: String) throws -> ABI? {
-        if let filePath = Bundle(for: type(of: self)).url(forResource: name, withExtension: "json") {
-            let data = try Data(contentsOf: filePath)
-            let jsonDecoder = JSONDecoder()
-            let dataFromJson = try jsonDecoder.decode(ABI.self, from: data)
-            return dataFromJson
+        do {
+            if let filePath = Bundle(for: type(of: self)).url(forResource: name, withExtension: "json") {
+                let data = try Data(contentsOf: filePath)
+                let jsonDecoder = JSONDecoder()
+                let dataFromJson = try jsonDecoder.decode(ABI.self, from: data)
+                return dataFromJson
+            }
+        } catch {
+            print(error)
         }
+
         return nil
     }
 

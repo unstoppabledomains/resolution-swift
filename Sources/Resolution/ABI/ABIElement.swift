@@ -23,7 +23,7 @@ public struct ABIElement: Codable {
 
 // MARK: - Put
 struct Put: Codable {
-    let internalType: InternalTypeEnum
+    let internalType: InternalTypeEnum?
     let name: String
     let type: InternalTypeEnum
     let indexed: Bool?
@@ -42,10 +42,13 @@ enum InternalTypeEnum: String, Codable {
     case bool = "bool"
     case bytes = "bytes"
     case bytes4 = "bytes4"
+    case bytes32 = "bytes32"
     case string = "string"
+    case uint64 = "uint64"
     case uint256 = "uint256"
     case contractMintingController = "contract MintingController"
     case contractRegistry = "contract Registry"
+    case contractENS = "contract ENS"
     case stringArray = "string[]"
     case typeUint256 = "uint256[]"
 }
