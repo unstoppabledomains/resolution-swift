@@ -10,12 +10,16 @@ import Foundation
 import CryptoSwift
 
 class CommonNamingService {
+    static let HEXADECIMAL_PREFIX = "0x"
+    static let JSON_EXTENSION = "json"
+    
     let name: String
     let providerUrl: String
 
     enum ContractType {
         case registry
         case resolver
+        case proxyReader
     }
 
     init(name: String, providerUrl: String) {
@@ -24,13 +28,16 @@ class CommonNamingService {
     }
 
     func buildContract(address: String, type: ContractType) throws -> Contract {
-        var jsonFileName: String
+        let jsonFileName: String
 
+        let nameLowCased = name.lowercased()
         switch type {
         case .registry:
-            jsonFileName = "\(name.lowercased())Registry"
+            jsonFileName = "\(nameLowCased)Registry"
         case .resolver:
-            jsonFileName = "\(name.lowercased())Resolver"
+            jsonFileName = "\(nameLowCased)Resolver"
+        case .proxyReader:
+            jsonFileName = "\(nameLowCased)ProxyReader"
         }
 
         let abi: ABI = try parseAbi(fromFile: jsonFileName)!
@@ -38,7 +45,7 @@ class CommonNamingService {
     }
 
     func parseAbi(fromFile name: String) throws -> ABI? {
-        if let filePath = Bundle(for: type(of: self)).url(forResource: name, withExtension: "json") {
+        if let filePath = Bundle(for: type(of: self)).url(forResource: name, withExtension: Self.JSON_EXTENSION) {
             let data = try Data(contentsOf: filePath)
             let jsonDecoder = JSONDecoder()
             let dataFromJson = try jsonDecoder.decode(ABI.self, from: data)
@@ -55,7 +62,7 @@ class CommonNamingService {
                 .reversed()
                 .reduce(node) { return self.childHash(parent: $0, label: $1)}
         }
-        return "0x" + node.toHexString()
+        return "\(Self.HEXADECIMAL_PREFIX)\(node.toHexString())"
     }
 
     func childHash(parent: [UInt8], label: [UInt8]) -> [UInt8] {

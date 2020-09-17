@@ -37,6 +37,15 @@ internal class CNS: CommonNamingService, NamingService {
         }
         return ownerAddress
     }
+    
+    func owner_proxyReader (domain: String) throws -> String {
+        let tokenId = super.namehash(domain: domain)
+        guard let ownerAddress = try askRegistryContract(for: "ownerOf", with: [tokenId]),
+            Utillities.isNotEmpty(ownerAddress) else {
+                throw ResolutionError.unregisteredDomain
+        }
+        return ownerAddress
+    }
 
     func addr(domain: String, ticker: String) throws -> String {
         let tokenId = super.namehash(domain: domain)
@@ -96,5 +105,10 @@ internal class CNS: CommonNamingService, NamingService {
     private func askRegistryContract(for methodName: String, with args: [String]) throws -> String? {
         let registryContract: Contract = try super.buildContract(address: self.registryAddress, type: .registry)
         return try registryContract.fetchMethod(methodName: methodName, args: args) as? String
+    }
+    
+    private func askProxyReaderContract(for methodName: String, with args: [String]) throws -> String? {
+        let proxyReaderContract: Contract = try super.buildContract(address: self.registryAddress, type: .proxyReader)
+        return try proxyReaderContract.fetchMethod(methodName: methodName, args: args) as? String
     }
 }
