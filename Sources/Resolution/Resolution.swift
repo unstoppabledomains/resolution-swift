@@ -91,8 +91,8 @@ public class Resolution {
         }
     }
 
-    /// Resolves a gunDB username of a `domain` owner
-    public func gunDBChat(domain: String, completion:@escaping StringResult ) {
+    /// Resolves a  chat id of a `domain` owner
+    public func chatId(domain: String, completion:@escaping StringResult ) {
         let preparedDomain = prepare(domain: domain)
         DispatchQueue.global(qos: .utility).async {
             do {
@@ -104,8 +104,8 @@ public class Resolution {
         }
     }
 
-    /// Resolves a gunDB private key of a `domain` owner
-    public func gunDBPk(domain: String, completion:@escaping StringResult ) {
+    /// Resolves  a  gundb public key of a `domain`
+    public func chatPk(domain: String, completion:@escaping StringResult ) {
         let preparedDomain = prepare(domain: domain)
         DispatchQueue.global(qos: .utility).async {
             do {

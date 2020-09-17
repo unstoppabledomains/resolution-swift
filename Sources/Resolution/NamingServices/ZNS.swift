@@ -13,7 +13,6 @@ internal class ZNS: CommonNamingService, NamingService {
 
     let registryAddress: String
     let registryMap: [String: String] = [
-//        "mainnet": "zil1jcgu2wlx6xejqk9jw3aaankw6lsjzeunx2j0jz"
         "mainnet": "0x9611c53be6d1b32058b2747bdececed7e1216793"
     ]
 
@@ -28,10 +27,6 @@ internal class ZNS: CommonNamingService, NamingService {
 
     func isSupported(domain: String) -> Bool {
         return domain.hasSuffix(".zil")
-    }
-
-    func isSupportedNetwork() -> Bool {
-        return registryMap[network] != nil
     }
 
     func owner(domain: String) throws -> String {
@@ -91,9 +86,6 @@ internal class ZNS: CommonNamingService, NamingService {
         if !self.isSupported(domain: domain) {
             throw ResolutionError.unsupportedDomain
         }
-        if !self.isSupportedNetwork() {
-            throw ResolutionError.unsupportedNetwork
-        }
 
         let namehash = self.namehash(domain: domain)
         let records = try self.contract(address: self.registryAddress, keys: [namehash])
@@ -106,19 +98,11 @@ internal class ZNS: CommonNamingService, NamingService {
                 throw ResolutionError.unregisteredDomain
         }
 
-        //if (ownerAddress.startsWith('0x')) {
-        //  ownerAddress = toBech32Address(ownerAddress);
-        //}
-
         return (ownerAddress, resolverAddress)
     }
 
     private func contract(address: String, keys: [String] = []) throws -> [String: Any] {
-
-        //let contractAddr = contractAddress.startsWith('zil1') ? fromBech32Address(contractAddress) : contractAddress;
-
-        let resolverContract: ContractZNS =
-        self.buildContract(address: address)
+        let resolverContract: ContractZNS = self.buildContract(address: address)
 
         guard let records = try resolverContract.fetchSubState(
                     field: "records",
