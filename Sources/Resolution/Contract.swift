@@ -3,7 +3,7 @@
 //  resolution
 //
 //  Created by Johnny Good on 8/12/20.
-//  Copyright © 2020 Johnny Good. All rights reserved.
+//  Copyright © 2020 Unstoppable Domains. All rights reserved.
 //
 
 import Foundation
@@ -51,6 +51,11 @@ internal class Contract {
         guard err == nil else {
             throw err!
         }
-        return resp?.result
+        switch resp?.result {
+        case .string(let result):
+            return result
+        default:
+            return nil
+        }
     }
 }

@@ -3,7 +3,7 @@
 //  resolution
 //
 //  Created by Johnny Good on 8/11/20.
-//  Copyright © 2020 Johnny Good. All rights reserved.
+//  Copyright © 2020 Unstoppable Domains. All rights reserved.
 //
 
 import Foundation
@@ -16,7 +16,8 @@ public class Resolution {
     init(providerUrl: String, network: String) throws {
         self.providerUrl = providerUrl
         let cns = try CNS(network: network, providerUrl: providerUrl)
-        self.services = [cns]
+        let zns = try ZNS(network: network, providerUrl: "https://api.zilliqa.com/")
+        self.services = [cns, zns]
     }
 
     /// Resolves a hash  of the `domain` according to https://github.com/ethereum/EIPs/blob/master/EIPS/eip-137.md
@@ -24,9 +25,6 @@ public class Resolution {
         let preparedDomain = prepare(domain: domain)
         return try getServiceOf(domain: preparedDomain).namehash(domain: preparedDomain)
     }
-
-    public typealias StringResult = (Result<String, ResolutionError>) -> Void
-    public typealias DictionaryResult = (Result<[String: String], ResolutionError>) -> Void
 
     /// Resolves an owner address of a `domain`
     public func owner(domain: String, completion:@escaping StringResult ) {
@@ -93,8 +91,8 @@ public class Resolution {
         }
     }
 
-    /// Resolves a gunDB username of a `domain` owner
-    public func gunDBChat(domain: String, completion:@escaping StringResult ) {
+    /// Resolves a  chat id of a `domain` owner
+    public func chatId(domain: String, completion:@escaping StringResult ) {
         let preparedDomain = prepare(domain: domain)
         DispatchQueue.global(qos: .utility).async {
             do {
@@ -106,8 +104,8 @@ public class Resolution {
         }
     }
 
-    /// Resolves a gunDB private key of a `domain` owner
-    public func gunDBPk(domain: String, completion:@escaping StringResult ) {
+    /// Resolves  a  gundb public key of a `domain`
+    public func chatPk(domain: String, completion:@escaping StringResult ) {
         let preparedDomain = prepare(domain: domain)
         DispatchQueue.global(qos: .utility).async {
             do {
