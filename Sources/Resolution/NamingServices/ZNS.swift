@@ -88,7 +88,7 @@ internal class ZNS: CommonNamingService, NamingService {
         }
 
         let namehash = self.namehash(domain: domain)
-        let records = try self.contract(address: self.registryAddress, keys: [namehash])
+        let records = try self.records(address: self.registryAddress, keys: [namehash])
 
         guard
             let record = records[namehash] as? [String: Any],
@@ -101,7 +101,7 @@ internal class ZNS: CommonNamingService, NamingService {
         return (ownerAddress, resolverAddress)
     }
 
-    private func contract(address: String, keys: [String] = []) throws -> [String: Any] {
+    private func records(address: String, keys: [String] = []) throws -> [String: Any] {
         let resolverContract: ContractZNS = self.buildContract(address: address)
 
         guard let records = try resolverContract.fetchSubState(
