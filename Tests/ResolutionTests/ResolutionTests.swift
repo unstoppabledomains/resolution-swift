@@ -258,14 +258,10 @@ class ResolutionTests: XCTestCase {
         case .success:
             XCTFail("Expected \(expectedError), but got none")
         case .failure(let error):
-            if let catched = error as? ResolutionError {
-                assert(catched == expectedError, "Expected \(expectedError), but got \(catched)")
-                return
-            }
-            XCTFail("Expected ResolutionError, but got different \(error)")
+            assert(error == expectedError, "Expected \(expectedError), but got \(error)")
+            return
         }
     }
-
 }
 
 extension ResolutionError: Equatable {
