@@ -15,6 +15,8 @@ internal class CNS: CommonNamingService, NamingService {
         "mainnet": "0xD1E5b0FF1287aA9f9A268759062E4Ab08b9Dacbe",
         "kovan": "0x22c2738cdA28C5598b1a68Fb1C89567c2364936F"
     ]
+    
+    let proxyReaderAddress = "0x7ea9Ee21077F84339eDa9C80048ec6db678642B1"
 
     init(network: String, providerUrl: String) throws {
         guard let registryAddress = registryMap[network] else {
@@ -31,16 +33,7 @@ internal class CNS: CommonNamingService, NamingService {
 
     func owner(domain: String) throws -> String {
         let tokenId = super.namehash(domain: domain)
-        guard let ownerAddress = try askRegistryContract(for: "ownerOf", with: [tokenId]),
-            Utillities.isNotEmpty(ownerAddress) else {
-                throw ResolutionError.unregisteredDomain
-        }
-        return ownerAddress
-    }
-    
-    func owner_proxyReader (domain: String) throws -> String {
-        let tokenId = super.namehash(domain: domain)
-        guard let ownerAddress = try askRegistryContract(for: "ownerOf", with: [tokenId]),
+        guard let ownerAddress = try askProxyReaderContract(for: "ownerOf", with: [tokenId]),
             Utillities.isNotEmpty(ownerAddress) else {
                 throw ResolutionError.unregisteredDomain
         }
@@ -62,7 +55,7 @@ internal class CNS: CommonNamingService, NamingService {
 
     func record(tokenId: String, key: String) throws -> String {
         let resolverAddress = try resolver(tokenId: tokenId)
-        let resolverContract = try super.buildContract(address: resolverAddress, type: .resolver)
+        let resolverContract = try super.buildContract(address: resolverAddress, type: .proxyReader)
         guard let result = try resolverContract.fetchMethod(methodName: "get", args: [key, tokenId]) as? String,
             Utillities.isNotEmpty(result) else {
                 throw ResolutionError.recordNotFound
@@ -94,7 +87,7 @@ internal class CNS: CommonNamingService, NamingService {
     }
 
     func resolver(tokenId: String) throws -> String {
-        guard let resolverAddress = try askRegistryContract(for: "resolverOf", with: [tokenId]),
+        guard let resolverAddress = try askProxyReaderContract(for: "resolverOf", with: [tokenId]),
             Utillities.isNotEmpty(resolverAddress) else {
                 throw ResolutionError.unconfiguredDomain
         }
@@ -102,13 +95,8 @@ internal class CNS: CommonNamingService, NamingService {
     }
 
     // MARK: - Helper functions
-    private func askRegistryContract(for methodName: String, with args: [String]) throws -> String? {
-        let registryContract: Contract = try super.buildContract(address: self.registryAddress, type: .registry)
-        return try registryContract.fetchMethod(methodName: methodName, args: args) as? String
-    }
-    
     private func askProxyReaderContract(for methodName: String, with args: [String]) throws -> String? {
-        let proxyReaderContract: Contract = try super.buildContract(address: self.registryAddress, type: .proxyReader)
+        let proxyReaderContract: Contract = try super.buildContract(address: self.proxyReaderAddress, type: .proxyReader)
         return try proxyReaderContract.fetchMethod(methodName: methodName, args: args) as? String
     }
 }
