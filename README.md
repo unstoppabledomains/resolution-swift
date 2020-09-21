@@ -52,8 +52,8 @@ This framework helps to resolve a decentralized domain name such as `brad.crypto
 ```
 enum ResolutionError: Error {
     case unregisteredDomain
-    case unsupportedDomain
     case unconfiguredDomain
+    case unspecifiedResolver
     case recordNotFound
     case unsupportedNetwork
 }

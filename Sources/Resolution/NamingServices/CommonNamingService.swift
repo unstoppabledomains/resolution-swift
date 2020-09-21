@@ -8,6 +8,7 @@
 
 import Foundation
 import CryptoSwift
+import EthereumABI
 
 class CommonNamingService {
     let name: String
@@ -33,22 +34,21 @@ class CommonNamingService {
             jsonFileName = "\(name.lowercased())Resolver"
         }
 
-        let abi: ABI = try parseAbi(fromFile: jsonFileName)!
+        let abi: ABIContract = try parseAbi(fromFile: jsonFileName)!
         return Contract(providerUrl: self.providerUrl, address: address, abi: abi)
     }
 
-    func parseAbi(fromFile name: String) throws -> ABI? {
-        do {
-            if let filePath = Bundle(for: type(of: self)).url(forResource: name, withExtension: "json") {
-                let data = try Data(contentsOf: filePath)
-                let jsonDecoder = JSONDecoder()
-                let dataFromJson = try jsonDecoder.decode(ABI.self, from: data)
-                return dataFromJson
-            }
-        } catch {
-            print(error)
-        }
+    func parseAbi(fromFile name: String) throws -> ABIContract? {
+        if let filePath = Bundle(for: type(of: self)).url(forResource: name, withExtension: "json") {
+            let data = try Data(contentsOf: filePath)
+            let jsonDecoder = JSONDecoder()
+            let abi = try jsonDecoder.decode([ABI.Record].self, from: data)
+            let abiNative = try abi.map({ (record) -> ABI.Element in
+                return try record.parse()
+            })
 
+            return abiNative
+        }
         return nil
     }
 

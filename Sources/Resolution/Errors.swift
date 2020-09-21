@@ -11,13 +11,9 @@ import Foundation
 public enum ResolutionError: Error {
     case unregisteredDomain
     case unsupportedDomain
-    case unconfiguredDomain
     case recordNotFound
+    case recordNotSupported
     case unsupportedNetwork
     case unspecifiedResolver
     case unknownError(Error)
-}
-
-enum OtherError: Error {
-    case runtimeError(String)
 }

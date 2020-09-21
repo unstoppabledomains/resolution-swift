@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import EthereumAddress
 
 internal class CNS: CommonNamingService, NamingService {
     let network: String
@@ -54,8 +55,24 @@ internal class CNS: CommonNamingService, NamingService {
     func record(tokenId: String, key: String) throws -> String {
         let resolverAddress = try resolver(tokenId: tokenId)
         let resolverContract = try super.buildContract(address: resolverAddress, type: .resolver)
-        guard let result = try resolverContract.callMethod(methodName: "get", args: [key, tokenId]) as? String,
-            Utillities.isNotEmpty(result) else {
+        let resolverResult = try resolverContract.callMethod(methodName: "get", args: [key, tokenId])
+        var result: String = ""
+
+        if let dictAddress = resolverResult as? [String: EthereumAddress],
+              let address = dictAddress["0"] {
+            result = address.address
+        }
+
+        if let dict = resolverResult as? [String: String],
+           let resultStr = dict["0"] {
+            result = resultStr
+        }
+
+        if let resultStr = resolverResult as? String {
+            result = resultStr
+        }
+
+        guard Utillities.isNotEmpty(result) else {
                 throw ResolutionError.recordNotFound
         }
         return result
@@ -65,7 +82,8 @@ internal class CNS: CommonNamingService, NamingService {
         let tokenId = super.namehash(domain: domain)
         let resolverAddress = try resolver(tokenId: tokenId)
         let resolverContract = try super.buildContract(address: resolverAddress, type: .resolver)
-        guard let result = try resolverContract.callMethod(methodName: "getMany", args: [keys, tokenId]) as? [String]
+        guard let dict = try resolverContract.callMethod(methodName: "getMany", args: [keys, tokenId]) as? [String: [String]],
+              let result = dict["0"]
             else {
                 throw ResolutionError.recordNotFound
         }
@@ -87,7 +105,7 @@ internal class CNS: CommonNamingService, NamingService {
     func resolver(tokenId: String) throws -> String {
         guard let resolverAddress = try askRegistryContract(for: "resolverOf", with: [tokenId]),
             Utillities.isNotEmpty(resolverAddress) else {
-                throw ResolutionError.unconfiguredDomain
+                throw ResolutionError.unspecifiedResolver
         }
         return resolverAddress
     }
@@ -95,6 +113,10 @@ internal class CNS: CommonNamingService, NamingService {
     // MARK: - Helper functions
     private func askRegistryContract(for methodName: String, with args: [String]) throws -> String? {
         let registryContract: Contract = try super.buildContract(address: self.registryAddress, type: .registry)
-        return try registryContract.callMethod(methodName: methodName, args: args) as? String
+        guard let ethereumAddress = try registryContract.callMethod(methodName: methodName, args: args) as? [String: EthereumAddress],
+              let address = ethereumAddress["0"] else {
+            return nil
+        }
+        return address.address
     }
 }

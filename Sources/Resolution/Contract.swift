@@ -12,7 +12,7 @@ internal class Contract {
     let providerUrl: String
     let coder: ABICoder
 
-    init(providerUrl: String, address: String, abi: ABI) {
+    init(providerUrl: String, address: String, abi: ABIContract) {
         self.address = address
         self.providerUrl = providerUrl
         self.coder = ABICoder(abi)

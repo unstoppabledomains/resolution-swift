@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import EthereumAddress
 
 internal class ENS: CommonNamingService, NamingService {
     let network: String
@@ -42,10 +43,21 @@ internal class ENS: CommonNamingService, NamingService {
     }
 
     func addr(domain: String, ticker: String) throws -> String {
+        guard ticker.uppercased() == "ETH" else {
+            throw ResolutionError.recordNotSupported
+        }
+
         let tokenId = super.namehash(domain: domain)
-        let key = "crypto.\(ticker.uppercased()).address"
-        let result = try record(tokenId: tokenId, key: key)
-        return result
+        let resolverAddress = try resolver(tokenId: tokenId)
+        let resolverContract = try super.buildContract(address: resolverAddress, type: .resolver)
+
+        guard let dict = try resolverContract.callMethod(methodName: "addr", args: [tokenId, EthCoinIndex]) as? [String: Data],
+              let dataAddress = dict["0"],
+              let address = EthereumAddress(dataAddress),
+              Utillities.isNotEmpty(address.address) else {
+                throw ResolutionError.recordNotFound
+        }
+        return address.address
     }
 
     // MARK: - Get Record
@@ -56,8 +68,7 @@ internal class ENS: CommonNamingService, NamingService {
 
     func record(tokenId: String, key: String) throws -> String {
         if key == "ipfs.html.value" {
-            let hash = try self.getContentHash(tokenId: tokenId)
-            return hash
+            throw ResolutionError.recordNotSupported
         }
 
         let resolverAddress = try resolver(tokenId: tokenId)
@@ -65,7 +76,8 @@ internal class ENS: CommonNamingService, NamingService {
 
         let ensKeyName = self.fromUDNameToENS(record: key)
 
-        guard let result = try resolverContract.callMethod(methodName: "text", args: [tokenId, ensKeyName]) as? String,
+        guard let dict = try resolverContract.callMethod(methodName: "text", args: [tokenId, ensKeyName]) as? [String: String],
+              let result = dict["0"],
             Utillities.isNotEmpty(result) else {
                 throw ResolutionError.recordNotFound
         }
@@ -73,7 +85,8 @@ internal class ENS: CommonNamingService, NamingService {
     }
 
     func records(keys: [String], for domain: String) throws -> [String: String] {
-        throw OtherError.runtimeError("Method not implemented.")
+        //TODO: Add some batch request and collect all keys by few request
+        throw ResolutionError.recordNotSupported
     }
 
     // MARK: - get Resolver
@@ -85,7 +98,7 @@ internal class ENS: CommonNamingService, NamingService {
     func resolver(tokenId: String) throws -> String {
         guard let resolverAddress = try askRegistryContract(for: "resolver", with: [tokenId]),
             Utillities.isNotEmpty(resolverAddress) else {
-                throw ResolutionError.unconfiguredDomain
+                throw ResolutionError.unspecifiedResolver
         }
         return resolverAddress
     }
@@ -93,7 +106,11 @@ internal class ENS: CommonNamingService, NamingService {
     // MARK: - Helper functions
     private func askRegistryContract(for methodName: String, with args: [String]) throws -> String? {
         let registryContract: Contract = try super.buildContract(address: self.registryAddress, type: .registry)
-        return try registryContract.callMethod(methodName: methodName, args: args) as? String
+        guard let ethereumAddress = try registryContract.callMethod(methodName: methodName, args: args) as? [String: EthereumAddress],
+              let address = ethereumAddress["0"] else {
+            return nil
+        }
+        return address.address
     }
 
     private func fromUDNameToENS(record: String) -> String {
@@ -105,21 +122,4 @@ internal class ENS: CommonNamingService, NamingService {
         ]
         return mapper[record] ?? record
     }
-
-    private func getContentHash(tokenId: String) throws -> String {
-
-        let resolverAddress = try resolver(tokenId: tokenId)
-        let resolverContract = try super.buildContract(address: resolverAddress, type: .resolver)
-
-        guard let contentHashEncoded = try resolverContract.callMethod(methodName: "contenthash", args: [tokenId]) as? String else {
-            throw OtherError.runtimeError("Content hash is NULL")
-        }
-
-        //      const codec = contentHash.getCodec(contentHashEncoded);
-        //      if (codec !== 'ipfs-ns') return undefined;
-        //      return contentHash.decode(contentHashEncoded);
-
-        return contentHashEncoded
-    }
-
 }

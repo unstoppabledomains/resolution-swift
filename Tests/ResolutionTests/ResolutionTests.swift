@@ -35,42 +35,17 @@ class ResolutionTests: XCTestCase {
         assert(ethHashTest == "0x2b53e3f567989ee41b897998d89eb4d8cf0715fb2cfb41a64939a532c09e495e")
     }
 
-    func testGetEthOwner() throws {
-
-        // Given
-        let domainEthReceived = expectation(description: "Exist ETH domain should be received")
-        
-        var ethOwner = ""
-        
-        
-        // When
-        resolution.owner(domain: "matthewgould.eth") { (result) in
-            switch result {
-            case .success(let returnValue):
-                domainEthReceived.fulfill()
-                ethOwner = returnValue
-            case .failure(let error):
-                XCTFail("Expected owner, but got \(error)")
-            }
-        }
-        
-
-        waitForExpectations(timeout: timeout, handler: nil)
-
-        // Then
-        assert(ethOwner == "0x714ef33943d925731fbb89c99af5780d888bd106")
-        
-    }
-    
     func testGetOwner() throws {
 
         // Given
         let domainCryptoReceived = expectation(description: "Exist Crypto domain should be received")
         let domainZilReceived = expectation(description: "Exist ziliq domain should be received")
+        let domainEthReceived = expectation(description: "Exist ETH domain should be received")
         let unregisteredReceived = expectation(description: "Unregistered domain should be received")
 
         var owner = ""
         var zilOwner = ""
+        var ethOwner = ""
         var unregisteredResult: Result<String, ResolutionError>!
 
         // When
@@ -94,7 +69,16 @@ class ResolutionTests: XCTestCase {
             }
         }
         
-
+        resolution.owner(domain: "matthewgould.eth") { (result) in
+            switch result {
+            case .success(let returnValue):
+                domainEthReceived.fulfill()
+                ethOwner = returnValue
+            case .failure(let error):
+                XCTFail("Expected owner, but got \(error)")
+            }
+        }
+        
         resolution.owner(domain: "unregistered.crypto") {
             unregisteredResult = $0
             unregisteredReceived.fulfill()
@@ -103,50 +87,38 @@ class ResolutionTests: XCTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        assert(owner == "0x8aaD44321A86b170879d7A244c1e8d360c99DdA8".lowercased())
-        assert(zilOwner == "0x2d418942dce1afa02d0733a2000c71b371a6ac07".lowercased())
+        assert(owner.lowercased() == "0x8aaD44321A86b170879d7A244c1e8d360c99DdA8".lowercased())
+        assert(zilOwner.lowercased() == "0x2d418942dce1afa02d0733a2000c71b371a6ac07".lowercased())
+        assert(ethOwner.lowercased() == "0x714ef33943d925731fbb89c99af5780d888bd106".lowercased())
         self.checkError(result: unregisteredResult, expectedError: ResolutionError.unregisteredDomain)
-    }
-
-    func testGetETHResolver() throws {
-        
-        // Given
-        let domainReceived = expectation(description: "Exist domain should be received")
-
-        var resolverAddress = ""
-
-        // When
-        resolution.resolver(domain: "monkybrain.eth") { (result) in
-            switch result {
-            case .success(let returnValue):
-                domainReceived.fulfill()
-                resolverAddress = returnValue
-            case .failure(let error):
-                XCTFail("Expected resolver Address, but got \(error)")
-            }
-        }
-
-        waitForExpectations(timeout: timeout, handler: nil)
-
-        // Then
-        assert(resolverAddress == "0x4976fb03C32e5B8cfe2b6cCB31c09Ba78EBaBa41".lowercased())
-        
     }
     
     func testGetResolver() throws {
         // Given
-        let domainReceived = expectation(description: "Exist domain should be received")
+        let domainCryptoReceived = expectation(description: "Exist Crypto domain should be received")
+        let domainEthReceived = expectation(description: "Exist ETH domain should be received")
         let unregisteredReceived = expectation(description: "Unregistered domain should be received")
 
         var resolverAddress = ""
+        var ethResolverAddress = ""
         var unregisteredResult: Result<String, ResolutionError>!
 
         // When
         resolution.resolver(domain: "brad.crypto") { (result) in
             switch result {
             case .success(let returnValue):
-                domainReceived.fulfill()
+                domainCryptoReceived.fulfill()
                 resolverAddress = returnValue
+            case .failure(let error):
+                XCTFail("Expected resolver Address, but got \(error)")
+            }
+        }
+        
+        resolution.resolver(domain: "monkybrain.eth") { (result) in
+            switch result {
+            case .success(let returnValue):
+                domainEthReceived.fulfill()
+                ethResolverAddress = returnValue
             case .failure(let error):
                 XCTFail("Expected resolver Address, but got \(error)")
             }
@@ -160,16 +132,19 @@ class ResolutionTests: XCTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        assert(resolverAddress == "0xb66DcE2DA6afAAa98F2013446dBCB0f4B0ab2842".lowercased())
-        self.checkError(result: unregisteredResult, expectedError: ResolutionError.unconfiguredDomain)
+        assert(resolverAddress.lowercased() == "0xb66DcE2DA6afAAa98F2013446dBCB0f4B0ab2842".lowercased())
+        assert(ethResolverAddress.lowercased() == "0x4976fb03C32e5B8cfe2b6cCB31c09Ba78EBaBa41".lowercased())
+        self.checkError(result: unregisteredResult, expectedError: ResolutionError.unspecifiedResolver)
     }
 
     func testAddr() throws {
         // Given
         let domainReceived = expectation(description: "Exist domain should be received")
+        let domainEthReceived = expectation(description: "Exist ETH domain should be received")
         let unregisteredReceived = expectation(description: "Unregistered domain should be received")
 
         var ethAddress = ""
+        var ethENSAddress = ""
         var unregisteredResult: Result<String, ResolutionError>!
 
         // When
@@ -183,6 +158,16 @@ class ResolutionTests: XCTestCase {
             }
         }
 
+        resolution.addr(domain: "monkybrain.eth", ticker: "eth") { (result) in
+            switch result {
+            case .success(let returnValue):
+                domainEthReceived.fulfill()
+                ethENSAddress = returnValue
+            case .failure(let error):
+                XCTFail("Expected Eth Address, but got \(error)")
+            }
+        }
+        
         resolution.addr(domain: "brad.crypto", ticker: "unknown") {
             unregisteredResult = $0
             unregisteredReceived.fulfill()
@@ -192,6 +177,7 @@ class ResolutionTests: XCTestCase {
 
         // Then
         assert(ethAddress == "0x8aaD44321A86b170879d7A244c1e8d360c99DdA8")
+        assert(ethENSAddress == "0x842f373409191Cff2988A6F19AB9f605308eE462")
         self.checkError(result: unregisteredResult, expectedError: ResolutionError.recordNotFound)
     }
 
@@ -199,7 +185,7 @@ class ResolutionTests: XCTestCase {
         // Given
         let chatReceived = expectation(description: "Exist chat ID should be received")
         var chatID = ""
-        
+
         // When
         resolution.chatId(domain: "crunk.eth")  { (result) in
             switch result {
@@ -210,33 +196,11 @@ class ResolutionTests: XCTestCase {
                 XCTFail("Expected chat ID, but got \(error)")
             }
         }
-        
+
         waitForExpectations(timeout: timeout, handler: nil)
-        
+
         // Then
         assert(chatID == "0x7e1d12f34e038a2bda3d5f6ee0809d72f668c357d9e64fd7f622513f06ea652146ab5fdee35dc4ce77f1c089fd74972691fccd48130306d9eafcc6e1437d1ab21b")
-    }
-
-    func testIPFSENS() throws {
-        // Given
-        let domainReceived = expectation(description: "Exist domain should be received")
-        var hash = ""
-        
-        // When
-        resolution.ipfsHash(domain: "monkybrain.eth") { (result) in
-            switch result {
-            case .success(let returnValue):
-                domainReceived.fulfill()
-                hash = returnValue
-            case .failure(let error):
-                XCTFail("Expected ipfsHash, but got \(error)")
-            }
-        }
-        
-        waitForExpectations(timeout: timeout, handler: nil)
-        
-        // Then
-        assert(hash == "QmXSBLw6VMegqkCHSDBPg7xzfLhUyuRBzTb927KVzKC1vq")
     }
     
     func testIpfs() throws {
@@ -267,7 +231,7 @@ class ResolutionTests: XCTestCase {
 
         // Then
         assert(hash == "Qme54oEzRkgooJbCDr78vzKAWcv6DDEZqRhhDyDtzgrZP6")
-        self.checkError(result: unregisteredResult, expectedError: ResolutionError.unconfiguredDomain)
+        self.checkError(result: unregisteredResult, expectedError: ResolutionError.unspecifiedResolver)
     }
 
     func testCustomRecord() throws {
@@ -373,9 +337,9 @@ extension ResolutionError: Equatable {
             return true
         case ( .unsupportedDomain, .unsupportedDomain):
             return true
-        case ( .unconfiguredDomain, .unconfiguredDomain):
-            return true
         case ( .recordNotFound, .recordNotFound):
+            return true
+        case ( .recordNotSupported, .recordNotSupported):
             return true
         case ( .unsupportedNetwork, .unsupportedNetwork):
             return true
@@ -384,11 +348,12 @@ extension ResolutionError: Equatable {
         // We don't use `default` here on purpose, so we don't forget updating this method on adding new variants.
         case (.unregisteredDomain, _),
             (.unsupportedDomain, _),
-            (.unconfiguredDomain, _),
             (.recordNotFound, _),
+            (.recordNotSupported, _),
             (.unsupportedNetwork, _),
-            (.unknownError, _ ),
-            (.unspecifiedResolver, _):
+            (.unspecifiedResolver, _),
+            (.unknownError, _ ):
+            
             return false
         }
     }
