@@ -113,7 +113,7 @@ internal class ENS: CommonNamingService, NamingService {
         return address.address
     }
 
-    private func fromUDNameToENS(record: String) -> String {
+    private func fromUDNameToEns(record: String) -> String {
         let mapper: [String: String] = [
             "ipfs.redirect_domain.value": "url",
             "whois.email.value": "email",
