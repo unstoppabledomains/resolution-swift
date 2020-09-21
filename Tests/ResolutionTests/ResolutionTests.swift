@@ -151,7 +151,7 @@ class ResolutionTests: XCTestCase {
         var unregisteredResult: Result<String, ResolutionError>!
 
         // When
-        resolution.ipfsHash(domain: "brad.crypto") { (result) in
+        resolution.ipfsHash(domain: "brad.crypto") { result in
             switch result {
             case .success(let returnValue):
                 domainReceived.fulfill()
@@ -161,8 +161,8 @@ class ResolutionTests: XCTestCase {
             }
         }
 
-        resolution.ipfsHash(domain: "unregistered.crypto") {
-            unregisteredResult = $0
+        resolution.ipfsHash(domain: "unregistered.crypto") { result in
+            unregisteredResult = result
             unregisteredReceived.fulfill()
         }
 
