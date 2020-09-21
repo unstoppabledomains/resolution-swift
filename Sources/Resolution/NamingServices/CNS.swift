@@ -54,9 +54,8 @@ internal class CNS: CommonNamingService, NamingService {
     }
 
     func record(tokenId: String, key: String) throws -> String {
-        let resolverAddress = try resolver(tokenId: tokenId)
-        let resolverContract = try super.buildContract(address: resolverAddress, type: .proxyReader)
-        guard let result = try resolverContract.fetchMethod(methodName: "get", args: [key, tokenId]) as? String,
+        let proxyReaderContract: Contract = try super.buildContract(address: self.proxyReaderAddress, type: .proxyReader)
+        guard let result = try proxyReaderContract.fetchMethod(methodName: "get", args: [key, tokenId]) as? String,
             Utillities.isNotEmpty(result) else {
                 throw ResolutionError.recordNotFound
         }
@@ -65,9 +64,8 @@ internal class CNS: CommonNamingService, NamingService {
 
     func records(keys: [String], for domain: String) throws -> [String: String] {
         let tokenId = super.namehash(domain: domain)
-        let resolverAddress = try resolver(tokenId: tokenId)
-        let resolverContract = try super.buildContract(address: resolverAddress, type: .resolver)
-        guard let result = try resolverContract.fetchMethod(methodName: "getMany", args: [keys, tokenId]) as? [String]
+        let proxyReaderContract: Contract = try super.buildContract(address: self.proxyReaderAddress, type: .proxyReader)
+        guard let result = try proxyReaderContract.fetchMethod(methodName: "getMany", args: [keys, tokenId]) as? [String]
             else {
                 throw ResolutionError.recordNotFound
         }
