@@ -57,7 +57,7 @@ internal class ZNS: CommonNamingService, NamingService {
     }
 
     func records(keys: [String], for domain: String) throws -> [String: String] {
-        guard let records = try self.contract(address: try resolver(domain: domain), keys: keys) as? [String: String] else {
+        guard let records = try self.askContract(address: try resolver(domain: domain), keys: keys) as? [String: String] else {
             throw ResolutionError.recordNotFound
         }
         return records
@@ -88,7 +88,7 @@ internal class ZNS: CommonNamingService, NamingService {
         }
 
         let namehash = self.namehash(domain: domain)
-        let records = try self.contract(address: self.registryAddress, keys: [namehash])
+        let records = try self.askContract(address: self.registryAddress, keys: [namehash])
 
         guard
             let record = records[namehash] as? [String: Any],
@@ -101,7 +101,7 @@ internal class ZNS: CommonNamingService, NamingService {
         return (ownerAddress, resolverAddress)
     }
 
-    private func contract(address: String, keys: [String] = []) throws -> [String: Any] {
+    private func askContract(address: String, keys: [String] = []) throws -> [String: Any] {
         let resolverContract: ContractZNS = self.buildContract(address: address)
 
         guard let records = try resolverContract.fetchSubState(

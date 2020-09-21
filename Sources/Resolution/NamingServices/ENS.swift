@@ -74,7 +74,7 @@ internal class ENS: CommonNamingService, NamingService {
         let resolverAddress = try resolver(tokenId: tokenId)
         let resolverContract = try super.buildContract(address: resolverAddress, type: .resolver)
 
-        let ensKeyName = self.fromUDNameToENS(record: key)
+        let ensKeyName = self.fromUDNameToEns(record: key)
 
         guard let dict = try resolverContract.callMethod(methodName: "text", args: [tokenId, ensKeyName]) as? [String: String],
               let result = dict["0"],
