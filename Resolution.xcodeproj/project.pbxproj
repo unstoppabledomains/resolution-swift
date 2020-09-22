@@ -11,9 +11,7 @@
 		3E2AC91F24E4FA35008EBC39 /* NamingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E2AC91E24E4FA35008EBC39 /* NamingService.swift */; };
 		3E2AC93E24E4FC9F008EBC39 /* cnsResolver.json in Resources */ = {isa = PBXBuildFile; fileRef = 3E2AC93C24E4FC9F008EBC39 /* cnsResolver.json */; };
 		3E2AC93F24E4FC9F008EBC39 /* cnsRegistry.json in Resources */ = {isa = PBXBuildFile; fileRef = 3E2AC93D24E4FC9F008EBC39 /* cnsRegistry.json */; };
-		3E2AC94124E5EE9A008EBC39 /* ABIElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E2AC94024E5EE9A008EBC39 /* ABIElement.swift */; };
 		3E65912824E381E900D7EC35 /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E65912724E381E900D7EC35 /* Errors.swift */; };
-		3E65912B24E386D500D7EC35 /* CryptoSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 3E65912A24E386D500D7EC35 /* CryptoSwift */; };
 		3E65913124E4ADAC00D7EC35 /* Contract.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E65913024E4ADAC00D7EC35 /* Contract.swift */; };
 		3EAFA3F724EB59DA008791E9 /* ABICoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EAFA3F624EB59DA008791E9 /* ABICoder.swift */; };
 		3EAFA3FE24EE03E0008791E9 /* JSON_RPC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EAFA3FD24EE03E0008791E9 /* JSON_RPC.swift */; };
@@ -24,10 +22,14 @@
 		3EE4DA1224E367720097540B /* ResolutionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EE4DA1124E367720097540B /* ResolutionTests.swift */; };
 		3EE4DA1424E367720097540B /* resolution.h in Headers */ = {isa = PBXBuildFile; fileRef = 3EE4DA0624E367720097540B /* resolution.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3EE4DA1E24E367D40097540B /* Resolution.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EE4DA1D24E367D40097540B /* Resolution.swift */; };
-		3EF4D83524F77E300022B33C /* AbiCoderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EF4D83424F77E300022B33C /* AbiCoderTests.swift */; };
 		8402F708250935FE0007F01D /* ContractZNS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8402F707250935FD0007F01D /* ContractZNS.swift */; };
+		8449EDFA25139F2500DABB57 /* ensRegistry.json in Resources */ = {isa = PBXBuildFile; fileRef = 8449EDF925139F2500DABB57 /* ensRegistry.json */; };
+		8449EDFC2513BA3D00DABB57 /* ensResolver.json in Resources */ = {isa = PBXBuildFile; fileRef = 8449EDFB2513BA3D00DABB57 /* ensResolver.json */; };
+		845B401D251389A4006AB08E /* ENS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845B401C251389A4006AB08E /* ENS.swift */; };
 		848E21092507890A008707D2 /* ZNS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848E21082507890A008707D2 /* ZNS.swift */; };
 		848E210C25079D61008707D2 /* Types.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848E210B25079D61008707D2 /* Types.swift */; };
+		B66597192518B96400D0640B /* EthereumABI in Frameworks */ = {isa = PBXBuildFile; productRef = B66597182518B96400D0640B /* EthereumABI */; };
+		B6A944F725194EDC00894E27 /* EthereumABI in Frameworks */ = {isa = PBXBuildFile; productRef = B6A944F625194EDC00894E27 /* EthereumABI */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -45,7 +47,6 @@
 		3E2AC91E24E4FA35008EBC39 /* NamingService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NamingService.swift; sourceTree = "<group>"; };
 		3E2AC93C24E4FC9F008EBC39 /* cnsResolver.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = cnsResolver.json; sourceTree = "<group>"; };
 		3E2AC93D24E4FC9F008EBC39 /* cnsRegistry.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = cnsRegistry.json; sourceTree = "<group>"; };
-		3E2AC94024E5EE9A008EBC39 /* ABIElement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ABIElement.swift; sourceTree = "<group>"; };
 		3E65912724E381E900D7EC35 /* Errors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
 		3E65913024E4ADAC00D7EC35 /* Contract.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Contract.swift; sourceTree = "<group>"; };
 		3EAFA3F624EB59DA008791E9 /* ABICoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ABICoder.swift; sourceTree = "<group>"; };
@@ -60,9 +61,11 @@
 		3EE4DA1124E367720097540B /* ResolutionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResolutionTests.swift; sourceTree = "<group>"; };
 		3EE4DA1324E367720097540B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3EE4DA1D24E367D40097540B /* Resolution.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Resolution.swift; sourceTree = "<group>"; };
-		3EF4D83424F77E300022B33C /* AbiCoderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AbiCoderTests.swift; sourceTree = "<group>"; };
 		8402F707250935FD0007F01D /* ContractZNS.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContractZNS.swift; sourceTree = "<group>"; };
 		8425AED824FFBADF00BBCBBA /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		8449EDF925139F2500DABB57 /* ensRegistry.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = ensRegistry.json; sourceTree = "<group>"; };
+		8449EDFB2513BA3D00DABB57 /* ensResolver.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = ensResolver.json; sourceTree = "<group>"; };
+		845B401C251389A4006AB08E /* ENS.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ENS.swift; sourceTree = "<group>"; };
 		848E21082507890A008707D2 /* ZNS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZNS.swift; sourceTree = "<group>"; };
 		848E210B25079D61008707D2 /* Types.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Types.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -72,7 +75,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3E65912B24E386D500D7EC35 /* CryptoSwift in Frameworks */,
+				B6A944F725194EDC00894E27 /* EthereumABI in Frameworks */,
+				B66597192518B96400D0640B /* EthereumABI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -90,9 +94,10 @@
 		3E2AC91A24E4FA28008EBC39 /* NamingServices */ = {
 			isa = PBXGroup;
 			children = (
-				3E2AC91B24E4FA28008EBC39 /* CNS.swift */,
-				848E21082507890A008707D2 /* ZNS.swift */,
 				3EAFA40324EE32B2008791E9 /* CommonNamingService.swift */,
+				3E2AC91B24E4FA28008EBC39 /* CNS.swift */,
+				845B401C251389A4006AB08E /* ENS.swift */,
+				848E21082507890A008707D2 /* ZNS.swift */,
 			);
 			path = NamingServices;
 			sourceTree = "<group>";
@@ -109,6 +114,7 @@
 			isa = PBXGroup;
 			children = (
 				3E2AC92124E4FA3E008EBC39 /* CNS */,
+				8449EDF825139F2500DABB57 /* ENS */,
 				3EAFA3F624EB59DA008791E9 /* ABICoder.swift */,
 				3EAFA3FD24EE03E0008791E9 /* JSON_RPC.swift */,
 			);
@@ -120,7 +126,6 @@
 			children = (
 				3E2AC93D24E4FC9F008EBC39 /* cnsRegistry.json */,
 				3E2AC93C24E4FC9F008EBC39 /* cnsResolver.json */,
-				3E2AC94024E5EE9A008EBC39 /* ABIElement.swift */,
 			);
 			path = CNS;
 			sourceTree = "<group>";
@@ -167,7 +172,6 @@
 			children = (
 				3EE4DA1124E367720097540B /* ResolutionTests.swift */,
 				3EE4DA1324E367720097540B /* Info.plist */,
-				3EF4D83424F77E300022B33C /* AbiCoderTests.swift */,
 			);
 			path = ResolutionTests;
 			sourceTree = "<group>";
@@ -179,6 +183,15 @@
 				3EE4DA0524E367720097540B /* Resolution */,
 			);
 			path = Sources;
+			sourceTree = "<group>";
+		};
+		8449EDF825139F2500DABB57 /* ENS */ = {
+			isa = PBXGroup;
+			children = (
+				8449EDF925139F2500DABB57 /* ensRegistry.json */,
+				8449EDFB2513BA3D00DABB57 /* ensResolver.json */,
+			);
+			path = ENS;
 			sourceTree = "<group>";
 		};
 		848E210A25079D43008707D2 /* Helpers */ = {
@@ -228,7 +241,8 @@
 			);
 			name = Resolution;
 			packageProductDependencies = (
-				3E65912A24E386D500D7EC35 /* CryptoSwift */,
+				B66597182518B96400D0640B /* EthereumABI */,
+				B6A944F625194EDC00894E27 /* EthereumABI */,
 			);
 			productName = resolution;
 			productReference = 3EE4DA0324E367720097540B /* Resolution.framework */;
@@ -281,7 +295,7 @@
 			);
 			mainGroup = 3EE4D9F924E367720097540B;
 			packageReferences = (
-				3E65912924E386D500D7EC35 /* XCRemoteSwiftPackageReference "CryptoSwift" */,
+				B6A944F525194EDC00894E27 /* XCRemoteSwiftPackageReference "EthereumABI" */,
 			);
 			productRefGroup = 3EE4DA0424E367720097540B /* Products */;
 			projectDirPath = "";
@@ -298,7 +312,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8449EDFC2513BA3D00DABB57 /* ensResolver.json in Resources */,
 				3E2AC93E24E4FC9F008EBC39 /* cnsResolver.json in Resources */,
+				8449EDFA25139F2500DABB57 /* ensRegistry.json in Resources */,
 				3E2AC93F24E4FC9F008EBC39 /* cnsRegistry.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -329,7 +345,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if which swiftlint >/dev/null; then\n  swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
+			shellScript = "if which swiftlint >/dev/null; then\n  swiftlint autocorrect\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -339,10 +355,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				3E2AC91C24E4FA28008EBC39 /* CNS.swift in Sources */,
+				845B401D251389A4006AB08E /* ENS.swift in Sources */,
 				3EAFA40424EE32B2008791E9 /* CommonNamingService.swift in Sources */,
 				3E2AC91F24E4FA35008EBC39 /* NamingService.swift in Sources */,
 				848E21092507890A008707D2 /* ZNS.swift in Sources */,
-				3E2AC94124E5EE9A008EBC39 /* ABIElement.swift in Sources */,
 				3E65912824E381E900D7EC35 /* Errors.swift in Sources */,
 				3EAFA3F724EB59DA008791E9 /* ABICoder.swift in Sources */,
 				3EE4DA1E24E367D40097540B /* Resolution.swift in Sources */,
@@ -359,7 +375,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3EF4D83524F77E300022B33C /* AbiCoderTests.swift in Sources */,
 				3EE4DA1224E367720097540B /* ResolutionTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -617,21 +632,34 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		3E65912924E386D500D7EC35 /* XCRemoteSwiftPackageReference "CryptoSwift" */ = {
+		B66597172518B96400D0640B /* XCRemoteSwiftPackageReference "EthereumABI" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/krzyzanowskim/CryptoSwift";
+			repositoryURL = "https://github.com/shamatar/EthereumABI.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 1.3.1;
+				minimumVersion = 1.2.0;
+			};
+		};
+		B6A944F525194EDC00894E27 /* XCRemoteSwiftPackageReference "EthereumABI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/deczer/EthereumABI";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		3E65912A24E386D500D7EC35 /* CryptoSwift */ = {
+		B66597182518B96400D0640B /* EthereumABI */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 3E65912924E386D500D7EC35 /* XCRemoteSwiftPackageReference "CryptoSwift" */;
-			productName = CryptoSwift;
+			package = B66597172518B96400D0640B /* XCRemoteSwiftPackageReference "EthereumABI" */;
+			productName = EthereumABI;
+		};
+		B6A944F625194EDC00894E27 /* EthereumABI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B6A944F525194EDC00894E27 /* XCRemoteSwiftPackageReference "EthereumABI" */;
+			productName = EthereumABI;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

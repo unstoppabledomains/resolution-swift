@@ -2,19 +2,21 @@
 //  CNS.swift
 //  resolution
 //
-//  Created by Johnny Good on 8/11/20.
+//  Created by Serg Merenkov on 9/14/20.
 //  Copyright © 2020 Unstoppable Domains. All rights reserved.
 //
 
 import Foundation
 import EthereumAddress
 
-internal class CNS: CommonNamingService, NamingService {
+internal class ENS: CommonNamingService, NamingService {
     let network: String
     let registryAddress: String
     let registryMap: [String: String] = [
-        "mainnet": "0xD1E5b0FF1287aA9f9A268759062E4Ab08b9Dacbe",
-        "kovan": "0x22c2738cdA28C5598b1a68Fb1C89567c2364936F"
+        "mainnet": "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e",
+        "ropsten": "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e",
+        "rinkeby": "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e",
+        "goerli": "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e"
     ]
 
     init(network: String, providerUrl: String) throws {
@@ -23,16 +25,17 @@ internal class CNS: CommonNamingService, NamingService {
         }
         self.network = network
         self.registryAddress = registryAddress
-        super.init(name: "CNS", providerUrl: providerUrl)
+        super.init(name: "ENS", providerUrl: providerUrl)
     }
 
     func isSupported(domain: String) -> Bool {
-        return domain.hasSuffix(".crypto")
+        //Add additional domains
+        return domain.hasSuffix(".eth")
     }
 
     func owner(domain: String) throws -> String {
         let tokenId = super.namehash(domain: domain)
-        guard let ownerAddress = try askRegistryContract(for: "ownerOf", with: [tokenId]),
+        guard let ownerAddress = try askRegistryContract(for: "owner", with: [tokenId]),
             Utillities.isNotEmpty(ownerAddress) else {
                 throw ResolutionError.unregisteredDomain
         }
@@ -40,10 +43,21 @@ internal class CNS: CommonNamingService, NamingService {
     }
 
     func addr(domain: String, ticker: String) throws -> String {
+        guard ticker.uppercased() == "ETH" else {
+            throw ResolutionError.recordNotSupported
+        }
+
         let tokenId = super.namehash(domain: domain)
-        let key = "crypto.\(ticker.uppercased()).address"
-        let result = try record(tokenId: tokenId, key: key)
-        return result
+        let resolverAddress = try resolver(tokenId: tokenId)
+        let resolverContract = try super.buildContract(address: resolverAddress, type: .resolver)
+
+        guard let dict = try resolverContract.callMethod(methodName: "addr", args: [tokenId, EthCoinIndex]) as? [String: Data],
+              let dataAddress = dict["0"],
+              let address = EthereumAddress(dataAddress),
+              Utillities.isNotEmpty(address.address) else {
+                throw ResolutionError.recordNotFound
+        }
+        return address.address
     }
 
     // MARK: - Get Record
@@ -53,47 +67,26 @@ internal class CNS: CommonNamingService, NamingService {
     }
 
     func record(tokenId: String, key: String) throws -> String {
+        if key == "ipfs.html.value" {
+            throw ResolutionError.recordNotSupported
+        }
+
         let resolverAddress = try resolver(tokenId: tokenId)
         let resolverContract = try super.buildContract(address: resolverAddress, type: .resolver)
-        let resolverResult = try resolverContract.callMethod(methodName: "get", args: [key, tokenId])
-        var result: String = ""
 
-        if let dictAddress = resolverResult as? [String: EthereumAddress],
-              let address = dictAddress["0"] {
-            result = address.address
-        }
+        let ensKeyName = self.fromUDNameToEns(record: key)
 
-        if let dict = resolverResult as? [String: String],
-           let resultStr = dict["0"] {
-            result = resultStr
-        }
-
-        if let resultStr = resolverResult as? String {
-            result = resultStr
-        }
-
-        guard Utillities.isNotEmpty(result) else {
+        guard let dict = try resolverContract.callMethod(methodName: "text", args: [tokenId, ensKeyName]) as? [String: String],
+              let result = dict["0"],
+            Utillities.isNotEmpty(result) else {
                 throw ResolutionError.recordNotFound
         }
         return result
     }
 
     func records(keys: [String], for domain: String) throws -> [String: String] {
-        let tokenId = super.namehash(domain: domain)
-        let resolverAddress = try resolver(tokenId: tokenId)
-        let resolverContract = try super.buildContract(address: resolverAddress, type: .resolver)
-        guard let dict = try resolverContract.callMethod(methodName: "getMany", args: [keys, tokenId]) as? [String: [String]],
-              let result = dict["0"]
-            else {
-                throw ResolutionError.recordNotFound
-        }
-
-        let returnValue = zip(keys, result).reduce(into: [String: String]()) { dict, pair in
-            let (key, value) = pair
-            dict[key] = value
-        }
-
-        return returnValue
+        //TODO: Add some batch request and collect all keys by few request
+        throw ResolutionError.recordNotSupported
     }
 
     // MARK: - get Resolver
@@ -103,7 +96,7 @@ internal class CNS: CommonNamingService, NamingService {
     }
 
     func resolver(tokenId: String) throws -> String {
-        guard let resolverAddress = try askRegistryContract(for: "resolverOf", with: [tokenId]),
+        guard let resolverAddress = try askRegistryContract(for: "resolver", with: [tokenId]),
             Utillities.isNotEmpty(resolverAddress) else {
                 throw ResolutionError.unspecifiedResolver
         }
@@ -118,5 +111,15 @@ internal class CNS: CommonNamingService, NamingService {
             return nil
         }
         return address.address
+    }
+
+    private func fromUDNameToEns(record: String) -> String {
+        let mapper: [String: String] = [
+            "ipfs.redirect_domain.value": "url",
+            "whois.email.value": "email",
+            "gundb.username.value": "gundb_username",
+            "gundb.public_key.value": "gundb_public_key"
+        ]
+        return mapper[record] ?? record
     }
 }

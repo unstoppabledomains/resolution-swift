@@ -57,7 +57,7 @@ internal class ZNS: CommonNamingService, NamingService {
     }
 
     func records(keys: [String], for domain: String) throws -> [String: String] {
-        guard let records = try self.contract(address: try resolver(domain: domain), keys: keys) as? [String: String] else {
+        guard let records = try self.records(address: try resolver(domain: domain), keys: keys) as? [String: String] else {
             throw ResolutionError.recordNotFound
         }
         return records
