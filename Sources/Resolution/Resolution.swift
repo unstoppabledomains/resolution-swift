@@ -16,8 +16,9 @@ public class Resolution {
     init(providerUrl: String, network: String) throws {
         self.providerUrl = providerUrl
         let cns = try CNS(network: network, providerUrl: providerUrl)
+        let ens = try ENS(network: network, providerUrl: providerUrl)
         let zns = try ZNS(network: network, providerUrl: "https://api.zilliqa.com/")
-        self.services = [cns, zns]
+        self.services = [cns, ens, zns]
     }
 
     /// Resolves a hash  of the `domain` according to https://github.com/ethereum/EIPs/blob/master/EIPS/eip-137.md
@@ -81,7 +82,7 @@ public class Resolution {
             }
         }
     }
-    
+
     /// Resolves an email of a `domain` owner
     public func email(domain: String, completion:@escaping StringResult ) {
         let preparedDomain = prepare(domain: domain)
@@ -96,8 +97,8 @@ public class Resolution {
         }
     }
 
-    /// Resolves a gunDB username of a `domain` owner
-    public func gunDBChat(domain: String, completion:@escaping StringResult ) {
+    /// Resolves a  chat id of a `domain` owner
+    public func chatId(domain: String, completion:@escaping StringResult ) {
         let preparedDomain = prepare(domain: domain)
         DispatchQueue.global(qos: .utility).async { [weak self] in
             do {
@@ -109,9 +110,9 @@ public class Resolution {
             }
         }
     }
-    
-    /// Resolves a gunDB private key of a `domain` owner
-    public func gunDBPk(domain: String, completion:@escaping StringResult ) {
+
+    /// Resolves  a  gundb public key of a `domain`
+    public func chatPk(domain: String, completion:@escaping StringResult ) {
         let preparedDomain = prepare(domain: domain)
         DispatchQueue.global(qos: .utility).async { [weak self] in
             do {
@@ -123,9 +124,9 @@ public class Resolution {
             }
         }
     }
-    
+
     /// Resolves redirect url of a `domain`
-    public func redirectUrl(domain: String, completion:@escaping StringResult ) {
+    public func httpUrl(domain: String, completion:@escaping StringResult ) {
         let preparedDomain = prepare(domain: domain)
         DispatchQueue.global(qos: .utility).async { [weak self] in
             do {
@@ -137,7 +138,7 @@ public class Resolution {
             }
         }
     }
-    
+
     /// Resolves custom record of a `domain`
     public func record(domain: String, key: String, completion:@escaping StringResult ) {
         let preparedDomain = prepare(domain: domain)
@@ -151,7 +152,7 @@ public class Resolution {
             }
         }
     }
-    
+
     /// Allows to get Many records from a `domain` in a single transaction
     /// `keys` is an array of keys
     public func records(domain: String, keys: [String], completion:@escaping DictionaryResult ) {

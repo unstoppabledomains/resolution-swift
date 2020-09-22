@@ -12,15 +12,15 @@ internal class Contract {
     let providerUrl: String
     let coder: ABICoder
 
-    init(providerUrl: String, address: String, abi: ABI) {
+    init(providerUrl: String, address: String, abi: ABIContract) {
         self.address = address
         self.providerUrl = providerUrl
         self.coder = ABICoder(abi)
     }
 
-    func fetchMethod(methodName: String, args: [Any]) throws -> Any {
+    func callMethod(methodName: String, args: [Any]) throws -> Any {
             let encodedData = try self.coder.encode(method: methodName, args: args)
-            let body: JSON_RPC_REQUEST = JSON_RPC_REQUEST(
+            let body: JsonRpcPayload = JsonRpcPayload(
                 jsonrpc: "2.0",
                 id: "1",
                 method: "eth_call",
@@ -33,9 +33,9 @@ internal class Contract {
             return try self.coder.decode(response, from: methodName)
     }
 
-    private func postRequest(_ body: JSON_RPC_REQUEST) throws -> String? {
+    private func postRequest(_ body: JsonRpcPayload) throws -> String? {
         let postRequest = APIRequest(providerUrl)
-        var resp: JSON_RPC_RESPONSE?
+        var resp: JsonRpcResponse?
         var err: Error?
         let semaphore = DispatchSemaphore(value: 0)
         postRequest.post(body, completion: {result in

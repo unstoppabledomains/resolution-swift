@@ -22,7 +22,7 @@ struct APIRequest {
         self.url = url
     }
 
-    func post(_ body: JSON_RPC_REQUEST, completion: @escaping(Result<JSON_RPC_RESPONSE, APIError>) -> Void ) {
+    func post(_ body: JsonRpcPayload, completion: @escaping(Result<JsonRpcResponse, APIError>) -> Void ) {
         do {
             var urlRequest = URLRequest(url: self.url)
             urlRequest.httpMethod = "POST"
@@ -38,7 +38,7 @@ struct APIRequest {
                 }
 
                 do {
-                    let result = try JSONDecoder().decode(JSON_RPC_RESPONSE.self, from: jsonData)
+                    let result = try JSONDecoder().decode(JsonRpcResponse.self, from: jsonData)
                     completion(.success(result))
                 } catch {
                     completion(.failure(.decodingError))

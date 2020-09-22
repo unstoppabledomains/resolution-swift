@@ -10,7 +10,7 @@ This framework helps to resolve a decentralized domain name such as `brad.crypto
  - Initialize Resolution class
  - use any method of resolution class
  
- # Common examples
+# Common examples
  ```swift
   let resolution = try Resolution(providerUrl: "https://main-rpc.linkpool.io", network: "mainnet");
   
@@ -52,9 +52,13 @@ This framework helps to resolve a decentralized domain name such as `brad.crypto
 ```
 enum ResolutionError: Error {
     case unregisteredDomain
-    case unsupportedDomain
     case unconfiguredDomain
+    case unspecifiedResolver
     case recordNotFound
     case unsupportedNetwork
 }
 ```
+
+# Contributions
+
+Any contribution is more than welcome! You can contribute through pull requests and issues on GitHub.
