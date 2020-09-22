@@ -17,4 +17,8 @@ internal class Utillities {
         ]
         return !(value.isEmpty || nullValues.contains(value))
     }
+    
+    static func isNotEmpty(_ array: [Any]) -> Bool {
+        return array.count > 0
+    }
 }

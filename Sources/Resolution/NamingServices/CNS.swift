@@ -77,6 +77,18 @@ internal class CNS: CommonNamingService, NamingService {
 
         return returnValue
     }
+    typealias GetDataResponse = [Any]
+    func getData(keys: [String], for tokenId: String) throws -> [Any] {
+        let proxyReaderContract: Contract = try super.buildContract(address: self.proxyReaderAddress, type: .proxyReader)
+        guard let result = try proxyReaderContract.fetchMethod(methodName: "getData", args: [keys, tokenId]) as? [Any],
+              let resolver = result[0] as? String,
+              let owner = result[1] as? String,
+              let values = result[3] as? [String],
+            Utillities.isNotEmpty(result) else {
+            throw ResolutionError.recordNotFound
+        }
+        return [resolver, owner, values] as [Any]
+    }
 
     // MARK: - get Resolver
     func resolver(domain: String) throws -> String {
