@@ -20,6 +20,21 @@ class ResolutionTests: XCTestCase {
         resolution = try! Resolution(providerUrl: "https://main-rpc.linkpool.io", network: "mainnet")
     }
 
+    func testSupportedDomains() throws {
+        // Given // When // Then
+        assert(false == resolution.isSupported(domain: "notsupported.crypto1"))
+        assert(true == resolution.isSupported(domain: "supported.crypto"))
+        assert(false == resolution.isSupported(domain: "notsupported.eth1"))
+        assert(true == resolution.isSupported(domain: "supported.eth"))
+        assert(false == resolution.isSupported(domain: "notsupported.xyz1"))
+        assert(true == resolution.isSupported(domain: "supported.xyz"))
+        assert(false == resolution.isSupported(domain: "notsupported.luxe1"))
+        assert(true == resolution.isSupported(domain: "supported.luxe"))
+        assert(false == resolution.isSupported(domain: "-notsupported.eth"))
+        assert(true == resolution.isSupported(domain: "supported.kred"))
+        assert(true == resolution.isSupported(domain: "supported.addr.reverse"))
+    }
+    
     func testNamehash() throws {
         // Given // When
         let firstHashTest = try resolution.namehash(domain: "test.crypto")

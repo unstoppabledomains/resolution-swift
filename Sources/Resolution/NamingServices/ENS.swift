@@ -29,8 +29,7 @@ internal class ENS: CommonNamingService, NamingService {
     }
 
     func isSupported(domain: String) -> Bool {
-        //Add additional domains
-        return domain.hasSuffix(".eth")
+        return domain ~= "^[^-]*[^-]*\\.(eth|luxe|xyz|kred|addr\\.reverse)$"
     }
 
     func owner(domain: String) throws -> String {

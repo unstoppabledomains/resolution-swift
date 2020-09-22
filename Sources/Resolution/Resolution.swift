@@ -8,7 +8,6 @@
 
 import Foundation
 
-
 /// A library for interacting with blockchain domain names.
 ///
 /// Supported domain zones:
@@ -68,7 +67,7 @@ public class Resolution {
             return false
         }
     }
-    
+
     /// Resolves a hash  of the `domain` according to https://github.com/ethereum/EIPs/blob/master/EIPS/eip-137.md
     /// - Parameter domain: - domain name to be converted
     /// - Returns: Produces a namehash from supported naming service in hex format with 0x prefix.
@@ -255,7 +254,7 @@ public class Resolution {
 
         completion(.failure(catched))
     }
-    
+
     /// Process the 'error'
     private func catchError(_ error: Error, completion:@escaping StringResult ) {
         guard let catched = error as? ResolutionError else {
