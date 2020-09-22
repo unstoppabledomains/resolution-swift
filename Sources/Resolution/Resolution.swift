@@ -8,6 +8,37 @@
 
 import Foundation
 
+
+/// A library for interacting with blockchain domain names.
+///
+/// Supported domain zones:
+///
+/// *CNS:*
+///     .crypto
+///
+/// *ZNS*
+///     .zil
+///
+/// *ENS*
+///     .eth
+///     .kred
+///     .xyz
+///     .luxe
+///
+/// ```swift
+/// let resolution = try Resolution(providerUrl: "https://main-rpc.linkpool.io", network: "mainnet");
+///
+/// resolution.addr(domain: "brad.crypto", ticker: "btc") { (result) in
+///     switch result {
+///     case .success(let returnValue):
+///           // bc1q359khn0phg58xgezyqsuuaha28zkwx047c0c3y
+///         let btcAddress = returnValue
+///     case .failure(let error):
+///         print("Expected btc Address, but got \(error)")
+///     }
+/// }
+/// ```
+///
 public class Resolution {
 
     private var providerUrl: String
@@ -21,13 +52,37 @@ public class Resolution {
         self.services = [cns, ens, zns]
     }
 
+    /// Checks if the domain name is valid according to naming service rules for valid domain names.
+    ///
+    /// **Example:** ENS doesn't allow domains that start from '-' symbol.
+    ///
+    /// - Parameter domain: domain name to be checked
+    ///
+    /// - Returns: The return true or false.
+    ///
+    public func isSupported(domain: String) -> Bool {
+        do {
+            let preparedDomain = prepare(domain: domain)
+            return try getServiceOf(domain: preparedDomain).isSupported(domain: preparedDomain)
+        } catch {
+            return false
+        }
+    }
+    
     /// Resolves a hash  of the `domain` according to https://github.com/ethereum/EIPs/blob/master/EIPS/eip-137.md
+    /// - Parameter domain: - domain name to be converted
+    /// - Returns: Produces a namehash from supported naming service in hex format with 0x prefix.
+    /// Corresponds to ERC721 token id in case of Ethereum based naming service like ENS or CNS.
+    /// - Throws: ```ResolutionError.unsupportedDomain```  if domain extension is unknown
+    ///
     public func namehash(domain: String) throws -> String {
         let preparedDomain = prepare(domain: domain)
         return try getServiceOf(domain: preparedDomain).namehash(domain: preparedDomain)
     }
 
     /// Resolves an owner address of a `domain`
+    /// - Parameter domain: - domain name
+    /// - Parameter completion: A callback that resolves `Result`  with an `owner address` or `Error`
     public func owner(domain: String, completion:@escaping StringResult ) {
         let preparedDomain = prepare(domain: domain)
         DispatchQueue.global(qos: .utility).async {
@@ -40,7 +95,10 @@ public class Resolution {
         }
     }
 
-    /// Resolves `ticker` cryptoaddress of a `domain`
+    /// Resolves give `domain` name to a specific `currency address` if exists
+    /// - Parameter  domain: - domain name to be resolved
+    /// - Parameter  ticker: - currency ticker like BTC, ETH, ZIL
+    /// - Parameter  completion: A callback that resolves `Result`  with an `address` or `Error`
     public func addr(domain: String, ticker: String, completion:@escaping StringResult ) {
         let preparedDomain = prepare(domain: domain)
         DispatchQueue.global(qos: .utility).async {
@@ -54,6 +112,8 @@ public class Resolution {
     }
 
     /// Resolves a resolver address of a `domain`
+    /// - Parameter  domain: - domain name to be resolved
+    /// - Parameter  completion: A callback that resolves `Result`  with a `resolver address` for a specific domain or `Error`
     public func resolver(domain: String, completion:@escaping StringResult ) {
         let preparedDomain = prepare(domain: domain)
         DispatchQueue.global(qos: .utility).async {
@@ -67,6 +127,8 @@ public class Resolution {
     }
 
     /// Resolves an ipfs hash of a `domain`
+    /// - Parameter  domain: - domain name to be resolved
+    /// - Parameter  completion: A callback that resolves `Result`  with an `IPFS hash` for a specific domain or `Error`
     public func ipfsHash(domain: String, completion:@escaping StringResult ) {
         let preparedDomain = prepare(domain: domain)
         DispatchQueue.global(qos: .utility).async {
@@ -79,7 +141,9 @@ public class Resolution {
         }
     }
 
-    /// Resolves an email of a `domain` owner
+    /// Resolves an `email` field from whois configurations
+    /// - Parameter  domain: - domain name to be resolved
+    /// - Parameter  completion: A callback that resolves `Result`  with an `email` for a specific domain or `Error`
     public func email(domain: String, completion:@escaping StringResult ) {
         let preparedDomain = prepare(domain: domain)
         DispatchQueue.global(qos: .utility).async {
@@ -92,7 +156,9 @@ public class Resolution {
         }
     }
 
-    /// Resolves a  chat id of a `domain` owner
+    /// Resolves a  `chat id` of a `domain` record
+    /// - Parameter  domain: - domain name to be resolved
+    /// - Parameter  completion: A callback that resolves `Result`  with an `chat id` for a specific domain or `Error`
     public func chatId(domain: String, completion:@escaping StringResult ) {
         let preparedDomain = prepare(domain: domain)
         DispatchQueue.global(qos: .utility).async {
@@ -105,7 +171,9 @@ public class Resolution {
         }
     }
 
-    /// Resolves  a  gundb public key of a `domain`
+    /// Resolves  a  `gundb public key` of a `domain` record
+    /// - Parameter  domain: - domain name to be resolved
+    /// - Parameter  completion: A callback that resolves `Result`  with an `gundb public key` for a specific domain or `Error`
     public func chatPk(domain: String, completion:@escaping StringResult ) {
         let preparedDomain = prepare(domain: domain)
         DispatchQueue.global(qos: .utility).async {
@@ -119,6 +187,8 @@ public class Resolution {
     }
 
     /// Resolves redirect url of a `domain`
+    /// - Parameter  domain: - domain name to be resolved
+    /// - Parameter  completion: A callback that resolves `Result`  with an `url` for a specific domain or `Error`
     public func httpUrl(domain: String, completion:@escaping StringResult ) {
         let preparedDomain = prepare(domain: domain)
         DispatchQueue.global(qos: .utility).async {
@@ -132,6 +202,8 @@ public class Resolution {
     }
 
     /// Resolves custom record of a `domain`
+    /// - Parameter  domain: - domain name to be resolved
+    /// - Parameter  key: - a name of a record to be resolved
     public func record(domain: String, key: String, completion:@escaping StringResult ) {
         let preparedDomain = prepare(domain: domain)
         DispatchQueue.global(qos: .utility).async {
@@ -145,7 +217,9 @@ public class Resolution {
     }
 
     /// Allows to get Many records from a `domain` in a single transaction
-    /// `keys` is an array of keys
+    /// - Parameter  domain: - domain name to be resolved
+    /// - Parameter  keys: -  is an array of keys
+    /// - Parameter  completion: A callback that resolves `Result`  with an `map [key: value]` for a specific domain or `Error`
     public func records(domain: String, keys: [String], completion:@escaping DictionaryResult ) {
         let preparedDomain = prepare(domain: domain)
         DispatchQueue.global(qos: .utility).async {
@@ -181,7 +255,8 @@ public class Resolution {
 
         completion(.failure(catched))
     }
-
+    
+    /// Process the 'error'
     private func catchError(_ error: Error, completion:@escaping StringResult ) {
         guard let catched = error as? ResolutionError else {
             completion(.failure(.unknownError(error)))
