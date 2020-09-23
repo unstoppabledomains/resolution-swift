@@ -8,6 +8,10 @@
 
 import Foundation
 internal class Contract {
+    static let OWNER_KEY = "owner"
+    static let RESOLVER_KEY = "resolver"
+    static let VALUES_KEY = "values"
+
     let address: String
     let providerUrl: String
     let coder: ABICoder

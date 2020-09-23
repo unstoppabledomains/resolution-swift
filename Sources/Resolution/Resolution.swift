@@ -28,53 +28,57 @@ public class Resolution {
     }
 
     /// Resolves an owner address of a `domain`
-    public func owner(domain: String, completion:@escaping StringResult ) {
+    public func owner(domain: String, completion: @escaping StringResult ) {
         let preparedDomain = prepare(domain: domain)
-        DispatchQueue.global(qos: .utility).async {
+        DispatchQueue.global(qos: .utility).async { [weak self] in
             do {
-                let result = try self.getServiceOf(domain: preparedDomain).owner(domain: preparedDomain)
-                completion(.success(result))
+                if let result = try self?.getServiceOf(domain: preparedDomain).owner(domain: preparedDomain) {
+                    completion(.success(result))
+                }
             } catch {
-                self.catchError(error, completion: completion)
+                self?.catchError(error, completion: completion)
             }
         }
     }
 
     /// Resolves `ticker` cryptoaddress of a `domain`
-    public func addr(domain: String, ticker: String, completion:@escaping StringResult ) {
+    public func addr(domain: String, ticker: String, completion: @escaping StringResult ) {
         let preparedDomain = prepare(domain: domain)
-        DispatchQueue.global(qos: .utility).async {
+        DispatchQueue.global(qos: .utility).async { [weak self] in
             do {
-                let result = try self.getServiceOf(domain: domain).addr(domain: preparedDomain, ticker: ticker)
-                completion(.success(result))
+                if let result = try self?.getServiceOf(domain: domain).addr(domain: preparedDomain, ticker: ticker) {
+                    completion(.success(result))
+                }
             } catch {
-                self.catchError(error, completion: completion)
+                self?.catchError(error, completion: completion)
             }
         }
     }
 
     /// Resolves a resolver address of a `domain`
-    public func resolver(domain: String, completion:@escaping StringResult ) {
+    public func resolver(domain: String, completion: @escaping StringResult ) {
         let preparedDomain = prepare(domain: domain)
-        DispatchQueue.global(qos: .utility).async {
+        DispatchQueue.global(qos: .utility).async { [weak self] in
             do {
-                let result = try self.getServiceOf(domain: preparedDomain).resolver(domain: preparedDomain)
-                completion(.success(result))
+                if let result = try self?.getServiceOf(domain: preparedDomain).resolver(domain: preparedDomain) {
+                    completion(.success(result))
+                }
             } catch {
-                self.catchError(error, completion: completion)
+                self?.catchError(error, completion: completion)
             }
         }
     }
 
     /// Resolves an ipfs hash of a `domain`
-    public func ipfsHash(domain: String, completion:@escaping StringResult ) {
+    public func ipfsHash(domain: String, completion: @escaping StringResult ) {
         let preparedDomain = prepare(domain: domain)
-        DispatchQueue.global(qos: .utility).async {
+        DispatchQueue.global(qos: .utility).async { [weak self] in
             do {
-                let result = try self.getServiceOf(domain: preparedDomain).record(domain: preparedDomain, key: "ipfs.html.value")
-                completion(.success(result))
+                if let result = try self?.getServiceOf(domain: preparedDomain).record(domain: preparedDomain, key: "ipfs.html.value") {
+                    completion(.success(result))
+                }
             } catch {
-                self.catchError(error, completion: completion)
+                self?.catchError(error, completion: completion)
             }
         }
     }
@@ -82,12 +86,13 @@ public class Resolution {
     /// Resolves an email of a `domain` owner
     public func email(domain: String, completion:@escaping StringResult ) {
         let preparedDomain = prepare(domain: domain)
-        DispatchQueue.global(qos: .utility).async {
+        DispatchQueue.global(qos: .utility).async { [weak self] in
             do {
-                let result = try self.getServiceOf(domain: preparedDomain).record(domain: preparedDomain, key: "whois.email.value")
+                if let result = try self?.getServiceOf(domain: preparedDomain).record(domain: preparedDomain, key: "whois.email.value") {
                 completion(.success(result))
+                }
             } catch {
-                self.catchError(error, completion: completion)
+                self?.catchError(error, completion: completion)
             }
         }
     }
@@ -95,12 +100,13 @@ public class Resolution {
     /// Resolves a  chat id of a `domain` owner
     public func chatId(domain: String, completion:@escaping StringResult ) {
         let preparedDomain = prepare(domain: domain)
-        DispatchQueue.global(qos: .utility).async {
+        DispatchQueue.global(qos: .utility).async { [weak self] in
             do {
-                let result = try self.getServiceOf(domain: preparedDomain).record(domain: preparedDomain, key: "gundb.username.value")
-                completion(.success(result))
+                if let result = try self?.getServiceOf(domain: preparedDomain).record(domain: preparedDomain, key: "gundb.username.value") {
+                    completion(.success(result))
+                }
             } catch {
-                self.catchError(error, completion: completion)
+                self?.catchError(error, completion: completion)
             }
         }
     }
@@ -108,12 +114,13 @@ public class Resolution {
     /// Resolves  a  gundb public key of a `domain`
     public func chatPk(domain: String, completion:@escaping StringResult ) {
         let preparedDomain = prepare(domain: domain)
-        DispatchQueue.global(qos: .utility).async {
+        DispatchQueue.global(qos: .utility).async { [weak self] in
             do {
-                let result = try self.getServiceOf(domain: preparedDomain).record(domain: preparedDomain, key: "gundb.public_key.value")
-                completion(.success(result))
+                if let result = try self?.getServiceOf(domain: preparedDomain).record(domain: preparedDomain, key: "gundb.public_key.value") {
+                    completion(.success(result))
+                }
             } catch {
-                self.catchError(error, completion: completion)
+                self?.catchError(error, completion: completion)
             }
         }
     }
@@ -121,12 +128,13 @@ public class Resolution {
     /// Resolves redirect url of a `domain`
     public func httpUrl(domain: String, completion:@escaping StringResult ) {
         let preparedDomain = prepare(domain: domain)
-        DispatchQueue.global(qos: .utility).async {
+        DispatchQueue.global(qos: .utility).async { [weak self] in
             do {
-                let result = try self.getServiceOf(domain: preparedDomain).record(domain: preparedDomain, key: "ipfs.redirect_domain.value")
-                completion(.success(result))
+                if let result = try self?.getServiceOf(domain: preparedDomain).record(domain: preparedDomain, key: "ipfs.redirect_domain.value") {
+                    completion(.success(result))
+                }
             } catch {
-                self.catchError(error, completion: completion)
+                self?.catchError(error, completion: completion)
             }
         }
     }
@@ -134,12 +142,13 @@ public class Resolution {
     /// Resolves custom record of a `domain`
     public func record(domain: String, key: String, completion:@escaping StringResult ) {
         let preparedDomain = prepare(domain: domain)
-        DispatchQueue.global(qos: .utility).async {
+        DispatchQueue.global(qos: .utility).async { [weak self] in
             do {
-                let result = try self.getServiceOf(domain: preparedDomain).record(domain: preparedDomain, key: key)
-                completion(.success(result))
+                if let result = try self?.getServiceOf(domain: preparedDomain).record(domain: preparedDomain, key: key) {
+                    completion(.success(result))
+                }
             } catch {
-                self.catchError(error, completion: completion)
+                self?.catchError(error, completion: completion)
             }
         }
     }
@@ -148,12 +157,13 @@ public class Resolution {
     /// `keys` is an array of keys
     public func records(domain: String, keys: [String], completion:@escaping DictionaryResult ) {
         let preparedDomain = prepare(domain: domain)
-        DispatchQueue.global(qos: .utility).async {
+        DispatchQueue.global(qos: .utility).async { [weak self] in
             do {
-                let result = try self.getServiceOf(domain: preparedDomain).records(keys: keys, for: preparedDomain)
-                completion(.success(result))
+                if let result = try self?.getServiceOf(domain: preparedDomain).records(keys: keys, for: preparedDomain) {
+                    completion(.success(result))
+                }
             } catch {
-                self.catchError(error, completion: completion)
+                self?.catchError(error, completion: completion)
             }
         }
     }
