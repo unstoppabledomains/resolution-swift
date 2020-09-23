@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		30A69245251385A70079EC69 /* cnsProxyReader.json in Resources */ = {isa = PBXBuildFile; fileRef = 30A69244251385A70079EC69 /* cnsProxyReader.json */; };
 		3E2AC91C24E4FA28008EBC39 /* CNS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E2AC91B24E4FA28008EBC39 /* CNS.swift */; };
 		3E2AC91F24E4FA35008EBC39 /* NamingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E2AC91E24E4FA35008EBC39 /* NamingService.swift */; };
 		3E2AC93E24E4FC9F008EBC39 /* cnsResolver.json in Resources */ = {isa = PBXBuildFile; fileRef = 3E2AC93C24E4FC9F008EBC39 /* cnsResolver.json */; };
@@ -43,6 +44,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		30A69244251385A70079EC69 /* cnsProxyReader.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = cnsProxyReader.json; sourceTree = "<group>"; };
 		3E2AC91B24E4FA28008EBC39 /* CNS.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CNS.swift; sourceTree = "<group>"; };
 		3E2AC91E24E4FA35008EBC39 /* NamingService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NamingService.swift; sourceTree = "<group>"; };
 		3E2AC93C24E4FC9F008EBC39 /* cnsResolver.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = cnsResolver.json; sourceTree = "<group>"; };
@@ -126,6 +128,7 @@
 			children = (
 				3E2AC93D24E4FC9F008EBC39 /* cnsRegistry.json */,
 				3E2AC93C24E4FC9F008EBC39 /* cnsResolver.json */,
+				30A69244251385A70079EC69 /* cnsProxyReader.json */,
 			);
 			path = CNS;
 			sourceTree = "<group>";
@@ -312,6 +315,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				30A69245251385A70079EC69 /* cnsProxyReader.json in Resources */,
 				8449EDFC2513BA3D00DABB57 /* ensResolver.json in Resources */,
 				3E2AC93E24E4FC9F008EBC39 /* cnsResolver.json in Resources */,
 				8449EDFA25139F2500DABB57 /* ensRegistry.json in Resources */,

@@ -227,7 +227,7 @@ class ResolutionTests: XCTestCase {
         var unregisteredResult: Result<String, ResolutionError>!
 
         // When
-        resolution.ipfsHash(domain: "brad.crypto") { (result) in
+        resolution.ipfsHash(domain: "brad.crypto") { result in
             switch result {
             case .success(let returnValue):
                 domainReceived.fulfill()
@@ -237,8 +237,8 @@ class ResolutionTests: XCTestCase {
             }
         }
 
-        resolution.ipfsHash(domain: "unregistered.crypto") {
-            unregisteredResult = $0
+        resolution.ipfsHash(domain: "unregistered.crypto") { result in
+            unregisteredResult = result
             unregisteredReceived.fulfill()
         }
 
@@ -334,19 +334,14 @@ class ResolutionTests: XCTestCase {
         case .success:
             XCTFail("Expected \(expectedError), but got none")
         case .failure(let error):
-            if let catched = error as? ResolutionError {
-                assert(catched == expectedError, "Expected \(expectedError), but got \(catched)")
-                return
-            }
-            XCTFail("Expected ResolutionError, but got different \(error)")
+            assert(error == expectedError, "Expected \(expectedError), but got \(error)")
+            return
         }
     }
-
 }
 
 extension ResolutionError: Equatable {
     public static func == (lhs: ResolutionError, rhs: ResolutionError) -> Bool {
-
         switch (lhs, rhs) {
         case ( .unregisteredDomain, .unregisteredDomain):
             return true
@@ -360,6 +355,8 @@ extension ResolutionError: Equatable {
             return true
         case (.unspecifiedResolver, .unspecifiedResolver):
             return true
+        case (.proxyReaderNonInitialized, .proxyReaderNonInitialized):
+            return true
         // We don't use `default` here on purpose, so we don't forget updating this method on adding new variants.
         case (.unregisteredDomain, _),
             (.unsupportedDomain, _),
@@ -367,8 +364,9 @@ extension ResolutionError: Equatable {
             (.recordNotSupported, _),
             (.unsupportedNetwork, _),
             (.unspecifiedResolver, _),
-            (.unknownError, _ ):
-            
+            (.unknownError, _ ),
+            (.proxyReaderNonInitialized, _):
+
             return false
         }
     }
