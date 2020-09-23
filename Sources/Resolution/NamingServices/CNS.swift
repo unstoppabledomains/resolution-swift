@@ -12,12 +12,13 @@ import EthereumAddress
 internal class CNS: CommonNamingService, NamingService {
     let network: String
     let registryAddress: String
+    var proxyReaderContract: Contract?
     let registryMap: [String: String] = [
         "mainnet": "0xD1E5b0FF1287aA9f9A268759062E4Ab08b9Dacbe",
         "kovan": "0x22c2738cdA28C5598b1a68Fb1C89567c2364936F"
     ]
 
-    let proxyReaderAddress = "0x7ea9Ee21077F84339eDa9C80048ec6db678642B1"
+    static let proxyReaderAddress = "0x7ea9Ee21077F84339eDa9C80048ec6db678642B1"
 
     init(network: String, providerUrl: String) throws {
         guard let registryAddress = registryMap[network] else {
@@ -26,6 +27,7 @@ internal class CNS: CommonNamingService, NamingService {
         self.network = network
         self.registryAddress = registryAddress
         super.init(name: "CNS", providerUrl: providerUrl)
+        proxyReaderContract = try super.buildContract(address: Self.proxyReaderAddress, type: .proxyReader)
     }
 
     func isSupported(domain: String) -> Bool {
@@ -103,8 +105,7 @@ internal class CNS: CommonNamingService, NamingService {
 
     func records(keys: [String], for domain: String) throws -> [String: String] {
         let tokenId = super.namehash(domain: domain)
-        let proxyReaderContract: Contract = try super.buildContract(address: self.proxyReaderAddress, type: .proxyReader)
-        guard let dict = try proxyReaderContract.callMethod(methodName: "getMany", args: [keys, tokenId]) as? [String: [String]],
+        guard let dict = try proxyReaderContract?.callMethod(methodName: "getMany", args: [keys, tokenId]) as? [String: [String]],
               let result = dict["0"]
             else {
                 throw ResolutionError.recordNotFound
@@ -138,7 +139,6 @@ internal class CNS: CommonNamingService, NamingService {
 
     // MARK: - Helper functions
     func unfold(contractResult: Any, key: String = "0") -> String? {
-
         if let dict = contractResult as? [String: Any], let el = dict[key] {
             if let addr = el as? EthereumAddress {
                 return addr.address
@@ -156,13 +156,11 @@ internal class CNS: CommonNamingService, NamingService {
     }
     
     private func getData(keys: [String], for tokenId: String) throws -> Any {
-        let proxyReaderContract: Contract = try super.buildContract(address: self.proxyReaderAddress, type: .proxyReader)
-        let result = try proxyReaderContract.callMethod(methodName: "getData", args: [keys, tokenId])
+        let result = try proxyReaderContract?.callMethod(methodName: "getData", args: [keys, tokenId])
         return result
     }
 
     private func askProxyReaderContract(for methodName: String, with args: [String]) throws -> Any {
-        let proxyReaderContract: Contract = try super.buildContract(address: self.proxyReaderAddress, type: .proxyReader)
-        return try proxyReaderContract.callMethod(methodName: methodName, args: args)
+        return try proxyReaderContract?.callMethod(methodName: methodName, args: args)
     }
 }
