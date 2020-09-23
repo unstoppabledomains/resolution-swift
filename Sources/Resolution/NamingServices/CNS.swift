@@ -34,12 +34,16 @@ internal class CNS: CommonNamingService, NamingService {
 
     func owner(domain: String) throws -> String {
         let tokenId = super.namehash(domain: domain)
-        let proxyResult = try askProxyReaderContract(for: "ownerOf", with: [tokenId])
-        guard let ownerAddress = self.unfold(contractResult: proxyResult),
-            Utillities.isNotEmpty(ownerAddress) else {
-                throw ResolutionError.unregisteredDomain
+        let res: Any
+        do {
+            res = try self.getData(keys: ["owner"], for: tokenId)
+        } catch {
+            throw ResolutionError.unregisteredDomain
         }
-        return ownerAddress
+        guard let rec = self.unfold(contractResult: res, key: "owner") else {
+            throw ResolutionError.unregisteredDomain
+        }
+        return rec
     }
 
     func addr(domain: String, ticker: String) throws -> String {
@@ -52,18 +56,46 @@ internal class CNS: CommonNamingService, NamingService {
     // MARK: - Get Record
     func record(domain: String, key: String) throws -> String {
         let tokenId = super.namehash(domain: domain)
-        return try self.record(tokenId: tokenId, key: key)
+        return try record(tokenId: tokenId, key: key)
+    }
+    
+    private func unfoldAddress<T> (_ incomingData: T) -> String? {
+        if let eth = incomingData as? EthereumAddress {
+            return eth.address
+        }
+        
+        if let str = incomingData as? String {
+            return str
+        }
+        
+        return nil
     }
 
-    func record(tokenId: String, key: String) throws -> String {
-        let proxyReaderContract: Contract = try super.buildContract(address: self.proxyReaderAddress, type: .proxyReader)
-        let proxyResult = try proxyReaderContract.callMethod(methodName: "get", args: [key, tokenId])
-
-        guard let result = self.unfold(contractResult: proxyResult),
-              Utillities.isNotEmpty(result) else {
-            throw ResolutionError.recordNotFound
+    func getOwnerResolverRecord(tokenId: String, key: String) throws -> (owner: String, resolver: String, record: String) {
+        let res = try self.getData(keys: [key], for: tokenId)
+        if let dict = res as? [String: Any] {
+            if let owner = unfoldAddress(dict["owner"]),
+               let resolver = unfoldAddress(dict["resolver"]),
+               let values = dict["values"] as? [String] {
+                let record = values[0]
+                return (owner: owner, resolver: resolver, record: record)
+            }
         }
-        return result
+        throw ResolutionError.unregisteredDomain
+    }
+    
+    func record(tokenId: String, key: String) throws -> String {
+        var result: (owner: String, resolver: String, record: String) = ("", "", "")
+        do {
+            result = try self.getOwnerResolverRecord(tokenId: tokenId, key: key)
+        }
+        catch ResolutionError.unregisteredDomain {
+            throw ResolutionError.unregisteredDomain
+        }
+        guard Utillities.isNotEmpty(result.owner) else { throw ResolutionError.unregisteredDomain }
+        guard Utillities.isNotEmpty(result.resolver) else { throw ResolutionError.unspecifiedResolver }
+
+        return result.record
     }
 
     func records(keys: [String], for domain: String) throws -> [String: String] {
@@ -79,27 +111,7 @@ internal class CNS: CommonNamingService, NamingService {
             let (key, value) = pair
             dict[key] = value
         }
-
         return returnValue
-    }
-
-    typealias GetDataResponse = [Any]
-    func getData(keys: [String], for tokenId: String) throws -> [Any] {
-
-        let proxyReaderContract: Contract = try super.buildContract(address: self.proxyReaderAddress, type: .proxyReader)
-
-        let result = try proxyReaderContract.callMethod(methodName: "getData", args: [keys, tokenId])
-
-        return []
-
-//        guard let result = try proxyReaderContract.callMethod(methodName: "getData", args: [keys, tokenId]) as? [Any],
-//              let resolver = result[0] as? String,
-//              let owner = result[1] as? String,
-//              let values = result[3] as? [String],
-//            Utillities.isNotEmpty(result) else {
-//            throw ResolutionError.recordNotFound
-//        }
-//        return [resolver, owner, values] as [Any]
     }
 
     // MARK: - get Resolver
@@ -109,32 +121,40 @@ internal class CNS: CommonNamingService, NamingService {
     }
 
     func resolver(tokenId: String) throws -> String {
-        let proxyResult = try askProxyReaderContract(for: "resolverOf", with: [tokenId])
-        guard let resolverAddress = self.unfold(contractResult: proxyResult),
-            Utillities.isNotEmpty(resolverAddress) else {
-                throw ResolutionError.unspecifiedResolver
+        let res: Any
+        do {
+            res = try self.getData(keys: ["resolver"], for: tokenId)
+        } catch {
+            throw ResolutionError.unspecifiedResolver
         }
-        return resolverAddress
+        guard let rec = self.unfold(contractResult: res, key: "resolver") else {
+            throw ResolutionError.unspecifiedResolver
+        }
+        return rec
     }
 
     // MARK: - Helper functions
-    func unfold(contractResult: Any) -> String? {
-        var result: String?
+    func unfold(contractResult: Any, key: String = "0") -> String? {
 
-        if let dictAddress = contractResult as? [String: EthereumAddress],
-           let address = dictAddress["0"] {
-            result = address.address
+        if let dict = contractResult as? [String: Any], let el = dict[key] {
+            if let addr = el as? EthereumAddress {
+                return addr.address
+            }
+            
+            if let string = el as? String {
+                return string
+            }
         }
-
-        if let dict = contractResult as? [String: String],
-           let resultStr = dict["0"] {
-            result = resultStr
-        }
-
+        
         if let resultStr = contractResult as? String {
-            result = resultStr
+            return resultStr
         }
-
+        return nil
+    }
+    
+    private func getData(keys: [String], for tokenId: String) throws -> Any {
+        let proxyReaderContract: Contract = try super.buildContract(address: self.proxyReaderAddress, type: .proxyReader)
+        let result = try proxyReaderContract.callMethod(methodName: "getData", args: [keys, tokenId])
         return result
     }
 
