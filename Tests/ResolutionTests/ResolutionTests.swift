@@ -327,7 +327,6 @@ class ResolutionTests: XCTestCase {
 
 extension ResolutionError: Equatable {
     public static func == (lhs: ResolutionError, rhs: ResolutionError) -> Bool {
-
         switch (lhs, rhs) {
         case ( .unregisteredDomain, .unregisteredDomain):
             return true
@@ -341,6 +340,8 @@ extension ResolutionError: Equatable {
             return true
         case (.unspecifiedResolver, .unspecifiedResolver):
             return true
+        case (.proxyReaderNonInitialized, .proxyReaderNonInitialized):
+            return true
         // We don't use `default` here on purpose, so we don't forget updating this method on adding new variants.
         case (.unregisteredDomain, _),
             (.unsupportedDomain, _),
@@ -348,8 +349,9 @@ extension ResolutionError: Equatable {
             (.recordNotSupported, _),
             (.unsupportedNetwork, _),
             (.unspecifiedResolver, _),
-            (.unknownError, _ ):
-            
+            (.unknownError, _ ),
+            (.proxyReaderNonInitialized, _):
+
             return false
         }
     }
