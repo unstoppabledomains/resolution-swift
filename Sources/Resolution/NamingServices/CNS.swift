@@ -47,16 +47,19 @@ internal class CNS: CommonNamingService, NamingService {
     }
 
     func addr(domain: String, ticker: String) throws -> String {
-        let tokenId = super.namehash(domain: domain)
         let key = "crypto.\(ticker.uppercased()).address"
-        let result = try record(tokenId: tokenId, key: key)
+        let result = try record(domain: domain, key: key)
         return result
     }
 
     // MARK: - Get Record
     func record(domain: String, key: String) throws -> String {
         let tokenId = super.namehash(domain: domain)
-        return try record(tokenId: tokenId, key: key)
+        let result = try record(tokenId: tokenId, key: key)
+        guard Utillities.isNotEmpty(result) else {
+            throw ResolutionError.recordNotFound
+        }
+        return result
     }
     
     private func unfoldAddress<T> (_ incomingData: T) -> String? {
@@ -89,8 +92,8 @@ internal class CNS: CommonNamingService, NamingService {
         do {
             result = try self.getOwnerResolverRecord(tokenId: tokenId, key: key)
         }
-        catch ResolutionError.unregisteredDomain {
-            throw ResolutionError.unregisteredDomain
+        catch {
+            throw ResolutionError.unspecifiedResolver
         }
         guard Utillities.isNotEmpty(result.owner) else { throw ResolutionError.unregisteredDomain }
         guard Utillities.isNotEmpty(result.resolver) else { throw ResolutionError.unspecifiedResolver }
