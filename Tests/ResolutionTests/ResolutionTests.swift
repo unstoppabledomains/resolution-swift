@@ -221,9 +221,11 @@ class ResolutionTests: XCTestCase {
     func testIpfs() throws {
         // Given
         let domainReceived = expectation(description: "Exist domain should be received")
+        let domainEthReceived = expectation(description: "Exist ETH domain should be received")
         let unregisteredReceived = expectation(description: "Unregistered domain should be received")
 
         var hash = ""
+        var etcHash = ""
         var unregisteredResult: Result<String, ResolutionError>!
 
         // When
@@ -237,6 +239,16 @@ class ResolutionTests: XCTestCase {
             }
         }
 
+        resolution.ipfsHash(domain: "monkybrain.eth") { (result) in
+            switch result {
+            case .success(let returnValue):
+                domainEthReceived.fulfill()
+                etcHash = returnValue
+            case .failure(let error):
+                XCTFail("Expected ipfsHash, but got \(error)")
+            }
+        }
+        
         resolution.ipfsHash(domain: "unregistered.crypto") { result in
             unregisteredResult = result
             unregisteredReceived.fulfill()
@@ -246,6 +258,7 @@ class ResolutionTests: XCTestCase {
 
         // Then
         assert(hash == "Qme54oEzRkgooJbCDr78vzKAWcv6DDEZqRhhDyDtzgrZP6")
+        assert(etcHash == "QmXSBLw6VMegqkCHSDBPg7xzfLhUyuRBzTb927KVzKC1vq")
         self.checkError(result: unregisteredResult, expectedError: ResolutionError.unspecifiedResolver)
     }
 

@@ -8,6 +8,7 @@
 
 import Foundation
 import EthereumAddress
+import Base58Swift
 
 internal class ENS: CommonNamingService, NamingService {
     let network: String
@@ -67,7 +68,8 @@ internal class ENS: CommonNamingService, NamingService {
 
     func record(tokenId: String, key: String) throws -> String {
         if key == "ipfs.html.value" {
-            throw ResolutionError.recordNotSupported
+            let hash = try self.getContentHash(tokenId: tokenId)
+            return hash
         }
 
         let resolverAddress = try resolver(tokenId: tokenId)
@@ -121,4 +123,37 @@ internal class ENS: CommonNamingService, NamingService {
         ]
         return mapper[record] ?? record
     }
+
+    /*
+     //https://ethereum.stackexchange.com/questions/17094/how-to-store-ipfs-hash-using-bytes32
+     getIpfsHashFromBytes32(bytes32Hex) {
+       // Add our default ipfs values for first 2 bytes:
+       // function:0x12=sha2, size:0x20=256 bits
+       // and cut off leading "0x"
+       const hashHex = "1220" + bytes32Hex.slice(2)
+       const hashBytes = Buffer.from(hashHex, 'hex');
+       const hashStr = bs58.encode(hashBytes)
+       return hashStr
+     }
+     */
+    private func getContentHash(tokenId: String) throws -> String {
+
+        let resolverAddress = try resolver(tokenId: tokenId)
+        let resolverContract = try super.buildContract(address: resolverAddress, type: .resolver)
+
+        let hash = try resolverContract.callMethod(methodName: "contenthash", args: [tokenId]) as? [String: Any]
+        guard let data = hash?["0"] as? Data else {
+            throw ResolutionError.recordNotFound
+        }
+
+        let contentHash = [UInt8](data)
+        guard let codec = Array(contentHash[0..<1]).last,
+              codec == 0xE3 // 'ipfs-ns'
+        else {
+            throw ResolutionError.recordNotFound
+        }
+
+        return Base58.base58Encode(Array(contentHash[4..<contentHash.count]))
+ }
+
 }

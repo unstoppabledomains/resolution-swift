@@ -30,6 +30,7 @@
 		848E21092507890A008707D2 /* ZNS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848E21082507890A008707D2 /* ZNS.swift */; };
 		848E210C25079D61008707D2 /* Types.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848E210B25079D61008707D2 /* Types.swift */; };
 		B66597192518B96400D0640B /* EthereumABI in Frameworks */ = {isa = PBXBuildFile; productRef = B66597182518B96400D0640B /* EthereumABI */; };
+		B6A0F433251CB1F60018F233 /* Base58Swift in Frameworks */ = {isa = PBXBuildFile; productRef = B6A0F432251CB1F60018F233 /* Base58Swift */; };
 		B6A944F725194EDC00894E27 /* EthereumABI in Frameworks */ = {isa = PBXBuildFile; productRef = B6A944F625194EDC00894E27 /* EthereumABI */; };
 /* End PBXBuildFile section */
 
@@ -78,6 +79,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B6A944F725194EDC00894E27 /* EthereumABI in Frameworks */,
+				B6A0F433251CB1F60018F233 /* Base58Swift in Frameworks */,
 				B66597192518B96400D0640B /* EthereumABI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -140,6 +142,7 @@
 				840B552D24F94B5A00618935 /* Sources */,
 				849E07CB24F946CA00A793D3 /* Tests */,
 				3EE4DA0424E367720097540B /* Products */,
+				B6E2A65C251BA87B00E927FC /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -214,6 +217,13 @@
 			path = Tests;
 			sourceTree = "<group>";
 		};
+		B6E2A65C251BA87B00E927FC /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -246,6 +256,7 @@
 			packageProductDependencies = (
 				B66597182518B96400D0640B /* EthereumABI */,
 				B6A944F625194EDC00894E27 /* EthereumABI */,
+				B6A0F432251CB1F60018F233 /* Base58Swift */,
 			);
 			productName = resolution;
 			productReference = 3EE4DA0324E367720097540B /* Resolution.framework */;
@@ -299,6 +310,7 @@
 			mainGroup = 3EE4D9F924E367720097540B;
 			packageReferences = (
 				B6A944F525194EDC00894E27 /* XCRemoteSwiftPackageReference "EthereumABI" */,
+				B6A0F431251CB1F60018F233 /* XCRemoteSwiftPackageReference "Base58Swift" */,
 			);
 			productRefGroup = 3EE4DA0424E367720097540B /* Products */;
 			projectDirPath = "";
@@ -646,6 +658,14 @@
 				minimumVersion = 1.2.0;
 			};
 		};
+		B6A0F431251CB1F60018F233 /* XCRemoteSwiftPackageReference "Base58Swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/keefertaylor/Base58Swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.1.0;
+			};
+		};
 		B6A944F525194EDC00894E27 /* XCRemoteSwiftPackageReference "EthereumABI" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/deczer/EthereumABI";
@@ -661,6 +681,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B66597172518B96400D0640B /* XCRemoteSwiftPackageReference "EthereumABI" */;
 			productName = EthereumABI;
+		};
+		B6A0F432251CB1F60018F233 /* Base58Swift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B6A0F431251CB1F60018F233 /* XCRemoteSwiftPackageReference "Base58Swift" */;
+			productName = Base58Swift;
 		};
 		B6A944F625194EDC00894E27 /* EthereumABI */ = {
 			isa = XCSwiftPackageProductDependency;
