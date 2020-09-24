@@ -20,9 +20,8 @@ Pod::Spec.new do |s|
   s.description      = 'This framework helps to resolve a decentralized domain name such as brad.crypto'
 
   s.homepage         = 'https://github.com/unstoppabledomains/resolution-swift'
-  # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
-  s.author           = { 'rommex' => 'dev@kadru.net' }
+  s.author           = { 'rommex' => 'roman@unstoppabledomains.com' }
   s.source           = { :git => 'https://github.com/unstoppabledomains/resolution-swift.git', :tag => s.version.to_s }
   s.social_media_url = 'https://twitter.com/unstoppableweb'
   
