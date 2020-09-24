@@ -45,6 +45,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		3045D13E251CDA2100B65A06 /* DistributedDomainResolution.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = DistributedDomainResolution.podspec; sourceTree = "<group>"; };
 		30A69244251385A70079EC69 /* cnsProxyReader.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = cnsProxyReader.json; sourceTree = "<group>"; };
 		3E2AC91B24E4FA28008EBC39 /* CNS.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CNS.swift; sourceTree = "<group>"; };
 		3E2AC91E24E4FA35008EBC39 /* NamingService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NamingService.swift; sourceTree = "<group>"; };
@@ -139,6 +140,7 @@
 			isa = PBXGroup;
 			children = (
 				8425AED824FFBADF00BBCBBA /* README.md */,
+				3045D13E251CDA2100B65A06 /* DistributedDomainResolution.podspec */,
 				840B552D24F94B5A00618935 /* Sources */,
 				849E07CB24F946CA00A793D3 /* Tests */,
 				3EE4DA0424E367720097540B /* Products */,
