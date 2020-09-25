@@ -1,7 +1,7 @@
 Pod::Spec.new do |spec|
 
   spec.name         = "DistributedDomainResolution"
-  spec.version      = "0.1.0"
+  spec.version      = "0.1.1"
   spec.summary      = "Swift framework for resolving unstoppable domains."
 
   # This description is used to generate tags and improve search results.
@@ -27,7 +27,9 @@ Pod::Spec.new do |spec|
   #  the deployment target. You can optionally include the target after the platform.
   #
 
-  spec.platform     = :ios, "13.6"
+  spec.ios.deployment_target = "13.6"
+  spec.osx.deployment_target = "10.15"
+
   spec.swift_version = '5.0'
 
   #  When using multiple platforms
@@ -36,9 +38,9 @@ Pod::Spec.new do |spec|
   # spec.watchos.deployment_target = "2.0"
   # spec.tvos.deployment_target = "9.0"
 
-  spec.source       = { :git => "https://github.com/unstoppabledomains/resolution-swift.git", :tag => "0.1.1" }
+  spec.source       = { :git => "https://github.com/unstoppabledomains/resolution-swift.git", :tag => spec.version }
 
-  spec.source_files  = "Sources/Resolution"
+  spec.source_files  = "Sources/Resolution", "Sources/Resolution/**/*"
   # spec.exclude_files = "Classes/Exclude"
 
   # spec.public_header_files = "Classes/**/*.h"
@@ -69,6 +71,9 @@ Pod::Spec.new do |spec|
 
   # spec.library   = "iconv"
   # spec.libraries = "iconv", "xml2"
+
+  spec.dependency 'EthereumABI', '~> 1.2'
+  spec.dependency 'Base58Swift', '~> 2.1'
 
 
   # ――― Project Settings ――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
