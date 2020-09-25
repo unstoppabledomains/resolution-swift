@@ -116,7 +116,7 @@ internal class ZNS: CommonNamingService, NamingService {
     }
 
     func buildContract(address: String) -> ContractZNS {
-        return ContractZNS(providerUrl: self.providerUrl, address: address.replacingOccurrences(of: "0x", with: ""))
+        return ContractZNS(providerUrl: self.providerUrl, address: address.removeHexPrefix())
     }
 
 }
