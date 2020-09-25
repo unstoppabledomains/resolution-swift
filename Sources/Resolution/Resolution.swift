@@ -82,7 +82,7 @@ public class Resolution {
     /// Resolves an owner address of a `domain`
     /// - Parameter domain: - domain name
     /// - Parameter completion: A callback that resolves `Result`  with an `owner address` or `Error`
-    public func owner(domain: String, completion: @escaping StringResult ) {
+    public func owner(domain: String, completion: @escaping StringResultConsumer ) {
         let preparedDomain = prepare(domain: domain)
         DispatchQueue.global(qos: .utility).async { [weak self] in
             do {
@@ -99,7 +99,7 @@ public class Resolution {
     /// - Parameter  domain: - domain name to be resolved
     /// - Parameter  ticker: - currency ticker like BTC, ETH, ZIL
     /// - Parameter  completion: A callback that resolves `Result`  with an `address` or `Error`
-    public func addr(domain: String, ticker: String, completion: @escaping StringResult ) {
+    public func addr(domain: String, ticker: String, completion: @escaping StringResultConsumer ) {
         let preparedDomain = prepare(domain: domain)
         DispatchQueue.global(qos: .utility).async { [weak self] in
             do {
@@ -115,7 +115,7 @@ public class Resolution {
     /// Resolves a resolver address of a `domain`
     /// - Parameter  domain: - domain name to be resolved
     /// - Parameter  completion: A callback that resolves `Result`  with a `resolver address` for a specific domain or `Error`
-    public func resolver(domain: String, completion: @escaping StringResult ) {
+    public func resolver(domain: String, completion: @escaping StringResultConsumer ) {
         let preparedDomain = prepare(domain: domain)
         DispatchQueue.global(qos: .utility).async { [weak self] in
             do {
@@ -131,7 +131,7 @@ public class Resolution {
     /// Resolves an ipfs hash of a `domain`
     /// - Parameter  domain: - domain name to be resolved
     /// - Parameter  completion: A callback that resolves `Result`  with an `IPFS hash` for a specific domain or `Error`
-    public func ipfsHash(domain: String, completion: @escaping StringResult ) {
+    public func ipfsHash(domain: String, completion: @escaping StringResultConsumer ) {
         let preparedDomain = prepare(domain: domain)
         DispatchQueue.global(qos: .utility).async { [weak self] in
             do {
@@ -147,7 +147,7 @@ public class Resolution {
     /// Resolves an `email` field from whois configurations
     /// - Parameter  domain: - domain name to be resolved
     /// - Parameter  completion: A callback that resolves `Result`  with an `email` for a specific domain or `Error`
-    public func email(domain: String, completion:@escaping StringResult ) {
+    public func email(domain: String, completion:@escaping StringResultConsumer ) {
         let preparedDomain = prepare(domain: domain)
         DispatchQueue.global(qos: .utility).async { [weak self] in
             do {
@@ -163,7 +163,7 @@ public class Resolution {
     /// Resolves a  `chat id` of a `domain` record
     /// - Parameter  domain: - domain name to be resolved
     /// - Parameter  completion: A callback that resolves `Result`  with an `chat id` for a specific domain or `Error`
-    public func chatId(domain: String, completion:@escaping StringResult ) {
+    public func chatId(domain: String, completion:@escaping StringResultConsumer ) {
         let preparedDomain = prepare(domain: domain)
         DispatchQueue.global(qos: .utility).async { [weak self] in
             do {
@@ -179,7 +179,7 @@ public class Resolution {
     /// Resolves  a  `gundb public key` of a `domain` record
     /// - Parameter  domain: - domain name to be resolved
     /// - Parameter  completion: A callback that resolves `Result`  with an `gundb public key` for a specific domain or `Error`
-    public func chatPk(domain: String, completion:@escaping StringResult ) {
+    public func chatPk(domain: String, completion:@escaping StringResultConsumer ) {
         let preparedDomain = prepare(domain: domain)
         DispatchQueue.global(qos: .utility).async { [weak self] in
             do {
@@ -195,7 +195,7 @@ public class Resolution {
     /// Resolves redirect url of a `domain`
     /// - Parameter  domain: - domain name to be resolved
     /// - Parameter  completion: A callback that resolves `Result`  with an `url` for a specific domain or `Error`
-    public func httpUrl(domain: String, completion:@escaping StringResult ) {
+    public func httpUrl(domain: String, completion:@escaping StringResultConsumer ) {
         let preparedDomain = prepare(domain: domain)
         DispatchQueue.global(qos: .utility).async { [weak self] in
             do {
@@ -211,7 +211,7 @@ public class Resolution {
     /// Resolves custom record of a `domain`
     /// - Parameter  domain: - domain name to be resolved
     /// - Parameter  key: - a name of a record to be resolved
-    public func record(domain: String, key: String, completion:@escaping StringResult ) {
+    public func record(domain: String, key: String, completion:@escaping StringResultConsumer ) {
         let preparedDomain = prepare(domain: domain)
         DispatchQueue.global(qos: .utility).async { [weak self] in
             do {
@@ -228,7 +228,7 @@ public class Resolution {
     /// - Parameter  domain: - domain name to be resolved
     /// - Parameter  keys: -  is an array of keys
     /// - Parameter  completion: A callback that resolves `Result`  with an `map [key: value]` for a specific domain or `Error`
-    public func records(domain: String, keys: [String], completion:@escaping DictionaryResult ) {
+    public func records(domain: String, keys: [String], completion:@escaping DictionaryResultConsumer ) {
         let preparedDomain = prepare(domain: domain)
         DispatchQueue.global(qos: .utility).async { [weak self] in
             do {
@@ -256,7 +256,7 @@ public class Resolution {
     }
 
     /// Process the 'error'
-    private func catchError(_ error: Error, completion:@escaping DictionaryResult ) {
+    private func catchError(_ error: Error, completion:@escaping DictionaryResultConsumer ) {
         guard let catched = error as? ResolutionError else {
             completion(.failure(.unknownError(error)))
             return
@@ -266,7 +266,7 @@ public class Resolution {
     }
 
     /// Process the 'error'
-    private func catchError(_ error: Error, completion:@escaping StringResult ) {
+    private func catchError(_ error: Error, completion:@escaping StringResultConsumer ) {
         guard let catched = error as? ResolutionError else {
             completion(.failure(.unknownError(error)))
             return

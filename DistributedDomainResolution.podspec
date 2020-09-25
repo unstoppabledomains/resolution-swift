@@ -1,45 +1,85 @@
-#
-# Be sure to run `pod lib lint DistributedDomainResolution.podspec' to ensure this is a
-# valid spec before submitting.
-#
-# Any lines starting with a # are optional, but their use is encouraged
-# To learn more about a Podspec see https://guides.cocoapods.org/syntax/podspec.html
-#
+Pod::Spec.new do |spec|
 
-Pod::Spec.new do |s|
-  s.name             = 'DistributedDomainResolution'
-  s.version          = '0.1.0'
-  s.summary          = 'Swift framework for resolving unstoppable domains.'
+  spec.name         = "DistributedDomainResolution"
+  spec.version      = "0.1.0"
+  spec.summary      = "Swift framework for resolving unstoppable domains."
 
-# This description is used to generate tags and improve search results.
-#   * Think: What does it do? Why did you write it? What is the focus?
-#   * Try to keep it short, snappy and to the point.
-#   * Write the description between the DESC delimiters below.
-#   * Finally, don't worry about the indent, CocoaPods strips it!
+  # This description is used to generate tags and improve search results.
+  #   * Think: What does it do? Why did you write it? What is the focus?
+  #   * Try to keep it short, snappy and to the point.
+  #   * Write the description between the DESC delimiters below.
+  #   * Finally, don't worry about the indent, CocoaPods strips it!
+  spec.description  = <<-DESC
+	This framework helps to resolve a decentralized domain name such as brad.crypto
+                   DESC
 
-  s.description      = <<-DESC
-      This framework helps to resolve a decentralized domain name such as brad.crypto
-                       DESC
-                       
-  s.homepage         = 'https://github.com/unstoppabledomains/resolution-swift'
-  s.license          = { :type => 'MIT', :file => 'LICENSE' }
-  s.author           = { 'rommex' => 'roman@unstoppabledomains.com' }
-  s.source           = { :git => 'https://github.com/unstoppabledomains/resolution-swift.git', :tag => s.version.to_s }
-  s.social_media_url = 'https://twitter.com/unstoppableweb'
-  
-  s.swift_version = '5.0'
+  spec.homepage     = "https://github.com/unstoppabledomains/resolution-swift"
 
-  s.ios.deployment_target = '13.6'
+  spec.license      = { :type => "MIT", :file => "LICENSE.md" }
 
-  s.library = 'EthereumABI'
 
-  s.source_files = 'Sources/Resolution/**/*'
-  
-  # s.resource_bundles = {
-  #   'DistributedDomainResolution' => ['DistributedDomainResolution/Assets/*.png']
-  # }
+  spec.author             = { "Roman Medvid" => "roman@unstoppabledomains.com" }
+  spec.social_media_url = 'https://twitter.com/unstoppableweb'
 
-  # s.public_header_files = 'Pod/Classes/**/*.h'
-  # s.frameworks = 'UIKit', 'MapKit'
-  # s.dependency 'AFNetworking', '~> 2.3'
+  # ――― Platform Specifics ――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
+  #
+  #  If this Pod runs only on iOS or OS X, then specify the platform and
+  #  the deployment target. You can optionally include the target after the platform.
+  #
+
+  spec.platform     = :ios, "13.6"
+  spec.swift_version = '5.0'
+
+  #  When using multiple platforms
+  # spec.ios.deployment_target = "5.0"
+  # spec.osx.deployment_target = "10.7"
+  # spec.watchos.deployment_target = "2.0"
+  # spec.tvos.deployment_target = "9.0"
+
+  spec.source       = { :git => "https://github.com/unstoppabledomains/resolution-swift.git", :tag => "0.1.0" }
+
+  spec.source_files  = "Sources/Resolution"
+  # spec.exclude_files = "Classes/Exclude"
+
+  # spec.public_header_files = "Classes/**/*.h"
+
+
+  # ――― Resources ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
+  #
+  #  A list of resources included with the Pod. These are copied into the
+  #  target bundle with a build phase script. Anything else will be cleaned.
+  #  You can preserve files from being cleaned, please don't preserve
+  #  non-essential files like tests, examples and documentation.
+  #
+
+  # spec.resource  = "icon.png"
+  # spec.resources = "Resources/*.png"
+
+  # spec.preserve_paths = "FilesToSave", "MoreFilesToSave"
+
+
+  # ――― Project Linking ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
+  #
+  #  Link your library with frameworks, or libraries. Libraries do not include
+  #  the lib prefix of their name.
+  #
+
+  # spec.framework  = "SomeFramework"
+  # spec.frameworks = "SomeFramework", "AnotherFramework"
+
+  # spec.library   = "iconv"
+  # spec.libraries = "iconv", "xml2"
+
+
+  # ――― Project Settings ――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
+  #
+  #  If your library depends on compiler flags you can set them in the xcconfig hash
+  #  where they will only apply to your library. If you depend on other Podspecs
+  #  you can include multiple dependencies to ensure it works.
+
+  # spec.requires_arc = true
+
+  # spec.xcconfig = { "HEADER_SEARCH_PATHS" => "$(SDKROOT)/usr/include/libxml2" }
+  # spec.dependency "JSONKit", "~> 1.4"
+
 end
