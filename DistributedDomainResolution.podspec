@@ -17,8 +17,10 @@ Pod::Spec.new do |s|
 #   * Write the description between the DESC delimiters below.
 #   * Finally, don't worry about the indent, CocoaPods strips it!
 
-  s.description      = 'This framework helps to resolve a decentralized domain name such as brad.crypto'
-
+  s.description      = <<-DESC
+      This framework helps to resolve a decentralized domain name such as brad.crypto
+                       DESC
+                       
   s.homepage         = 'https://github.com/unstoppabledomains/resolution-swift'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'rommex' => 'roman@unstoppabledomains.com' }
@@ -28,6 +30,8 @@ Pod::Spec.new do |s|
   s.swift_version = '5.0'
 
   s.ios.deployment_target = '13.6'
+
+  s.library = 'EthereumABI'
 
   s.source_files = 'Sources/Resolution/**/*'
   
