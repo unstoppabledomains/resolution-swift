@@ -43,7 +43,7 @@ public class Resolution {
     private var providerUrl: String
     private let services: [NamingService]
 
-    init(providerUrl: String, network: String) throws {
+    public init(providerUrl: String, network: String) throws {
         self.providerUrl = providerUrl
         let cns = try CNS(network: network, providerUrl: providerUrl)
         let ens = try ENS(network: network, providerUrl: providerUrl)
