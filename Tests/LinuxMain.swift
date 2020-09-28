@@ -1,7 +1,7 @@
 import XCTest
 
-import resolutionTests
+import ResolutionTests
 
 var tests = [XCTestCaseEntry]()
-tests += resolutionTests.allTests()
+tests += ResolutionTests.allTests()
 XCTMain(tests)

@@ -11,12 +11,13 @@ let package = Package(
             targets: ["Resolution"])
     ],
     dependencies: [
-        .package(url: "https://github.com/krzyzanowskim/CryptoSwift.git", .upToNextMinor(from: "1.3.1"))
+        .package(url: "https://github.com/deczer/EthereumABI", .upToNextMinor(from: "1.0.0")),
+        .package(url: "https://github.com/keefertaylor/Base58Swift.git", .upToNextMinor(from: "2.1.0")),
     ],
     targets: [
         .target(
             name: "Resolution",
-            dependencies: ["CryptoSwift"],
+            dependencies: ["EthereumABI", "Base58Swift"],
             resources: [
                 .copy("ABI/CNS/cnsRegistry.json"),
                 .copy("ABI/CNS/cnsResolver.json")
