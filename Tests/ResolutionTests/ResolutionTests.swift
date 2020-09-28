@@ -20,6 +20,21 @@ class ResolutionTests: XCTestCase {
         resolution = try! Resolution(providerUrl: "https://main-rpc.linkpool.io", network: "mainnet")
     }
 
+    func testSupportedDomains() throws {
+        // Given // When // Then
+        assert(false == resolution.isSupported(domain: "notsupported.crypto1"))
+        assert(true == resolution.isSupported(domain: "supported.crypto"))
+        assert(false == resolution.isSupported(domain: "notsupported.eth1"))
+        assert(true == resolution.isSupported(domain: "supported.eth"))
+        assert(false == resolution.isSupported(domain: "notsupported.xyz1"))
+        assert(true == resolution.isSupported(domain: "supported.xyz"))
+        assert(false == resolution.isSupported(domain: "notsupported.luxe1"))
+        assert(true == resolution.isSupported(domain: "supported.luxe"))
+        assert(false == resolution.isSupported(domain: "-notsupported.eth"))
+        assert(true == resolution.isSupported(domain: "supported.kred"))
+        assert(true == resolution.isSupported(domain: "supported.addr.reverse"))
+    }
+    
     func testNamehash() throws {
         // Given // When
         let firstHashTest = try resolution.namehash(domain: "test.crypto")
@@ -206,13 +221,15 @@ class ResolutionTests: XCTestCase {
     func testIpfs() throws {
         // Given
         let domainReceived = expectation(description: "Exist domain should be received")
+        let domainEthReceived = expectation(description: "Exist ETH domain should be received")
         let unregisteredReceived = expectation(description: "Unregistered domain should be received")
 
         var hash = ""
+        var etcHash = ""
         var unregisteredResult: Result<String, ResolutionError>!
 
         // When
-        resolution.ipfsHash(domain: "brad.crypto") { (result) in
+        resolution.ipfsHash(domain: "brad.crypto") { result in
             switch result {
             case .success(let returnValue):
                 domainReceived.fulfill()
@@ -222,8 +239,18 @@ class ResolutionTests: XCTestCase {
             }
         }
 
-        resolution.ipfsHash(domain: "unregistered.crypto") {
-            unregisteredResult = $0
+        resolution.ipfsHash(domain: "monkybrain.eth") { (result) in
+            switch result {
+            case .success(let returnValue):
+                domainEthReceived.fulfill()
+                etcHash = returnValue
+            case .failure(let error):
+                XCTFail("Expected ipfsHash, but got \(error)")
+            }
+        }
+        
+        resolution.ipfsHash(domain: "unregistered.crypto") { result in
+            unregisteredResult = result
             unregisteredReceived.fulfill()
         }
 
@@ -231,6 +258,7 @@ class ResolutionTests: XCTestCase {
 
         // Then
         assert(hash == "Qme54oEzRkgooJbCDr78vzKAWcv6DDEZqRhhDyDtzgrZP6")
+        assert(etcHash == "QmXSBLw6VMegqkCHSDBPg7xzfLhUyuRBzTb927KVzKC1vq")
         self.checkError(result: unregisteredResult, expectedError: ResolutionError.unspecifiedResolver)
     }
 
@@ -319,19 +347,14 @@ class ResolutionTests: XCTestCase {
         case .success:
             XCTFail("Expected \(expectedError), but got none")
         case .failure(let error):
-            if let catched = error as? ResolutionError {
-                assert(catched == expectedError, "Expected \(expectedError), but got \(catched)")
-                return
-            }
-            XCTFail("Expected ResolutionError, but got different \(error)")
+            assert(error == expectedError, "Expected \(expectedError), but got \(error)")
+            return
         }
     }
-
 }
 
 extension ResolutionError: Equatable {
     public static func == (lhs: ResolutionError, rhs: ResolutionError) -> Bool {
-
         switch (lhs, rhs) {
         case ( .unregisteredDomain, .unregisteredDomain):
             return true
@@ -345,6 +368,8 @@ extension ResolutionError: Equatable {
             return true
         case (.unspecifiedResolver, .unspecifiedResolver):
             return true
+        case (.proxyReaderNonInitialized, .proxyReaderNonInitialized):
+            return true
         // We don't use `default` here on purpose, so we don't forget updating this method on adding new variants.
         case (.unregisteredDomain, _),
             (.unsupportedDomain, _),
@@ -352,8 +377,9 @@ extension ResolutionError: Equatable {
             (.recordNotSupported, _),
             (.unsupportedNetwork, _),
             (.unspecifiedResolver, _),
-            (.unknownError, _ ):
-            
+            (.unknownError, _ ),
+            (.proxyReaderNonInitialized, _):
+
             return false
         }
     }

@@ -16,4 +16,5 @@ public enum ResolutionError: Error {
     case unsupportedNetwork
     case unspecifiedResolver
     case unknownError(Error)
+    case proxyReaderNonInitialized
 }

@@ -1,20 +1,49 @@
-# resolution-swift
+# UnstoppableDomainsResolution
 [![Chat on Telegram](https://img.shields.io/badge/Chat%20on-Telegram-brightgreen.svg)](https://t.me/unstoppabledev)
 
 Swift framework for resolving unstoppable domains
 
 This framework helps to resolve a decentralized domain name such as `brad.crypto`
 
-# Usage ( not sure yet how to use it in a live project) 
- - Include this framework in your project
- - Initialize Resolution class
- - use any method of resolution class
+# Installation into the project
+
+## Cocoa Pods
+```ruby
+pod 'UnstoppableDomainsResolution', '~> 0.1.2'
+```
+## Swift Package Manager
+```swift
+package.dependencies.append(
+    .package(url: "https://github.com/unstoppabledomains/resolution-swift", from: "0.1.2")
+)
+```
+
+# Usage
+
+ - Create an instance of the Resolution class
+ - Call any method of the Resolution class asyncronously
+ 
+-- NOTE: make sure an instance of the Resolution class is not deallocated until the asyncronous call brings in the result
  
 # Common examples
  ```swift
-  let resolution = try Resolution(providerUrl: "https://main-rpc.linkpool.io", network: "mainnet");
+ import UnstoppableDomainsResolution
+ 
+    ....
+ 
+  guard let resolution = try? Resolution() else {
+     print ("Init of Resolution instance with default parameters failed...")
+     return
+  }
   
-  resolution.addr(domain: "brad.crypto", ticker: "btc") { (result) in
+  // or, if you want to specify providerUrl and network by yourself:
+  guard let resolution = try? Resolution(providerUrl: "https://main-rpc.linkpool.io", network: "mainnet") else {
+     print ("Init of Resolution instance with custom parameters failed...")
+     return
+  }
+  
+  
+  resolution.addr(domain: "brad.crypto", ticker: "btc") { result in
       switch result {
       case .success(let returnValue):
             // bc1q359khn0phg58xgezyqsuuaha28zkwx047c0c3y
@@ -24,7 +53,7 @@ This framework helps to resolve a decentralized domain name such as `brad.crypto
       }
   }
   
-  resolution.addr(domain: "brad.crypto", ticker: "eth") { (result) in
+  resolution.addr(domain: "brad.crypto", ticker: "eth") { result in
       switch result {
       case .success(let returnValue):
             // 0x8aaD44321A86b170879d7A244c1e8d360c99DdA8
@@ -34,7 +63,7 @@ This framework helps to resolve a decentralized domain name such as `brad.crypto
       }
   }
   
-  resolution.owner(domain: "brad.crypto") { (result) in
+  resolution.owner(domain: "brad.crypto") { result in
       switch result {
       case .success(let returnValue):
             // 0x8aaD44321A86b170879d7A244c1e8d360c99DdA8
@@ -52,10 +81,13 @@ This framework helps to resolve a decentralized domain name such as `brad.crypto
 ```
 enum ResolutionError: Error {
     case unregisteredDomain
-    case unconfiguredDomain
-    case unspecifiedResolver
+    case unsupportedDomain
     case recordNotFound
+    case recordNotSupported
     case unsupportedNetwork
+    case unspecifiedResolver
+    case unknownError(Error)
+    case proxyReaderNonInitialized
 }
 ```
 

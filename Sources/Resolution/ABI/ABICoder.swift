@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import CryptoSwift
 import EthereumABI
 
 typealias ABIContract = [ABI.Element]
@@ -79,14 +78,5 @@ internal class ABICoder {
 
         let encoded = encodedData.toHexString().addHexPrefix()
         return encoded
-    }
-}
-
-extension String {
-    func addHexPrefix() -> String {
-        if !self.hasPrefix("0x") {
-            return "0x" + self
-        }
-        return self
     }
 }

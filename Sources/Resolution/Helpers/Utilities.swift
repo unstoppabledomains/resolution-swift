@@ -17,4 +17,23 @@ internal class Utillities {
         ]
         return !(value.isEmpty || nullValues.contains(value))
     }
+
+    static func isNotEmpty(_ array: [Any]) -> Bool {
+        return array.count > 0
+    }
+}
+
+extension String {
+    static func ~= (lhs: String, rhs: String) -> Bool {
+        guard let regex = try? NSRegularExpression(pattern: rhs) else { return false }
+        let range = NSRange(location: 0, length: lhs.utf16.count)
+        return regex.firstMatch(in: lhs, options: [], range: range) != nil
+    }
+
+    func addHexPrefix() -> String {
+        if !self.hasPrefix("0x") {
+            return "0x" + self
+        }
+        return self
+    }
 }
