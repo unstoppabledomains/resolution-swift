@@ -5,17 +5,24 @@ Swift framework for resolving unstoppable domains
 
 This framework helps to resolve a decentralized domain name such as `brad.crypto`
 
-# Usage ( not sure yet how to use it in a live project) 
-## Include this framework in your project
+# Installation into the project
 
-###Cocoa Pods
+##Cocoa Pods
 ```ruby
 pod "UnstoppableDomainsResolver", "~> 0.1.2"
 ```
+##Swift Package Manager
+```swift
+package.dependencies.append(
+    .package(url: "https://github.com/mxcl/resolution-swift", from: "0.1.2")
+)
+```
 
- - Initialize Resolution class
- - use any method of resolution class
- - NOTE: make sure an instance of the Resolution class (<Resolution?> type) is not deallocated until the asyncronous call brings in the result
+# Usage
+
+ - Create an instance Resolution class
+ - use any method of Resolution class
+-- NOTE: make sure an instance of the Resolution class (<Resolution?> type) is not deallocated until the asyncronous call brings in the result
  
 # Common examples
  ```swift
@@ -59,10 +66,13 @@ pod "UnstoppableDomainsResolver", "~> 0.1.2"
 ```
 enum ResolutionError: Error {
     case unregisteredDomain
-    case unconfiguredDomain
-    case unspecifiedResolver
+    case unsupportedDomain
     case recordNotFound
+    case recordNotSupported
     case unsupportedNetwork
+    case unspecifiedResolver
+    case unknownError(Error)
+    case proxyReaderNonInitialized
 }
 ```
 
