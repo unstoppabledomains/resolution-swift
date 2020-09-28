@@ -23,7 +23,7 @@ package.dependencies.append(
  - Create an instance of the Resolution class
  - Call any method of the Resolution class asyncronously
  
--- NOTE: make sure an instance of the Resolution class (<Resolution?> type) is not deallocated until the asyncronous call brings in the result
+-- NOTE: make sure an instance of the Resolution class is not deallocated until the asyncronous call brings in the result
  
 # Common examples
  ```swift
@@ -31,13 +31,19 @@ package.dependencies.append(
  
     ....
  
-  let resolution = try! Resolution()
+  guard let resolution = try? Resolution() else {
+     print ("Init of Resolution instance with default parameters failed...")
+     return
+  }
   
   // or, if you want to specify providerUrl and network by yourself:
-  let resolution = try! Resolution(providerUrl: "https://main-rpc.linkpool.io", network: "mainnet")
+  guard let resolution = try? Resolution(providerUrl: "https://main-rpc.linkpool.io", network: "mainnet") else {
+     print ("Init of Resolution instance with custom parameters failed...")
+     return
+  }
   
   
-  resolution!.addr(domain: "brad.crypto", ticker: "btc") { result in
+  resolution.addr(domain: "brad.crypto", ticker: "btc") { result in
       switch result {
       case .success(let returnValue):
             // bc1q359khn0phg58xgezyqsuuaha28zkwx047c0c3y
@@ -47,7 +53,7 @@ package.dependencies.append(
       }
   }
   
-  resolution!.addr(domain: "brad.crypto", ticker: "eth") { result in
+  resolution.addr(domain: "brad.crypto", ticker: "eth") { result in
       switch result {
       case .success(let returnValue):
             // 0x8aaD44321A86b170879d7A244c1e8d360c99DdA8
@@ -57,7 +63,7 @@ package.dependencies.append(
       }
   }
   
-  resolution!.owner(domain: "brad.crypto") { result in
+  resolution.owner(domain: "brad.crypto") { result in
       switch result {
       case .success(let returnValue):
             // 0x8aaD44321A86b170879d7A244c1e8d360c99DdA8
