@@ -1,10 +1,10 @@
 Pod::Spec.new do |spec|
-  spec.name         = "DistributedDomainResolution"
-  spec.version      = "0.1.1"
-  spec.summary      = "Swift framework for resolving unstoppable domains."
+  spec.name         = "UnstoppableDomainsResolution"
+  spec.version      = "0.1.2"
+  spec.summary      = "Swift framework for resolving Unstoppable domains."
 
   spec.description  = <<-DESC
-	This framework helps to resolve a decentralized domain name such as brad.crypto
+	This framework helps to resolve a decentralised domain names such as brad.crypto
                    DESC
 
   spec.homepage     = "https://github.com/unstoppabledomains/resolution-swift"
