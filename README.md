@@ -20,8 +20,9 @@ package.dependencies.append(
 
 # Usage
 
- - Create an instance Resolution class
- - use any method of Resolution class
+ - Create an instance of the Resolution class
+ - Call any method of the Resolution class asyncronously
+ 
 -- NOTE: make sure an instance of the Resolution class (<Resolution?> type) is not deallocated until the asyncronous call brings in the result
  
 # Common examples
