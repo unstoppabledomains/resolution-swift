@@ -29,7 +29,6 @@
 		845B401D251389A4006AB08E /* ENS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845B401C251389A4006AB08E /* ENS.swift */; };
 		848E21092507890A008707D2 /* ZNS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848E21082507890A008707D2 /* ZNS.swift */; };
 		848E210C25079D61008707D2 /* Types.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848E210B25079D61008707D2 /* Types.swift */; };
-		B66597192518B96400D0640B /* EthereumABI in Frameworks */ = {isa = PBXBuildFile; productRef = B66597182518B96400D0640B /* EthereumABI */; };
 		B6A0F433251CB1F60018F233 /* Base58Swift in Frameworks */ = {isa = PBXBuildFile; productRef = B6A0F432251CB1F60018F233 /* Base58Swift */; };
 		B6A944F725194EDC00894E27 /* EthereumABI in Frameworks */ = {isa = PBXBuildFile; productRef = B6A944F625194EDC00894E27 /* EthereumABI */; };
 /* End PBXBuildFile section */
@@ -45,6 +44,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		3045D148251E2C6200B65A06 /* LICENSE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = LICENSE.md; sourceTree = "<group>"; };
 		30A69244251385A70079EC69 /* cnsProxyReader.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = cnsProxyReader.json; sourceTree = "<group>"; };
 		3E2AC91B24E4FA28008EBC39 /* CNS.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CNS.swift; sourceTree = "<group>"; };
 		3E2AC91E24E4FA35008EBC39 /* NamingService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NamingService.swift; sourceTree = "<group>"; };
@@ -80,7 +80,6 @@
 			files = (
 				B6A944F725194EDC00894E27 /* EthereumABI in Frameworks */,
 				B6A0F433251CB1F60018F233 /* Base58Swift in Frameworks */,
-				B66597192518B96400D0640B /* EthereumABI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -95,6 +94,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		3045D143251E071200B65A06 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				3E2AC92124E4FA3E008EBC39 /* CNS */,
+				8449EDF825139F2500DABB57 /* ENS */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 		3E2AC91A24E4FA28008EBC39 /* NamingServices */ = {
 			isa = PBXGroup;
 			children = (
@@ -117,8 +125,6 @@
 		3E2AC92024E4FA3E008EBC39 /* ABI */ = {
 			isa = PBXGroup;
 			children = (
-				3E2AC92124E4FA3E008EBC39 /* CNS */,
-				8449EDF825139F2500DABB57 /* ENS */,
 				3EAFA3F624EB59DA008791E9 /* ABICoder.swift */,
 				3EAFA3FD24EE03E0008791E9 /* JSON_RPC.swift */,
 			);
@@ -139,6 +145,7 @@
 			isa = PBXGroup;
 			children = (
 				8425AED824FFBADF00BBCBBA /* README.md */,
+				3045D148251E2C6200B65A06 /* LICENSE.md */,
 				840B552D24F94B5A00618935 /* Sources */,
 				849E07CB24F946CA00A793D3 /* Tests */,
 				3EE4DA0424E367720097540B /* Products */,
@@ -158,6 +165,7 @@
 		3EE4DA0524E367720097540B /* Resolution */ = {
 			isa = PBXGroup;
 			children = (
+				3045D143251E071200B65A06 /* Resources */,
 				848E210A25079D43008707D2 /* Helpers */,
 				3E2AC92024E4FA3E008EBC39 /* ABI */,
 				3E2AC91D24E4FA35008EBC39 /* Protocols */,
@@ -254,7 +262,6 @@
 			);
 			name = Resolution;
 			packageProductDependencies = (
-				B66597182518B96400D0640B /* EthereumABI */,
 				B6A944F625194EDC00894E27 /* EthereumABI */,
 				B6A0F432251CB1F60018F233 /* Base58Swift */,
 			);
@@ -650,14 +657,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		B66597172518B96400D0640B /* XCRemoteSwiftPackageReference "EthereumABI" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/shamatar/EthereumABI.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.2.0;
-			};
-		};
 		B6A0F431251CB1F60018F233 /* XCRemoteSwiftPackageReference "Base58Swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/keefertaylor/Base58Swift.git";
@@ -677,11 +676,6 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		B66597182518B96400D0640B /* EthereumABI */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B66597172518B96400D0640B /* XCRemoteSwiftPackageReference "EthereumABI" */;
-			productName = EthereumABI;
-		};
 		B6A0F432251CB1F60018F233 /* Base58Swift */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = B6A0F431251CB1F60018F233 /* XCRemoteSwiftPackageReference "Base58Swift" */;

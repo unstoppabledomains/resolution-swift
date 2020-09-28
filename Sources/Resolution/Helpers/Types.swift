@@ -8,6 +8,6 @@
 
 import Foundation
 
-public typealias StringResult = (Result<String, ResolutionError>) -> Void
-public typealias DictionaryResult = (Result<[String: String], ResolutionError>) -> Void
+public typealias StringResultConsumer = (Result<String, ResolutionError>) -> Void
+public typealias DictionaryResultConsumer = (Result<[String: String], ResolutionError>) -> Void
 public let EthCoinIndex = 60
