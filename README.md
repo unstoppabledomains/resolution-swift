@@ -9,7 +9,7 @@ This framework helps to resolve a decentralized domain name such as `brad.crypto
 
 ## Cocoa Pods
 ```ruby
-pod 'UnstoppableDomainsResolver', '~> 0.1.2'
+pod 'UnstoppableDomainsResolution', '~> 0.1.2'
 ```
 ## Swift Package Manager
 ```swift
