@@ -37,7 +37,7 @@ package.dependencies.append(
   let resolution = try! Resolution(providerUrl: "https://main-rpc.linkpool.io", network: "mainnet")
   
   
-  resolution.addr(domain: "brad.crypto", ticker: "btc") { result in
+  resolution!.addr(domain: "brad.crypto", ticker: "btc") { result in
       switch result {
       case .success(let returnValue):
             // bc1q359khn0phg58xgezyqsuuaha28zkwx047c0c3y
@@ -47,7 +47,7 @@ package.dependencies.append(
       }
   }
   
-  resolution.addr(domain: "brad.crypto", ticker: "eth") { result in
+  resolution!.addr(domain: "brad.crypto", ticker: "eth") { result in
       switch result {
       case .success(let returnValue):
             // 0x8aaD44321A86b170879d7A244c1e8d360c99DdA8
@@ -57,7 +57,7 @@ package.dependencies.append(
       }
   }
   
-  resolution.owner(domain: "brad.crypto") { result in
+  resolution!.owner(domain: "brad.crypto") { result in
       switch result {
       case .success(let returnValue):
             // 0x8aaD44321A86b170879d7A244c1e8d360c99DdA8
