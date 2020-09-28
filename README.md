@@ -9,7 +9,7 @@ This framework helps to resolve a decentralized domain name such as `brad.crypto
 
 ## Cocoa Pods
 ```ruby
-pod "UnstoppableDomainsResolver", "~> 0.1.2"
+pod 'UnstoppableDomainsResolver', '~> 0.1.2'
 ```
 ## Swift Package Manager
 ```swift
@@ -27,10 +27,14 @@ package.dependencies.append(
  
 # Common examples
  ```swift
-  let resolution = try Resolution()
+ import UnstoppableDomainsResolution
+ 
+    ....
+ 
+  let resolution = try! Resolution()
   
   // or, if you want to specify providerUrl and network by yourself:
-  let resolution = try Resolution(providerUrl: "https://main-rpc.linkpool.io", network: "mainnet")
+  let resolution = try! Resolution(providerUrl: "https://main-rpc.linkpool.io", network: "mainnet")
   
   
   resolution.addr(domain: "brad.crypto", ticker: "btc") { result in
