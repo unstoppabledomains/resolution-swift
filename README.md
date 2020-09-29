@@ -74,6 +74,22 @@ package.dependencies.append(
   }
  ```
  
+ # Networking
+ Make sure your app has AppTransportSecurity settings to allow HTTP access to the `https://main-rpc.linkpool.io` domain.
+ 
+ ## Custom Networking Layer
+ The UnstoppableDomainsResolution library is using native iOS networking API to connect to the internet. If you want the library to use your own networking layer you need to conform your networking layer to the `NetworkingLayer` protocol, which requires only one method to be implemented: `makeHttpPostRequest(url:, httpMethod:, httpHeaderContentType:, httpBody:, completion:)` This method would delegate the request to your own networking code.
+ 
+ ```swift 
+ 
+ guard let resolution = try? Resolution(networking: MyNetworkingApi) else {
+    print ("Init of Resolution instance failed...")
+    return
+ }
+ 
+ ```
+ 
+ 
  # Possible Errors:
  In case if domain is not registered, or doesn't contain some information you are requesting this framework will return ResolutionError with these possible cases:
  It is adviced to check for the errors and show the users an appropriate localized message

@@ -22,13 +22,13 @@ internal class CNS: CommonNamingService, NamingService {
     let registryAddress: String
     var proxyReaderContract: Contract?
 
-    init(network: String, providerUrl: String) throws {
+    init(network: String, providerUrl: String, networking: NetworkingLayer) throws {
         guard let registryAddress = registryMap[network] else {
             throw ResolutionError.unsupportedNetwork
         }
         self.network = network
         self.registryAddress = registryAddress
-        super.init(name: Self.name, providerUrl: providerUrl)
+        super.init(name: Self.name, providerUrl: providerUrl, networking: networking)
         proxyReaderContract = try super.buildContract(address: Self.proxyReaderAddress, type: .proxyReader)
     }
 

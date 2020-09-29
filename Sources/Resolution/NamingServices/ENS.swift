@@ -20,13 +20,13 @@ internal class ENS: CommonNamingService, NamingService {
         "goerli": "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e"
     ]
 
-    init(network: String, providerUrl: String) throws {
+    init(network: String, providerUrl: String, networking: NetworkingLayer) throws {
         guard let registryAddress = registryMap[network] else {
             throw ResolutionError.unsupportedNetwork
         }
         self.network = network
         self.registryAddress = registryAddress
-        super.init(name: "ENS", providerUrl: providerUrl)
+        super.init(name: "ENS", providerUrl: providerUrl, networking: networking)
     }
 
     func isSupported(domain: String) -> Bool {

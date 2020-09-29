@@ -15,11 +15,13 @@ internal class Contract {
     let address: String
     let providerUrl: String
     let coder: ABICoder
+    let networking: NetworkingLayer
 
-    init(providerUrl: String, address: String, abi: ABIContract) {
+    init(providerUrl: String, address: String, abi: ABIContract, networking: NetworkingLayer) {
         self.address = address
         self.providerUrl = providerUrl
         self.coder = ABICoder(abi)
+        self.networking = networking
     }
 
     func callMethod(methodName: String, args: [Any]) throws -> Any {
@@ -38,7 +40,7 @@ internal class Contract {
     }
 
     private func postRequest(_ body: JsonRpcPayload) throws -> String? {
-        let postRequest = APIRequest(providerUrl)
+        let postRequest = APIRequest(providerUrl, networking: networking)
         var resp: JsonRpcResponse?
         var err: Error?
         let semaphore = DispatchSemaphore(value: 0)

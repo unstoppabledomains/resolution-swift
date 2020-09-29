@@ -43,11 +43,13 @@ public class Resolution {
     private var providerUrl: String
     private let services: [NamingService]
     
-    public init(providerUrl: String = "https://main-rpc.linkpool.io", network: String = "mainnet") throws {
+    public init(providerUrl: String = "https://main-rpc.linkpool.io",
+                network: String = "mainnet",
+                networking: NetworkingLayer = DefaultNetworkingLayer() ) throws {
         self.providerUrl = providerUrl
-        let cns = try CNS(network: network, providerUrl: providerUrl)
-        let ens = try ENS(network: network, providerUrl: providerUrl)
-        let zns = try ZNS(network: network, providerUrl: "https://api.zilliqa.com/")
+        let cns = try CNS(network: network, providerUrl: providerUrl, networking: networking)
+        let ens = try ENS(network: network, providerUrl: providerUrl, networking: networking)
+        let zns = try ZNS(network: network, providerUrl: "https://api.zilliqa.com/", networking: networking)
         self.services = [cns, ens, zns]
     }
 

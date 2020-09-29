@@ -21,13 +21,13 @@ public struct JsonRpcPayload: Codable {
     }
 }
 
-enum ParamElement: Codable {
+public enum ParamElement: Codable {
     case paramClass(ParamClass)
     case string(String)
     case array([ParamElement])
     case dictionary([String: ParamElement])
 
-    init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
         if let elem = try? container.decode(String.self) {
             self = .string(elem)
@@ -53,7 +53,7 @@ enum ParamElement: Codable {
         )
     }
 
-    func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
         switch self {
         case .paramClass(let elem):
@@ -68,12 +68,12 @@ enum ParamElement: Codable {
     }
 }
 
-struct ParamClass: Codable {
+public struct ParamClass: Codable {
     let data: String
     let to: String
 }
 
-struct JsonRpcResponse: Codable {
+public struct JsonRpcResponse: Codable {
     let jsonrpc: String
     let id: String
     let result: ParamElement
