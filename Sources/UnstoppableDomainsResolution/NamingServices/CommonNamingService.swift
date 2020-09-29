@@ -15,6 +15,7 @@ class CommonNamingService {
 
     let name: String
     let providerUrl: String
+    let networking: NetworkingLayer
 
     enum ContractType {
         case registry
@@ -22,9 +23,10 @@ class CommonNamingService {
         case proxyReader
     }
 
-    init(name: String, providerUrl: String) {
+    init(name: String, providerUrl: String, networking: NetworkingLayer) {
         self.name = name
         self.providerUrl = providerUrl
+        self.networking = networking
     }
 
     func buildContract(address: String, type: ContractType) throws -> Contract {
@@ -41,7 +43,7 @@ class CommonNamingService {
         }
 
         let abi: ABIContract = try parseAbi(fromFile: jsonFileName)!
-        return Contract(providerUrl: self.providerUrl, address: address, abi: abi)
+        return Contract(providerUrl: self.providerUrl, address: address, abi: abi, networking: networking)
     }
 
     func parseAbi(fromFile name: String) throws -> ABIContract? {

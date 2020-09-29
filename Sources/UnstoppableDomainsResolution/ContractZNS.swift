@@ -11,10 +11,12 @@ import Foundation
 internal class ContractZNS {
     let address: String
     let providerUrl: String
+    let networking: NetworkingLayer
 
-    init(providerUrl: String, address: String) {
+    init(providerUrl: String, address: String, networking: NetworkingLayer) {
         self.address = address
         self.providerUrl = providerUrl
+        self.networking = networking
     }
 
     func fetchSubState(field: String, keys: [String]) throws -> Any {
@@ -41,7 +43,7 @@ internal class ContractZNS {
     }
 
     private func postRequest(_ body: JsonRpcPayload) throws -> Any? {
-        let postRequest = APIRequest(providerUrl)
+        let postRequest = APIRequest(providerUrl, networking: networking)
         var resp: JsonRpcResponse?
         var err: Error?
         let semaphore = DispatchSemaphore(value: 0)
