@@ -80,6 +80,8 @@ package.dependencies.append(
  ## Custom Networking Layer
  The UnstoppableDomainsResolution library is using native iOS networking API to connect to the internet. If you want the library to use your own networking layer you need to conform your networking layer to the `NetworkingLayer` protocol, which requires only one method to be implemented: `makeHttpPostRequest(url:, httpMethod:, httpHeaderContentType:, httpBody:, completion:)` This method would delegate the request to your own networking code.
  
+ In this case the construction of the Resolution instance would be like so:
+ 
  ```swift 
  
  guard let resolution = try? Resolution(networking: MyNetworkingApi) else {
