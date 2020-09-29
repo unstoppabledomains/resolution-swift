@@ -16,7 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3EE4DA0224E367720097540B"
                BuildableName = "Resolution.framework"
-               BlueprintName = "Resolution"
+               BlueprintName = "UnstoppableDomainsResolution"
                ReferencedContainer = "container:Resolution.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -62,7 +62,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3EE4DA0224E367720097540B"
             BuildableName = "Resolution.framework"
-            BlueprintName = "Resolution"
+            BlueprintName = "UnstoppableDomainsResolution"
             ReferencedContainer = "container:Resolution.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

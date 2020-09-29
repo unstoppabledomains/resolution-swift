@@ -4,33 +4,35 @@
 import PackageDescription
 
 let package = Package(
-    name: "Resolution",
+    name: "UnstoppableDomainsResolution",
+    platforms: [.macOS(.v10_15), .iOS(.v13) ],
     products: [
         .library(
-            name: "Resolution",
-            targets: ["Resolution"])
+            name: "UnstoppableDomainsResolution",
+            type: nil,
+            targets: ["UnstoppableDomainsResolution"])
     ],
     dependencies: [
         .package(url: "https://github.com/deczer/EthereumABI", .upToNextMinor(from: "1.0.0")),
-        .package(url: "https://github.com/keefertaylor/Base58Swift.git", .upToNextMinor(from: "2.1.0")),
+        .package(url: "https://github.com/keefertaylor/Base58Swift.git", .upToNextMinor(from: "2.1.0"))
     ],
     targets: [
         .target(
-            name: "Resolution",
+            name: "UnstoppableDomainsResolution",
             dependencies: ["EthereumABI", "Base58Swift"],
             resources: [
-                .copy("ABI/CNS/cnsRegistry.json"),
-                .copy("ABI/CNS/cnsResolver.json")
-            ]
+                .process("Resources/CNS/cnsProxyReader.json"),
+                .process("Resources/CNS/cnsRegistry.json"),
+                .process("Resources/CNS/cnsResolver.json"),
+                .process("Resources/ENS/ensRegistry.json"),
+                .process("Resources/ENS/ensResolver.json")
+            ],
+            swiftSettings: [.define("INSIDE_PM")]
         ),
         .testTarget(
             name: "ResolutionTests",
-            dependencies: ["Resolution"],
-            exclude:["Info.plist"],
-            resources: [
-                .copy("ABI/CNS/cnsRegistry.json"),
-                .copy("ABI/CNS/cnsResolver.json")
-            ]
+            dependencies: ["UnstoppableDomainsResolution"],
+            exclude:["Info.plist"]
         )
     ]
 )

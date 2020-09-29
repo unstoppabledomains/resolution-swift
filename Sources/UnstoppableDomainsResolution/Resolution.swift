@@ -42,7 +42,7 @@ public class Resolution {
 
     private var providerUrl: String
     private let services: [NamingService]
-    
+
     public init(providerUrl: String = "https://main-rpc.linkpool.io", network: String = "mainnet") throws {
         self.providerUrl = providerUrl
         let cns = try CNS(network: network, providerUrl: providerUrl)

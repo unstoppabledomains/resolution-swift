@@ -7,7 +7,11 @@
 //
 
 import XCTest
+#if INSIDE_PM
+@testable import UnstoppableDomainsResolution
+#else
 @testable import Resolution
+#endif
 
 var resolution: Resolution!
 
