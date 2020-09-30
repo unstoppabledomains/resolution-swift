@@ -47,7 +47,12 @@ class CommonNamingService {
     }
 
     func parseAbi(fromFile name: String) throws -> ABIContract? {
-        if let filePath = Bundle(for: type(of: self)).url(forResource: name, withExtension: "json") {
+        #if INSIDE_PM
+        let bundler = Bundle.module
+        #else
+        let bundler = Bundle(for: type(of: self))
+        #endif
+        if let filePath = bundler.url(forResource: name, withExtension: "json") {
             let data = try Data(contentsOf: filePath)
             let jsonDecoder = JSONDecoder()
             let abi = try jsonDecoder.decode([ABI.Record].self, from: data)

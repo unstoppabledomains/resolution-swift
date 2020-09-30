@@ -71,6 +71,8 @@
 		845B401C251389A4006AB08E /* ENS.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ENS.swift; sourceTree = "<group>"; };
 		848E21082507890A008707D2 /* ZNS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZNS.swift; sourceTree = "<group>"; };
 		848E210B25079D61008707D2 /* Types.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Types.swift; sourceTree = "<group>"; };
+		849E07CC24F946CA00A793D3 /* LinuxMain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinuxMain.swift; sourceTree = "<group>"; };
+		849E07D124F9499900A793D3 /* XCTestManifests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XCTestManifests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -178,7 +180,7 @@
 				3EAFA3FF24EE0CFD008791E9 /* APIRequest.swift */,
 			);
 			name = Resolution;
-			path = Sources/Resolution;
+			path = Sources/UnstoppableDomainsResolution;
 			sourceTree = SOURCE_ROOT;
 		};
 		3EE4DA1024E367720097540B /* ResolutionTests */ = {
@@ -186,6 +188,7 @@
 			children = (
 				3EE4DA1124E367720097540B /* ResolutionTests.swift */,
 				3EE4DA1324E367720097540B /* Info.plist */,
+				849E07D124F9499900A793D3 /* XCTestManifests.swift */,
 			);
 			path = ResolutionTests;
 			sourceTree = "<group>";
@@ -220,6 +223,7 @@
 		849E07CB24F946CA00A793D3 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				849E07CC24F946CA00A793D3 /* LinuxMain.swift */,
 				3EE4DA1024E367720097540B /* ResolutionTests */,
 			);
 			path = Tests;
@@ -246,9 +250,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		3EE4DA0224E367720097540B /* Resolution */ = {
+		3EE4DA0224E367720097540B /* UnstoppableDomainsResolution */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 3EE4DA1724E367720097540B /* Build configuration list for PBXNativeTarget "Resolution" */;
+			buildConfigurationList = 3EE4DA1724E367720097540B /* Build configuration list for PBXNativeTarget "UnstoppableDomainsResolution" */;
 			buildPhases = (
 				3EE4D9FE24E367720097540B /* Headers */,
 				3EE4D9FF24E367720097540B /* Sources */,
@@ -260,7 +264,7 @@
 			);
 			dependencies = (
 			);
-			name = Resolution;
+			name = UnstoppableDomainsResolution;
 			packageProductDependencies = (
 				B6A944F625194EDC00894E27 /* EthereumABI */,
 				B6A0F432251CB1F60018F233 /* Base58Swift */,
@@ -323,7 +327,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				3EE4DA0224E367720097540B /* Resolution */,
+				3EE4DA0224E367720097540B /* UnstoppableDomainsResolution */,
 				3EE4DA0B24E367720097540B /* ResolutionTests */,
 			);
 		};
@@ -407,7 +411,7 @@
 /* Begin PBXTargetDependency section */
 		3EE4DA0F24E367720097540B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 3EE4DA0224E367720097540B /* Resolution */;
+			target = 3EE4DA0224E367720097540B /* UnstoppableDomainsResolution */;
 			targetProxy = 3EE4DA0E24E367720097540B /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -636,7 +640,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		3EE4DA1724E367720097540B /* Build configuration list for PBXNativeTarget "Resolution" */ = {
+		3EE4DA1724E367720097540B /* Build configuration list for PBXNativeTarget "UnstoppableDomainsResolution" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3EE4DA1824E367720097540B /* Debug */,
