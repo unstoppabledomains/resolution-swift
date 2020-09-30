@@ -20,9 +20,9 @@ Pod::Spec.new do |spec|
   spec.swift_version = '5.0'
 
   spec.source       = { :git => "https://github.com/unstoppabledomains/resolution-swift.git", :tag => spec.version }
-  spec.source_files  = "Sources/Resolution/**/*"
+  spec.source_files  = "Sources/UnstoppableDomainsResolution/**/*"
 
-  spec.resources = "Sources/Resolution/Resources/**/*"
+  spec.resources = "Sources/UnstoppableDomainsResolution/Resources/**/*"
 
   spec.dependency 'EthereumABI', '~> 1.2'
   spec.dependency 'Base58Swift', '~> 2.1'
