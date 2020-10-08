@@ -51,9 +51,17 @@ internal class CNS: CommonNamingService, NamingService {
         return rec
     }
     
-    func batchOwners(domains: String) throws -> [String] {
-        // stub
-        return []
+    func batchOwners(domains: [String]) throws -> [String?] {
+        let tokenIds = domains.map { super.namehash(domain: $0) }
+        let res: [Any]
+        do {
+            res = try self.getBatchData(keys: [Contract.OWNER_KEY], for: tokenIds)
+        } catch {
+            throw ResolutionError.unregisteredDomain
+        }
+        
+        let rec = res.map { self.unfold(contractResult: $0, key: Contract.OWNER_KEY) }
+        return rec
     }
 
     func resolver(domain: String) throws -> String {
@@ -154,6 +162,12 @@ internal class CNS: CommonNamingService, NamingService {
 
     private func getData(keys: [String], for tokenId: String) throws -> Any {
         if let result = try proxyReaderContract?.callMethod(methodName: "getData", args: [keys, tokenId]) {
+            return result }
+        throw ResolutionError.proxyReaderNonInitialized
+    }
+    
+    private func getBatchData(keys: [String], for tokenIds: [String]) throws -> [Any] {
+        if let result = try proxyReaderContract?.callBatchMethod(methodName: "getData", argsArray: tokenIds.map { [keys, $0] }) {
             return result }
         throw ResolutionError.proxyReaderNonInitialized
     }

@@ -39,6 +39,15 @@ struct APIRequest {
                                        httpBody: body,
                                        completion: completion)
     }
+    
+    func post(_ bodyArray: [JsonRpcPayload], completion: @escaping(Result<JsonRpcResponse, APIError>) -> Void ) {
+        //stub
+        networking.makeHttpPostRequest(url: self.url,
+                                       httpMethod: "POST",
+                                       httpHeaderContentType: "application/json",
+                                       httpBody: bodyArray[0],
+                                       completion: completion)
+    }
 }
 
 public struct DefaultNetworkingLayer: NetworkingLayer {
