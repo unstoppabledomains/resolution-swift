@@ -9,5 +9,6 @@
 import Foundation
 
 public typealias StringResultConsumer = (Result<String, ResolutionError>) -> Void
+public typealias StringsArratResultConsumer = (Result<[String], ResolutionError>) -> Void
 public typealias DictionaryResultConsumer = (Result<[String: String], ResolutionError>) -> Void
 public let EthCoinIndex = 60

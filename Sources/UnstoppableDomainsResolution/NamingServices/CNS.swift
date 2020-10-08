@@ -50,6 +50,11 @@ internal class CNS: CommonNamingService, NamingService {
         }
         return rec
     }
+    
+    func batchOwners(domains: String) throws -> [String] {
+        // stub
+        return []
+    }
 
     func resolver(domain: String) throws -> String {
         let tokenId = super.namehash(domain: domain)
