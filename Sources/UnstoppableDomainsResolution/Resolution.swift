@@ -300,7 +300,6 @@ public class Resolution {
             completion(.failure(.unknownError(error)))
             return
         }
-
         completion(.failure(catched))
     }
 
@@ -310,7 +309,15 @@ public class Resolution {
             completion(.failure(.unknownError(error)))
             return
         }
-
+        completion(.failure(catched))
+    }
+    
+    /// Process the 'error'
+    private func catchError(_ error: Error, completion:@escaping StringsArratResultConsumer ) {
+        guard let catched = error as? ResolutionError else {
+            completion(.failure(.unknownError(error)))
+            return
+        }
         completion(.failure(catched))
     }
 }

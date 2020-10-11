@@ -39,6 +39,7 @@ internal class Contract {
             return try self.coder.decode(response, from: methodName)
     }
     
+    //stub
     func callBatchMethod(methodName: String, argsArray: [[Any]]) throws -> [Any] {
         let encodedDataArray = try argsArray.map { try self.coder.encode(method: methodName, args: $0) }
         let bodyArray: [JsonRpcPayload] = encodedDataArray.map { JsonRpcPayload(
@@ -51,15 +52,15 @@ internal class Contract {
             ]
         ) }
         let response = try postBatchRequest(bodyArray)!
-        return try self.coder.decode(response, from: methodName)
+        return try response.map { try self.coder.decode($0, from: methodName) }
 }
 
     private func postRequest(_ body: JsonRpcPayload) throws -> String? {
         let postRequest = APIRequest(providerUrl, networking: networking)
-        var resp: JsonRpcResponse?
+        var resp: JsonRpcResponseArray?
         var err: Error?
         let semaphore = DispatchSemaphore(value: 0)
-        postRequest.post(body, completion: {result in
+        try postRequest.post(body, completion: {result in
             switch result {
             case .success(let response):
                 resp = response
@@ -72,7 +73,7 @@ internal class Contract {
         guard err == nil else {
             throw err!
         }
-        switch resp?.result {
+        switch resp?[0].result {
         case .string(let result):
             return result
         default:
@@ -80,12 +81,12 @@ internal class Contract {
         }
     }
     
-    private func postBatchRequest(_ bodyArray: [JsonRpcPayload]) throws -> String? {
+    private func postBatchRequest(_ bodyArray: [JsonRpcPayload]) throws -> [String]? {
         let postRequest = APIRequest(providerUrl, networking: networking)
-        var resp: JsonRpcResponse?
+        var resp: JsonRpcResponseArray?
         var err: Error?
         let semaphore = DispatchSemaphore(value: 0)
-        postRequest.post(bodyArray, completion: {result in
+        try postRequest.post(bodyArray, completion: {result in
             switch result {
             case .success(let response):
                 resp = response
@@ -98,14 +99,16 @@ internal class Contract {
         guard err == nil else {
             throw err!
         }
-        switch resp?.result {
-        case .string(let result):
-            return result
-        default:
+        
+        let respArray = resp?.compactMap { $0.result }
+        guard respArray?.count == resp?.count else { return nil }
+        guard let elements = respArray else { return nil }
+        let fin: [String] = elements.compactMap { element in
+            if case let ParamElement.string (result) = element {
+                return result
+            }
             return nil
         }
-        
-        
-        
+        return fin
     }
 }
