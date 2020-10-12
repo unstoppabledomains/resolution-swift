@@ -25,32 +25,15 @@ internal class Contract {
     }
 
     func callMethod(methodName: String, args: [Any]) throws -> Any {
-            let encodedData = try self.coder.encode(method: methodName, args: args)
-            let body: JsonRpcPayload = JsonRpcPayload(
-                jsonrpc: "2.0",
-                id: "1",
-                method: "eth_call",
-                params: [
-                    ParamElement.paramClass(ParamClass(data: encodedData, to: address)),
-                    ParamElement.string("latest")
-                ]
-            )
-            let response = try postRequest(body)!
-            return try self.coder.decode(response, from: methodName)
+        let encodedData = try self.coder.encode(method: methodName, args: args)
+        let body = JsonRpcPayload(id: "1", data: encodedData, to: address)
+        let response = try postRequest(body)!
+        return try self.coder.decode(response, from: methodName)
     }
     
-    //stub
     func callBatchMethod(methodName: String, argsArray: [[Any]]) throws -> [Any] {
         let encodedDataArray = try argsArray.map { try self.coder.encode(method: methodName, args: $0) }
-        let bodyArray: [JsonRpcPayload] = encodedDataArray.map { JsonRpcPayload(
-            jsonrpc: "2.0",
-            id: "1",
-            method: "eth_call",
-            params: [
-                ParamElement.paramClass(ParamClass(data: $0, to: address)),
-                ParamElement.string("latest")
-            ]
-        ) }
+        let bodyArray: [JsonRpcPayload] = encodedDataArray.map { JsonRpcPayload(id: "1", data: $0, to: address) }
         let response = try postBatchRequest(bodyArray)!
         return try response.map { try self.coder.decode($0, from: methodName) }
 }
