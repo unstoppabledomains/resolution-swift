@@ -38,6 +38,10 @@ internal class ZNS: CommonNamingService, NamingService {
 
         return ownerAddress
     }
+    
+    func batchOwners(domains: [String]) throws -> [String?] {
+        throw ResolutionError.methodNotSupported
+    }
 
     func addr(domain: String, ticker: String) throws -> String {
         let key = "crypto.\(ticker.uppercased()).address"
