@@ -15,8 +15,6 @@ internal class ZNS: CommonNamingService, NamingService {
     let registryMap: [String: String] = [
         "mainnet": "0x9611c53be6d1b32058b2747bdececed7e1216793"
     ]
-    
-    let ARGUMENTS_KEY = "arguments"
 
     init(network: String, providerUrl: String, networking: NetworkingLayer) throws {
         guard let registryAddress = registryMap[network] else {
@@ -39,17 +37,6 @@ internal class ZNS: CommonNamingService, NamingService {
         }
 
         return ownerAddress
-    }
-    
-    //stub
-    func batchOwners(domains: [String]) throws -> [String?] {
-        let recordAddressesArray = try self.recordsAddressesBatch(domains: domains)
-//        let (ownerAddress, _ ) = recordAddresses
-//        guard Utillities.isNotEmpty(ownerAddress) else {
-//                throw ResolutionError.unregisteredDomain
-//        }
-//
-//        return ownerAddress
     }
 
     func addr(domain: String, ticker: String) throws -> String {
@@ -96,7 +83,7 @@ internal class ZNS: CommonNamingService, NamingService {
 
     private func recordsAddresses(domain: String) throws -> (String, String) {
 
-        guard self.isSupported(domain: domain) else {
+        if !self.isSupported(domain: domain) {
             throw ResolutionError.unsupportedDomain
         }
 
@@ -105,34 +92,13 @@ internal class ZNS: CommonNamingService, NamingService {
 
         guard
             let record = records[namehash] as? [String: Any],
-            let arguments = record[ARGUMENTS_KEY] as? [Any], arguments.count == 2,
+            let arguments = record["arguments"] as? [Any], arguments.count == 2,
             let ownerAddress = arguments[0] as? String, let resolverAddress = arguments[1] as? String
             else {
                 throw ResolutionError.unregisteredDomain
         }
 
         return (ownerAddress, resolverAddress)
-    }
-    
-    private func recordsAddressesBatch(domains: [String]) throws -> ([String], [String]) {
-        guard domains.map({ self.isSupported(domain: $0) })
-                .reduce(true, {allSupported, isSupported in return allSupported && isSupported}) else {
-            throw ResolutionError.unsupportedDomain
-        }
-        let namehashArray = domains.map { self.namehash(domain: $0) }
-        let recordsArray: [[String: Any]] = try self.batchRecords(address: self.registryAddress, keysArray: [[namehash]])
-        
-        guard
-            let recordArray = recordsArray.map({ $0[namehash] as? [String: Any] }), recordArray.areAllNonNil,
-            let argumentsArray = recordArray.map ({ $0[ARGUMENTS_KEY] as? [Any] }), argumentsArray.map({$0.count == 2}).areAllTrue,
-            //let arguments = record["arguments"] as? [Any], arguments.count == 2,
-            let ownerAddressArray = argumentsArray.map ({ $0[0] as? String }), ownerAddressArray.areAllNonNil,
-            let resolverAddressArray = argumentsArray.map ({ $0[1] as? String }), resolverAddressArray.areAllNonNil
-            else {
-                throw ResolutionError.unregisteredDomain
-        }
-
-        return (ownerAddressArray, resolverAddressArray)
     }
 
     private func records(address: String, keys: [String] = []) throws -> [String: Any] {
@@ -148,25 +114,9 @@ internal class ZNS: CommonNamingService, NamingService {
 
       return records
     }
-    
-    private func batchRecords(address: String, keysArray: [[String]] = [[]]) throws -> [[String: Any]] {
-        
-        
-    }
 
     func buildContract(address: String) -> ContractZNS {
         return ContractZNS(providerUrl: self.providerUrl, address: address.replacingOccurrences(of: "0x", with: ""), networking: networking)
     }
 
-}
-
-extension Array where Element == Bool {
-    var areAllTrue: Bool {
-        self.reduce(true, {all, element in all && element})
-    }
-}
-extension Array where Element == Optional<Any> {
-    var areAllNonNil: Bool {
-        self.reduce(true, {all, element in all && (element != nil) })
-    }
 }

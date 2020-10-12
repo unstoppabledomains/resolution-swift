@@ -47,10 +47,10 @@ internal class ContractZNS {
         var resp: JsonRpcResponse?
         var err: Error?
         let semaphore = DispatchSemaphore(value: 0)
-        try postRequest.post(body, completion: {result in
+        postRequest.post(body, completion: {result in
             switch result {
             case .success(let response):
-                resp = response[0]
+                resp = response
             case .failure(let error):
                 err = error
             }
