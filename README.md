@@ -9,12 +9,12 @@ This framework helps to resolve a decentralized domain name such as `brad.crypto
 
 ## Cocoa Pods
 ```ruby
-pod 'UnstoppableDomainsResolution', '~> 0.1.2'
+pod 'UnstoppableDomainsResolution', '~> 0.1.3'
 ```
 ## Swift Package Manager
 ```swift
 package.dependencies.append(
-    .package(url: "https://github.com/unstoppabledomains/resolution-swift", from: "0.1.2")
+    .package(url: "https://github.com/unstoppabledomains/resolution-swift", from: "0.1.3")
 )
 ```
 
@@ -74,6 +74,22 @@ package.dependencies.append(
   }
  ```
  
+ ## Batch request of owners
+ In the version 0.1.3 there was introduced a method `batchOwners(domains: _, completion: _ )` that adds additional convenience to query the owners of the array of domains. The domains must be only CNS-compatible (other kind of domains will throw `ResolutionError.methodNotSupported`). The result will return only if all domains are resolved.
+ 
+ ```swift
+ 
+ resolution.batchOwners(domains: ["brad.crypto", "otherbrad.crypto"]) { result in
+     switch result {
+     case .success(let returnValue):
+           // returnValue = <array of owners's addresses>
+         let domainOwner = returnValue
+     case .failure(let error):
+         XCTFail("Expected owner, but got \(error)")
+     }
+ }
+ ```
+ 
  # Networking
  Make sure your app has AppTransportSecurity settings to allow HTTP access to the `https://main-rpc.linkpool.io` domain.
  
@@ -106,6 +122,8 @@ enum ResolutionError: Error {
     case unspecifiedResolver
     case unknownError(Error)
     case proxyReaderNonInitialized
+    case inconsistenDomainArray
+    case methodNotSupported
 }
 ```
 
