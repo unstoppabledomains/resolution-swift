@@ -6,8 +6,15 @@
 //  Copyright © 2020 Unstoppable Domains. All rights reserved.
 //
 
+struct IdentifiableResult<T> {
+    var id: String
+    var result: T
+}
+
 import Foundation
 internal class Contract {
+    let BATCH_ID_OFFSET = 128
+    
     static let OWNER_KEY = "owner"
     static let RESOLVER_KEY = "resolver"
     static let VALUES_KEY = "values"
@@ -31,11 +38,14 @@ internal class Contract {
         return try self.coder.decode(response, from: methodName)
     }
     
-    func callBatchMethod(methodName: String, argsArray: [[Any]]) throws -> [Any] {
+    func callBatchMethod(methodName: String, argsArray: [[Any]]) throws -> [IdentifiableResult<Any>] {
         let encodedDataArray = try argsArray.map { try self.coder.encode(method: methodName, args: $0) }
-        let bodyArray: [JsonRpcPayload] = encodedDataArray.map { JsonRpcPayload(id: "1", data: $0, to: address) }
+        let bodyArray: [JsonRpcPayload] = encodedDataArray.enumerated()
+                                                            .map { JsonRpcPayload(id: String($0.offset + BATCH_ID_OFFSET),
+                                                                                  data: $0.element,
+                                                                                  to: address) }
         let response = try postBatchRequest(bodyArray)!
-        return try response.map { try self.coder.decode($0, from: methodName) }
+        return try response.map { IdentifiableResult<Any>(id: $0.id, result: try self.coder.decode($0.result, from: methodName)) }
 }
 
     private func postRequest(_ body: JsonRpcPayload) throws -> String? {
@@ -64,7 +74,7 @@ internal class Contract {
         }
     }
     
-    private func postBatchRequest(_ bodyArray: [JsonRpcPayload]) throws -> [String]? {
+    private func postBatchRequest(_ bodyArray: [JsonRpcPayload]) throws -> [IdentifiableResult<String>]? {
         let postRequest = APIRequest(providerUrl, networking: networking)
         var resp: JsonRpcResponseArray?
         var err: Error?
@@ -83,15 +93,15 @@ internal class Contract {
             throw err!
         }
         
-        let respArray = resp?.compactMap { $0.result }
-        guard respArray?.count == resp?.count else { return nil }
-        guard let elements = respArray else { return nil }
-        let fin: [String] = elements.compactMap { element in
-            if case let ParamElement.string (result) = element {
-                return result
+        guard let responseArray = resp else { return nil }
+        
+        let parsedResponseArray: [IdentifiableResult<String>?] = responseArray.map {
+            if case let ParamElement.string ( stringResult ) = $0.result {
+                return IdentifiableResult<String>(id: $0.id, result: stringResult)
             }
             return nil
         }
-        return fin
+        guard parsedResponseArray.reduce(true, { all, element in all && (element != nil) }) else { return nil }
+        return parsedResponseArray.map {$0!}
     }
 }
