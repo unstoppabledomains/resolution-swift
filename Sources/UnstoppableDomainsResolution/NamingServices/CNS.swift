@@ -17,6 +17,8 @@ internal class CNS: CommonNamingService, NamingService {
         "mainnet": "0xD1E5b0FF1287aA9f9A268759062E4Ab08b9Dacbe",
         "kovan": "0x22c2738cdA28C5598b1a68Fb1C89567c2364936F"
     ]
+    
+    let GETDATA_METHOD_NAME = "getData"
 
     let network: String
     let registryAddress: String
@@ -48,6 +50,20 @@ internal class CNS: CommonNamingService, NamingService {
         guard let rec = self.unfold(contractResult: res, key: Contract.OWNER_KEY) else {
             throw ResolutionError.unregisteredDomain
         }
+        return rec
+    }
+    
+    func batchOwners(domains: [String]) throws -> [String?] {
+        let tokenIds = domains.map { super.namehash(domain: $0) }
+        let res: [IdentifiableResult<Any>]
+        do {
+            res = try self.getBatchData(keys: [Contract.OWNER_KEY], for: tokenIds)
+        } catch {
+            throw ResolutionError.unregisteredDomain
+        }
+        
+        let rec = res.sorted(by: {Int($0.id)! < Int($1.id)!})
+            .map { self.unfold(contractResult: $0.result, key: Contract.OWNER_KEY) }
         return rec
     }
 
@@ -148,7 +164,13 @@ internal class CNS: CommonNamingService, NamingService {
     }
 
     private func getData(keys: [String], for tokenId: String) throws -> Any {
-        if let result = try proxyReaderContract?.callMethod(methodName: "getData", args: [keys, tokenId]) {
+        if let result = try proxyReaderContract?.callMethod(methodName: GETDATA_METHOD_NAME, args: [keys, tokenId]) {
+            return result }
+        throw ResolutionError.proxyReaderNonInitialized
+    }
+    
+    private func getBatchData(keys: [String], for tokenIds: [String]) throws -> [IdentifiableResult<Any>] {
+        if let result = try proxyReaderContract?.callBatchMethod(methodName: GETDATA_METHOD_NAME, argsArray: tokenIds.map { [keys, $0] }) {
             return result }
         throw ResolutionError.proxyReaderNonInitialized
     }

@@ -41,6 +41,10 @@ internal class ENS: CommonNamingService, NamingService {
         }
         return ownerAddress
     }
+    
+    func batchOwners(domains: [String]) throws -> [String?] {
+        throw ResolutionError.methodNotSupported
+    }
 
     func addr(domain: String, ticker: String) throws -> String {
         guard ticker.uppercased() == "ETH" else {
