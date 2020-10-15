@@ -116,6 +116,9 @@ class ResolutionTests: XCTestCase {
         
         // Given
         let domainCryptoReceived = expectation(description: "Existing Crypto domains should be received")
+        let unregisteredReceived = expectation(description: "Unregistered domain should be received at least for one error")
+
+        var unregisteredResult: Result<String, ResolutionError>!
 
         var owners: [String] = []
 
@@ -129,13 +132,19 @@ class ResolutionTests: XCTestCase {
                 XCTFail("Expected owners, but got \(error)")
             }
         }
+        
+        resolution.batchOwner(domain: ["brad.crypto", "unregistered.crypto"]) {
+            unregisteredResult = $0
+            unregisteredReceived.fulfill()
+        }
 
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         let lowercasedOwners = owners.map({$0.lowercased()})
-        assert( lowercasedOwners.contains( "0x8aaD44321A86b170879d7A244c1e8d360c99DdA8".lowercased() ) )
-        assert( lowercasedOwners.contains( "0x53E238E686BeFF9853b2d8ede1D6B3067A921AAa".lowercased() ) )
+        assert( lowercasedOwners[0] = "0x8aaD44321A86b170879d7A244c1e8d360c99DdA8".lowercased() )
+        assert( lowercasedOwners[1] = "0x53E238E686BeFF9853b2d8ede1D6B3067A921AAa".lowercased() )
+        self.checkError(result: unregisteredResult, expectedError: ResolutionError.unregisteredDomain)
     }
     
     func testGetResolver() throws {
