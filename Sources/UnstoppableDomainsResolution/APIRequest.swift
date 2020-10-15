@@ -65,7 +65,6 @@ public struct DefaultNetworkingLayer: NetworkingLayer {
             urlRequest.addValue(httpHeaderContentType, forHTTPHeaderField: "Content-Type")
             urlRequest.httpBody = httpBody
             
-            let strin = String(data: httpBody, encoding: .utf8)
             let dataTask = URLSession.shared.dataTask(with: urlRequest) { data, response, _ in
                 guard let httpResponse = response as? HTTPURLResponse,
                       httpResponse.statusCode == 200,
@@ -86,35 +85,4 @@ public struct DefaultNetworkingLayer: NetworkingLayer {
             completion(.failure(.encodingError))
         }
     }
-    
-//    public func makeHttpPostRequest(url: URL,
-//                             httpMethod: String,
-//                             httpHeaderContentType: String,
-//                             httpBody: [JsonRpcPayload],
-//                             completion: @escaping(Result<JsonRpcResponse, APIError>) -> Void) {
-//        do {
-//            var urlRequest = URLRequest(url: url)
-//            urlRequest.httpMethod = httpMethod
-//            urlRequest.addValue(httpHeaderContentType, forHTTPHeaderField: "Content-Type")
-//            urlRequest.httpBody = try JSONEncoder().encode(httpBody)
-//            let dataTask = URLSession.shared.dataTask(with: urlRequest) { data, response, _ in
-//                guard let httpResponse = response as? HTTPURLResponse,
-//                      httpResponse.statusCode == 200,
-//                      let jsonData = data else {
-//                    completion(.failure(.responseError))
-//                    return
-//                }
-//
-//                do {
-//                    let result = try JSONDecoder().decode(JsonRpcResponse.self, from: jsonData)
-//                    completion(.success(result))
-//                } catch {
-//                    completion(.failure(.decodingError))
-//                }
-//            }
-//            dataTask.resume()
-//        } catch {
-//            completion(.failure(.encodingError))
-//        }
-//    }
 }

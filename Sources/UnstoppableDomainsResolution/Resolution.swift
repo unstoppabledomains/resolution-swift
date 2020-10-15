@@ -100,7 +100,7 @@ public class Resolution {
     /// Resolves owner addresses of an array of `domain`s
     /// - Parameter domains: - array of domain names
     /// - Parameter completion: A callback that resolves `Result`  with an array of `owner address`'s or `Error`
-    public func batchOwners(domains: [String], completion: @escaping StringsArratResultConsumer ) {
+    public func batchOwners(domains: [String], completion: @escaping StringsArrayResultConsumer ) {
         let preparedDomains = domains.map { prepare(domain: $0) }
         DispatchQueue.global(qos: .utility).async { [weak self] in
             do {
@@ -313,7 +313,7 @@ public class Resolution {
     }
     
     /// Process the 'error'
-    private func catchError(_ error: Error, completion:@escaping StringsArratResultConsumer ) {
+    private func catchError(_ error: Error, completion:@escaping StringsArrayResultConsumer ) {
         guard let catched = error as? ResolutionError else {
             completion(.failure(.unknownError(error)))
             return
