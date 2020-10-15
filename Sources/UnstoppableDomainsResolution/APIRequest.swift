@@ -86,8 +86,6 @@ public struct DefaultNetworkingLayer: NetworkingLayer {
                 }
             }
             dataTask.resume()
-        } catch {
-            completion(.failure(.encodingError))
         }
     }
 }
