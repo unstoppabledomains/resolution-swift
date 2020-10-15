@@ -55,37 +55,35 @@ public struct DefaultNetworkingLayer: NetworkingLayer {
     public init() { }
     
     public func makeHttpPostRequest(url: URL,
-                             httpMethod: String,
-                             httpHeaderContentType: String,
-                             httpBody: Data,
-                             completion: @escaping(Result<JsonRpcResponseArray, APIError>) -> Void) {
-        do {
-            var urlRequest = URLRequest(url: url)
-            urlRequest.httpMethod = httpMethod
-            urlRequest.addValue(httpHeaderContentType, forHTTPHeaderField: "Content-Type")
-            urlRequest.httpBody = httpBody
+                                    httpMethod: String,
+                                    httpHeaderContentType: String,
+                                    httpBody: Data,
+                                    completion: @escaping(Result<JsonRpcResponseArray, APIError>) -> Void) {
+        var urlRequest = URLRequest(url: url)
+        urlRequest.httpMethod = httpMethod
+        urlRequest.addValue(httpHeaderContentType, forHTTPHeaderField: "Content-Type")
+        urlRequest.httpBody = httpBody
+        
+        let dataTask = URLSession.shared.dataTask(with: urlRequest) { data, response, _ in
+            guard let httpResponse = response as? HTTPURLResponse,
+                  httpResponse.statusCode == 200,
+                  let jsonData = data else {
+                completion(.failure(.responseError))
+                return
+            }
             
-            let dataTask = URLSession.shared.dataTask(with: urlRequest) { data, response, _ in
-                guard let httpResponse = response as? HTTPURLResponse,
-                      httpResponse.statusCode == 200,
-                      let jsonData = data else {
-                    completion(.failure(.responseError))
-                    return
-                }
-                
+            do {
+                let result = try JSONDecoder().decode(JsonRpcResponseArray.self, from: jsonData)
+                completion(.success(result))
+            } catch {
                 do {
-                    let result = try JSONDecoder().decode(JsonRpcResponseArray.self, from: jsonData)
-                    completion(.success(result))
+                    let result = try JSONDecoder().decode(JsonRpcResponse.self, from: jsonData)
+                    completion(.success([result]))
                 } catch {
-                    do {
-                        let result = try JSONDecoder().decode(JsonRpcResponse.self, from: jsonData)
-                        completion(.success([result]))
-                    } catch {
-                        completion(.failure(.decodingError))
-                    }
+                    completion(.failure(.decodingError))
                 }
             }
-            dataTask.resume()
         }
+        dataTask.resume()
     }
 }
