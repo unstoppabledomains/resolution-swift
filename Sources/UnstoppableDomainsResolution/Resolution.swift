@@ -313,7 +313,7 @@ public class Resolution {
     }
     
     /// Process the 'error'
-    private func catchError(_ error: Error, completion:@escaping StringsArratResultConsumer ) {
+    private func catchError(_ error: Error, completion:@escaping StringsArrayResultConsumer ) {
         guard let catched = error as? ResolutionError else {
             completion(.failure(.unknownError(error)))
             return
