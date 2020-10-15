@@ -77,7 +77,12 @@ public struct DefaultNetworkingLayer: NetworkingLayer {
                     let result = try JSONDecoder().decode(JsonRpcResponseArray.self, from: jsonData)
                     completion(.success(result))
                 } catch {
-                    completion(.failure(.decodingError))
+                    do {
+                        let result = try JSONDecoder().decode(JsonRpcResponse.self, from: jsonData)
+                        completion(.success([result]))
+                    } catch {
+                        completion(.failure(.decodingError))
+                    }
                 }
             }
             dataTask.resume()
