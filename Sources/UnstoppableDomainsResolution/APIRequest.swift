@@ -35,19 +35,23 @@ struct APIRequest {
     }
 
     func post(_ body: JsonRpcPayload, completion: @escaping(Result<JsonRpcResponseArray, APIError>) -> Void ) throws {
-        networking.makeHttpPostRequest(url: self.url,
-                                       httpMethod: "POST",
-                                       httpHeaderContentType: "application/json",
-                                       httpBody: try JSONEncoder().encode(body),
-                                       completion: completion)
+        do {
+            networking.makeHttpPostRequest(url: self.url,
+                                           httpMethod: "POST",
+                                           httpHeaderContentType: "application/json",
+                                           httpBody: try JSONEncoder().encode(body),
+                                           completion: completion)
+        } catch { throw APIError.encodingError }
     }
     
     func post(_ bodyArray: [JsonRpcPayload], completion: @escaping(Result<JsonRpcResponseArray, APIError>) -> Void ) throws {
-        networking.makeHttpPostRequest(url: self.url,
-                                       httpMethod: "POST",
-                                       httpHeaderContentType: "application/json",
-                                       httpBody: try JSONEncoder().encode(bodyArray),
-                                       completion: completion)
+        do {
+            networking.makeHttpPostRequest(url: self.url,
+                                           httpMethod: "POST",
+                                           httpHeaderContentType: "application/json",
+                                           httpBody: try JSONEncoder().encode(bodyArray),
+                                           completion: completion)
+        } catch { throw APIError.encodingError }
     }
 }
 
