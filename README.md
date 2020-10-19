@@ -75,7 +75,7 @@ package.dependencies.append(
  ```
  
  ## Batch request of owners
- In the version 0.1.3 there was introduced a method `batchOwners(domains: _, completion: _ )` that adds additional convenience to query the owners of the array of domains. The domains must be only CNS-compatible (other kind of domains will throw `ResolutionError.methodNotSupported`). As opposed to the single `owner(domain: _, completion: _)` method, this batch request will return the array of owners `[String?]`: if the the domain is not registered, the related array element of the response will be `nil` without throwing an error.
+ In the version 0.1.3 there was introduced a method `batchOwners(domains: _, completion: _ )` that adds additional convenience to query the owners of the array of domains. The domains must be only CNS-compatible (other kind of domains will throw `ResolutionError.methodNotSupported`). As opposed to the single `owner(domain: _, completion: _)` method, this batch request will return the array of owners `[String?]`: if the the domain is not registered (or its resolver is `null`, the related array element of the response will be `nil` without throwing an error.
  
  ```swift
  

@@ -98,7 +98,8 @@ public class Resolution {
     }
 
     /// Resolves owner addresses of an array of `domain`s
-    /// - Parameter domains: - array of domain names
+    /// - Parameter domains: - array of domain names, with nil value if the domain is not registered or
+    ///     its resolver is null
     /// - Parameter completion: A callback that resolves `Result`  with an array of `owner address`'s or `Error`
     public func batchOwners(domains: [String], completion: @escaping StringsArrayResultConsumer ) {
         let preparedDomains = domains.map { prepare(domain: $0) }
