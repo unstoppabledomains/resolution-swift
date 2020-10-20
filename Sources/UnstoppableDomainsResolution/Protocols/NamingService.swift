@@ -19,7 +19,7 @@ protocol NamingService {
     func owner(domain: String) throws -> String
     func addr(domain: String, ticker: String) throws -> String
     func resolver(domain: String) throws -> String
-    
+
     func batchOwners(domains: [String]) throws -> [String?]
 
     func record(domain: String, key: String) throws -> String

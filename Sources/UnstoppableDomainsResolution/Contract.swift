@@ -13,11 +13,11 @@ struct IdentifiableResult<T> {
 
 import Foundation
 internal class Contract {
-    let BATCH_ID_OFFSET = 128
-    
-    static let OWNER_KEY = "owner"
-    static let RESOLVER_KEY = "resolver"
-    static let VALUES_KEY = "values"
+    let batchIdOffset = 128
+
+    static let ownerKey = "owner"
+    static let resolverKey = "resolver"
+    static let valuesKey = "values"
 
     let address: String
     let providerUrl: String
@@ -37,15 +37,22 @@ internal class Contract {
         let response = try postRequest(body)!
         return try self.coder.decode(response, from: methodName)
     }
-    
-    func callBatchMethod(methodName: String, argsArray: [[Any]]) throws -> [IdentifiableResult<Any>] {
+
+    func callBatchMethod(methodName: String, argsArray: [[Any]]) throws -> [IdentifiableResult<Any?>] {
         let encodedDataArray = try argsArray.map { try self.coder.encode(method: methodName, args: $0) }
         let bodyArray: [JsonRpcPayload] = encodedDataArray.enumerated()
-                                                            .map { JsonRpcPayload(id: String($0.offset + BATCH_ID_OFFSET),
+                                                            .map { JsonRpcPayload(id: String($0.offset + batchIdOffset),
                                                                                   data: $0.element,
                                                                                   to: address) }
-        let response = try postBatchRequest(bodyArray)!
-        return try response.map { IdentifiableResult<Any>(id: $0.id, result: try self.coder.decode($0.result, from: methodName)) }
+        let response = try postBatchRequest(bodyArray)
+        return try response.map { guard let responseElement = $0 else { throw ResolutionError.recordNotSupported }
+            var res: Any?
+            do {
+                res = try self.coder.decode(responseElement.result, from: methodName)
+            } catch ABICoderError.couldNotDecode {
+                res = nil
+            }
+            return IdentifiableResult<Any?>(id: responseElement.id, result: res) }
 }
 
     private func postRequest(_ body: JsonRpcPayload) throws -> String? {
@@ -73,8 +80,8 @@ internal class Contract {
             return nil
         }
     }
-    
-    private func postBatchRequest(_ bodyArray: [JsonRpcPayload]) throws -> [IdentifiableResult<String>]? {
+
+    private func postBatchRequest(_ bodyArray: [JsonRpcPayload]) throws -> [IdentifiableResult<String>?] {
         let postRequest = APIRequest(providerUrl, networking: networking)
         var resp: JsonRpcResponseArray?
         var err: Error?
@@ -92,16 +99,15 @@ internal class Contract {
         guard err == nil else {
             throw err!
         }
-        
-        guard let responseArray = resp else { return nil }
-        
+
+        guard let responseArray = resp else { throw APIError.decodingError }
+
         let parsedResponseArray: [IdentifiableResult<String>?] = responseArray.map {
-            if case let ParamElement.string ( stringResult ) = $0.result {
+            if case let ParamElement.string( stringResult ) = $0.result {
                 return IdentifiableResult<String>(id: $0.id, result: stringResult)
             }
             return nil
         }
-        guard parsedResponseArray.reduce(true, { all, element in all && (element != nil) }) else { return nil }
-        return parsedResponseArray.map {$0!}
+        return parsedResponseArray
     }
 }

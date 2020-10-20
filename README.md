@@ -9,12 +9,12 @@ This framework helps to resolve a decentralized domain name such as `brad.crypto
 
 ## Cocoa Pods
 ```ruby
-pod 'UnstoppableDomainsResolution', '~> 0.1.3'
+pod 'UnstoppableDomainsResolution', '~> 0.1.4'
 ```
 ## Swift Package Manager
 ```swift
 package.dependencies.append(
-    .package(url: "https://github.com/unstoppabledomains/resolution-swift", from: "0.1.3")
+    .package(url: "https://github.com/unstoppabledomains/resolution-swift", from: "0.1.4")
 )
 ```
 
@@ -75,14 +75,14 @@ package.dependencies.append(
  ```
  
  ## Batch request of owners
- In the version 0.1.3 there was introduced a method `batchOwners(domains: _, completion: _ )` that adds additional convenience to query the owners of the array of domains. The domains must be only CNS-compatible (other kind of domains will throw `ResolutionError.methodNotSupported`). The result will return only if all domains are resolved.
+ In the version 0.1.3 there was introduced a method `batchOwners(domains: _, completion: _ )` that adds additional convenience to query the owners of the array of domains. The domains must be only CNS-compatible (other kind of domains will throw `ResolutionError.methodNotSupported`). As opposed to the single `owner(domain: _, completion: _)` method, this batch request will return the array of owners `[String?]`: if the the domain is not registered (or its resolver is `null`, the related array element of the response will be `nil` without throwing an error.
  
  ```swift
  
  resolution.batchOwners(domains: ["brad.crypto", "otherbrad.crypto"]) { result in
      switch result {
      case .success(let returnValue):
-           // returnValue = <array of owners's addresses>
+           // returnValue: [String?] = <array of owners's addresses>
          let domainOwner = returnValue
      case .failure(let error):
          XCTFail("Expected owner, but got \(error)")

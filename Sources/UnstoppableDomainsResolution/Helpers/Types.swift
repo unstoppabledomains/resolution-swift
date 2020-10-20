@@ -11,4 +11,4 @@ import Foundation
 public typealias StringResultConsumer = (Result<String, ResolutionError>) -> Void
 public typealias StringsArrayResultConsumer = (Result<[String?], ResolutionError>) -> Void
 public typealias DictionaryResultConsumer = (Result<[String: String], ResolutionError>) -> Void
-public let EthCoinIndex = 60
+public let ethCoinIndex = 60

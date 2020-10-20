@@ -10,8 +10,8 @@ import Foundation
 import EthereumABI
 
 class CommonNamingService {
-    static let HEXADECIMAL_PREFIX = "0x"
-    static let JSON_EXTENSION = "json"
+    static let hexadecimalPrefix = "0x"
+    static let jsonExtension = "json"
 
     let name: String
     let providerUrl: String
@@ -73,7 +73,7 @@ class CommonNamingService {
                 .reversed()
                 .reduce(node) { return self.childHash(parent: $0, label: $1)}
         }
-        return "\(Self.HEXADECIMAL_PREFIX)\(node.toHexString())"
+        return "\(Self.hexadecimalPrefix)\(node.toHexString())"
     }
 
     func childHash(parent: [UInt8], label: [UInt8]) -> [UInt8] {

@@ -11,6 +11,12 @@ import EthereumABI
 
 typealias ABIContract = [ABI.Element]
 
+enum ABICoderError: Error {
+    case wrongABIInterfaceForMethod(method: String)
+    case couldNotEncode(method: String, args: [Any])
+    case couldNotDecode(method: String, value: String)
+}
+
 // swiftlint:disable identifier_name cyclomatic_complexity
 internal class ABICoder {
     let abi: ABIContract
@@ -27,12 +33,6 @@ internal class ABICoder {
             }
         }
         return toReturn
-    }
-
-    enum ABICoderError: Error {
-        case wrongABIInterfaceForMethod(method: String)
-        case couldNotEncode(method: String, args: [Any])
-        case couldNotDecode(method: String, value: String)
     }
 
     init(_ abi: ABIContract) {
