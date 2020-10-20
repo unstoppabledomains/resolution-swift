@@ -62,8 +62,9 @@ internal class CNS: CommonNamingService, NamingService {
             throw error
         }
 
-        let rec = res.sorted(by: {Int($0.id)! < Int($1.id)!})
-            .map { self.unfold(contractResult: $0.result, key: Contract.ownerKey) }
+        let rec: [String?] = res.sorted(by: {Int($0.id)! < Int($1.id)!})
+            .map {  guard let result = $0.result else { return nil }
+                    return self.unfold(contractResult: result, key: Contract.ownerKey) }
         return rec
     }
 
