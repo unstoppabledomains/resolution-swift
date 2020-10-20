@@ -202,7 +202,8 @@ public class Resolution {
         let preparedDomain = prepare(domain: domain)
         DispatchQueue.global(qos: .utility).async { [weak self] in
             do {
-                if let result = try self?.getServiceOf(domain: preparedDomain).record(domain: preparedDomain, key: "gundb.public_key.value") {
+                if let result = try self?.getServiceOf(domain: preparedDomain)
+                    .record(domain: preparedDomain, key: "gundb.public_key.value") {
                     completion(.success(result))
                 }
             } catch {
@@ -218,7 +219,8 @@ public class Resolution {
         let preparedDomain = prepare(domain: domain)
         DispatchQueue.global(qos: .utility).async { [weak self] in
             do {
-                if let result = try self?.getServiceOf(domain: preparedDomain).record(domain: preparedDomain, key: "ipfs.redirect_domain.value") {
+                if let result = try self?.getServiceOf(domain: preparedDomain)
+                    .record(domain: preparedDomain, key: "ipfs.redirect_domain.value") {
                     completion(.success(result))
                 }
             } catch {

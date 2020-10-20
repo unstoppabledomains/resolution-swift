@@ -13,11 +13,11 @@ struct IdentifiableResult<T> {
 
 import Foundation
 internal class Contract {
-    let BATCH_ID_OFFSET = 128
+    let batchIdOffset = 128
 
-    static let OWNER_KEY = "owner"
-    static let RESOLVER_KEY = "resolver"
-    static let VALUES_KEY = "values"
+    static let ownerKey = "owner"
+    static let resolverKey = "resolver"
+    static let valuesKey = "values"
 
     let address: String
     let providerUrl: String
@@ -41,7 +41,7 @@ internal class Contract {
     func callBatchMethod(methodName: String, argsArray: [[Any]]) throws -> [IdentifiableResult<Any?>] {
         let encodedDataArray = try argsArray.map { try self.coder.encode(method: methodName, args: $0) }
         let bodyArray: [JsonRpcPayload] = encodedDataArray.enumerated()
-                                                            .map { JsonRpcPayload(id: String($0.offset + BATCH_ID_OFFSET),
+                                                            .map { JsonRpcPayload(id: String($0.offset + batchIdOffset),
                                                                                   data: $0.element,
                                                                                   to: address) }
         let response = try postBatchRequest(bodyArray)

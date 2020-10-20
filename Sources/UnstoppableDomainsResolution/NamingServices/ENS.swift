@@ -55,7 +55,7 @@ internal class ENS: CommonNamingService, NamingService {
         let resolverAddress = try resolver(tokenId: tokenId)
         let resolverContract = try super.buildContract(address: resolverAddress, type: .resolver)
 
-        guard let dict = try resolverContract.callMethod(methodName: "addr", args: [tokenId, EthCoinIndex]) as? [String: Data],
+        guard let dict = try resolverContract.callMethod(methodName: "addr", args: [tokenId, ethCoinIndex]) as? [String: Data],
               let dataAddress = dict["0"],
               let address = EthereumAddress(dataAddress),
               Utillities.isNotEmpty(address.address) else {

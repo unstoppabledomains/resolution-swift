@@ -10,7 +10,7 @@ import Foundation
 import EthereumAddress
 
 internal class CNS: CommonNamingService, NamingService {
-    static let SPECIFIC_DOMAIN = ".crypto"
+    static let specificDomain = ".crypto"
     static let name = "CNS"
     static let proxyReaderAddress = "0x7ea9Ee21077F84339eDa9C80048ec6db678642B1"
     let registryMap: [String: String] = [
@@ -18,7 +18,7 @@ internal class CNS: CommonNamingService, NamingService {
         "kovan": "0x22c2738cdA28C5598b1a68Fb1C89567c2364936F"
     ]
 
-    let GETDATA_METHOD_NAME = "getData"
+    let getDataMethodName = "getData"
 
     let network: String
     let registryAddress: String
@@ -35,7 +35,7 @@ internal class CNS: CommonNamingService, NamingService {
     }
 
     func isSupported(domain: String) -> Bool {
-        return domain.hasSuffix(Self.SPECIFIC_DOMAIN)
+        return domain.hasSuffix(Self.specificDomain)
     }
 
     // MARK: - geters of Owner and Resolver
@@ -43,11 +43,11 @@ internal class CNS: CommonNamingService, NamingService {
         let tokenId = super.namehash(domain: domain)
         let res: Any
         do {
-            res = try self.getData(keys: [Contract.OWNER_KEY], for: tokenId)
+            res = try self.getData(keys: [Contract.ownerKey], for: tokenId)
         } catch {
             throw ResolutionError.unregisteredDomain
         }
-        guard let rec = self.unfold(contractResult: res, key: Contract.OWNER_KEY) else {
+        guard let rec = self.unfold(contractResult: res, key: Contract.ownerKey) else {
             throw ResolutionError.unregisteredDomain
         }
         return rec
@@ -57,13 +57,13 @@ internal class CNS: CommonNamingService, NamingService {
         let tokenIds = domains.map { super.namehash(domain: $0) }
         let res: [IdentifiableResult<Any?>]
         do {
-            res = try self.getBatchData(keys: [Contract.OWNER_KEY], for: tokenIds)
+            res = try self.getBatchData(keys: [Contract.ownerKey], for: tokenIds)
         } catch {
             throw error
         }
 
         let rec = res.sorted(by: {Int($0.id)! < Int($1.id)!})
-            .map { self.unfold(contractResult: $0.result, key: Contract.OWNER_KEY) }
+            .map { self.unfold(contractResult: $0.result, key: Contract.ownerKey) }
         return rec
     }
 
@@ -75,11 +75,11 @@ internal class CNS: CommonNamingService, NamingService {
     func resolver(tokenId: String) throws -> String {
         let res: Any
         do {
-            res = try self.getData(keys: [Contract.RESOLVER_KEY], for: tokenId)
+            res = try self.getData(keys: [Contract.resolverKey], for: tokenId)
         } catch {
             throw ResolutionError.unspecifiedResolver
         }
-        guard let rec = self.unfold(contractResult: res, key: Contract.RESOLVER_KEY) else {
+        guard let rec = self.unfold(contractResult: res, key: Contract.resolverKey) else {
             throw ResolutionError.unspecifiedResolver
         }
         return rec
@@ -144,8 +144,8 @@ internal class CNS: CommonNamingService, NamingService {
 
     private func unfold(contractResult: Any, key: String = "0") -> String? {
         if let dict = contractResult as? [String: Any],
-           let el = dict[key] {
-            return unfoldAddress(el)
+           let element = dict[key] {
+            return unfoldAddress(element)
         }
         return nil
     }
@@ -153,9 +153,9 @@ internal class CNS: CommonNamingService, NamingService {
     private func getOwnerResolverRecord(tokenId: String, key: String) throws -> (owner: String, resolver: String, record: String) {
         let res = try self.getData(keys: [key], for: tokenId)
         if let dict = res as? [String: Any] {
-            if let owner = unfoldAddress(dict[Contract.OWNER_KEY]),
-               let resolver = unfoldAddress(dict[Contract.RESOLVER_KEY]),
-               let values = dict[Contract.VALUES_KEY] as? [String] {
+            if let owner = unfoldAddress(dict[Contract.ownerKey]),
+               let resolver = unfoldAddress(dict[Contract.resolverKey]),
+               let values = dict[Contract.valuesKey] as? [String] {
                 let record = values[0]
                 return (owner: owner, resolver: resolver, record: record)
             }
@@ -164,13 +164,13 @@ internal class CNS: CommonNamingService, NamingService {
     }
 
     private func getData(keys: [String], for tokenId: String) throws -> Any {
-        if let result = try proxyReaderContract?.callMethod(methodName: GETDATA_METHOD_NAME, args: [keys, tokenId]) {
+        if let result = try proxyReaderContract?.callMethod(methodName: getDataMethodName, args: [keys, tokenId]) {
             return result }
         throw ResolutionError.proxyReaderNonInitialized
     }
 
     private func getBatchData(keys: [String], for tokenIds: [String]) throws -> [IdentifiableResult<Any?>] {
-        if let result = try proxyReaderContract?.callBatchMethod(methodName: GETDATA_METHOD_NAME, argsArray: tokenIds.map { [keys, $0] }) {
+        if let result = try proxyReaderContract?.callBatchMethod(methodName: getDataMethodName, argsArray: tokenIds.map { [keys, $0] }) {
             return result }
         throw ResolutionError.proxyReaderNonInitialized
     }
