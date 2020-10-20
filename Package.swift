@@ -32,7 +32,8 @@ let package = Package(
         .testTarget(
             name: "ResolutionTests",
             dependencies: ["UnstoppableDomainsResolution"],
-            exclude:["Info.plist"]
+            exclude:["Info.plist"],
+            swiftSettings: [.define("INSIDE_PM")]
         )
     ]
 )
