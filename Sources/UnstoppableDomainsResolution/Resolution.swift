@@ -42,7 +42,7 @@ public class Resolution {
 
     private var providerUrl: String
     private let services: [NamingService]
-    
+
     public init(providerUrl: String = "https://main-rpc.linkpool.io",
                 network: String = "mainnet",
                 networking: NetworkingLayer = DefaultNetworkingLayer() ) throws {
@@ -113,7 +113,7 @@ public class Resolution {
             }
         }
     }
-    
+
     /// Resolves give `domain` name to a specific `currency address` if exists
     /// - Parameter  domain: - domain name to be resolved
     /// - Parameter  ticker: - currency ticker like BTC, ETH, ZIL
@@ -268,7 +268,7 @@ public class Resolution {
         }
         return service
     }
-    
+
     /// This returns the correct naming service based on the `domain`'s array asked for
     private func getServiceOf(domains: [String]) throws -> NamingService {
         guard domains.count > 0 else {
@@ -281,7 +281,7 @@ public class Resolution {
         guard possibleServices.count == domains.count else {
             throw ResolutionError.unsupportedDomain
         }
-        
+
         let service: NamingService? = try possibleServices.reduce(nil, {result, currNS in
             guard result != nil else { return currNS }
             guard result!.name == currNS.name else { throw ResolutionError.inconsistenDomainArray }
@@ -312,7 +312,7 @@ public class Resolution {
         }
         completion(.failure(catched))
     }
-    
+
     /// Process the 'error'
     private func catchError(_ error: Error, completion:@escaping StringsArrayResultConsumer ) {
         guard let catched = error as? ResolutionError else {

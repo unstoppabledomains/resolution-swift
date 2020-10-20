@@ -12,22 +12,21 @@ import Foundation
 public struct JsonRpcPayload: Codable {
     let jsonrpc, id, method: String
     let params: [ParamElement]
-    
+
     enum CodingKeys: String, CodingKey {
         case jsonrpc
         case id
         case method
         case params
     }
-    
+
     init(jsonrpc: String, id: String, method: String, params: [ParamElement]) {
         self.jsonrpc = jsonrpc
         self.id = id
         self.method = method
         self.params = params
     }
-    
-    
+
     init (id: String, data: String, to address: String) {
         self.init(jsonrpc: "2.0",
                   id: id,
