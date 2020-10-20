@@ -43,7 +43,7 @@ struct APIRequest {
                                            completion: completion)
         } catch { throw APIError.encodingError }
     }
-    
+
     func post(_ bodyArray: [JsonRpcPayload], completion: @escaping(Result<JsonRpcResponseArray, APIError>) -> Void ) throws {
         do {
             networking.makeHttpPostRequest(url: self.url,
@@ -57,7 +57,7 @@ struct APIRequest {
 
 public struct DefaultNetworkingLayer: NetworkingLayer {
     public init() { }
-    
+
     public func makeHttpPostRequest(url: URL,
                                     httpMethod: String,
                                     httpHeaderContentType: String,
@@ -67,7 +67,7 @@ public struct DefaultNetworkingLayer: NetworkingLayer {
         urlRequest.httpMethod = httpMethod
         urlRequest.addValue(httpHeaderContentType, forHTTPHeaderField: "Content-Type")
         urlRequest.httpBody = httpBody
-        
+
         let dataTask = URLSession.shared.dataTask(with: urlRequest) { data, response, _ in
             guard let httpResponse = response as? HTTPURLResponse,
                   httpResponse.statusCode == 200,
@@ -75,7 +75,7 @@ public struct DefaultNetworkingLayer: NetworkingLayer {
                 completion(.failure(.responseError))
                 return
             }
-            
+
             do {
                 let result = try JSONDecoder().decode(JsonRpcResponseArray.self, from: jsonData)
                 completion(.success(result))
