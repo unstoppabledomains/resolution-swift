@@ -14,7 +14,7 @@ pod 'UnstoppableDomainsResolution', '~> 0.1.4'
 ## Swift Package Manager
 ```swift
 package.dependencies.append(
-    .package(url: "https://github.com/unstoppabledomains/resolution-swift", from: "0.1.4")
+    .package(url: "https://github.com/unstoppabledomains/resolution-swift", from: "0.1.5")
 )
 ```
 

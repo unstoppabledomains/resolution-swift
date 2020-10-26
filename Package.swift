@@ -13,7 +13,7 @@ let package = Package(
             targets: ["UnstoppableDomainsResolution"])
     ],
     dependencies: [
-        .package(url: "https://github.com/deczer/EthereumABI", .upToNextMinor(from: "1.0.0")),
+        .package(url: "https://github.com/deczer/EthereumABI", .upToNextMinor(from: "1.0.1")),
         .package(url: "https://github.com/keefertaylor/Base58Swift.git", .upToNextMinor(from: "2.1.0"))
     ],
     targets: [

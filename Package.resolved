@@ -24,8 +24,8 @@
         "repositoryURL": "https://github.com/krzyzanowskim/CryptoSwift.git",
         "state": {
           "branch": null,
-          "revision": "c5ee516c9616ec7dc2a000007ddb8bf5d9543c74",
-          "version": "0.13.1"
+          "revision": "3a2acbb32ab68215ee1596ee6004da8e90c3721b",
+          "version": "1.0.0"
         }
       },
       {
@@ -33,8 +33,8 @@
         "repositoryURL": "https://github.com/deczer/EthereumABI",
         "state": {
           "branch": null,
-          "revision": "2891f6067e94b94a4323d61b971b1455d22d02bc",
-          "version": "1.0.0"
+          "revision": "0131e0b31300b029da0def74ba2784d49ba9478c",
+          "version": "1.0.1"
         }
       },
       {
@@ -42,8 +42,8 @@
         "repositoryURL": "https://github.com/deczer/EthereumAddress.git",
         "state": {
           "branch": null,
-          "revision": "56e8efc904f2414040b6697c93f8dfcb4a29f2cd",
-          "version": "1.0.0"
+          "revision": "d060ee73cf18dbb685289c9557e6b3a446e4a4ae",
+          "version": "1.0.1"
         }
       },
       {
