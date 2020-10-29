@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
   spec.name         = "UnstoppableDomainsResolution"
-  spec.version      = "0.1.4"
+  spec.version      = "0.1.5"
   spec.summary      = "Swift framework for resolving Unstoppable domains."
 
   spec.description  = <<-DESC
@@ -24,6 +24,6 @@ Pod::Spec.new do |spec|
 
   spec.resources = "Sources/UnstoppableDomainsResolution/Resources/**/*"
 
-  spec.dependency 'EthereumABI', '~> 1.2'
+  spec.dependency 'EthereumABI', '~> 1.3'
   spec.dependency 'Base58Swift', '~> 2.1'
 end
