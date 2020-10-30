@@ -15,7 +15,6 @@ Pod::Spec.new do |spec|
   spec.social_media_url = 'https://twitter.com/unstoppableweb'
 
   spec.ios.deployment_target = "12.1"
-  spec.osx.deployment_target = "10.14"
 
   spec.swift_version = '5.0'
 
