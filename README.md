@@ -25,7 +25,7 @@ For more information, see our detailed [API Referrence](https://unstoppabledomai
 ## Cocoa Pods
 
 ```ruby
-pod 'UnstoppableDomainsResolution', '~> 0.1.4'
+pod 'UnstoppableDomainsResolution', '~> 0.1.5'
 ```
 
 ## Swift Package Manager
