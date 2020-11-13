@@ -112,6 +112,48 @@ class ResolutionTests: XCTestCase {
         self.checkError(result: unregisteredResult, expectedError: ResolutionError.unregisteredDomain)
     }
     
+    func testGetBatchOwner() throws {
+        
+        // Given
+        let domainCryptoReceived = expectation(description: "Existing Crypto domains' owners should be received")
+        let particalResultReceived = expectation(description: "An existing domain and non-existing domain should result in mized response ")
+
+        var owners: [String?] = []
+        var partialResult: Result<[String?], ResolutionError>!
+
+        // When
+        resolution.batchOwners(domains: ["brad.crypto", "unstoppablecaribou.crypto"]) { (result) in
+            switch result {
+            case .success(let returnValue):
+                owners = returnValue
+                domainCryptoReceived.fulfill()
+            case .failure(let error):
+                XCTFail("Expected owners, but got \(error)")
+            }
+        }
+        
+        resolution.batchOwners(domains: ["brad.crypto", "unregistered.crypto"]) {
+            partialResult = $0
+            particalResultReceived.fulfill()
+        }
+
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        switch partialResult {
+        case .success(let array):
+            let lowercasedOwners = array.map( {$0?.lowercased()} )
+            assert( lowercasedOwners[0] == "0x8aaD44321A86b170879d7A244c1e8d360c99DdA8".lowercased() )
+            assert( lowercasedOwners[1] == nil )
+
+        default: XCTFail("Expected owners, but got failure")
+        }
+        
+        let lowercasedOwners = owners.compactMap({$0}).map{$0.lowercased()}
+        assert( lowercasedOwners[0] == "0x8aaD44321A86b170879d7A244c1e8d360c99DdA8".lowercased() )
+        assert( lowercasedOwners[1] == "0x53E238E686BeFF9853b2d8ede1D6B3067A921AAa".lowercased() )
+    }
+    
     func testGetResolver() throws {
         // Given
         let domainCryptoReceived = expectation(description: "Exist Crypto domain should be received")
@@ -170,8 +212,8 @@ class ResolutionTests: XCTestCase {
         resolution.addr(domain: "brad.crypto", ticker: "eth") { (result) in
             switch result {
             case .success(let returnValue):
-                domainReceived.fulfill()
                 ethAddress = returnValue
+                domainReceived.fulfill()
             case .failure(let error):
                 XCTFail("Expected Eth Address, but got \(error)")
             }
@@ -180,8 +222,8 @@ class ResolutionTests: XCTestCase {
         resolution.addr(domain: "monkybrain.eth", ticker: "eth") { (result) in
             switch result {
             case .success(let returnValue):
-                domainEthReceived.fulfill()
                 ethENSAddress = returnValue
+                domainEthReceived.fulfill()
             case .failure(let error):
                 XCTFail("Expected Eth Address, but got \(error)")
             }
@@ -209,8 +251,8 @@ class ResolutionTests: XCTestCase {
         resolution.chatId(domain: "crunk.eth")  { (result) in
             switch result {
             case .success(let returnValue):
-                chatReceived.fulfill()
                 chatID = returnValue
+                chatReceived.fulfill()
             case .failure(let error):
                 XCTFail("Expected chat ID, but got \(error)")
             }
@@ -236,8 +278,8 @@ class ResolutionTests: XCTestCase {
         resolution.ipfsHash(domain: "brad.crypto") { result in
             switch result {
             case .success(let returnValue):
-                domainReceived.fulfill()
                 hash = returnValue
+                domainReceived.fulfill()
             case .failure(let error):
                 XCTFail("Expected ipfsHash, but got \(error)")
             }
@@ -246,8 +288,8 @@ class ResolutionTests: XCTestCase {
         resolution.ipfsHash(domain: "monkybrain.eth") { (result) in
             switch result {
             case .success(let returnValue):
-                domainEthReceived.fulfill()
                 etcHash = returnValue
+                domainEthReceived.fulfill()
             case .failure(let error):
                 XCTFail("Expected ipfsHash, but got \(error)")
             }
@@ -309,8 +351,8 @@ class ResolutionTests: XCTestCase {
         resolution.records(domain: domain, keys: keys) { (result) in
             switch result {
             case .success(let returnValue):
-                domainReceived.fulfill()
                 values = returnValue
+                domainReceived.fulfill()
             case .failure(let error):
                 XCTFail("Expected ipfsHash, but got \(error)")
             }
@@ -355,6 +397,16 @@ class ResolutionTests: XCTestCase {
             return
         }
     }
+    
+    func checkError(result: Result<[String?], ResolutionError>, expectedError: ResolutionError) {
+        switch result {
+        case .success:
+            XCTFail("Expected \(expectedError), but got none")
+        case .failure(let error):
+            assert(error == expectedError, "Expected \(expectedError), but got \(error)")
+            return
+        }
+    }
 }
 
 extension ResolutionError: Equatable {
@@ -374,6 +426,10 @@ extension ResolutionError: Equatable {
             return true
         case (.proxyReaderNonInitialized, .proxyReaderNonInitialized):
             return true
+        case (.inconsistenDomainArray, .inconsistenDomainArray):
+            return true
+        case (.methodNotSupported, .methodNotSupported):
+            return true
         // We don't use `default` here on purpose, so we don't forget updating this method on adding new variants.
         case (.unregisteredDomain, _),
             (.unsupportedDomain, _),
@@ -382,6 +438,8 @@ extension ResolutionError: Equatable {
             (.unsupportedNetwork, _),
             (.unspecifiedResolver, _),
             (.unknownError, _ ),
+            (.inconsistenDomainArray, _),
+            (.methodNotSupported, _),
             (.proxyReaderNonInitialized, _):
 
             return false

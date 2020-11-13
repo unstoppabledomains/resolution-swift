@@ -14,12 +14,14 @@ public enum APIError: Error {
     case encodingError
 }
 
+public typealias JsonRpcResponseArray = [JsonRpcResponse]
+
 public protocol NetworkingLayer {
     func makeHttpPostRequest (url: URL,
                               httpMethod: String,
                               httpHeaderContentType: String,
-                              httpBody: JsonRpcPayload,
-                              completion: @escaping(Result<JsonRpcResponse, APIError>) -> Void)
+                              httpBody: Data,
+                              completion: @escaping(Result<JsonRpcResponseArray, APIError>) -> Void)
 }
 
 struct APIRequest {
@@ -32,46 +34,60 @@ struct APIRequest {
         self.networking = networking
     }
 
-    func post(_ body: JsonRpcPayload, completion: @escaping(Result<JsonRpcResponse, APIError>) -> Void ) {
-        networking.makeHttpPostRequest(url: self.url,
-                                       httpMethod: "POST",
-                                       httpHeaderContentType: "application/json",
-                                       httpBody: body,
-                                       completion: completion)
+    func post(_ body: JsonRpcPayload, completion: @escaping(Result<JsonRpcResponseArray, APIError>) -> Void ) throws {
+        do {
+            networking.makeHttpPostRequest(url: self.url,
+                                           httpMethod: "POST",
+                                           httpHeaderContentType: "application/json",
+                                           httpBody: try JSONEncoder().encode(body),
+                                           completion: completion)
+        } catch { throw APIError.encodingError }
+    }
+
+    func post(_ bodyArray: [JsonRpcPayload], completion: @escaping(Result<JsonRpcResponseArray, APIError>) -> Void ) throws {
+        do {
+            networking.makeHttpPostRequest(url: self.url,
+                                           httpMethod: "POST",
+                                           httpHeaderContentType: "application/json",
+                                           httpBody: try JSONEncoder().encode(bodyArray),
+                                           completion: completion)
+        } catch { throw APIError.encodingError }
     }
 }
 
 public struct DefaultNetworkingLayer: NetworkingLayer {
     public init() { }
-    
+
     public func makeHttpPostRequest(url: URL,
-                             httpMethod: String,
-                             httpHeaderContentType: String,
-                             httpBody: JsonRpcPayload,
-                             completion: @escaping(Result<JsonRpcResponse, APIError>) -> Void) {
-        do {
-            var urlRequest = URLRequest(url: url)
-            urlRequest.httpMethod = httpMethod
-            urlRequest.addValue(httpHeaderContentType, forHTTPHeaderField: "Content-Type")
-            urlRequest.httpBody = try JSONEncoder().encode(httpBody)
-            let dataTask = URLSession.shared.dataTask(with: urlRequest) { data, response, _ in
-                guard let httpResponse = response as? HTTPURLResponse,
-                      httpResponse.statusCode == 200,
-                      let jsonData = data else {
-                    completion(.failure(.responseError))
-                    return
-                }
-                
+                                    httpMethod: String,
+                                    httpHeaderContentType: String,
+                                    httpBody: Data,
+                                    completion: @escaping(Result<JsonRpcResponseArray, APIError>) -> Void) {
+        var urlRequest = URLRequest(url: url)
+        urlRequest.httpMethod = httpMethod
+        urlRequest.addValue(httpHeaderContentType, forHTTPHeaderField: "Content-Type")
+        urlRequest.httpBody = httpBody
+
+        let dataTask = URLSession.shared.dataTask(with: urlRequest) { data, response, _ in
+            guard let httpResponse = response as? HTTPURLResponse,
+                  httpResponse.statusCode == 200,
+                  let jsonData = data else {
+                completion(.failure(.responseError))
+                return
+            }
+
+            do {
+                let result = try JSONDecoder().decode(JsonRpcResponseArray.self, from: jsonData)
+                completion(.success(result))
+            } catch {
                 do {
                     let result = try JSONDecoder().decode(JsonRpcResponse.self, from: jsonData)
-                    completion(.success(result))
+                    completion(.success([result]))
                 } catch {
                     completion(.failure(.decodingError))
                 }
             }
-            dataTask.resume()
-        } catch {
-            completion(.failure(.encodingError))
         }
+        dataTask.resume()
     }
 }

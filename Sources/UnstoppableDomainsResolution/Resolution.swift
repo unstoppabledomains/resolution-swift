@@ -42,7 +42,7 @@ public class Resolution {
 
     private var providerUrl: String
     private let services: [NamingService]
-    
+
     public init(providerUrl: String = "https://main-rpc.linkpool.io",
                 network: String = "mainnet",
                 networking: NetworkingLayer = DefaultNetworkingLayer() ) throws {
@@ -89,6 +89,23 @@ public class Resolution {
         DispatchQueue.global(qos: .utility).async { [weak self] in
             do {
                 if let result = try self?.getServiceOf(domain: preparedDomain).owner(domain: preparedDomain) {
+                    completion(.success(result))
+                }
+            } catch {
+                self?.catchError(error, completion: completion)
+            }
+        }
+    }
+
+    /// Resolves owner addresses of an array of `domain`s
+    /// - Parameter domains: - array of domain names, with nil value if the domain is not registered or
+    ///     its resolver is null
+    /// - Parameter completion: A callback that resolves `Result`  with an array of `owner address`'s or `Error`
+    public func batchOwners(domains: [String], completion: @escaping StringsArrayResultConsumer ) {
+        let preparedDomains = domains.map { prepare(domain: $0) }
+        DispatchQueue.global(qos: .utility).async { [weak self] in
+            do {
+                if let result = try self?.getServiceOf(domains: preparedDomains).batchOwners(domains: preparedDomains) {
                     completion(.success(result))
                 }
             } catch {
@@ -185,7 +202,8 @@ public class Resolution {
         let preparedDomain = prepare(domain: domain)
         DispatchQueue.global(qos: .utility).async { [weak self] in
             do {
-                if let result = try self?.getServiceOf(domain: preparedDomain).record(domain: preparedDomain, key: "gundb.public_key.value") {
+                if let result = try self?.getServiceOf(domain: preparedDomain)
+                    .record(domain: preparedDomain, key: "gundb.public_key.value") {
                     completion(.success(result))
                 }
             } catch {
@@ -201,7 +219,8 @@ public class Resolution {
         let preparedDomain = prepare(domain: domain)
         DispatchQueue.global(qos: .utility).async { [weak self] in
             do {
-                if let result = try self?.getServiceOf(domain: preparedDomain).record(domain: preparedDomain, key: "ipfs.redirect_domain.value") {
+                if let result = try self?.getServiceOf(domain: preparedDomain)
+                    .record(domain: preparedDomain, key: "ipfs.redirect_domain.value") {
                     completion(.success(result))
                 }
             } catch {
@@ -252,6 +271,27 @@ public class Resolution {
         return service
     }
 
+    /// This returns the correct naming service based on the `domain`'s array asked for
+    private func getServiceOf(domains: [String]) throws -> NamingService {
+        guard domains.count > 0 else {
+            throw ResolutionError.unsupportedDomain
+        }
+
+        let possibleServices = domains.compactMap { domain in
+            return services.first(where: {$0.isSupported(domain: domain)})
+        }
+        guard possibleServices.count == domains.count else {
+            throw ResolutionError.unsupportedDomain
+        }
+
+        let service: NamingService? = try possibleServices.reduce(nil, {result, currNS in
+            guard result != nil else { return currNS }
+            guard result!.name == currNS.name else { throw ResolutionError.inconsistenDomainArray }
+            return currNS
+        })
+        return service!
+    }
+
     /// Preproccess the `domain`
     private func prepare(domain: String) -> String {
         return domain.lowercased()
@@ -263,7 +303,6 @@ public class Resolution {
             completion(.failure(.unknownError(error)))
             return
         }
-
         completion(.failure(catched))
     }
 
@@ -273,7 +312,15 @@ public class Resolution {
             completion(.failure(.unknownError(error)))
             return
         }
+        completion(.failure(catched))
+    }
 
+    /// Process the 'error'
+    private func catchError(_ error: Error, completion:@escaping StringsArrayResultConsumer ) {
+        guard let catched = error as? ResolutionError else {
+            completion(.failure(.unknownError(error)))
+            return
+        }
         completion(.failure(catched))
     }
 }

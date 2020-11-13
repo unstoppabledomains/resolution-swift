@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
   spec.name         = "UnstoppableDomainsResolution"
-  spec.version      = "0.1.2"
+  spec.version      = "0.1.5"
   spec.summary      = "Swift framework for resolving Unstoppable domains."
 
   spec.description  = <<-DESC
@@ -14,8 +14,7 @@ Pod::Spec.new do |spec|
   spec.author             = { "JohnnyJumper" => "jeyhunt@gmail.com", "Sergei Merenkov" => "mer.sergei@gmail.com", "Roman Medvid" => "roman@unstoppabledomains.com" }
   spec.social_media_url = 'https://twitter.com/unstoppableweb'
 
-  spec.ios.deployment_target = "13.6"
-  spec.osx.deployment_target = "10.15"
+  spec.ios.deployment_target = "12.1"
 
   spec.swift_version = '5.0'
 
@@ -24,6 +23,6 @@ Pod::Spec.new do |spec|
 
   spec.resources = "Sources/UnstoppableDomainsResolution/Resources/**/*"
 
-  spec.dependency 'EthereumABI', '~> 1.2'
+  spec.dependency 'EthereumABI', '~> 1.3'
   spec.dependency 'Base58Swift', '~> 2.1'
 end
