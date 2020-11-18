@@ -5,7 +5,7 @@ import PackageDescription
 
 let package = Package(
     name: "UnstoppableDomainsResolution",
-    platforms: [.macOS(.v10_15), .iOS(.v13) ],
+    platforms: [.macOS(.v10_15), .iOS(.v11) ],
     products: [
         .library(
             name: "UnstoppableDomainsResolution",
