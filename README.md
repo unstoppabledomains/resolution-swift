@@ -25,14 +25,14 @@ For more information, see our detailed [API Referrence](https://unstoppabledomai
 ## Cocoa Pods
 
 ```ruby
-pod 'UnstoppableDomainsResolution', '~> 0.1.5'
+pod 'UnstoppableDomainsResolution', '~> 0.1.6'
 ```
 
 ## Swift Package Manager
 
 ```swift
 package.dependencies.append(
-    .package(url: "https://github.com/unstoppabledomains/resolution-swift", from: "0.1.5")
+    .package(url: "https://github.com/unstoppabledomains/resolution-swift", from: "0.1.6")
 )
 ```
 
