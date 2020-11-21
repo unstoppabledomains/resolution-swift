@@ -7,6 +7,7 @@
 //
 
 struct IdentifiableResult<T> {
+    // swiftlint:disable:next identifier_name
     var id: String
     var result: T
 }
