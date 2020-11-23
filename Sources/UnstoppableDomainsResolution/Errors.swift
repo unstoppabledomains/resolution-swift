@@ -19,4 +19,32 @@ public enum ResolutionError: Error {
     case proxyReaderNonInitialized
     case inconsistenDomainArray
     case methodNotSupported
+    case tooManyResponses
+    case badRequestOrResponse
+
+    static let tooManyResponsesCode = -32005
+    static let badRequestOrResponseCode = -32042
+
+    static func parse (errorResponse: NetworkErrorResponse) -> ResolutionError? {
+        let error = errorResponse.error
+        if error.code == tooManyResponsesCode {
+            return .tooManyResponses
+        }
+        if error.code == badRequestOrResponseCode {
+            return .badRequestOrResponse
+        }
+        return nil
+    }
+}
+
+struct NetworkErrorResponse: Decodable {
+    var jsonrpc: String
+    // swiftlint:disable:next identifier_name
+    var id: String
+    var error: ErrorId
+}
+
+struct ErrorId: Codable {
+    var code: Int
+    var message: String
 }

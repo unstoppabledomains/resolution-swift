@@ -106,8 +106,10 @@ internal class CNS: CommonNamingService, NamingService {
         var result: (owner: String, resolver: String, record: String) = ("", "", "")
         do {
             result = try self.getOwnerResolverRecord(tokenId: tokenId, key: key)
-        } catch {
+        } catch { if error is ABICoderError {
             throw ResolutionError.unspecifiedResolver
+        }
+        throw error
         }
         guard Utillities.isNotEmpty(result.owner) else { throw ResolutionError.unregisteredDomain }
         guard Utillities.isNotEmpty(result.resolver) else { throw ResolutionError.unspecifiedResolver }

@@ -21,7 +21,7 @@ public protocol NetworkingLayer {
                               httpMethod: String,
                               httpHeaderContentType: String,
                               httpBody: Data,
-                              completion: @escaping(Result<JsonRpcResponseArray, APIError>) -> Void)
+                              completion: @escaping(Result<JsonRpcResponseArray, Error>) -> Void)
 }
 
 struct APIRequest {
@@ -34,7 +34,7 @@ struct APIRequest {
         self.networking = networking
     }
 
-    func post(_ body: JsonRpcPayload, completion: @escaping(Result<JsonRpcResponseArray, APIError>) -> Void ) throws {
+    func post(_ body: JsonRpcPayload, completion: @escaping(Result<JsonRpcResponseArray, Error>) -> Void ) throws {
         do {
             networking.makeHttpPostRequest(url: self.url,
                                            httpMethod: "POST",
@@ -44,7 +44,7 @@ struct APIRequest {
         } catch { throw APIError.encodingError }
     }
 
-    func post(_ bodyArray: [JsonRpcPayload], completion: @escaping(Result<JsonRpcResponseArray, APIError>) -> Void ) throws {
+    func post(_ bodyArray: [JsonRpcPayload], completion: @escaping(Result<JsonRpcResponseArray, Error>) -> Void ) throws {
         do {
             networking.makeHttpPostRequest(url: self.url,
                                            httpMethod: "POST",
@@ -62,7 +62,7 @@ public struct DefaultNetworkingLayer: NetworkingLayer {
                                     httpMethod: String,
                                     httpHeaderContentType: String,
                                     httpBody: Data,
-                                    completion: @escaping(Result<JsonRpcResponseArray, APIError>) -> Void) {
+                                    completion: @escaping(Result<JsonRpcResponseArray, Error>) -> Void) {
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = httpMethod
         urlRequest.addValue(httpHeaderContentType, forHTTPHeaderField: "Content-Type")
@@ -72,7 +72,7 @@ public struct DefaultNetworkingLayer: NetworkingLayer {
             guard let httpResponse = response as? HTTPURLResponse,
                   httpResponse.statusCode == 200,
                   let jsonData = data else {
-                completion(.failure(.responseError))
+                completion(.failure(APIError.responseError))
                 return
             }
 
@@ -84,7 +84,12 @@ public struct DefaultNetworkingLayer: NetworkingLayer {
                     let result = try JSONDecoder().decode(JsonRpcResponse.self, from: jsonData)
                     completion(.success([result]))
                 } catch {
-                    completion(.failure(.decodingError))
+                    if let errorResponse = try? JSONDecoder().decode(NetworkErrorResponse.self, from: jsonData),
+                       let errorExplained = ResolutionError.parse(errorResponse: errorResponse) {
+                        completion(.failure(errorExplained))
+                    } else {
+                        completion(.failure(APIError.decodingError))
+                    }
                 }
             }
         }

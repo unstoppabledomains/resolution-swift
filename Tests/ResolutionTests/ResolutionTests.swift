@@ -430,18 +430,25 @@ extension ResolutionError: Equatable {
             return true
         case (.methodNotSupported, .methodNotSupported):
             return true
+        case (.tooManyResponses, .tooManyResponses):
+            return true
+        case (.badRequestOrResponse, .badRequestOrResponse):
+            return true
+            
         // We don't use `default` here on purpose, so we don't forget updating this method on adding new variants.
         case (.unregisteredDomain, _),
-            (.unsupportedDomain, _),
-            (.recordNotFound, _),
-            (.recordNotSupported, _),
-            (.unsupportedNetwork, _),
-            (.unspecifiedResolver, _),
-            (.unknownError, _ ),
-            (.inconsistenDomainArray, _),
-            (.methodNotSupported, _),
-            (.proxyReaderNonInitialized, _):
-
+             (.unsupportedDomain, _),
+             (.recordNotFound, _),
+             (.recordNotSupported, _),
+             (.unsupportedNetwork, _),
+             (.unspecifiedResolver, _),
+             (.unknownError, _ ),
+             (.inconsistenDomainArray, _),
+             (.methodNotSupported, _),
+             (.proxyReaderNonInitialized, _),
+             (.tooManyResponses, _),
+             (.badRequestOrResponse, _):
+            
             return false
         }
     }
