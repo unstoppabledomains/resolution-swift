@@ -20,6 +20,7 @@ internal class CNS: CommonNamingService, NamingService {
     ]
 
     let getDataMethodName = "getData"
+    let getDataForManyMethodName = "getDataForMany"
 
     let network: String
     let registryAddress: String
@@ -63,17 +64,19 @@ internal class CNS: CommonNamingService, NamingService {
 
     func batchOwners(domains: [String]) throws -> [String?] {
         let tokenIds = domains.map { super.namehash(domain: $0) }
-        let res: [IdentifiableResult<Any?>]
+        let res: Any
         do {
             res = try self.getBatchData(keys: [Contract.ownerKey], for: tokenIds)
         } catch {
             throw error
         }
-
-        let rec: [String?] = res.sorted(by: {Int($0.id)! < Int($1.id)!})
-            .map {  guard let result = $0.result else { return nil }
-                    return self.unfold(contractResult: result, key: Contract.ownerKey) }
-        return rec
+        guard let data = res as? [String: Any] else {
+            return []
+        }
+        guard let ownersFolded = data["1"] as? [Any] else {
+            return []
+        }
+        return ownersFolded.map { unfoldAddress($0) }
     }
 
     func resolver(domain: String) throws -> String {
@@ -193,8 +196,8 @@ internal class CNS: CommonNamingService, NamingService {
         throw ResolutionError.proxyReaderNonInitialized
     }
 
-    private func getBatchData(keys: [String], for tokenIds: [String]) throws -> [IdentifiableResult<Any?>] {
-        if let result = try proxyReaderContract?.callBatchMethod(methodName: getDataMethodName, argsArray: tokenIds.map { [keys, $0] }) {
+    private func getBatchData(keys: [String], for tokenIds: [String]) throws -> Any {
+        if let result = try proxyReaderContract?.callMethod(methodName: getDataForManyMethodName, args: [keys, tokenIds]) {
             return result }
         throw ResolutionError.proxyReaderNonInitialized
     }
