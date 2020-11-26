@@ -45,7 +45,10 @@ internal class CNS: CommonNamingService, NamingService {
         do {
             res = try self.getData(keys: [Contract.ownerKey], for: tokenId)
         } catch {
-            throw ResolutionError.unregisteredDomain
+            if error is ABICoderError {
+                throw ResolutionError.unregisteredDomain
+            }
+            throw error
         }
         guard let rec = self.unfold(contractResult: res, key: Contract.ownerKey) else {
             throw ResolutionError.unregisteredDomain
@@ -78,7 +81,10 @@ internal class CNS: CommonNamingService, NamingService {
         do {
             res = try self.getData(keys: [Contract.resolverKey], for: tokenId)
         } catch {
-            throw ResolutionError.unspecifiedResolver
+            if error is ABICoderError {
+                throw ResolutionError.unspecifiedResolver
+            }
+            throw error
         }
         guard let rec = self.unfold(contractResult: res, key: Contract.resolverKey) else {
             throw ResolutionError.unspecifiedResolver
@@ -106,10 +112,11 @@ internal class CNS: CommonNamingService, NamingService {
         var result: (owner: String, resolver: String, record: String) = ("", "", "")
         do {
             result = try self.getOwnerResolverRecord(tokenId: tokenId, key: key)
-        } catch { if error is ABICoderError {
-            throw ResolutionError.unspecifiedResolver
-        }
-        throw error
+        } catch {
+            if error is ABICoderError {
+                throw ResolutionError.unspecifiedResolver
+            }
+            throw error
         }
         guard Utillities.isNotEmpty(result.owner) else { throw ResolutionError.unregisteredDomain }
         guard Utillities.isNotEmpty(result.resolver) else { throw ResolutionError.unspecifiedResolver }
