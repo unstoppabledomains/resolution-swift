@@ -12,7 +12,7 @@ import EthereumAddress
 internal class CNS: CommonNamingService, NamingService {
     static let specificDomain = ".crypto"
     static let name = "CNS"
-    static let proxyReaderAddress = "0x7ea9Ee21077F84339eDa9C80048ec6db678642B1"
+    static let proxyReaderAddress = "0xa6E7cEf2EDDEA66352Fd68E5915b60BDbb7309f5"
     let registryMap: [String: String] = [
         "mainnet": "0xD1E5b0FF1287aA9f9A268759062E4Ab08b9Dacbe",
         "kovan": "0x22c2738cdA28C5598b1a68Fb1C89567c2364936F"
@@ -176,9 +176,5 @@ internal class CNS: CommonNamingService, NamingService {
         if let result = try proxyReaderContract?.callBatchMethod(methodName: getDataMethodName, argsArray: tokenIds.map { [keys, $0] }) {
             return result }
         throw ResolutionError.proxyReaderNonInitialized
-    }
-
-    private func askProxyReaderContract(for methodName: String, with args: [String]) throws -> Any {
-        return try proxyReaderContract!.callMethod(methodName: methodName, args: args)
     }
 }
