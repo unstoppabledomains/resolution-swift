@@ -12,7 +12,8 @@ import EthereumAddress
 internal class CNS: CommonNamingService, NamingService {
     static let specificDomain = ".crypto"
     static let name = "CNS"
-    static let proxyReaderAddress = "0xa6E7cEf2EDDEA66352Fd68E5915b60BDbb7309f5"
+    static let proxyReaderAddress =  "0xa6E7cEf2EDDEA66352Fd68E5915b60BDbb7309f5"
+    static let proxyReaderAddressLegacy =  "0x7ea9Ee21077F84339eDa9C80048ec6db678642B1"
     let registryMap: [String: String] = [
         "mainnet": "0xD1E5b0FF1287aA9f9A268759062E4Ab08b9Dacbe",
         "kovan": "0x22c2738cdA28C5598b1a68Fb1C89567c2364936F"
@@ -53,6 +54,10 @@ internal class CNS: CommonNamingService, NamingService {
         guard let rec = self.unfold(contractResult: res, key: Contract.ownerKey) else {
             throw ResolutionError.unregisteredDomain
         }
+
+        guard Utillities.isNotEmpty(rec) else {
+            throw ResolutionError.unregisteredDomain
+        }
         return rec
     }
 
@@ -87,6 +92,9 @@ internal class CNS: CommonNamingService, NamingService {
             throw error
         }
         guard let rec = self.unfold(contractResult: res, key: Contract.resolverKey) else {
+            throw ResolutionError.unspecifiedResolver
+        }
+        guard Utillities.isNotEmpty(rec) else {
             throw ResolutionError.unspecifiedResolver
         }
         return rec
@@ -166,6 +174,12 @@ internal class CNS: CommonNamingService, NamingService {
             if let owner = unfoldAddress(dict[Contract.ownerKey]),
                let resolver = unfoldAddress(dict[Contract.resolverKey]),
                let values = dict[Contract.valuesKey] as? [String] {
+                guard Utillities.isNotEmpty(owner),
+                      Utillities.isNotEmpty(resolver),
+                      values.count > 0 else {
+                    throw ResolutionError.unspecifiedResolver
+                }
+
                 let record = values[0]
                 return (owner: owner, resolver: resolver, record: record)
             }
