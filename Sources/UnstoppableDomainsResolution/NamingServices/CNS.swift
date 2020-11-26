@@ -70,13 +70,13 @@ internal class CNS: CommonNamingService, NamingService {
         } catch {
             throw error
         }
-        guard let data = res as? [String: Any] else {
+        guard let data = res as? [String: Any],
+              let ownersFolded = data["1"] as? [Any] else {
             return []
         }
-        guard let ownersFolded = data["1"] as? [Any] else {
-            return []
+        return ownersFolded.map { let address = unfoldAddress($0)
+            return Utillities.isNotEmpty(address) ? address : nil
         }
-        return ownersFolded.map { unfoldAddress($0) }
     }
 
     func resolver(domain: String) throws -> String {
