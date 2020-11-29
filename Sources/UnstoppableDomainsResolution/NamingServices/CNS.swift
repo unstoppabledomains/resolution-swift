@@ -19,7 +19,7 @@ internal class CNS: CommonNamingService, NamingService {
         "kovan": "0x22c2738cdA28C5598b1a68Fb1C89567c2364936F"
     ]
 
-    let getDataForManyMethodName = "getDataForMany"
+    static let getDataForManyMethodName = "getDataForMany"
 
     let network: String
     let registryAddress: String
@@ -57,7 +57,8 @@ internal class CNS: CommonNamingService, NamingService {
             }
             throw error
         }
-        guard let rec = self.unfoldForMany(contractResult: res, key: Contract.ownersKey) else {
+        guard let rec = self.unfoldForMany(contractResult: res, key: Contract.ownersKey),
+              rec.count > 0 else {
             throw ResolutionError.unregisteredDomain
         }
 
@@ -99,7 +100,8 @@ internal class CNS: CommonNamingService, NamingService {
             }
             throw error
         }
-        guard let rec = self.unfoldForMany(contractResult: res, key: Contract.resolversKey) else {
+        guard let rec = self.unfoldForMany(contractResult: res, key: Contract.resolversKey),
+              rec.count > 0  else {
             throw ResolutionError.unspecifiedResolver
         }
         guard Utillities.isNotEmpty(rec[0]) else {
@@ -125,7 +127,7 @@ internal class CNS: CommonNamingService, NamingService {
     }
 
     func record(tokenId: String, key: String) throws -> String {
-        var result: OwnerResolverRecord?
+        let result: OwnerResolverRecord
         do {
             result = try self.getOwnerResolverRecord(tokenId: tokenId, key: key)
         } catch {
@@ -134,10 +136,10 @@ internal class CNS: CommonNamingService, NamingService {
             }
             throw error
         }
-        guard Utillities.isNotEmpty(result!.owner) else { throw ResolutionError.unregisteredDomain }
-        guard Utillities.isNotEmpty(result!.resolver) else { throw ResolutionError.unspecifiedResolver }
+        guard Utillities.isNotEmpty(result.owner) else { throw ResolutionError.unregisteredDomain }
+        guard Utillities.isNotEmpty(result.resolver) else { throw ResolutionError.unspecifiedResolver }
 
-        return result!.record
+        return result.record
     }
 
     func records(keys: [String], for domain: String) throws -> [String: String] {
@@ -160,23 +162,19 @@ internal class CNS: CommonNamingService, NamingService {
         if let eth = incomingData as? EthereumAddress {
             return eth.address
         }
-
         if let str = incomingData as? String {
             return str
         }
-
         return nil
     }
 
     private func unfoldAddressForMany<T> (_ incomingData: T) -> [String]? {
-        if let eth = incomingData as? [EthereumAddress] {
-            return eth.map { $0.address }
+        if let ethArray = incomingData as? [EthereumAddress] {
+            return ethArray.map { $0.address }
         }
-
-        if let str = incomingData as? [String] {
-            return str
+        if let strArray = incomingData as? [String] {
+            return strArray
         }
-
         return nil
     }
 
@@ -196,7 +194,8 @@ internal class CNS: CommonNamingService, NamingService {
                let valuesArray = dict[Contract.valuesKey] as? [[String]] {
                 guard Utillities.isNotEmpty(owners[0]),
                       Utillities.isNotEmpty(resolvers[0]),
-                      Utillities.isNotEmpty(valuesArray) else {
+                      valuesArray.count > 0,
+                      valuesArray[0].count > 0 else {
                     throw ResolutionError.unspecifiedResolver
                 }
 
@@ -208,8 +207,9 @@ internal class CNS: CommonNamingService, NamingService {
     }
 
     private func getDataForMany(keys: [String], for tokenIds: [String]) throws -> Any {
-        if let result = try proxyReaderContract?.callMethod(methodName: getDataForManyMethodName, args: [keys, tokenIds]) {
-            return result }
+        if let result = try proxyReaderContract?
+                                .callMethod(methodName: Self.getDataForManyMethodName,
+                                            args: [keys, tokenIds]) { return result }
         throw ResolutionError.proxyReaderNonInitialized
     }
 }
