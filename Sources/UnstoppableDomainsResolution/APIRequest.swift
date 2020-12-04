@@ -29,8 +29,7 @@ struct APIRequest {
     let networking: NetworkingLayer
 
     init(_ endpoint: String, networking: NetworkingLayer) {
-        guard let url = URL(string: endpoint) else {fatalError()}
-        self.url = url
+        self.url = URL(string: endpoint)!
         self.networking = networking
     }
 

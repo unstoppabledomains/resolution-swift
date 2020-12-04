@@ -10,29 +10,32 @@ import Foundation
 import EthereumAddress
 
 internal class CNS: CommonNamingService, NamingService {
+    struct ContractAddresses {
+        let registryAddress: String
+        let resolverAddress: String
+        let proxyReaderAddress: String
+    }
+
     static let specificDomain = ".crypto"
     static let name = "CNS"
-    static let proxyReaderAddress =  "0xa6E7cEf2EDDEA66352Fd68E5915b60BDbb7309f5"
-    static let proxyReaderAddressLegacy =  "0x7ea9Ee21077F84339eDa9C80048ec6db678642B1"
-    let registryMap: [String: String] = [
-        "mainnet": "0xD1E5b0FF1287aA9f9A268759062E4Ab08b9Dacbe",
-        "kovan": "0x22c2738cdA28C5598b1a68Fb1C89567c2364936F"
-    ]
 
     static let getDataForManyMethodName = "getDataForMany"
 
     let network: String
-    let registryAddress: String
+    let contracts: ContractAddresses
     var proxyReaderContract: Contract?
 
     init(network: String, providerUrl: String, networking: NetworkingLayer) throws {
-        guard let registryAddress = registryMap[network] else {
-            throw ResolutionError.unsupportedNetwork
-        }
         self.network = network
-        self.registryAddress = registryAddress
+
+        guard let contractsContainer = try Self.parseContractAddresses(network: network),
+              let registry = contractsContainer[ContractType.registry.name]?.address,
+              let resolver = contractsContainer[ContractType.resolver.name]?.address,
+              let proxyReader = contractsContainer[ContractType.proxyReader.name]?.address else { throw ResolutionError.unsupportedNetwork }
+        self.contracts = ContractAddresses(registryAddress: registry, resolverAddress: resolver, proxyReaderAddress: proxyReader)
+
         super.init(name: Self.name, providerUrl: providerUrl, networking: networking)
-        proxyReaderContract = try super.buildContract(address: Self.proxyReaderAddress, type: .proxyReader)
+        proxyReaderContract = try super.buildContract(address: self.contracts.proxyReaderAddress, type: .proxyReader)
     }
 
     func isSupported(domain: String) -> Bool {
