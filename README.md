@@ -26,14 +26,14 @@ For more information, see our detailed [API Referrence](https://unstoppabledomai
 ## Cocoa Pods
 
 ```ruby
-pod 'UnstoppableDomainsResolution', '~> 0.1.6'
+pod 'UnstoppableDomainsResolution', '~> 0.1.7'
 ```
 
 ## Swift Package Manager
 
 ```swift
 package.dependencies.append(
-    .package(url: "https://github.com/unstoppabledomains/resolution-swift", from: "0.1.6")
+    .package(url: "https://github.com/unstoppabledomains/resolution-swift", from: "0.1.7")
 )
 ```
 
@@ -42,9 +42,11 @@ package.dependencies.append(
  - Create an instance of the Resolution class
  - Call any method of the Resolution class asyncronously
 
-> NOTE: make sure an instance of the Resolution class is not deallocated until the asyncronous call brings in the result.
+> NOTE: make sure an instance of the Resolution class is not deallocated until the asyncronous call brings in the result. Your code is the **only owner** of the instance so keep it as long as you need it.
 
 # Common examples
+
+> NOTE as of 26 November 2020: since the service at https://main-rpc.linkpool.io seems to be unstable it is highly recommended that you instantiate the Resolution instance with an Infura URL, like shown below.
 
 ```swift
 import UnstoppableDomainsResolution
@@ -57,7 +59,7 @@ guard let resolution = try? Resolution() else {
 }
 
 // Or, if you want to use a specific providerUrl and network:
-guard let resolution = try? Resolution(providerUrl: "https://main-rpc.linkpool.io", network: "mainnet") else {
+guard let resolution = try? Resolution(providerUrl: "https://mainnet.infura.io/v3/<YOUR_PROJECT_ID_HERE>", network: "mainnet") else {
   print ("Init of Resolution instance with custom parameters failed...")
   return
 }

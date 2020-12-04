@@ -16,8 +16,8 @@ import Foundation
 internal class Contract {
     let batchIdOffset = 128
 
-    static let ownerKey = "owner"
-    static let resolverKey = "resolver"
+    static let ownersKey = "owners"
+    static let resolversKey = "resolvers"
     static let valuesKey = "values"
 
     let address: String
