@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		30A69245251385A70079EC69 /* cnsProxyReader.json in Resources */ = {isa = PBXBuildFile; fileRef = 30A69244251385A70079EC69 /* cnsProxyReader.json */; };
 		30AE8615257A8CCD003A0142 /* network-config.json in Resources */ = {isa = PBXBuildFile; fileRef = 30AE8614257A8CCD003A0142 /* network-config.json */; };
+		3E105520258C95D300652FC7 /* DnsType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E10551F258C95D300652FC7 /* DnsType.swift */; };
+		3E105524258CB73400652FC7 /* DnsUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E105523258CB73400652FC7 /* DnsUtils.swift */; };
+		3E10552E258CBD0900652FC7 /* DnsRecordsError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E10552D258CBD0900652FC7 /* DnsRecordsError.swift */; };
 		3E2AC91C24E4FA28008EBC39 /* CNS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E2AC91B24E4FA28008EBC39 /* CNS.swift */; };
 		3E2AC91F24E4FA35008EBC39 /* NamingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E2AC91E24E4FA35008EBC39 /* NamingService.swift */; };
 		3E2AC93E24E4FC9F008EBC39 /* cnsResolver.json in Resources */ = {isa = PBXBuildFile; fileRef = 3E2AC93C24E4FC9F008EBC39 /* cnsResolver.json */; };
@@ -48,6 +51,9 @@
 		3045D148251E2C6200B65A06 /* LICENSE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = LICENSE.md; sourceTree = "<group>"; };
 		30A69244251385A70079EC69 /* cnsProxyReader.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = cnsProxyReader.json; sourceTree = "<group>"; };
 		30AE8614257A8CCD003A0142 /* network-config.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "network-config.json"; sourceTree = "<group>"; };
+		3E10551F258C95D300652FC7 /* DnsType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DnsType.swift; sourceTree = "<group>"; };
+		3E105523258CB73400652FC7 /* DnsUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DnsUtils.swift; sourceTree = "<group>"; };
+		3E10552D258CBD0900652FC7 /* DnsRecordsError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DnsRecordsError.swift; sourceTree = "<group>"; };
 		3E2AC91B24E4FA28008EBC39 /* CNS.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CNS.swift; sourceTree = "<group>"; };
 		3E2AC91E24E4FA35008EBC39 /* NamingService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NamingService.swift; sourceTree = "<group>"; };
 		3E2AC93C24E4FC9F008EBC39 /* cnsResolver.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = cnsResolver.json; sourceTree = "<group>"; };
@@ -105,6 +111,16 @@
 				8449EDF825139F2500DABB57 /* ENS */,
 			);
 			path = Resources;
+			sourceTree = "<group>";
+		};
+		3E10551E258C95BD00652FC7 /* DNS */ = {
+			isa = PBXGroup;
+			children = (
+				3E10551F258C95D300652FC7 /* DnsType.swift */,
+				3E105523258CB73400652FC7 /* DnsUtils.swift */,
+				3E10552D258CBD0900652FC7 /* DnsRecordsError.swift */,
+			);
+			path = DNS;
 			sourceTree = "<group>";
 		};
 		3E2AC91A24E4FA28008EBC39 /* NamingServices */ = {
@@ -217,6 +233,7 @@
 		848E210A25079D43008707D2 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				3E10551E258C95BD00652FC7 /* DNS */,
 				3EAFA40124EE312A008791E9 /* Utilities.swift */,
 				848E210B25079D61008707D2 /* Types.swift */,
 			);
@@ -314,7 +331,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 3EE4D9FD24E367720097540B /* Build configuration list for PBXProject "Resolution" */;
+			buildConfigurationList = 3EE4D9FD24E367720097540B /* Build configuration list for PBXProject "resolution" */;
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -410,6 +427,7 @@
 				848E21092507890A008707D2 /* ZNS.swift in Sources */,
 				3E65912824E381E900D7EC35 /* Errors.swift in Sources */,
 				3EAFA3F724EB59DA008791E9 /* ABICoder.swift in Sources */,
+				3E105520258C95D300652FC7 /* DnsType.swift in Sources */,
 				3EE4DA1E24E367D40097540B /* Resolution.swift in Sources */,
 				848E210C25079D61008707D2 /* Types.swift in Sources */,
 				3E65913124E4ADAC00D7EC35 /* Contract.swift in Sources */,
@@ -417,6 +435,8 @@
 				3EAFA40224EE312A008791E9 /* Utilities.swift in Sources */,
 				3EAFA3FE24EE03E0008791E9 /* JSON_RPC.swift in Sources */,
 				8402F708250935FE0007F01D /* ContractZNS.swift in Sources */,
+				3E105524258CB73400652FC7 /* DnsUtils.swift in Sources */,
+				3E10552E258CBD0900652FC7 /* DnsRecordsError.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -655,7 +675,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		3EE4D9FD24E367720097540B /* Build configuration list for PBXProject "Resolution" */ = {
+		3EE4D9FD24E367720097540B /* Build configuration list for PBXProject "resolution" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3EE4DA1524E367720097540B /* Debug */,

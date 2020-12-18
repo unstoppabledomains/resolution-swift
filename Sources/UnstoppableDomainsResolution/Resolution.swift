@@ -228,6 +228,25 @@ public class Resolution {
             }
         }
     }
+    /// Resolves dns record of a `domain`
+    /// - Parameter domain: - domain name to be resolved
+    /// - Parameter type: - dns record type
+    public func dns(domain: String, types: [DnsType], completion:@escaping DnsRecordsResultConsumer) {
+        let preparedDomain = prepare(domain: domain)
+        DispatchQueue.global(qos: .utility).async { [weak self] in
+            do {
+                let cryptoRecords = DnsType.getCryptoRecords(types: types, ttl: true)
+                if let result = try self?.getServiceOf(domain: preparedDomain)
+                    .records(keys: cryptoRecords, for: preparedDomain) {
+                    let utils = DnsUtils.init()
+                    let parsed = try utils.toList(map: result)
+                    completion(.success(parsed))
+                }
+            } catch {
+                self?.catchError(error, completion: completion)
+            }
+        }
+    }
 
     /// Resolves custom record of a `domain`
     /// - Parameter  domain: - domain name to be resolved
@@ -319,6 +338,18 @@ public class Resolution {
     private func catchError(_ error: Error, completion:@escaping StringsArrayResultConsumer ) {
         guard let catched = error as? ResolutionError else {
             completion(.failure(.unknownError(error)))
+            return
+        }
+        completion(.failure(catched))
+    }
+
+    private func catchError(_ error: Error, completion:@escaping DnsRecordsResultConsumer) {
+        guard let catched = error as? ResolutionError else {
+            guard let catched = error as? DnsRecordsError else {
+                completion(.failure(ResolutionError.unknownError(error)))
+                return
+            }
+            completion(.failure(catched))
             return
         }
         completion(.failure(catched))

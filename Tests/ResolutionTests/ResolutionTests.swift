@@ -53,6 +53,33 @@ class ResolutionTests: XCTestCase {
         assert(zilHashTest == "0xd7587a5c8caad4941c598440d34f3a454e79889c48e510d13c7c5d1dfc6eab45")
         assert(ethHashTest == "0x2b53e3f567989ee41b897998d89eb4d8cf0715fb2cfb41a64939a532c09e495e")
     }
+    
+    func testDns() throws {
+        
+        // Given
+        let domain: String = "udtestdev-reseller-test-udtesting-875948372642.crypto";
+        let domainDnsReceived = expectation(description: "Dns record should be received")
+        let dnsTypes: [DnsType] = [.A, .AAAA];
+        
+        var testResult: [DnsRecord] = []
+        
+        //When
+        resolution.dns(domain: domain, types: dnsTypes) { (result) in
+            switch result {
+            case .success(let returnValue):
+                domainDnsReceived.fulfill();
+                testResult = returnValue;
+            case .failure(let error):
+                XCTFail("Expected dns record, but got \(error)")
+            }
+        }
+        waitForExpectations(timeout: timeout, handler: nil)
+        
+        // Then
+        assert(testResult[0] == DnsRecord(ttl: 98, type: "A", data: "10.0.0.1"));
+        assert(testResult[1] == DnsRecord(ttl: 98, type: "A", data: "10.0.0.3"));
+        
+    }
 
     func testGetOwner() throws {
 

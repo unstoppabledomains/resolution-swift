@@ -83,6 +83,11 @@ public struct DefaultNetworkingLayer: NetworkingLayer {
                     let result = try JSONDecoder().decode(JsonRpcResponse.self, from: jsonData)
                     completion(.success([result]))
                 } catch {
+                    if let JSONString = String(data: jsonData, encoding: String.Encoding.utf8) {
+                       print(JSONString)
+                    }
+                    print(jsonData)
+                    print(String(data: jsonData, encoding: String.Encoding.utf8))
                     if let errorResponse = try? JSONDecoder().decode(NetworkErrorResponse.self, from: jsonData),
                        let errorExplained = ResolutionError.parse(errorResponse: errorResponse) {
                         completion(.failure(errorExplained))
