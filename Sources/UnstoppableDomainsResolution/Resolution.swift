@@ -235,13 +235,17 @@ public class Resolution {
         let preparedDomain = prepare(domain: domain)
         DispatchQueue.global(qos: .utility).async { [weak self] in
             do {
-                let cryptoRecords = DnsType.getCryptoRecords(types: types, ttl: true)
-                if let result = try self?.getServiceOf(domain: preparedDomain)
-                    .records(keys: cryptoRecords, for: preparedDomain) {
-                    let utils = DnsUtils.init()
-                    let parsed = try utils.toList(map: result)
-                    completion(.success(parsed))
+                guard let service = try self?.getServiceOf(domain: preparedDomain),
+                      service.name == "CNS" else {
+                    throw ResolutionError.methodNotSupported
                 }
+
+                let cryptoRecords = DnsType.getCryptoRecords(types: types, ttl: true)
+                let result = try service.records(keys: cryptoRecords, for: preparedDomain)
+
+                let parsed = try DnsUtils.init().toList(map: result)
+                completion(.success(parsed))
+
             } catch {
                 self?.catchError(error, completion: completion)
             }
