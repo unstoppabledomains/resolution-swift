@@ -81,7 +81,6 @@ class ResolutionTests: XCTestCase {
         
         let utils = DnsUtils.init();
         let backConversion = try utils.toMap(records: testResult);
-        print(backConversion);
         assert(backConversion["dns.A.ttl"] == "98");
         assert(backConversion["dns.A"] == """
         ["10.0.0.1","10.0.0.3"]
@@ -396,7 +395,6 @@ class ResolutionTests: XCTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        print(values)
         assert(values["ipfs.html.value"] == "Qme54oEzRkgooJbCDr78vzKAWcv6DDEZqRhhDyDtzgrZP6")
         assert(values["crypto.BTC.address"] == "bc1q359khn0phg58xgezyqsuuaha28zkwx047c0c3y")
         assert(values["crypto.ETH.address"] == "0x8aaD44321A86b170879d7A244c1e8d360c99DdA8")

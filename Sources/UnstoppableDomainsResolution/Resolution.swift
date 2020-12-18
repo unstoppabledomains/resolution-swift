@@ -245,7 +245,6 @@ public class Resolution {
 
                 let parsed = try DnsUtils.init().toList(map: result)
                 completion(.success(parsed))
-
             } catch {
                 self?.catchError(error, completion: completion)
             }
