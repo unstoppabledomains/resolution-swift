@@ -79,6 +79,14 @@ class ResolutionTests: XCTestCase {
         assert(testResult[0] == DnsRecord(ttl: 98, type: "A", data: "10.0.0.1"));
         assert(testResult[1] == DnsRecord(ttl: 98, type: "A", data: "10.0.0.3"));
         
+        let utils = DnsUtils.init();
+        let backConversion = try utils.toMap(records: testResult);
+        print(backConversion);
+        assert(backConversion["dns.A.ttl"] == "98");
+        assert(backConversion["dns.A"] == """
+        ["10.0.0.1","10.0.0.3"]
+        """);
+        
     }
 
     func testGetOwner() throws {

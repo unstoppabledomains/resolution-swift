@@ -32,6 +32,30 @@ public class DnsUtils {
         return recordList
     }
 
+    public func toMap(records: [DnsRecord]) throws -> [String: String] {
+        var map: [String: String] = [:]
+        for record in records {
+
+            if let ttlInMap = map["dns.\(record.type).ttl"],
+               let ttl = Int(ttlInMap) {
+
+                guard ttl == record.ttl else {
+                    throw DnsRecordsError.inconsistentTtl(recordType: DnsType(rawValue: record.type)!)
+                }
+            }
+
+            guard let dnsArrayInMap: String = map["dns.\(record.type)"] else {
+                map["dns.\(record.type)"] = self.toJsonString(from: [record.data])
+                map["dns.\(record.type).ttl"] = String(record.ttl)
+                continue
+            }
+            var dnsArray = try toStringArray(fromJsonString: dnsArrayInMap)
+            dnsArray.append(record.data)
+            map["dns.\(record.type)"] = toJsonString(from: dnsArray)
+        }
+        return map
+    }
+
     private func constructDnsRecord(map: [String: String], type: DnsType) throws -> [DnsRecord] {
         var dnsRecords: [DnsRecord] = []
         let ttl: Int = self.parseTtl(map: map, type: type)
@@ -39,10 +63,7 @@ public class DnsUtils {
             return []
         }
         do {
-            let data = Data(jsonValueString.utf8)
-            // swiftlint:disable force_cast
-            let recordDataArray = try JSONSerialization.jsonObject(with: data) as! [String]
-            // swiftlint:enable force_cast
+            let recordDataArray = try self.toStringArray(fromJsonString: jsonValueString)
             for record in recordDataArray {
                 dnsRecords.append(DnsRecord(ttl: ttl, type: "\(type)", data: record))
             }
@@ -73,5 +94,19 @@ public class DnsUtils {
             return defaultRecordTtl
         }
         return DnsUtils.DefaultTtl
+    }
+
+    private func toJsonString(from object: Any) -> String? {
+        guard let data = try? JSONSerialization.data(withJSONObject: object, options: []) else {
+            return nil
+        }
+        return String(data: data, encoding: String.Encoding.utf8)
+    }
+
+    private func toStringArray(fromJsonString str: String) throws -> [String] {
+        let data = Data(str.utf8)
+        // swiftlint:disable force_cast
+        return try JSONSerialization.jsonObject(with: data) as! [String]
+        // swiftlint:enable force_cast
     }
 }

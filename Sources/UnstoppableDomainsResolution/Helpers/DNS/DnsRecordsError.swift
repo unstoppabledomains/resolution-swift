@@ -10,4 +10,5 @@ import Foundation
 
 public enum DnsRecordsError: Error {
     case dnsRecordCorrupted(recordType: DnsType)
+    case inconsistentTtl(recordType: DnsType)
 }
