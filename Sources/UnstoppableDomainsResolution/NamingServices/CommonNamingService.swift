@@ -17,10 +17,14 @@ class CommonNamingService {
     let providerUrl: String
     let networking: NetworkingLayer
 
-    enum ContractType {
-        case registry
-        case resolver
-        case proxyReader
+    enum ContractType: String {
+        case registry = "Registry"
+        case resolver = "Resolver"
+        case proxyReader = "ProxyReader"
+
+        var name: String {
+            self.rawValue
+        }
     }
 
     init(name: String, providerUrl: String, networking: NetworkingLayer) {
@@ -79,5 +83,45 @@ class CommonNamingService {
     func childHash(parent: [UInt8], label: [UInt8]) -> [UInt8] {
         let childHash = label.sha3(.keccak256)
         return (parent + childHash).sha3(.keccak256)
+    }
+}
+
+extension CommonNamingService {
+    static let networkConfigFileName = "network-config"
+    static let networkIds = ["mainnet": "1",
+                             "rinkeby": "4"]
+
+    struct NewtorkConfigJson: Decodable {
+        let version: String
+        let networks: [String: ContractsEntry]
+    }
+
+    struct ContractsEntry: Decodable {
+        let contracts: [String: ContractAddressEntry]
+    }
+
+    struct ContractAddressEntry: Decodable {
+        let address: String
+        let legacyAddresses: [String]
+    }
+
+    static func parseContractAddresses(network: String) throws -> [String: ContractAddressEntry]? {
+        #if INSIDE_PM
+        let bundler = Bundle.module
+        #else
+        let bundler = Bundle(for: self)
+        #endif
+
+        guard let idString = networkIds[network] else { throw ResolutionError.unsupportedNetwork }
+
+        if let filePath = bundler.url(forResource: Self.networkConfigFileName, withExtension: "json") {
+            guard let data = try? Data(contentsOf: filePath) else { return nil }
+            guard let info = try? JSONDecoder().decode(NewtorkConfigJson.self, from: data) else { return nil }
+            guard let currentNetwork = info.networks[idString] else {
+                return nil
+            }
+            return currentNetwork.contracts
+        }
+        return nil
     }
 }

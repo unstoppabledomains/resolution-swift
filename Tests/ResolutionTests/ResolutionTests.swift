@@ -53,6 +53,40 @@ class ResolutionTests: XCTestCase {
         assert(zilHashTest == "0xd7587a5c8caad4941c598440d34f3a454e79889c48e510d13c7c5d1dfc6eab45")
         assert(ethHashTest == "0x2b53e3f567989ee41b897998d89eb4d8cf0715fb2cfb41a64939a532c09e495e")
     }
+    
+    func testDns() throws {
+        
+        // Given
+        let domain: String = "udtestdev-reseller-test-udtesting-875948372642.crypto";
+        let domainDnsReceived = expectation(description: "Dns record should be received")
+        let dnsTypes: [DnsType] = [.A, .AAAA];
+        
+        var testResult: [DnsRecord] = []
+        
+        //When
+        resolution.dns(domain: domain, types: dnsTypes) { (result) in
+            switch result {
+            case .success(let returnValue):
+                domainDnsReceived.fulfill();
+                testResult = returnValue;
+            case .failure(let error):
+                XCTFail("Expected dns record, but got \(error)")
+            }
+        }
+        waitForExpectations(timeout: timeout, handler: nil)
+        
+        // Then
+        assert(testResult[0] == DnsRecord(ttl: 98, type: "A", data: "10.0.0.1"));
+        assert(testResult[1] == DnsRecord(ttl: 98, type: "A", data: "10.0.0.3"));
+        
+        let utils = DnsUtils.init();
+        let backConversion = try utils.toMap(records: testResult);
+        assert(backConversion["dns.A.ttl"] == "98");
+        assert(backConversion["dns.A"] == """
+        ["10.0.0.1","10.0.0.3"]
+        """);
+        
+    }
 
     func testGetOwner() throws {
 
@@ -146,7 +180,10 @@ class ResolutionTests: XCTestCase {
             assert( lowercasedOwners[0] == "0x8aaD44321A86b170879d7A244c1e8d360c99DdA8".lowercased() )
             assert( lowercasedOwners[1] == nil )
 
-        default: XCTFail("Expected owners, but got failure")
+        case .failure(let error):
+            XCTFail("Expected owners, but got \(error)")
+        case .none:
+            XCTFail("Expected owners, but got .none")
         }
         
         let lowercasedOwners = owners.compactMap({$0}).map{$0.lowercased()}
@@ -361,7 +398,6 @@ class ResolutionTests: XCTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        print(values)
         assert(values["ipfs.html.value"] == "Qme54oEzRkgooJbCDr78vzKAWcv6DDEZqRhhDyDtzgrZP6")
         assert(values["crypto.BTC.address"] == "bc1q359khn0phg58xgezyqsuuaha28zkwx047c0c3y")
         assert(values["crypto.ETH.address"] == "0x8aaD44321A86b170879d7A244c1e8d360c99DdA8")
@@ -430,18 +466,25 @@ extension ResolutionError: Equatable {
             return true
         case (.methodNotSupported, .methodNotSupported):
             return true
+        case (.tooManyResponses, .tooManyResponses):
+            return true
+        case (.badRequestOrResponse, .badRequestOrResponse):
+            return true
+            
         // We don't use `default` here on purpose, so we don't forget updating this method on adding new variants.
         case (.unregisteredDomain, _),
-            (.unsupportedDomain, _),
-            (.recordNotFound, _),
-            (.recordNotSupported, _),
-            (.unsupportedNetwork, _),
-            (.unspecifiedResolver, _),
-            (.unknownError, _ ),
-            (.inconsistenDomainArray, _),
-            (.methodNotSupported, _),
-            (.proxyReaderNonInitialized, _):
-
+             (.unsupportedDomain, _),
+             (.recordNotFound, _),
+             (.recordNotSupported, _),
+             (.unsupportedNetwork, _),
+             (.unspecifiedResolver, _),
+             (.unknownError, _ ),
+             (.inconsistenDomainArray, _),
+             (.methodNotSupported, _),
+             (.proxyReaderNonInitialized, _),
+             (.tooManyResponses, _),
+             (.badRequestOrResponse, _):
+            
             return false
         }
     }

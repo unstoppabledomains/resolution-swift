@@ -9,9 +9,13 @@
 import Foundation
 
 internal class Utillities {
+    static func isNotEmpty(_ value: String?) -> Bool {
+        guard let value = value else { return false }
+        return Self.isNotEmpty(value)
+    }
+
     static func isNotEmpty(_ value: String) -> Bool {
         let nullValues = [
-        "0x",
         "0x0000000000000000000000000000000000000000",
         "0x0000000000000000000000000000000000000000000000000000000000000000"
         ]

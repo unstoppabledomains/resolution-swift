@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
   spec.name         = "UnstoppableDomainsResolution"
-  spec.version      = "0.1.5"
+  spec.version      = "0.1.7"
   spec.summary      = "Swift framework for resolving Unstoppable domains."
 
   spec.description  = <<-DESC
@@ -14,7 +14,7 @@ Pod::Spec.new do |spec|
   spec.author             = { "JohnnyJumper" => "jeyhunt@gmail.com", "Sergei Merenkov" => "mer.sergei@gmail.com", "Roman Medvid" => "roman@unstoppabledomains.com" }
   spec.social_media_url = 'https://twitter.com/unstoppableweb'
 
-  spec.ios.deployment_target = "12.1"
+  spec.ios.deployment_target = "11.0"
 
   spec.swift_version = '5.0'
 

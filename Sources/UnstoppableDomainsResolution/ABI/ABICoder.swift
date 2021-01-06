@@ -17,7 +17,7 @@ enum ABICoderError: Error {
     case couldNotDecode(method: String, value: String)
 }
 
-// swiftlint:disable identifier_name cyclomatic_complexity
+// swiftlint:disable identifier_name
 internal class ABICoder {
     let abi: ABIContract
 

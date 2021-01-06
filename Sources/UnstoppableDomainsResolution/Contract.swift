@@ -7,6 +7,7 @@
 //
 
 struct IdentifiableResult<T> {
+    // swiftlint:disable:next identifier_name
     var id: String
     var result: T
 }
@@ -15,8 +16,8 @@ import Foundation
 internal class Contract {
     let batchIdOffset = 128
 
-    static let ownerKey = "owner"
-    static let resolverKey = "resolver"
+    static let ownersKey = "owners"
+    static let resolversKey = "resolvers"
     static let valuesKey = "values"
 
     let address: String
@@ -45,14 +46,19 @@ internal class Contract {
                                                                                   data: $0.element,
                                                                                   to: address) }
         let response = try postBatchRequest(bodyArray)
-        return try response.map { guard let responseElement = $0 else { throw ResolutionError.recordNotSupported }
+        return try response.map {
+            guard let responseElement = $0 else {
+                throw ResolutionError.recordNotSupported
+            }
+
             var res: Any?
             do {
                 res = try self.coder.decode(responseElement.result, from: methodName)
             } catch ABICoderError.couldNotDecode {
                 res = nil
             }
-            return IdentifiableResult<Any?>(id: responseElement.id, result: res) }
+            return IdentifiableResult<Any?>(id: responseElement.id, result: res)
+        }
 }
 
     private func postRequest(_ body: JsonRpcPayload) throws -> String? {

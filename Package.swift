@@ -5,7 +5,7 @@ import PackageDescription
 
 let package = Package(
     name: "UnstoppableDomainsResolution",
-    platforms: [.macOS(.v10_15), .iOS(.v13) ],
+    platforms: [.macOS(.v10_15), .iOS(.v11) ],
     products: [
         .library(
             name: "UnstoppableDomainsResolution",
@@ -24,6 +24,7 @@ let package = Package(
                 .process("Resources/CNS/cnsProxyReader.json"),
                 .process("Resources/CNS/cnsRegistry.json"),
                 .process("Resources/CNS/cnsResolver.json"),
+                .process("Resources/CNS/network-config.json"),
                 .process("Resources/ENS/ensRegistry.json"),
                 .process("Resources/ENS/ensResolver.json")
             ],

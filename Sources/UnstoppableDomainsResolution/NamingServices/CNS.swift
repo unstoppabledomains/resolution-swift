@@ -10,32 +10,42 @@ import Foundation
 import EthereumAddress
 
 internal class CNS: CommonNamingService, NamingService {
+    struct ContractAddresses {
+        let registryAddress: String
+        let resolverAddress: String
+        let proxyReaderAddress: String
+    }
+
     static let specificDomain = ".crypto"
     static let name = "CNS"
-    static let proxyReaderAddress = "0x7ea9Ee21077F84339eDa9C80048ec6db678642B1"
-    let registryMap: [String: String] = [
-        "mainnet": "0xD1E5b0FF1287aA9f9A268759062E4Ab08b9Dacbe",
-        "kovan": "0x22c2738cdA28C5598b1a68Fb1C89567c2364936F"
-    ]
 
-    let getDataMethodName = "getData"
+    static let getDataForManyMethodName = "getDataForMany"
 
     let network: String
-    let registryAddress: String
+    let contracts: ContractAddresses
     var proxyReaderContract: Contract?
 
     init(network: String, providerUrl: String, networking: NetworkingLayer) throws {
-        guard let registryAddress = registryMap[network] else {
-            throw ResolutionError.unsupportedNetwork
-        }
         self.network = network
-        self.registryAddress = registryAddress
+
+        guard let contractsContainer = try Self.parseContractAddresses(network: network),
+              let registry = contractsContainer[ContractType.registry.name]?.address,
+              let resolver = contractsContainer[ContractType.resolver.name]?.address,
+              let proxyReader = contractsContainer[ContractType.proxyReader.name]?.address else { throw ResolutionError.unsupportedNetwork }
+        self.contracts = ContractAddresses(registryAddress: registry, resolverAddress: resolver, proxyReaderAddress: proxyReader)
+
         super.init(name: Self.name, providerUrl: providerUrl, networking: networking)
-        proxyReaderContract = try super.buildContract(address: Self.proxyReaderAddress, type: .proxyReader)
+        proxyReaderContract = try super.buildContract(address: self.contracts.proxyReaderAddress, type: .proxyReader)
     }
 
     func isSupported(domain: String) -> Bool {
         return domain.hasSuffix(Self.specificDomain)
+    }
+
+    struct OwnerResolverRecord {
+        let owner: String
+        let resolver: String
+        let record: String
     }
 
     // MARK: - geters of Owner and Resolver
@@ -43,29 +53,39 @@ internal class CNS: CommonNamingService, NamingService {
         let tokenId = super.namehash(domain: domain)
         let res: Any
         do {
-            res = try self.getData(keys: [Contract.ownerKey], for: tokenId)
+            res = try self.getDataForMany(keys: [Contract.ownersKey], for: [tokenId])
         } catch {
+            if error is ABICoderError {
+                throw ResolutionError.unregisteredDomain
+            }
+            throw error
+        }
+        guard let rec = self.unfoldForMany(contractResult: res, key: Contract.ownersKey),
+              rec.count > 0 else {
             throw ResolutionError.unregisteredDomain
         }
-        guard let rec = self.unfold(contractResult: res, key: Contract.ownerKey) else {
+
+        guard Utillities.isNotEmpty(rec[0]) else {
             throw ResolutionError.unregisteredDomain
         }
-        return rec
+        return rec[0]
     }
 
     func batchOwners(domains: [String]) throws -> [String?] {
         let tokenIds = domains.map { super.namehash(domain: $0) }
-        let res: [IdentifiableResult<Any?>]
+        let res: Any
         do {
-            res = try self.getBatchData(keys: [Contract.ownerKey], for: tokenIds)
+            res = try self.getDataForMany(keys: [Contract.ownersKey], for: tokenIds)
         } catch {
             throw error
         }
-
-        let rec: [String?] = res.sorted(by: {Int($0.id)! < Int($1.id)!})
-            .map {  guard let result = $0.result else { return nil }
-                    return self.unfold(contractResult: result, key: Contract.ownerKey) }
-        return rec
+        guard let data = res as? [String: Any],
+              let ownersFolded = data["1"] as? [Any] else {
+            return []
+        }
+        return ownersFolded.map { let address = unfoldAddress($0)
+            return Utillities.isNotEmpty(address) ? address : nil
+        }
     }
 
     func resolver(domain: String) throws -> String {
@@ -76,14 +96,21 @@ internal class CNS: CommonNamingService, NamingService {
     func resolver(tokenId: String) throws -> String {
         let res: Any
         do {
-            res = try self.getData(keys: [Contract.resolverKey], for: tokenId)
+            res = try self.getDataForMany(keys: [Contract.resolversKey], for: [tokenId])
         } catch {
+            if error is ABICoderError {
+                throw ResolutionError.unspecifiedResolver
+            }
+            throw error
+        }
+        guard let rec = self.unfoldForMany(contractResult: res, key: Contract.resolversKey),
+              rec.count > 0  else {
             throw ResolutionError.unspecifiedResolver
         }
-        guard let rec = self.unfold(contractResult: res, key: Contract.resolverKey) else {
+        guard Utillities.isNotEmpty(rec[0]) else {
             throw ResolutionError.unspecifiedResolver
         }
-        return rec
+        return rec[0]
     }
 
     func addr(domain: String, ticker: String) throws -> String {
@@ -103,11 +130,14 @@ internal class CNS: CommonNamingService, NamingService {
     }
 
     func record(tokenId: String, key: String) throws -> String {
-        var result: (owner: String, resolver: String, record: String) = ("", "", "")
+        let result: OwnerResolverRecord
         do {
             result = try self.getOwnerResolverRecord(tokenId: tokenId, key: key)
         } catch {
-            throw ResolutionError.unspecifiedResolver
+            if error is ABICoderError {
+                throw ResolutionError.unspecifiedResolver
+            }
+            throw error
         }
         guard Utillities.isNotEmpty(result.owner) else { throw ResolutionError.unregisteredDomain }
         guard Utillities.isNotEmpty(result.resolver) else { throw ResolutionError.unspecifiedResolver }
@@ -135,48 +165,54 @@ internal class CNS: CommonNamingService, NamingService {
         if let eth = incomingData as? EthereumAddress {
             return eth.address
         }
-
         if let str = incomingData as? String {
             return str
         }
-
         return nil
     }
 
-    private func unfold(contractResult: Any, key: String = "0") -> String? {
-        if let dict = contractResult as? [String: Any],
-           let element = dict[key] {
-            return unfoldAddress(element)
+    private func unfoldAddressForMany<T> (_ incomingData: T) -> [String]? {
+        if let ethArray = incomingData as? [EthereumAddress] {
+            return ethArray.map { $0.address }
+        }
+        if let strArray = incomingData as? [String] {
+            return strArray
         }
         return nil
     }
 
-    private func getOwnerResolverRecord(tokenId: String, key: String) throws -> (owner: String, resolver: String, record: String) {
-        let res = try self.getData(keys: [key], for: tokenId)
+    private func unfoldForMany(contractResult: Any, key: String = "0") -> [String]? {
+        if let dict = contractResult as? [String: Any],
+           let element = dict[key] {
+            return unfoldAddressForMany(element)
+        }
+        return nil
+    }
+
+    private func getOwnerResolverRecord(tokenId: String, key: String) throws -> OwnerResolverRecord {
+        let res = try self.getDataForMany(keys: [key], for: [tokenId])
         if let dict = res as? [String: Any] {
-            if let owner = unfoldAddress(dict[Contract.ownerKey]),
-               let resolver = unfoldAddress(dict[Contract.resolverKey]),
-               let values = dict[Contract.valuesKey] as? [String] {
-                let record = values[0]
-                return (owner: owner, resolver: resolver, record: record)
+            if let owners = unfoldAddressForMany(dict[Contract.ownersKey]),
+               let resolvers = unfoldAddressForMany(dict[Contract.resolversKey]),
+               let valuesArray = dict[Contract.valuesKey] as? [[String]] {
+                guard Utillities.isNotEmpty(owners[0]),
+                      Utillities.isNotEmpty(resolvers[0]),
+                      valuesArray.count > 0,
+                      valuesArray[0].count > 0 else {
+                    throw ResolutionError.unspecifiedResolver
+                }
+
+                let record = valuesArray[0][0]
+                return OwnerResolverRecord(owner: owners[0], resolver: resolvers[0], record: record)
             }
         }
         throw ResolutionError.unregisteredDomain
     }
 
-    private func getData(keys: [String], for tokenId: String) throws -> Any {
-        if let result = try proxyReaderContract?.callMethod(methodName: getDataMethodName, args: [keys, tokenId]) {
-            return result }
+    private func getDataForMany(keys: [String], for tokenIds: [String]) throws -> Any {
+        if let result = try proxyReaderContract?
+                                .callMethod(methodName: Self.getDataForManyMethodName,
+                                            args: [keys, tokenIds]) { return result }
         throw ResolutionError.proxyReaderNonInitialized
-    }
-
-    private func getBatchData(keys: [String], for tokenIds: [String]) throws -> [IdentifiableResult<Any?>] {
-        if let result = try proxyReaderContract?.callBatchMethod(methodName: getDataMethodName, argsArray: tokenIds.map { [keys, $0] }) {
-            return result }
-        throw ResolutionError.proxyReaderNonInitialized
-    }
-
-    private func askProxyReaderContract(for methodName: String, with args: [String]) throws -> Any {
-        return try proxyReaderContract!.callMethod(methodName: methodName, args: args)
     }
 }
