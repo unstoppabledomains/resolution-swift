@@ -180,7 +180,10 @@ class ResolutionTests: XCTestCase {
             assert( lowercasedOwners[0] == "0x8aaD44321A86b170879d7A244c1e8d360c99DdA8".lowercased() )
             assert( lowercasedOwners[1] == nil )
 
-        default: XCTFail("Expected owners, but got failure")
+        case .failure(let error):
+            XCTFail("Expected owners, but got \(error)")
+        case .none:
+            XCTFail("Expected owners, but got .none")
         }
         
         let lowercasedOwners = owners.compactMap({$0}).map{$0.lowercased()}
