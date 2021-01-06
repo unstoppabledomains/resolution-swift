@@ -24,6 +24,7 @@ let package = Package(
                 .process("Resources/CNS/cnsProxyReader.json"),
                 .process("Resources/CNS/cnsRegistry.json"),
                 .process("Resources/CNS/cnsResolver.json"),
+                .process("Resources/CNS/network-config.json"),
                 .process("Resources/ENS/ensRegistry.json"),
                 .process("Resources/ENS/ensResolver.json")
             ],

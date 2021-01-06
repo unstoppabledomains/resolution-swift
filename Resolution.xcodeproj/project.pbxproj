@@ -130,7 +130,6 @@
 				3E2AC91B24E4FA28008EBC39 /* CNS.swift */,
 				845B401C251389A4006AB08E /* ENS.swift */,
 				848E21082507890A008707D2 /* ZNS.swift */,
-				30AE8614257A8CCD003A0142 /* network-config.json */,
 			);
 			path = NamingServices;
 			sourceTree = "<group>";
@@ -158,6 +157,7 @@
 				3E2AC93D24E4FC9F008EBC39 /* cnsRegistry.json */,
 				3E2AC93C24E4FC9F008EBC39 /* cnsResolver.json */,
 				30A69244251385A70079EC69 /* cnsProxyReader.json */,
+				30AE8614257A8CCD003A0142 /* network-config.json */,
 			);
 			path = CNS;
 			sourceTree = "<group>";
@@ -331,7 +331,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 3EE4D9FD24E367720097540B /* Build configuration list for PBXProject "resolution" */;
+			buildConfigurationList = 3EE4D9FD24E367720097540B /* Build configuration list for PBXProject "Resolution" */;
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -675,7 +675,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		3EE4D9FD24E367720097540B /* Build configuration list for PBXProject "resolution" */ = {
+		3EE4D9FD24E367720097540B /* Build configuration list for PBXProject "Resolution" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3EE4DA1524E367720097540B /* Debug */,
