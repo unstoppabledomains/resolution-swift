@@ -147,6 +147,23 @@ public class Resolution {
         }
     }
 
+    public func usdt(domain: String, version: UsdtVersion, completion: @escaping StringResultConsumer ) {
+        let preparedDomain = prepare(domain: domain)
+        DispatchQueue.global(qos: .utility).async { [weak self] in
+            do {
+                guard let service = try self?.getServiceOf(domain: preparedDomain),
+                      service.name != "ENS" else {
+                    throw ResolutionError.methodNotSupported
+                }
+                let recordKey = "crypto.USDT.version.\(version).address"
+                let result = try service.record(domain: preparedDomain, key: recordKey)
+                completion(.success(result))
+            } catch {
+                self?.catchError(error, completion: completion)
+            }
+        }
+    }
+
     /// Resolves an ipfs hash of a `domain`
     /// - Parameter  domain: - domain name to be resolved
     /// - Parameter  completion: A callback that resolves `Result`  with an `IPFS hash` for a specific domain or `Error`
