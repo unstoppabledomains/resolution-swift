@@ -47,10 +47,33 @@ public class Resolution {
                 network: String = "mainnet",
                 networking: NetworkingLayer = DefaultNetworkingLayer() ) throws {
         self.providerUrl = providerUrl
-        let cns = try CNS(network: network, providerUrl: providerUrl, networking: networking)
-        let ens = try ENS(network: network, providerUrl: providerUrl, networking: networking)
-        let zns = try ZNS(network: network, providerUrl: "https://api.zilliqa.com/", networking: networking)
-        self.services = [cns, ens, zns]
+
+        var networkServices: [NamingService] = []
+        var errorService: Error?
+
+        do {
+            networkServices.append(try CNS(network: network, providerUrl: providerUrl, networking: networking))
+        } catch {
+            errorService = error
+        }
+
+        do {
+            networkServices.append(try ENS(network: network, providerUrl: providerUrl, networking: networking))
+        } catch {
+            errorService = error
+        }
+
+        do {
+            networkServices.append(try ZNS(network: network, providerUrl: "https://api.zilliqa.com/", networking: networking))
+        } catch {
+            errorService = error
+        }
+
+        if let error = errorService, networkServices.isEmpty {
+            throw error
+        }
+
+        self.services = networkServices
     }
 
     /// Checks if the domain name is valid according to naming service rules for valid domain names.
