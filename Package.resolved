@@ -6,8 +6,8 @@
         "repositoryURL": "https://github.com/keefertaylor/Base58Swift.git",
         "state": {
           "branch": null,
-          "revision": "c081b22d6df81d736e24424f461edd197ec873c2",
-          "version": "2.1.9"
+          "revision": "1c13ea6b07f1584660526f8bde3d4cc150e91acd",
+          "version": "2.1.14"
         }
       },
       {
@@ -15,8 +15,8 @@
         "repositoryURL": "https://github.com/attaswift/BigInt.git",
         "state": {
           "branch": null,
-          "revision": "018a5925f60f9e0523edd261de394a0898fe95b7",
-          "version": "3.1.0"
+          "revision": "889a1ecacd73ccc189c5cb29288048f186c44ed9",
+          "version": "5.2.1"
         }
       },
       {
@@ -33,26 +33,17 @@
         "repositoryURL": "https://github.com/deczer/EthereumABI",
         "state": {
           "branch": null,
-          "revision": "0131e0b31300b029da0def74ba2784d49ba9478c",
-          "version": "1.0.1"
+          "revision": "12750b6804f701f9df55902e73203d775cd37837",
+          "version": "1.4.0"
         }
       },
       {
         "package": "EthereumAddress",
-        "repositoryURL": "https://github.com/deczer/EthereumAddress.git",
+        "repositoryURL": "https://github.com/shamatar/EthereumAddress.git",
         "state": {
           "branch": null,
-          "revision": "d060ee73cf18dbb685289c9557e6b3a446e4a4ae",
-          "version": "1.0.1"
-        }
-      },
-      {
-        "package": "SipHash",
-        "repositoryURL": "https://github.com/attaswift/SipHash",
-        "state": {
-          "branch": null,
-          "revision": "e325083424688055363bbfcb7f1a440d7d7a1bae",
-          "version": "1.2.2"
+          "revision": "a8eb4fc1dc03c068bf88585d8f5a2dd3572664ca",
+          "version": "1.3.0"
         }
       }
     ]
