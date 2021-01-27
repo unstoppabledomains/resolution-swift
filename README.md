@@ -19,8 +19,6 @@ Resoultion supports decentralized domains across three main zones:
   - `.xyz`
   - `.luxe`
 
-For more information, see our detailed [API Referrence](https://unstoppabledomains.github.io/resolution/).
-
 # Installation into the project
 
 ## Cocoa Pods
