@@ -43,7 +43,7 @@ public class Resolution {
     private var providerUrl: String
     private let services: [NamingService]
 
-    public init(providerUrl: String = "https://main-rpc.linkpool.io",
+    public init(providerUrl: String = "https://mainnet.infura.io/v3/3c25f57353234b1b853e9861050f4817",
                 network: String = "mainnet",
                 networking: NetworkingLayer = DefaultNetworkingLayer() ) throws {
         self.providerUrl = providerUrl
@@ -58,7 +58,11 @@ public class Resolution {
         }
 
         do {
-            networkServices.append(try ENS(network: network, providerUrl: providerUrl, networking: networking))
+            var ensProviderUrl = providerUrl
+            if providerUrl == "https://mainnet.infura.io/v3/3c25f57353234b1b853e9861050f4817" {
+                ensProviderUrl = "https://mainnet.infura.io/v3/e05c36b6b2134ccc9f2594ddff94c136"
+            }
+            networkServices.append(try ENS(network: network, providerUrl: ensProviderUrl, networking: networking))
         } catch {
             errorService = error
         }

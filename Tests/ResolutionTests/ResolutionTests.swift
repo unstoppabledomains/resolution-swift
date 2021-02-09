@@ -21,7 +21,7 @@ class ResolutionTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        resolution = try! Resolution(providerUrl: "https://main-rpc.linkpool.io", network: "mainnet")
+        resolution = try! Resolution(providerUrl: "https://mainnet.infura.io/v3/3c25f57353234b1b853e9861050f4817", network: "mainnet")
     }
 
     func testSupportedDomains() throws {
