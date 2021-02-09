@@ -34,8 +34,18 @@
 		845B401D251389A4006AB08E /* ENS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845B401C251389A4006AB08E /* ENS.swift */; };
 		848E21092507890A008707D2 /* ZNS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848E21082507890A008707D2 /* ZNS.swift */; };
 		848E210C25079D61008707D2 /* Types.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848E210B25079D61008707D2 /* Types.swift */; };
-		B6A0F433251CB1F60018F233 /* Base58Swift in Frameworks */ = {isa = PBXBuildFile; productRef = B6A0F432251CB1F60018F233 /* Base58Swift */; };
-		B6A944F725194EDC00894E27 /* EthereumABI in Frameworks */ = {isa = PBXBuildFile; productRef = B6A944F625194EDC00894E27 /* EthereumABI */; };
+		B6F2075425DBD89800140CE3 /* ABIEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F2074C25DBD89800140CE3 /* ABIEncoder.swift */; };
+		B6F2075525DBD89800140CE3 /* ABIDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F2074D25DBD89800140CE3 /* ABIDecoder.swift */; };
+		B6F2075625DBD89800140CE3 /* ABIElements.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F2074E25DBD89800140CE3 /* ABIElements.swift */; };
+		B6F2075725DBD89800140CE3 /* ABITypeParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F2074F25DBD89800140CE3 /* ABITypeParser.swift */; };
+		B6F2075825DBD89800140CE3 /* ABIParameterTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F2075025DBD89800140CE3 /* ABIParameterTypes.swift */; };
+		B6F2075925DBD89800140CE3 /* ABI.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F2075125DBD89800140CE3 /* ABI.swift */; };
+		B6F2075A25DBD89800140CE3 /* ABIExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F2075225DBD89800140CE3 /* ABIExtensions.swift */; };
+		B6F2075B25DBD89800140CE3 /* ABIParsing.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F2075325DBD89800140CE3 /* ABIParsing.swift */; };
+		B6F2076125DBD8C800140CE3 /* EthereumABITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F2075F25DBD8C700140CE3 /* EthereumABITests.swift */; };
+		B6F2076D25DBD93900140CE3 /* CryptoSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B6F2076C25DBD93900140CE3 /* CryptoSwift */; };
+		B6F2077425DBD96100140CE3 /* Base58Swift in Frameworks */ = {isa = PBXBuildFile; productRef = B6F2077325DBD96100140CE3 /* Base58Swift */; };
+		B6F2077B25DBD99F00140CE3 /* EthereumAddress in Frameworks */ = {isa = PBXBuildFile; productRef = B6F2077A25DBD99F00140CE3 /* EthereumAddress */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -83,6 +93,16 @@
 		848E210B25079D61008707D2 /* Types.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Types.swift; sourceTree = "<group>"; };
 		849E07CC24F946CA00A793D3 /* LinuxMain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinuxMain.swift; sourceTree = "<group>"; };
 		849E07D124F9499900A793D3 /* XCTestManifests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XCTestManifests.swift; sourceTree = "<group>"; };
+		B6F2074C25DBD89800140CE3 /* ABIEncoder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ABIEncoder.swift; sourceTree = "<group>"; };
+		B6F2074D25DBD89800140CE3 /* ABIDecoder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ABIDecoder.swift; sourceTree = "<group>"; };
+		B6F2074E25DBD89800140CE3 /* ABIElements.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ABIElements.swift; sourceTree = "<group>"; };
+		B6F2074F25DBD89800140CE3 /* ABITypeParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ABITypeParser.swift; sourceTree = "<group>"; };
+		B6F2075025DBD89800140CE3 /* ABIParameterTypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ABIParameterTypes.swift; sourceTree = "<group>"; };
+		B6F2075125DBD89800140CE3 /* ABI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ABI.swift; sourceTree = "<group>"; };
+		B6F2075225DBD89800140CE3 /* ABIExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ABIExtensions.swift; sourceTree = "<group>"; };
+		B6F2075325DBD89800140CE3 /* ABIParsing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ABIParsing.swift; sourceTree = "<group>"; };
+		B6F2075F25DBD8C700140CE3 /* EthereumABITests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EthereumABITests.swift; sourceTree = "<group>"; };
+		B6F2076025DBD8C700140CE3 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -90,8 +110,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B6A944F725194EDC00894E27 /* EthereumABI in Frameworks */,
-				B6A0F433251CB1F60018F233 /* Base58Swift in Frameworks */,
+				B6F2077425DBD96100140CE3 /* Base58Swift in Frameworks */,
+				B6F2076D25DBD93900140CE3 /* CryptoSwift in Frameworks */,
+				B6F2077B25DBD99F00140CE3 /* EthereumAddress in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -147,6 +168,7 @@
 		3E2AC92024E4FA3E008EBC39 /* ABI */ = {
 			isa = PBXGroup;
 			children = (
+				B6F2074B25DBD89800140CE3 /* EthereumABI */,
 				3EAFA3F624EB59DA008791E9 /* ABICoder.swift */,
 				3EAFA3FD24EE03E0008791E9 /* JSON_RPC.swift */,
 			);
@@ -247,6 +269,7 @@
 			isa = PBXGroup;
 			children = (
 				849E07CC24F946CA00A793D3 /* LinuxMain.swift */,
+				B6F2075E25DBD8C700140CE3 /* EthereumABITests */,
 				3EE4DA1024E367720097540B /* ResolutionTests */,
 			);
 			path = Tests;
@@ -257,6 +280,30 @@
 			children = (
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		B6F2074B25DBD89800140CE3 /* EthereumABI */ = {
+			isa = PBXGroup;
+			children = (
+				B6F2074C25DBD89800140CE3 /* ABIEncoder.swift */,
+				B6F2074D25DBD89800140CE3 /* ABIDecoder.swift */,
+				B6F2074E25DBD89800140CE3 /* ABIElements.swift */,
+				B6F2074F25DBD89800140CE3 /* ABITypeParser.swift */,
+				B6F2075025DBD89800140CE3 /* ABIParameterTypes.swift */,
+				B6F2075125DBD89800140CE3 /* ABI.swift */,
+				B6F2075225DBD89800140CE3 /* ABIExtensions.swift */,
+				B6F2075325DBD89800140CE3 /* ABIParsing.swift */,
+			);
+			path = EthereumABI;
+			sourceTree = "<group>";
+		};
+		B6F2075E25DBD8C700140CE3 /* EthereumABITests */ = {
+			isa = PBXGroup;
+			children = (
+				B6F2075F25DBD8C700140CE3 /* EthereumABITests.swift */,
+				B6F2076025DBD8C700140CE3 /* Info.plist */,
+			);
+			path = EthereumABITests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -290,8 +337,9 @@
 			);
 			name = UnstoppableDomainsResolution;
 			packageProductDependencies = (
-				B6A944F625194EDC00894E27 /* EthereumABI */,
-				B6A0F432251CB1F60018F233 /* Base58Swift */,
+				B6F2076C25DBD93900140CE3 /* CryptoSwift */,
+				B6F2077325DBD96100140CE3 /* Base58Swift */,
+				B6F2077A25DBD99F00140CE3 /* EthereumAddress */,
 			);
 			productName = resolution;
 			productReference = 3EE4DA0324E367720097540B /* Resolution.framework */;
@@ -334,7 +382,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 3EE4D9FD24E367720097540B /* Build configuration list for PBXProject "resolution" */;
+			buildConfigurationList = 3EE4D9FD24E367720097540B /* Build configuration list for PBXProject "Resolution" */;
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -344,8 +392,9 @@
 			);
 			mainGroup = 3EE4D9F924E367720097540B;
 			packageReferences = (
-				B6A944F525194EDC00894E27 /* XCRemoteSwiftPackageReference "EthereumABI" */,
-				B6A0F431251CB1F60018F233 /* XCRemoteSwiftPackageReference "Base58Swift" */,
+				B6F2076B25DBD93900140CE3 /* XCRemoteSwiftPackageReference "CryptoSwift" */,
+				B6F2077225DBD96100140CE3 /* XCRemoteSwiftPackageReference "Base58Swift" */,
+				B6F2077925DBD99F00140CE3 /* XCRemoteSwiftPackageReference "EthereumAddress" */,
 			);
 			productRefGroup = 3EE4DA0424E367720097540B /* Products */;
 			projectDirPath = "";
@@ -426,14 +475,21 @@
 				3ECD84AE25A6AEE1001772DD /* UsdtVersion.swift in Sources */,
 				3E2AC91C24E4FA28008EBC39 /* CNS.swift in Sources */,
 				845B401D251389A4006AB08E /* ENS.swift in Sources */,
+				B6F2075825DBD89800140CE3 /* ABIParameterTypes.swift in Sources */,
+				B6F2075A25DBD89800140CE3 /* ABIExtensions.swift in Sources */,
+				B6F2075625DBD89800140CE3 /* ABIElements.swift in Sources */,
 				3EAFA40424EE32B2008791E9 /* CommonNamingService.swift in Sources */,
 				3E2AC91F24E4FA35008EBC39 /* NamingService.swift in Sources */,
+				B6F2075525DBD89800140CE3 /* ABIDecoder.swift in Sources */,
 				848E21092507890A008707D2 /* ZNS.swift in Sources */,
 				3E65912824E381E900D7EC35 /* Errors.swift in Sources */,
 				3EAFA3F724EB59DA008791E9 /* ABICoder.swift in Sources */,
 				3E105520258C95D300652FC7 /* DnsType.swift in Sources */,
+				B6F2075725DBD89800140CE3 /* ABITypeParser.swift in Sources */,
+				B6F2075425DBD89800140CE3 /* ABIEncoder.swift in Sources */,
 				3EE4DA1E24E367D40097540B /* Resolution.swift in Sources */,
 				848E210C25079D61008707D2 /* Types.swift in Sources */,
+				B6F2075925DBD89800140CE3 /* ABI.swift in Sources */,
 				3E65913124E4ADAC00D7EC35 /* Contract.swift in Sources */,
 				3EAFA40024EE0CFD008791E9 /* APIRequest.swift in Sources */,
 				3EAFA40224EE312A008791E9 /* Utilities.swift in Sources */,
@@ -441,6 +497,7 @@
 				8402F708250935FE0007F01D /* ContractZNS.swift in Sources */,
 				3E105524258CB73400652FC7 /* DnsUtils.swift in Sources */,
 				3E10552E258CBD0900652FC7 /* DnsRecordsError.swift in Sources */,
+				B6F2075B25DBD89800140CE3 /* ABIParsing.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -449,6 +506,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3EE4DA1224E367720097540B /* ResolutionTests.swift in Sources */,
+				B6F2076125DBD8C800140CE3 /* EthereumABITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -679,7 +737,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		3EE4D9FD24E367720097540B /* Build configuration list for PBXProject "resolution" */ = {
+		3EE4D9FD24E367720097540B /* Build configuration list for PBXProject "Resolution" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3EE4DA1524E367720097540B /* Debug */,
@@ -709,34 +767,47 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		B6A0F431251CB1F60018F233 /* XCRemoteSwiftPackageReference "Base58Swift" */ = {
+		B6F2076B25DBD93900140CE3 /* XCRemoteSwiftPackageReference "CryptoSwift" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/keefertaylor/Base58Swift.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.1.0;
-			};
-		};
-		B6A944F525194EDC00894E27 /* XCRemoteSwiftPackageReference "EthereumABI" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/deczer/EthereumABI";
+			repositoryURL = "https://github.com/krzyzanowskim/CryptoSwift.git";
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 1.0.0;
 			};
 		};
+		B6F2077225DBD96100140CE3 /* XCRemoteSwiftPackageReference "Base58Swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/keefertaylor/Base58Swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.1.14;
+			};
+		};
+		B6F2077925DBD99F00140CE3 /* XCRemoteSwiftPackageReference "EthereumAddress" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/shamatar/EthereumAddress.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.3.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		B6A0F432251CB1F60018F233 /* Base58Swift */ = {
+		B6F2076C25DBD93900140CE3 /* CryptoSwift */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B6A0F431251CB1F60018F233 /* XCRemoteSwiftPackageReference "Base58Swift" */;
+			package = B6F2076B25DBD93900140CE3 /* XCRemoteSwiftPackageReference "CryptoSwift" */;
+			productName = CryptoSwift;
+		};
+		B6F2077325DBD96100140CE3 /* Base58Swift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B6F2077225DBD96100140CE3 /* XCRemoteSwiftPackageReference "Base58Swift" */;
 			productName = Base58Swift;
 		};
-		B6A944F625194EDC00894E27 /* EthereumABI */ = {
+		B6F2077A25DBD99F00140CE3 /* EthereumAddress */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B6A944F525194EDC00894E27 /* XCRemoteSwiftPackageReference "EthereumABI" */;
-			productName = EthereumABI;
+			package = B6F2077925DBD99F00140CE3 /* XCRemoteSwiftPackageReference "EthereumAddress" */;
+			productName = EthereumAddress;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -13,13 +13,15 @@ let package = Package(
             targets: ["UnstoppableDomainsResolution"])
     ],
     dependencies: [
-        .package(url: "https://github.com/deczer/EthereumABI", .upToNextMinor(from: "1.4.0")),
+        .package(url: "https://github.com/krzyzanowskim/CryptoSwift.git", .upToNextMinor(from: "1.0.0")),
+        .package(url: "https://github.com/attaswift/BigInt.git", from: "5.0.0"),
+        .package(url: "https://github.com/shamatar/EthereumAddress.git", from: "1.3.0"),
         .package(url: "https://github.com/keefertaylor/Base58Swift.git", .upToNextMinor(from: "2.1.0"))
     ],
     targets: [
         .target(
             name: "UnstoppableDomainsResolution",
-            dependencies: ["EthereumABI", "Base58Swift"],
+            dependencies: ["CryptoSwift", "BigInt", "EthereumAddress", "Base58Swift"],
             resources: [
                 .process("Resources/CNS/cnsProxyReader.json"),
                 .process("Resources/CNS/cnsRegistry.json"),

@@ -29,15 +29,6 @@
         }
       },
       {
-        "package": "EthereumABI",
-        "repositoryURL": "https://github.com/deczer/EthereumABI",
-        "state": {
-          "branch": null,
-          "revision": "12750b6804f701f9df55902e73203d775cd37837",
-          "version": "1.4.0"
-        }
-      },
-      {
         "package": "EthereumAddress",
         "repositoryURL": "https://github.com/shamatar/EthereumAddress.git",
         "state": {
