@@ -60,7 +60,7 @@ public class Resolution {
         do {
             var ensProviderUrl = providerUrl
             if providerUrl == "https://mainnet.infura.io/v3/3c25f57353234b1b853e9861050f4817" {
-                ensProviderUrl = "https://mainnet.infura.io/v3/e05c36b6b2134ccc9f2594ddff94c136"
+                ensProviderUrl = "https://mainnet.infura.io/v3/d423cf2499584d7fbe171e33b42cfbee"
             }
             networkServices.append(try ENS(network: network, providerUrl: ensProviderUrl, networking: networking))
         } catch {
