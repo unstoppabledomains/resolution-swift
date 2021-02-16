@@ -39,7 +39,6 @@ public enum ResolutionError: Error {
 
 struct NetworkErrorResponse: Decodable {
     var jsonrpc: String
-    // swiftlint:disable:next identifier_name
     var id: String
     var error: ErrorId
 }

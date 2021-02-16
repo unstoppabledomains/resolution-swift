@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import EthereumABI
 
 typealias ABIContract = [ABI.Element]
 

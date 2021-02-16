@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import EthereumABI
 
 class CommonNamingService {
     static let hexadecimalPrefix = "0x"
