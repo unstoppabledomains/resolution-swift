@@ -16,6 +16,7 @@
 		3E2AC91F24E4FA35008EBC39 /* NamingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E2AC91E24E4FA35008EBC39 /* NamingService.swift */; };
 		3E2AC93E24E4FC9F008EBC39 /* cnsResolver.json in Resources */ = {isa = PBXBuildFile; fileRef = 3E2AC93C24E4FC9F008EBC39 /* cnsResolver.json */; };
 		3E2AC93F24E4FC9F008EBC39 /* cnsRegistry.json in Resources */ = {isa = PBXBuildFile; fileRef = 3E2AC93D24E4FC9F008EBC39 /* cnsRegistry.json */; };
+		3E33F99925DCFAB400627C71 /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E33F99825DCFAB400627C71 /* Configuration.swift */; };
 		3E65912824E381E900D7EC35 /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E65912724E381E900D7EC35 /* Errors.swift */; };
 		3E65913124E4ADAC00D7EC35 /* Contract.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E65913024E4ADAC00D7EC35 /* Contract.swift */; };
 		3EAFA3F724EB59DA008791E9 /* ABICoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EAFA3F624EB59DA008791E9 /* ABICoder.swift */; };
@@ -59,6 +60,7 @@
 		3E2AC91E24E4FA35008EBC39 /* NamingService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NamingService.swift; sourceTree = "<group>"; };
 		3E2AC93C24E4FC9F008EBC39 /* cnsResolver.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = cnsResolver.json; sourceTree = "<group>"; };
 		3E2AC93D24E4FC9F008EBC39 /* cnsRegistry.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = cnsRegistry.json; sourceTree = "<group>"; };
+		3E33F99825DCFAB400627C71 /* Configuration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Configuration.swift; sourceTree = "<group>"; };
 		3E65912724E381E900D7EC35 /* Errors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
 		3E65913024E4ADAC00D7EC35 /* Contract.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Contract.swift; sourceTree = "<group>"; };
 		3EAFA3F624EB59DA008791E9 /* ABICoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ABICoder.swift; sourceTree = "<group>"; };
@@ -199,6 +201,7 @@
 				3E65913024E4ADAC00D7EC35 /* Contract.swift */,
 				8402F707250935FD0007F01D /* ContractZNS.swift */,
 				3EAFA3FF24EE0CFD008791E9 /* APIRequest.swift */,
+				3E33F99825DCFAB400627C71 /* Configuration.swift */,
 			);
 			name = Resolution;
 			path = Sources/UnstoppableDomainsResolution;
@@ -426,6 +429,7 @@
 				3ECD84AE25A6AEE1001772DD /* UsdtVersion.swift in Sources */,
 				3E2AC91C24E4FA28008EBC39 /* CNS.swift in Sources */,
 				845B401D251389A4006AB08E /* ENS.swift in Sources */,
+				3E33F99925DCFAB400627C71 /* Configuration.swift in Sources */,
 				3EAFA40424EE32B2008791E9 /* CommonNamingService.swift in Sources */,
 				3E2AC91F24E4FA35008EBC39 /* NamingService.swift in Sources */,
 				848E21092507890A008707D2 /* ZNS.swift in Sources */,

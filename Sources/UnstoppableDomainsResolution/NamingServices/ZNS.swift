@@ -16,13 +16,13 @@ internal class ZNS: CommonNamingService, NamingService {
         "mainnet": "0x9611c53be6d1b32058b2747bdececed7e1216793"
     ]
 
-    init(network: String, providerUrl: String, networking: NetworkingLayer) throws {
-        guard let registryAddress = registryMap[network] else {
+    init(_ config: NamingServiceConfig) throws {
+        guard let registryAddress = registryMap[config.network] else {
             throw ResolutionError.unsupportedNetwork
         }
-        self.network = network
+        self.network = config.network
         self.registryAddress = registryAddress
-        super.init(name: "ZNS", providerUrl: providerUrl, networking: networking)
+        super.init(name: "ZNS", providerUrl: config.providerUrl, networking: config.networking)
     }
 
     func isSupported(domain: String) -> Bool {

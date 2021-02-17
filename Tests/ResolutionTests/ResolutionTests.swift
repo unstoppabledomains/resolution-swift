@@ -18,10 +18,39 @@ var resolution: Resolution!
 class ResolutionTests: XCTestCase {
 
     let timeout: TimeInterval = 10
-
     override func setUp() {
         super.setUp()
-        resolution = try! Resolution(providerUrl: "https://mainnet.infura.io/v3/3c25f57353234b1b853e9861050f4817", network: "mainnet")
+        resolution = try! Resolution();
+    }
+    
+    func testOldConstructor() throws {
+        // old constructor assumed providerUrl would be the same for cns and ens
+        // using this key cause it is not limitted by contract whitelist.
+        resolution = try Resolution(providerUrl: "https://mainnet.infura.io/v3/d423cf2499584d7fbe171e33b42cfbee", network: "mainnet");
+        try testAddr();
+    }
+    
+    func testRinkeby() throws {
+        resolution = try Resolution(configs: Configurations(
+                cns: NamingServiceConfig(
+                    providerUrl: "https://rinkeby.infura.io/v3/3c25f57353234b1b853e9861050f4817",
+                    network: "rinkeby"
+                )
+            )
+        );
+        let domainReceived = expectation(description: "Exist domain should be received")
+        var ethAddress = ""
+        resolution.addr(domain: "udtestdev-creek.crypto", ticker: "eth") { (result) in
+            switch result {
+            case .success(let returnValue):
+                ethAddress = returnValue
+                domainReceived.fulfill()
+            case .failure(let error):
+                XCTFail("Expected Eth Address, but got \(error)")
+            }
+        }
+        waitForExpectations(timeout: timeout, handler: nil)
+        assert(ethAddress == "0x1C8b9B78e3085866521FE206fa4c1a67F49f153A")
     }
 
     func testSupportedDomains() throws {
