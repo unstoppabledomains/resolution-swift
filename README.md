@@ -93,6 +93,54 @@ resolution.owner(domain: "brad.crypto") { result in
 }
 ```
 
+## Customizing naming services
+Version 0.3.0 introduced the `Configurations` struct that is used for configuring each connected naming service.
+Library can offer three naming services at the moment:
+
+* `cns` resolves `.crypto` domains,
+* `ens` resolves `.eth` domains,
+* `zns` resolves `.zil` domains
+
+By default, each of them is using the mainnet network via infura provider. 
+Unstoppable domains are using the infura key with no restriction for CNS.
+Unstoppable domains recommends setting up your own provider for ENS, as we don't guarantee ENS Infura key availability. 
+You can update each naming service separately
+
+```swift
+let resolution = try Resolution(configs: Configurations(
+        cns: NamingServiceConfig(
+            providerUrl: "https://rinkeby.infura.io/v3/3c25f57353234b1b853e9861050f4817",
+            network: "rinkeby"
+        )
+    )
+);
+
+// domain udtestdev-creek.crypto exists only on the rinkeby network.
+
+resolution.addr(domain: "udtestdev-creek.crypto", ticker: "eth") { (result) in
+    switch result {
+    case .success(let returnValue):
+        ethAddress = returnValue
+        domainReceived.fulfill()
+    case .failure(let error):
+        XCTFail("Expected Eth Address, but got \(error)")
+    }
+}
+
+// naming services that hasn't been touched by Configrations struct are using default settings
+// the following will look up monkybrain.eth on the mainnet via infura provider
+
+resolution.addr(domain: "monkybrain.eth", ticker: "eth") { (result) in
+    switch result {
+    case .success(let returnValue):
+        ethENSAddress = returnValue
+        domainEthReceived.fulfill()
+    case .failure(let error):
+        XCTFail("Expected Eth Address, but got \(error)")
+    }
+}
+```
+
 ## Batch requesting of owners
 
 Version 0.1.3 introduced the `batchOwners(domains: _, completion: _ )` method which adds additional convenience when making multiple domain owner queries.

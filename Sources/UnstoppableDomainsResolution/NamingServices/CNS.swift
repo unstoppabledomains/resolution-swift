@@ -25,8 +25,8 @@ internal class CNS: CommonNamingService, NamingService {
     let contracts: ContractAddresses
     var proxyReaderContract: Contract?
 
-    init(network: String, providerUrl: String, networking: NetworkingLayer) throws {
-        self.network = network
+    init(_ config: NamingServiceConfig) throws {
+        self.network = config.network
 
         guard let contractsContainer = try Self.parseContractAddresses(network: network),
               let registry = contractsContainer[ContractType.registry.name]?.address,
@@ -34,7 +34,7 @@ internal class CNS: CommonNamingService, NamingService {
               let proxyReader = contractsContainer[ContractType.proxyReader.name]?.address else { throw ResolutionError.unsupportedNetwork }
         self.contracts = ContractAddresses(registryAddress: registry, resolverAddress: resolver, proxyReaderAddress: proxyReader)
 
-        super.init(name: Self.name, providerUrl: providerUrl, networking: networking)
+        super.init(name: Self.name, providerUrl: config.providerUrl, networking: config.networking)
         proxyReaderContract = try super.buildContract(address: self.contracts.proxyReaderAddress, type: .proxyReader)
     }
 

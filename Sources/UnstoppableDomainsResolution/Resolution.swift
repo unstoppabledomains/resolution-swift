@@ -5,9 +5,7 @@
 //  Created by Johnny Good on 8/11/20.
 //  Copyright © 2020 Unstoppable Domains. All rights reserved.
 //
-
 import Foundation
-
 /// A library for interacting with blockchain domain names.
 ///
 /// Supported domain zones:
@@ -25,55 +23,67 @@ import Foundation
 ///     .luxe
 ///
 /// ```swift
-/// let resolution = try Resolution(providerUrl: "https://main-rpc.linkpool.io", network: "mainnet");
-///
+/// let resolution = try Resolution();
 /// resolution.addr(domain: "brad.crypto", ticker: "btc") { (result) in
+///   switch result {
+///   case .success(let returnValue):
+///         // bc1q359khn0phg58xgezyqsuuaha28zkwx047c0c3y
+///       let btcAddress = returnValue
+///   case .failure(let error):
+///       print("Expected btc Address, but got \(error)")
+///   }
+/// }
+/// ```
+/// You can configure namingServices by providing NamingServiceConfig struct to the constructor for the interested service
+/// for example lets configure crypto naming service to use rinkeby while left etherium naming service with default configurations:
+/// ```swift
+/// let resolution = try Resolution(
+///   configs: Configurations(
+///     cns: NamingServiceConfig(
+///       providerUrl: "https://rinkeby.infura.io/v3/3c25f57353234b1b853e9861050f4817",
+///       network: "rinkeby"
+///    )
+///   )
+/// );
+/// resolution.addr(domain: "udtestdev-creek.crypto", ticker: "eth") { (result) in
 ///     switch result {
 ///     case .success(let returnValue):
-///           // bc1q359khn0phg58xgezyqsuuaha28zkwx047c0c3y
-///         let btcAddress = returnValue
+///           // 0x1C8b9B78e3085866521FE206fa4c1a67F49f153A
+///         let ethAddress = returnValue
 ///     case .failure(let error):
-///         print("Expected btc Address, but got \(error)")
+///         print("Expected eth Address, but got \(error)")
 ///     }
 /// }
 /// ```
-///
 public class Resolution {
+    private var services: [NamingService] = []
 
-    private var providerUrl: String
-    private let services: [NamingService]
+    // Todo remove the following constructor in the 1.0.0
+    @available(*, deprecated, message: "Please use ```public init(configs: Configurations = Configurations() )```")
+    public init(providerUrl: String, network: String, networking: NetworkingLayer = DefaultNetworkingLayer()) throws {
+        self.services = try constructNetworkServices(
+            Configurations(
+                cns: NamingServiceConfig(
+                    providerUrl: providerUrl,
+                    network: network,
+                    networking: networking
+                ),
+                ens: NamingServiceConfig(
+                  providerUrl: providerUrl,
+                  network: network,
+                  networking: networking
+                ),
+                zns: NamingServiceConfig(
+                    providerUrl: "https://api.zilliqa.com/",
+                    network: network,
+                    networking: networking
+                )
+            )
+        )
+    }
 
-    public init(providerUrl: String = "https://main-rpc.linkpool.io",
-                network: String = "mainnet",
-                networking: NetworkingLayer = DefaultNetworkingLayer() ) throws {
-        self.providerUrl = providerUrl
-
-        var networkServices: [NamingService] = []
-        var errorService: Error?
-
-        do {
-            networkServices.append(try CNS(network: network, providerUrl: providerUrl, networking: networking))
-        } catch {
-            errorService = error
-        }
-
-        do {
-            networkServices.append(try ENS(network: network, providerUrl: providerUrl, networking: networking))
-        } catch {
-            errorService = error
-        }
-
-        do {
-            networkServices.append(try ZNS(network: network, providerUrl: "https://api.zilliqa.com/", networking: networking))
-        } catch {
-            errorService = error
-        }
-
-        if let error = errorService, networkServices.isEmpty {
-            throw error
-        }
-
-        self.services = networkServices
+    public init(configs: Configurations = Configurations() ) throws {
+        self.services = try constructNetworkServices(configs)
     }
 
     /// Checks if the domain name is valid according to naming service rules for valid domain names.
@@ -325,6 +335,35 @@ public class Resolution {
     }
 
     // MARK: - Uttilities function
+
+    /// this returns [NamingService] from the configurations
+    private func constructNetworkServices(_ configs: Configurations) throws -> [NamingService] {
+        var networkServices: [NamingService] = []
+        var errorService: Error?
+        do {
+            networkServices.append(try CNS(configs.cns))
+        } catch {
+            errorService = error
+        }
+
+        do {
+            networkServices.append(try ENS(configs.ens))
+        } catch {
+            errorService = error
+        }
+
+        do {
+            networkServices.append(try ZNS(configs.zns))
+        } catch {
+            errorService = error
+        }
+
+        if let error = errorService, networkServices.isEmpty {
+            throw error
+        }
+        return networkServices
+    }
+
     /// This returns the correct naming service based on the `domain` asked for
     private func getServiceOf(domain: String) throws -> NamingService {
         guard let service = services.first(where: {$0.isSupported(domain: domain)}) else {
