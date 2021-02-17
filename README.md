@@ -101,7 +101,10 @@ Library can offer three naming services at the moment:
 * `ens` resolves `.eth` domains,
 * `zns` resolves `.zil` domains
 
-By default, each of them is using the mainnet network via infura provider. You can update each naming service separately
+By default, each of them is using the mainnet network via infura provider. 
+Unstoppable domains are using the infura key with no restriction for CNS.
+Unstoppable domains recommends setting up your own provider for ENS, as we don't guarantee ENS Infura key availability. 
+You can update each naming service separately
 
 ```swift
 let resolution = try Resolution(configs: Configurations(
