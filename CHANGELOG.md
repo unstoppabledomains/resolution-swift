@@ -1,3 +1,20 @@
+### 0.3.0 
+- [Customizing naming services](https://github.com/unstoppabledomains/resolution-swift#customizing-naming-services)
+Version 0.3.0 introduced the `Configurations` struct that is used for configuring each connected naming service.
+Library can offer three naming services at the moment:
+
+* `cns` resolves `.crypto` domains,
+* `ens` resolves `.eth` domains,
+* `zns` resolves `.zil` domains
+
+*By default, each of them is using the mainnet network via infura provider. 
+Unstoppable domains are using the infura key with no restriction for CNS.
+Unstoppable domains recommends setting up your own provider for ENS, as we don't guarantee ENS Infura key availability. 
+You can update each naming service separately*
+
+- Update keys ([#30](https://github.com/unstoppabledomains/resolution-swift/pull/30)) via [@JohnnyJumper](https://github.com/JohnnyJumper)
+- Change ABI codec dependency ([#31](https://github.com/unstoppabledomains/resolution-swift/pull/31)) via [@merenkoff](https://github.com/merenkoff)
+
 ### 0.2.0
 - Added correct initialization of Resolution object if `rinkeby` test network used([#27](https://github.com/unstoppabledomains/resolution-swift/pull/27)) via [@merenkoff](https://github.com/merenkoff)
 - Dns records support ([#25](https://github.com/unstoppabledomains/resolution-swift/pull/25)) via [@JohnnyJumper](https://github.com/JohnnyJumper)
