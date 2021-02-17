@@ -7,6 +7,24 @@ line_length:
   ### works up until this config rule
   ignores_interpolated_strings: true
 
+identifier_name:
+  excluded:
+    - v
+    - t
+    - s
+    - c
+    - b
+    - d
+    - i
+    - h
+    - el
+    - bn
+    - to
+    - id
+    - tx
+    - vc
+    - ok
+
 excluded:
   - Pods
   - .build

@@ -8,7 +8,6 @@
 
 import Foundation
 
-// swiftlint:disable identifier_name
 public struct JsonRpcPayload: Codable {
     let jsonrpc, id, method: String
     let params: [ParamElement]
