@@ -59,6 +59,7 @@ public class Resolution {
     private var services: [NamingService] = []
 
     // Todo remove the following constructor in the 1.0.0
+    @available(*, deprecated, message: "Please use ```public init(configs: Configurations = Configurations() )```")
     public init(providerUrl: String, network: String, networking: NetworkingLayer = DefaultNetworkingLayer()) throws {
         self.services = try constructNetworkServices(
             Configurations(

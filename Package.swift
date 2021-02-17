@@ -23,6 +23,7 @@ let package = Package(
             name: "UnstoppableDomainsResolution",
             dependencies: ["CryptoSwift", "BigInt", "EthereumAddress", "Base58Swift"],
             resources: [
+                .process("Resources/CNS/supported-keys.json"),
                 .process("Resources/CNS/cnsProxyReader.json"),
                 .process("Resources/CNS/cnsRegistry.json"),
                 .process("Resources/CNS/cnsResolver.json"),
