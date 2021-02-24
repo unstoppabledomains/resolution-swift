@@ -28,7 +28,7 @@ internal class CNS: CommonNamingService, NamingService {
     init(_ config: NamingServiceConfig) throws {
 
         if config.network.isEmpty {
-            self.network = try Self.getNetworkId(providerUrl: config.providerUrl, networking: config.networking)!
+            self.network = try Self.getNetworkId(providerUrl: config.providerUrl, networking: config.networking)
         } else {
             self.network = config.network
         }

@@ -23,7 +23,7 @@ internal class ENS: CommonNamingService, NamingService {
     init(_ config: NamingServiceConfig) throws {
 
         self.network = config.network.isEmpty
-            ? try Self.getNetworkId(providerUrl: config.providerUrl, networking: config.networking)!
+            ? try Self.getNetworkId(providerUrl: config.providerUrl, networking: config.networking)
             : config.network
 
         guard let registryAddress = registryMap[self.network] else {

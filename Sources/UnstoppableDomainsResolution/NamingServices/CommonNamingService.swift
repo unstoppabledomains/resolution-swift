@@ -126,7 +126,7 @@ extension CommonNamingService {
         return nil
     }
 
-    static func getNetworkId(providerUrl: String, networking: NetworkingLayer) throws -> String? {
+    static func getNetworkId(providerUrl: String, networking: NetworkingLayer) throws -> String {
         let url = URL(string: providerUrl)!
         let payload: JsonRpcPayload = JsonRpcPayload(jsonrpc: "2.0", id: "67", method: "net_version", params: [])
 
@@ -154,9 +154,9 @@ extension CommonNamingService {
         }
         switch resp?[0].result {
         case .string(let result):
-            return networkIds.key(forValue: result)
+            return networkIds.key(forValue: result) ?? ""
         default:
-            return nil
+            return ""
         }
     }
 }

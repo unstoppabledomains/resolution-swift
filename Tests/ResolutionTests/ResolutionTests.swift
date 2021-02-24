@@ -45,6 +45,26 @@ class ResolutionTests: XCTestCase {
         assert(znsNetwork == "mainnet");
     }
     
+    func testUnsupportedNetwork() throws {
+        self.checkError(completion: {
+            try Resolution(configs: Configurations(
+                cns: NamingServiceConfig(providerUrl: "https://ropsten.infura.io/v3/3c25f57353234b1b853e9861050f4817")
+            ));
+        }, expectedError: .unsupportedNetwork)
+        
+        self.checkError(completion: {
+            try Resolution(configs: Configurations(
+                zns: NamingServiceConfig(providerUrl: "https://dev-api.zilliqa.com")
+            ));
+        }, expectedError: .unsupportedNetwork)
+        
+        self.checkError(completion: {
+            try Resolution(configs: Configurations(
+                ens: NamingServiceConfig(providerUrl: "https://kovan.infura.io/v3/3c25f57353234b1b853e9861050f4817")
+            ));
+        }, expectedError: .unsupportedNetwork)
+    }
+    
     func testRinkeby() throws {
         resolution = try Resolution(configs: Configurations(
                 cns: NamingServiceConfig(

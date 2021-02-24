@@ -16,10 +16,14 @@ internal class ZNS: CommonNamingService, NamingService {
         "mainnet": "0x9611c53be6d1b32058b2747bdececed7e1216793"
     ]
 
+    static let znsNetworkIds = ["mainnet": "1",
+                                "testnet": "333",
+                                "isolated": "222"]
+
     init(_ config: NamingServiceConfig) throws {
 
         self.network = config.network.isEmpty
-            ? Self.getNetworkFromUrl(config.providerUrl)
+            ? try Self.getNetworkFromUrl(config.providerUrl, with: config.networking)
             : config.network
 
         guard let registryAddress = registryMap[self.network] else {
@@ -30,13 +34,39 @@ internal class ZNS: CommonNamingService, NamingService {
         super.init(name: "ZNS", providerUrl: config.providerUrl, networking: config.networking)
     }
 
-    static func getNetworkFromUrl(_ url: String) -> String {
-        if url.contains("dev-zilliqa") {
-            return "testnet"
-        } else if url.contains("api.zilliqa") {
-            return "mainnet"
+    static func getNetworkFromUrl(_ providerUrl: String, with networking: NetworkingLayer) throws -> String {
+
+        let url = URL(string: providerUrl)!
+        let payload: JsonRpcPayload = JsonRpcPayload(jsonrpc: "2.0", id: "67", method: "GetNetworkId", params: [])
+
+        var resp: JsonRpcResponseArray?
+        var err: Error?
+        let semaphore = DispatchSemaphore(value: 0)
+
+        networking.makeHttpPostRequest(
+            url: url,
+            httpMethod: "POST",
+            httpHeaderContentType: "application/json",
+            httpBody: try JSONEncoder().encode(payload)
+        ) { result in
+            switch result {
+            case .success(let response):
+                resp = response
+            case .failure(let error):
+                err = error
+            }
+            semaphore.signal()
         }
-        return ""
+        semaphore.wait()
+        guard err == nil else {
+            throw err!
+        }
+        switch resp?[0].result {
+        case .string(let result):
+            return znsNetworkIds.key(forValue: result) ?? ""
+        default:
+            return ""
+        }
     }
 
     func isSupported(domain: String) -> Bool {
@@ -47,7 +77,7 @@ internal class ZNS: CommonNamingService, NamingService {
         let recordAddresses = try self.recordsAddresses(domain: domain)
         let (ownerAddress, _ ) = recordAddresses
         guard Utillities.isNotEmpty(ownerAddress) else {
-                throw ResolutionError.unregisteredDomain
+            throw ResolutionError.unregisteredDomain
         }
 
         return ownerAddress
@@ -112,8 +142,8 @@ internal class ZNS: CommonNamingService, NamingService {
             let record = records[namehash] as? [String: Any],
             let arguments = record["arguments"] as? [Any], arguments.count == 2,
             let ownerAddress = arguments[0] as? String, let resolverAddress = arguments[1] as? String
-            else {
-                throw ResolutionError.unregisteredDomain
+        else {
+            throw ResolutionError.unregisteredDomain
         }
 
         return (ownerAddress, resolverAddress)
@@ -123,18 +153,23 @@ internal class ZNS: CommonNamingService, NamingService {
         let resolverContract: ContractZNS = self.buildContract(address: address)
 
         guard let records = try resolverContract.fetchSubState(
-                    field: "records",
-                    keys: keys
-                  ) as? [String: Any]
+            field: "records",
+            keys: keys
+        ) as? [String: Any]
         else {
             throw ResolutionError.unspecifiedResolver
         }
 
-      return records
+        return records
     }
 
     func buildContract(address: String) -> ContractZNS {
         return ContractZNS(providerUrl: self.providerUrl, address: address.replacingOccurrences(of: "0x", with: ""), networking: networking)
     }
+}
 
+fileprivate extension Dictionary where Value: Equatable {
+    func key(forValue value: Value) -> Key? {
+        return first { $0.1 == value }?.0
+    }
 }
