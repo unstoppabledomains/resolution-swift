@@ -35,6 +35,7 @@ import Foundation
 /// }
 /// ```
 /// You can configure namingServices by providing NamingServiceConfig struct to the constructor for the interested service
+/// If you ommit network we are making a "net_version" JSON RPC call to the provider to determine the chainID
 /// for example lets configure crypto naming service to use rinkeby while left etherium naming service with default configurations:
 /// ```swift
 /// let resolution = try Resolution(

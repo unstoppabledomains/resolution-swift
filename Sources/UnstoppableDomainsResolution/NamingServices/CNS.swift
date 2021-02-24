@@ -27,11 +27,10 @@ internal class CNS: CommonNamingService, NamingService {
 
     init(_ config: NamingServiceConfig) throws {
 
-        if config.network.isEmpty {
-            self.network = try Self.getNetworkId(providerUrl: config.providerUrl, networking: config.networking)
-        } else {
-            self.network = config.network
-        }
+        self.network = config.network.isEmpty
+            ? try Self.getNetworkId(providerUrl: config.providerUrl, networking: config.networking)
+            : config.network
+
         guard let contractsContainer = try Self.parseContractAddresses(network: network),
               let registry = contractsContainer[ContractType.registry.name]?.address,
               let resolver = contractsContainer[ContractType.resolver.name]?.address,

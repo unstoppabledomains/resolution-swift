@@ -54,12 +54,6 @@ class ResolutionTests: XCTestCase {
         
         self.checkError(completion: {
             try Resolution(configs: Configurations(
-                zns: NamingServiceConfig(providerUrl: "https://dev-api.zilliqa.com")
-            ));
-        }, expectedError: .unsupportedNetwork)
-        
-        self.checkError(completion: {
-            try Resolution(configs: Configurations(
                 ens: NamingServiceConfig(providerUrl: "https://kovan.infura.io/v3/3c25f57353234b1b853e9861050f4817")
             ));
         }, expectedError: .unsupportedNetwork)
@@ -626,10 +620,6 @@ extension ResolutionError: Equatable {
              (.badRequestOrResponse, _),
              (.unsupportedServiceName, _):
             
-            return false
-        // Xcode with Version 12.4 (12D4e) can't compile this without default
-        // throws error: The compiler is unable to check that this switch is exhaustive in a reasonable time
-        default:
             return false
         }
     }
