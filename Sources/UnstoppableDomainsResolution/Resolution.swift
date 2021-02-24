@@ -366,7 +366,7 @@ public class Resolution {
             errorService = error
         }
 
-        if let error = errorService, networkServices.isEmpty {
+        if let error = errorService {
             throw error
         }
         return networkServices
