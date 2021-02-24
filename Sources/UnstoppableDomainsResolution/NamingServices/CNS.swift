@@ -26,8 +26,12 @@ internal class CNS: CommonNamingService, NamingService {
     var proxyReaderContract: Contract?
 
     init(_ config: NamingServiceConfig) throws {
-        self.network = config.network
 
+        if config.network.isEmpty {
+            self.network = try Self.getNetworkId(providerUrl: config.providerUrl, networking: config.networking)!
+        } else {
+            self.network = config.network
+        }
         guard let contractsContainer = try Self.parseContractAddresses(network: network),
               let registry = contractsContainer[ContractType.registry.name]?.address,
               let resolver = contractsContainer[ContractType.resolver.name]?.address,

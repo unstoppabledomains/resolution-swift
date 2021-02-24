@@ -17,12 +17,26 @@ internal class ZNS: CommonNamingService, NamingService {
     ]
 
     init(_ config: NamingServiceConfig) throws {
-        guard let registryAddress = registryMap[config.network] else {
+
+        self.network = config.network.isEmpty
+            ? Self.getNetworkFromUrl(config.providerUrl)
+            : config.network
+
+        guard let registryAddress = registryMap[self.network] else {
             throw ResolutionError.unsupportedNetwork
         }
-        self.network = config.network
+
         self.registryAddress = registryAddress
         super.init(name: "ZNS", providerUrl: config.providerUrl, networking: config.networking)
+    }
+
+    static func getNetworkFromUrl(_ url: String) -> String {
+        if url.contains("dev-zilliqa") {
+            return "testnet"
+        } else if url.contains("api.zilliqa") {
+            return "mainnet"
+        }
+        return ""
     }
 
     func isSupported(domain: String) -> Bool {

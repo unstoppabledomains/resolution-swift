@@ -21,6 +21,7 @@ public enum ResolutionError: Error {
     case methodNotSupported
     case tooManyResponses
     case badRequestOrResponse
+    case unsupportedServiceName
 
     static let tooManyResponsesCode = -32005
     static let badRequestOrResponseCode = -32042
