@@ -37,7 +37,7 @@ public extension ABI {
     }
 
     enum Element {
-        public enum ArraySize { //bytes for convenience
+        public enum ArraySize { // bytes for convenience
             case staticSize(UInt64)
             case dynamicSize
             case notArray

@@ -612,7 +612,6 @@ extension ResolutionError: Equatable {
         case (.unsupportedServiceName, .unsupportedServiceName):
             return true
             
-        // We don't use `default` here on purpose, so we don't forget updating this method on adding new variants.
         case (.unregisteredDomain, _),
              (.unsupportedDomain, _),
              (.recordNotFound, _),
@@ -629,7 +628,7 @@ extension ResolutionError: Equatable {
             
             return false
         // Xcode with Version 12.4 (12D4e) can't compile this without default
-        // throws error: The compiler is unable to check that this switch is exhaustive in reasonable time
+        // throws error: The compiler is unable to check that this switch is exhaustive in a reasonable time
         default:
             return false
         }
