@@ -49,8 +49,6 @@ package.dependencies.append(
 ```swift
 import UnstoppableDomainsResolution
 
-  ...
-
 guard let resolution = try? Resolution() else {
   print ("Init of Resolution instance with default parameters failed...")
   return
@@ -79,6 +77,26 @@ resolution.addr(domain: "brad.crypto", ticker: "eth") { result in
     let ethAddress = returnValue
   case .failure(let error):
     print("Expected eth Address, but got \(error)")
+  }
+}
+
+resolution.multiChainAddress(domain: "brad.crypto", ticker: "USDT", chain: "ERC20") { result in
+  switch result {
+  case .success(let returnValue):
+    // 0x8aaD44321A86b170879d7A244c1e8d360c99DdA8
+    let usdtErc20Address = returnValue
+  case .failure(let error):
+    print("Expected eth Address, but got \(error)")
+  }
+}
+
+resolution.multiChainAddress(domain: "brad.crypto", ticker: "USDT", chain: "OMNI") { result in
+  switch result {
+  case .success(let returnValue):
+    // 1FoWyxwPXuj4C6abqwhjDWdz6D4PZgYRjA
+    let usdtOmniAddress = returnValue
+  case .failure(let error):
+    print("Expected Omni Address, but got \(error)")
   }
 }
 

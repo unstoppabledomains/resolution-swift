@@ -180,6 +180,30 @@ public class Resolution {
         }
     }
 
+    /// Resolves a multiChainAddress of a `domain` for specific `chain`
+    /// - Parameter domain: - domain name to be resolved
+    /// - Parameter ticker: - currency ticker like USDT, FTM and others
+    /// - Parameter chain: - chain version like ERC20, OMNI, TRON and others
+    /// - Parameter completion: A callback that resolves `Result` with a `multiChain Address` for a specific ticker and chain
+    public func multiChainAddress(domain: String, ticker: String, chain: String, completion: @escaping StringResultConsumer ) {
+        let preparedDomain = prepare(domain: domain)
+        DispatchQueue.global(qos: .utility).async { [weak self] in
+            do {
+                guard let service = try self?.getServiceOf(domain: preparedDomain),
+                      service.name != "ENS" else {
+                    throw ResolutionError.methodNotSupported
+                }
+                let recordKey = "crypto.\(ticker.uppercased()).version.\(chain.uppercased()).address"
+                let result = try service.record(domain: preparedDomain, key: recordKey)
+                completion(.success(result))
+            } catch {
+                self?.catchError(error, completion: completion)
+            }
+        }
+    }
+
+    // TODO: remove this in 1.0.0
+    @available(*, deprecated, message: "Please use ```public func multiChainAddress(domain: String, ticker: String, chain: String) instead```")
     public func usdt(domain: String, version: UsdtVersion, completion: @escaping StringResultConsumer ) {
         let preparedDomain = prepare(domain: domain)
         DispatchQueue.global(qos: .utility).async { [weak self] in
