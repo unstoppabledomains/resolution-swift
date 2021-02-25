@@ -182,8 +182,8 @@ public class Resolution {
 
     /// Resolves a multiChainAddress of a `domain` for specific `chain`
     /// - Parameter domain: - domain name to be resolved
-    /// - Parameter ticker: - currency ticker like USDT, FTM, etc.
-    /// - Parameter chain: - usually means blockchain such as ERC20, OMNI,  TRON and etc.
+    /// - Parameter ticker: - currency ticker like USDT, FTM and others
+    /// - Parameter chain: - chain version like ERC20, OMNI, TRON and others
     /// - Parameter completion: A callback that resolves `Result` with a `multiChain Address` for a specific ticker and chain
     public func multiChainAddress(domain: String, ticker: String, chain: String, completion: @escaping StringResultConsumer ) {
         let preparedDomain = prepare(domain: domain)
