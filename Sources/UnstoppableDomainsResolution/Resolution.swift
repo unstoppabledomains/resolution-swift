@@ -35,6 +35,7 @@ import Foundation
 /// }
 /// ```
 /// You can configure namingServices by providing NamingServiceConfig struct to the constructor for the interested service
+/// If you ommit network we are making a "net_version" JSON RPC call to the provider to determine the chainID
 /// for example lets configure crypto naming service to use rinkeby while left etherium naming service with default configurations:
 /// ```swift
 /// let resolution = try Resolution(
@@ -84,6 +85,14 @@ public class Resolution {
 
     public init(configs: Configurations = Configurations() ) throws {
         self.services = try constructNetworkServices(configs)
+    }
+
+    /// Returns a network that NamingService was configure with
+    public func getNetwork(from serviceName: String) throws -> String {
+        guard let service = services.first(where: {$0.name == serviceName.uppercased() }) else {
+            throw ResolutionError.unsupportedServiceName
+        }
+        return service.network
     }
 
     /// Checks if the domain name is valid according to naming service rules for valid domain names.
@@ -382,7 +391,7 @@ public class Resolution {
             errorService = error
         }
 
-        if let error = errorService, networkServices.isEmpty {
+        if let error = errorService {
             throw error
         }
         return networkServices

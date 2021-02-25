@@ -88,7 +88,9 @@ class CommonNamingService {
 extension CommonNamingService {
     static let networkConfigFileName = "network-config"
     static let networkIds = ["mainnet": "1",
-                             "rinkeby": "4"]
+                             "ropsten": "3",
+                             "rinkeby": "4",
+                             "goerli": "5"]
 
     struct NewtorkConfigJson: Decodable {
         let version: String
@@ -122,5 +124,45 @@ extension CommonNamingService {
             return currentNetwork.contracts
         }
         return nil
+    }
+
+    static func getNetworkId(providerUrl: String, networking: NetworkingLayer) throws -> String {
+        let url = URL(string: providerUrl)!
+        let payload: JsonRpcPayload = JsonRpcPayload(jsonrpc: "2.0", id: "67", method: "net_version", params: [])
+
+        var resp: JsonRpcResponseArray?
+        var err: Error?
+        let semaphore = DispatchSemaphore(value: 0)
+
+        networking.makeHttpPostRequest(
+            url: url,
+            httpMethod: "POST",
+            httpHeaderContentType: "application/json",
+            httpBody: try JSONEncoder().encode(payload)
+        ) { result in
+            switch result {
+            case .success(let response):
+                resp = response
+            case .failure(let error):
+                err = error
+            }
+            semaphore.signal()
+        }
+        semaphore.wait()
+        guard err == nil else {
+            throw err!
+        }
+        switch resp?[0].result {
+        case .string(let result):
+            return networkIds.key(forValue: result) ?? ""
+        default:
+            return ""
+        }
+    }
+}
+
+fileprivate extension Dictionary where Value: Equatable {
+    func key(forValue value: Value) -> Key? {
+        return first { $0.1 == value }?.0
     }
 }

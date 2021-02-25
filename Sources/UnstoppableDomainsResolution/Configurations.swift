@@ -15,7 +15,7 @@ public struct NamingServiceConfig {
 
     public init(
         providerUrl: String,
-        network: String = "mainnet",
+        network: String = "",
         networking: NetworkingLayer = DefaultNetworkingLayer()
     ) {
         self.network = network
@@ -30,9 +30,15 @@ public struct Configurations {
     let ens: NamingServiceConfig
 
     public init(
-        cns: NamingServiceConfig = NamingServiceConfig(providerUrl: "https://mainnet.infura.io/v3/3c25f57353234b1b853e9861050f4817"),
-        ens: NamingServiceConfig = NamingServiceConfig(providerUrl: "https://mainnet.infura.io/v3/d423cf2499584d7fbe171e33b42cfbee"),
-        zns: NamingServiceConfig = NamingServiceConfig(providerUrl: "https://api.zilliqa.com/")
+        cns: NamingServiceConfig = NamingServiceConfig(
+            providerUrl: "https://mainnet.infura.io/v3/3c25f57353234b1b853e9861050f4817",
+            network: "mainnet"),
+        ens: NamingServiceConfig = NamingServiceConfig(
+            providerUrl: "https://mainnet.infura.io/v3/d423cf2499584d7fbe171e33b42cfbee",
+            network: "mainnet"),
+        zns: NamingServiceConfig = NamingServiceConfig(
+            providerUrl: "https://api.zilliqa.com",
+            network: "mainnet")
     ) {
         self.ens = ens
         self.cns = cns

@@ -30,6 +30,35 @@ class ResolutionTests: XCTestCase {
         try testAddr();
     }
     
+    func testNetworkFromUrl() throws {
+        resolution = try Resolution(configs: Configurations(
+            cns: NamingServiceConfig(providerUrl: "https://rinkeby.infura.io/v3/3c25f57353234b1b853e9861050f4817"),
+            ens: NamingServiceConfig(providerUrl: "https://ropsten.infura.io/v3/3c25f57353234b1b853e9861050f4817")
+            )
+        );
+        
+        let cnsNetwork = try resolution.getNetwork(from: "cns");
+        let ensNetwork = try resolution.getNetwork(from: "ens");
+        let znsNetwork = try resolution.getNetwork(from: "zns");
+        assert(cnsNetwork == "rinkeby");
+        assert(ensNetwork == "ropsten");
+        assert(znsNetwork == "mainnet");
+    }
+    
+    func testUnsupportedNetwork() throws {
+        self.checkError(completion: {
+            try Resolution(configs: Configurations(
+                cns: NamingServiceConfig(providerUrl: "https://ropsten.infura.io/v3/3c25f57353234b1b853e9861050f4817")
+            ));
+        }, expectedError: .unsupportedNetwork)
+        
+        self.checkError(completion: {
+            try Resolution(configs: Configurations(
+                ens: NamingServiceConfig(providerUrl: "https://kovan.infura.io/v3/3c25f57353234b1b853e9861050f4817")
+            ));
+        }, expectedError: .unsupportedNetwork)
+    }
+    
     func testRinkeby() throws {
         resolution = try Resolution(configs: Configurations(
                 cns: NamingServiceConfig(
@@ -650,8 +679,9 @@ extension ResolutionError: Equatable {
             return true
         case (.badRequestOrResponse, .badRequestOrResponse):
             return true
+        case (.unsupportedServiceName, .unsupportedServiceName):
+            return true
             
-        // We don't use `default` here on purpose, so we don't forget updating this method on adding new variants.
         case (.unregisteredDomain, _),
              (.unsupportedDomain, _),
              (.recordNotFound, _),
@@ -663,8 +693,13 @@ extension ResolutionError: Equatable {
              (.methodNotSupported, _),
              (.proxyReaderNonInitialized, _),
              (.tooManyResponses, _),
-             (.badRequestOrResponse, _):
+             (.badRequestOrResponse, _),
+             (.unsupportedServiceName, _):
             
+            return false
+        // Xcode with Version 12.4 (12D4e) can't compile this without default
+        // throws error: The compiler is unable to check that this switch is exhaustive in a reasonable time
+        default:
             return false
         }
     }

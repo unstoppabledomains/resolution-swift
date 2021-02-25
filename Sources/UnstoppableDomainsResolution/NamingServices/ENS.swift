@@ -21,10 +21,14 @@ internal class ENS: CommonNamingService, NamingService {
     ]
 
     init(_ config: NamingServiceConfig) throws {
-        guard let registryAddress = registryMap[config.network] else {
+
+        self.network = config.network.isEmpty
+            ? try Self.getNetworkId(providerUrl: config.providerUrl, networking: config.networking)
+            : config.network
+
+        guard let registryAddress = registryMap[self.network] else {
             throw ResolutionError.unsupportedNetwork
         }
-        self.network = config.network
         self.registryAddress = registryAddress
         super.init(name: "ENS", providerUrl: config.providerUrl, networking: config.networking)
     }

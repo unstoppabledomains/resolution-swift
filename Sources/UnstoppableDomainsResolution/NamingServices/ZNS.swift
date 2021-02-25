@@ -17,10 +17,12 @@ internal class ZNS: CommonNamingService, NamingService {
     ]
 
     init(_ config: NamingServiceConfig) throws {
+
         guard let registryAddress = registryMap[config.network] else {
             throw ResolutionError.unsupportedNetwork
         }
         self.network = config.network
+
         self.registryAddress = registryAddress
         super.init(name: "ZNS", providerUrl: config.providerUrl, networking: config.networking)
     }
@@ -33,7 +35,7 @@ internal class ZNS: CommonNamingService, NamingService {
         let recordAddresses = try self.recordsAddresses(domain: domain)
         let (ownerAddress, _ ) = recordAddresses
         guard Utillities.isNotEmpty(ownerAddress) else {
-                throw ResolutionError.unregisteredDomain
+            throw ResolutionError.unregisteredDomain
         }
 
         return ownerAddress
@@ -98,8 +100,8 @@ internal class ZNS: CommonNamingService, NamingService {
             let record = records[namehash] as? [String: Any],
             let arguments = record["arguments"] as? [Any], arguments.count == 2,
             let ownerAddress = arguments[0] as? String, let resolverAddress = arguments[1] as? String
-            else {
-                throw ResolutionError.unregisteredDomain
+        else {
+            throw ResolutionError.unregisteredDomain
         }
 
         return (ownerAddress, resolverAddress)
@@ -109,18 +111,17 @@ internal class ZNS: CommonNamingService, NamingService {
         let resolverContract: ContractZNS = self.buildContract(address: address)
 
         guard let records = try resolverContract.fetchSubState(
-                    field: "records",
-                    keys: keys
-                  ) as? [String: Any]
+            field: "records",
+            keys: keys
+        ) as? [String: Any]
         else {
             throw ResolutionError.unspecifiedResolver
         }
 
-      return records
+        return records
     }
 
     func buildContract(address: String) -> ContractZNS {
         return ContractZNS(providerUrl: self.providerUrl, address: address.replacingOccurrences(of: "0x", with: ""), networking: networking)
     }
-
 }
