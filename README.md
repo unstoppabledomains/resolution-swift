@@ -80,7 +80,7 @@ resolution.addr(domain: "brad.crypto", ticker: "eth") { result in
   }
 }
 
-resolution.multiChainAddress(domain: "brad.crypto", ticker: "USDT", version: "ERC20") { result in
+resolution.multiChainAddress(domain: "brad.crypto", ticker: "USDT", chain: "ERC20") { result in
   switch result {
   case .success(let returnValue):
     // 0x8aaD44321A86b170879d7A244c1e8d360c99DdA8
@@ -90,7 +90,7 @@ resolution.multiChainAddress(domain: "brad.crypto", ticker: "USDT", version: "ER
   }
 }
 
-resolution.multiChainAddress(domain: "brad.crypto", ticker: "USDT", version: "OMNI") { result in
+resolution.multiChainAddress(domain: "brad.crypto", ticker: "USDT", chain: "OMNI") { result in
   switch result {
   case .success(let returnValue):
     // 1FoWyxwPXuj4C6abqwhjDWdz6D4PZgYRjA
