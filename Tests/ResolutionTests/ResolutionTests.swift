@@ -117,6 +117,82 @@ class ResolutionTests: XCTestCase {
         
     }
     
+    func testMultiChainAddress() throws {
+        // Given
+        let domain: String = "udtestdev-usdt.crypto";
+        
+        let erc20Received = expectation(description: "Erc20 record should be received");
+        var erc20: String = "";
+        
+        let tronReceived = expectation(description: "tron record should be received");
+        var tron: String = "";
+        
+        let eosReceived = expectation(description: "eos record should be received");
+        var eos: String = "";
+        
+        let omniReceived = expectation(description: "omni record should be received");
+        var omni: String = "";
+        
+        let NoRecordReceived = expectation(description: "no record error should be received")
+        var NoRecordResult: Result<String, ResolutionError>!
+        
+        // When
+        resolution.multiChainAddress(domain: "brad.crypto", ticker: "usdt", chain: "erc20") {
+            NoRecordResult = $0
+            NoRecordReceived.fulfill()
+        }
+        
+        resolution.multiChainAddress(domain: domain, ticker: "usdt", chain: "erc20") { (result) in
+            switch result {
+            case .success(let returnValue):
+                erc20Received.fulfill();
+                erc20 = returnValue;
+            case .failure(let error):
+                XCTFail("Expected erc20 usdt address, but got \(error)")
+            }
+        }
+
+        resolution.multiChainAddress(domain: domain, ticker: "usdt", chain: "eos") { (result) in
+            switch result {
+            case .success(let returnValue):
+                eosReceived.fulfill();
+                eos = returnValue;
+            case .failure(let error):
+                XCTFail("Expected eos usdt address, but got \(error)")
+            }
+        }
+
+        resolution.multiChainAddress(domain: domain, ticker: "usdt", chain: "tron") { (result) in
+            switch result {
+            case .success(let returnValue):
+                tronReceived.fulfill();
+                tron = returnValue;
+            case .failure(let error):
+                XCTFail("Expected tron usdt address, but got \(error)")
+            }
+        }
+
+        resolution.multiChainAddress(domain: domain, ticker: "usdt", chain: "omni") { (result) in
+            switch result {
+            case .success(let returnValue):
+                omniReceived.fulfill();
+                omni = returnValue;
+            case .failure(let error):
+                XCTFail("Expected omni usdt address, but got \(error)")
+            }
+        }
+        
+        waitForExpectations(timeout: timeout, handler: nil)
+        
+        // Then
+        assert(erc20 == "0xe7474D07fD2FA286e7e0aa23cd107F8379085037")
+        assert(eos == "letsminesome")
+        assert(omni == "19o6LvAdCPkjLi83VsjrCsmvQZUirT4KXJ")
+        assert(tron == "TNemhXhpX7MwzZJa3oXvfCjo5pEeXrfN2h")
+        self.checkError(result: NoRecordResult, expectedError: ResolutionError.recordNotFound)
+    }
+    
+    // TODO: remove this in 1.0.0
     func testUsdtVersion() throws {
         // Given
         let domain: String = "udtestdev-usdt.crypto";
