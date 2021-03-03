@@ -109,6 +109,17 @@ resolution.owner(domain: "brad.crypto") { result in
     XCTFail("Expected owner, but got \(error)")
   }
 }
+
+// Lookup specific records
+resolution.record(domain: "ryan.crypto", record: "custom.record.value") { result in
+  switch result {
+  case .success(let returnValue):
+    // Example custom record value
+    let recordValue = returnValue
+  case .failure(let error):
+    print("Expected record value, but got \(error)")
+}
+}
 ```
 
 ## Customizing naming services
