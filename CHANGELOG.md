@@ -1,3 +1,11 @@
+### 0.3.5
+ * Introduce DomainResolution#getMultiChainAddress general method to fetch a ticker address from specific chain
+ * Deprecate DomainResolution#getUsdt method in favor of DomainResolution#getMultiChainAddress
+ 
+- General multichain support ([#33](https://github.com/unstoppabledomains/resolution-swift/pull/33)) via [@JohnnyJumper](https://github.com/JohnnyJumper)
+- Auto network ([#32](https://github.com/unstoppabledomains/resolution-swift/pull/32)) via [@JohnnyJumper](https://github.com/JohnnyJumper)
+- Move Base58 lib from dependencies to internal sources.
+
 ### 0.3.0 
 - [Customizing naming services](https://github.com/unstoppabledomains/resolution-swift#customizing-naming-services)
 Version 0.3.0 introduced the `Configurations` struct that is used for configuring each connected naming service.

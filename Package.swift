@@ -13,7 +13,7 @@ let package = Package(
             targets: ["UnstoppableDomainsResolution"])
     ],
     dependencies: [
-        .package(url: "https://github.com/krzyzanowskim/CryptoSwift.git", .upToNextMinor(from: "1.0.0")),
+        .package(url: "https://github.com/krzyzanowskim/CryptoSwift.git", from: "1.0.0"),
         .package(url: "https://github.com/attaswift/BigInt.git", from: "5.0.0"),
         .package(url: "https://github.com/shamatar/EthereumAddress.git", from: "1.3.0")
     ],
