@@ -59,6 +59,17 @@ class ResolutionTests: XCTestCase {
         }, expectedError: .unsupportedNetwork)
     }
     
+    func testForUnregisteredDomain() throws {
+        let UnregirestedDomainExpectation = expectation(description: "Domain should not be registered!")
+        var NoRecordResult: Result<String, ResolutionError>!
+        resolution.addr(domain: "unregistered.crypto", ticker: "eth") {
+            NoRecordResult = $0
+            UnregirestedDomainExpectation.fulfill();
+        }
+        waitForExpectations(timeout: timeout, handler: nil)
+        self.checkError(result: NoRecordResult, expectedError: ResolutionError.unregisteredDomain)
+    }
+    
     func testRinkeby() throws {
         resolution = try Resolution(configs: Configurations(
                 cns: NamingServiceConfig(
@@ -549,9 +560,9 @@ class ResolutionTests: XCTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        assert(hash == "Qme54oEzRkgooJbCDr78vzKAWcv6DDEZqRhhDyDtzgrZP6")
+        assert(hash == "QmdyBw5oTgCtTLQ18PbDvPL8iaLoEPhSyzD91q9XmgmAjb")
         assert(etcHash == "QmXSBLw6VMegqkCHSDBPg7xzfLhUyuRBzTb927KVzKC1vq")
-        self.checkError(result: unregisteredResult, expectedError: ResolutionError.unspecifiedResolver)
+        self.checkError(result: unregisteredResult, expectedError: ResolutionError.unregisteredDomain)
     }
 
     func testCustomRecord() throws {
@@ -581,7 +592,7 @@ class ResolutionTests: XCTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        assert(ipfshash == "Qme54oEzRkgooJbCDr78vzKAWcv6DDEZqRhhDyDtzgrZP6")
+        assert(ipfshash == "QmdyBw5oTgCtTLQ18PbDvPL8iaLoEPhSyzD91q9XmgmAjb")
         self.checkError(result: unregisteredResult, expectedError: ResolutionError.recordNotFound)
     }
 
@@ -607,7 +618,7 @@ class ResolutionTests: XCTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        assert(values["ipfs.html.value"] == "Qme54oEzRkgooJbCDr78vzKAWcv6DDEZqRhhDyDtzgrZP6")
+        assert(values["ipfs.html.value"] == "QmdyBw5oTgCtTLQ18PbDvPL8iaLoEPhSyzD91q9XmgmAjb")
         assert(values["crypto.BTC.address"] == "bc1q359khn0phg58xgezyqsuuaha28zkwx047c0c3y")
         assert(values["crypto.ETH.address"] == "0x8aaD44321A86b170879d7A244c1e8d360c99DdA8")
         assert(values["someweirdstuf"] == "")
