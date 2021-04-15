@@ -81,6 +81,29 @@ class ResolutionTests: XCTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
         assert(ethAddress == "0x1C8b9B78e3085866521FE206fa4c1a67F49f153A")
     }
+    
+    func testZilliqaTestNet() throws {
+        resolution = try Resolution(configs: Configurations(
+                zns: NamingServiceConfig(
+                    providerUrl: "https://dev-api.zilliqa.com",
+                    network: "testnet"
+                )
+            )
+        );
+        let domainReceived = expectation(description: "Exist domain should be received")
+        var zilOwner = ""
+        resolution.owner(domain: "test-udtesting-654.zil") { (result) in
+            switch result {
+            case .success(let returnValue):
+                zilOwner = returnValue
+                domainReceived.fulfill()
+            case .failure(let error):
+                XCTFail("Expected Owner Address, but got \(error)")
+            }
+        }
+        waitForExpectations(timeout: timeout, handler: nil)
+        assert(zilOwner == "0x5e398755d4e010e144e454fb5554bd68b28a8d9f")
+    }
 
     func testSupportedDomains() throws {
         // Given // When // Then
@@ -549,7 +572,7 @@ class ResolutionTests: XCTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        assert(hash == "Qme54oEzRkgooJbCDr78vzKAWcv6DDEZqRhhDyDtzgrZP6")
+        assert(hash == "QmdyBw5oTgCtTLQ18PbDvPL8iaLoEPhSyzD91q9XmgmAjb")
         assert(etcHash == "QmXSBLw6VMegqkCHSDBPg7xzfLhUyuRBzTb927KVzKC1vq")
         self.checkError(result: unregisteredResult, expectedError: ResolutionError.unspecifiedResolver)
     }
@@ -581,7 +604,7 @@ class ResolutionTests: XCTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        assert(ipfshash == "Qme54oEzRkgooJbCDr78vzKAWcv6DDEZqRhhDyDtzgrZP6")
+        assert(ipfshash == "QmdyBw5oTgCtTLQ18PbDvPL8iaLoEPhSyzD91q9XmgmAjb")
         self.checkError(result: unregisteredResult, expectedError: ResolutionError.recordNotFound)
     }
 
@@ -607,7 +630,7 @@ class ResolutionTests: XCTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        assert(values["ipfs.html.value"] == "Qme54oEzRkgooJbCDr78vzKAWcv6DDEZqRhhDyDtzgrZP6")
+        assert(values["ipfs.html.value"] == "QmdyBw5oTgCtTLQ18PbDvPL8iaLoEPhSyzD91q9XmgmAjb")
         assert(values["crypto.BTC.address"] == "bc1q359khn0phg58xgezyqsuuaha28zkwx047c0c3y")
         assert(values["crypto.ETH.address"] == "0x8aaD44321A86b170879d7A244c1e8d360c99DdA8")
         assert(values["someweirdstuf"] == "")
