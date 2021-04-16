@@ -70,6 +70,17 @@ class ResolutionTests: XCTestCase {
         self.checkError(result: NoRecordResult, expectedError: ResolutionError.unregisteredDomain)
     }
     
+    func testForUnspecifiedResolver() throws {
+        let UnregirestedDomainExpectation = expectation(description: "Domain should not have a Resolver!")
+        var NoRecordResult: Result<String, ResolutionError>!
+        resolution.addr(domain: "twistedmusic.crypto", ticker: "eth") {
+            NoRecordResult = $0
+            UnregirestedDomainExpectation.fulfill();
+        }
+        waitForExpectations(timeout: timeout, handler: nil)
+        self.checkError(result: NoRecordResult, expectedError: ResolutionError.unspecifiedResolver)
+    }
+    
     func testRinkeby() throws {
         resolution = try Resolution(configs: Configurations(
                 cns: NamingServiceConfig(
