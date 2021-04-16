@@ -92,6 +92,29 @@ class ResolutionTests: XCTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
         assert(ethAddress == "0x1C8b9B78e3085866521FE206fa4c1a67F49f153A")
     }
+    
+    func testZilliqaTestNet() throws {
+        resolution = try Resolution(configs: Configurations(
+                zns: NamingServiceConfig(
+                    providerUrl: "https://dev-api.zilliqa.com",
+                    network: "testnet"
+                )
+            )
+        );
+        let domainReceived = expectation(description: "Exist domain should be received")
+        var zilOwner = ""
+        resolution.owner(domain: "test-udtesting-654.zil") { (result) in
+            switch result {
+            case .success(let returnValue):
+                zilOwner = returnValue
+                domainReceived.fulfill()
+            case .failure(let error):
+                XCTFail("Expected Owner Address, but got \(error)")
+            }
+        }
+        waitForExpectations(timeout: timeout, handler: nil)
+        assert(zilOwner == "0x5e398755d4e010e144e454fb5554bd68b28a8d9f")
+    }
 
     func testSupportedDomains() throws {
         // Given // When // Then
