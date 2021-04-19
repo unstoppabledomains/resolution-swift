@@ -59,6 +59,28 @@ class ResolutionTests: XCTestCase {
         }, expectedError: .unsupportedNetwork)
     }
     
+    func testForUnregisteredDomain() throws {
+        let UnregirestedDomainExpectation = expectation(description: "Domain should not be registered!")
+        var NoRecordResult: Result<String, ResolutionError>!
+        resolution.addr(domain: "unregistered.crypto", ticker: "eth") {
+            NoRecordResult = $0
+            UnregirestedDomainExpectation.fulfill();
+        }
+        waitForExpectations(timeout: timeout, handler: nil)
+        self.checkError(result: NoRecordResult, expectedError: ResolutionError.unregisteredDomain)
+    }
+    
+    func testForUnspecifiedResolver() throws {
+        let UnregirestedDomainExpectation = expectation(description: "Domain should not have a Resolver!")
+        var NoRecordResult: Result<String, ResolutionError>!
+        resolution.addr(domain: "twistedmusic.crypto", ticker: "eth") {
+            NoRecordResult = $0
+            UnregirestedDomainExpectation.fulfill();
+        }
+        waitForExpectations(timeout: timeout, handler: nil)
+        self.checkError(result: NoRecordResult, expectedError: ResolutionError.unspecifiedResolver)
+    }
+    
     func testRinkeby() throws {
         resolution = try Resolution(configs: Configurations(
                 cns: NamingServiceConfig(
@@ -574,7 +596,7 @@ class ResolutionTests: XCTestCase {
         // Then
         assert(hash == "QmdyBw5oTgCtTLQ18PbDvPL8iaLoEPhSyzD91q9XmgmAjb")
         assert(etcHash == "QmXSBLw6VMegqkCHSDBPg7xzfLhUyuRBzTb927KVzKC1vq")
-        self.checkError(result: unregisteredResult, expectedError: ResolutionError.unspecifiedResolver)
+        self.checkError(result: unregisteredResult, expectedError: ResolutionError.unregisteredDomain)
     }
 
     func testCustomRecord() throws {
