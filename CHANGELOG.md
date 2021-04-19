@@ -1,3 +1,7 @@
+### 0.3.6
+- Zilliqa testnet support. ([#37](https://github.com/unstoppabledomains/resolution-swift/pull/37)) via [@merenkoff](https://github.com/merenkoff)
+- UnregisteredDomain instead of UnspecifiedResolver ([#36](https://github.com/unstoppabledomains/resolution-swift/pull/36)) via [@JohnnyJumper](https://github.com/JohnnyJumper)
+
 ### 0.3.5
  * Introduce DomainResolution#getMultiChainAddress general method to fetch a ticker address from specific chain
  * Deprecate DomainResolution#getUsdt method in favor of DomainResolution#getMultiChainAddress
