@@ -19,9 +19,9 @@ Pod::Spec.new do |spec|
   spec.swift_version = '5.0'
 
   spec.source       = { :git => "https://github.com/unstoppabledomains/resolution-swift.git", :tag => spec.version }
-  spec.source_files  = "Sources/UnstoppableDomainsResolution/**/*"
+  spec.source_files  = "Sources/UnstoppableDomainsResolution/**/*.swift"
 
-  spec.resources = "Sources/UnstoppableDomainsResolution/Resources/**/*"
+  spec.resources = "Sources/UnstoppableDomainsResolution/Resources/**/*.json"
 
   spec.dependency 'EthereumAddress', '~> 1.3'
   spec.dependency 'CryptoSwift', '~> 1.0'
