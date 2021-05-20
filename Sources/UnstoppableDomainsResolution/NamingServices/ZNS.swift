@@ -64,10 +64,11 @@ internal class ZNS: CommonNamingService, NamingService {
     }
 
     func records(keys: [String], for domain: String) throws -> [String: String] {
-        guard let records = try self.records(address: try resolver(domain: domain), keys: keys) as? [String: String] else {
+        guard let records = try self.records(address: try resolver(domain: domain), keys: []) as? [String: String] else {
             throw ResolutionError.recordNotFound
         }
-        return records
+        let filtered = records.filter { keys.contains($0.key) }
+        return filtered
     }
 
     // MARK: - get Resolver
