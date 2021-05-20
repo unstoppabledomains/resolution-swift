@@ -17,7 +17,7 @@ var resolution: Resolution!
 
 class ResolutionTests: XCTestCase {
 
-    let timeout: TimeInterval = 10
+    let timeout: TimeInterval = 30
     override func setUp() {
         super.setUp()
         resolution = try! Resolution();
@@ -492,10 +492,12 @@ class ResolutionTests: XCTestCase {
     func testAddr() throws {
         // Given
         let domainReceived = expectation(description: "Exist domain should be received")
-        let domainEthReceived = expectation(description: "Exist ETH domain should be received")
+        let domainEthReceived = expectation(description: "Exist ZIL domain should be received")
+        let domainZilReceived = expectation(description: "Exist ETH domain should be received")
         let unregisteredReceived = expectation(description: "Unregistered domain should be received")
 
         var ethAddress = ""
+        var zilENSAddress = ""
         var ethENSAddress = ""
         var unregisteredResult: Result<String, ResolutionError>!
 
@@ -520,6 +522,16 @@ class ResolutionTests: XCTestCase {
             }
         }
         
+        resolution.addr(domain: "brad.zil", ticker: "eth") { (result) in
+            switch result {
+            case .success(let returnValue):
+                domainZilReceived.fulfill()
+                zilENSAddress = returnValue
+            case .failure(let error):
+                XCTFail("Expected owner, but got \(error)")
+            }
+        }
+        
         resolution.addr(domain: "brad.crypto", ticker: "unknown") {
             unregisteredResult = $0
             unregisteredReceived.fulfill()
@@ -529,6 +541,7 @@ class ResolutionTests: XCTestCase {
 
         // Then
         assert(ethAddress == "0x8aaD44321A86b170879d7A244c1e8d360c99DdA8")
+        assert(zilENSAddress == "0x45b31e01AA6f42F0549aD482BE81635ED3149abb")
         assert(ethENSAddress == "0x842f373409191Cff2988A6F19AB9f605308eE462")
         self.checkError(result: unregisteredResult, expectedError: ResolutionError.recordNotFound)
     }
