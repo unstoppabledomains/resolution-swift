@@ -1,4 +1,8 @@
 # Resolution-swift CHANGELOG
+## 0.3.7
+- Zns fix ([#40](https://github.com/unstoppabledomains/resolution-swift/pull/40)) via [@merenkoff](https://github.com/merenkoff)
+- Warning in project due to incorrect podspec #38 ([#39](https://github.com/unstoppabledomains/resolution-swift/pull/39)) via [@merenkoff](https://github.com/merenkoff)
+
 ## 0.3.6
 - Zilliqa testnet support. ([#37](https://github.com/unstoppabledomains/resolution-swift/pull/37)) via [@merenkoff](https://github.com/merenkoff)
 - UnregisteredDomain instead of UnspecifiedResolver ([#36](https://github.com/unstoppabledomains/resolution-swift/pull/36)) via [@JohnnyJumper](https://github.com/JohnnyJumper)
