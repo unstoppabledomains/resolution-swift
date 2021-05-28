@@ -16,12 +16,6 @@ import Foundation
 /// *ZNS*
 ///     .zil
 ///
-/// *ENS*
-///     .eth
-///     .kred
-///     .xyz
-///     .luxe
-///
 /// ```swift
 /// let resolution = try Resolution();
 /// resolution.addr(domain: "brad.crypto", ticker: "btc") { (result) in
@@ -92,8 +86,6 @@ public class Resolution {
 
     /// Checks if the domain name is valid according to naming service rules for valid domain names.
     ///
-    /// **Example:** ENS doesn't allow domains that start from '-' symbol.
-    ///
     /// - Parameter domain: domain name to be checked
     ///
     /// - Returns: The return true or false.
@@ -110,7 +102,7 @@ public class Resolution {
     /// Resolves a hash  of the `domain` according to https://github.com/ethereum/EIPs/blob/master/EIPS/eip-137.md
     /// - Parameter domain: - domain name to be converted
     /// - Returns: Produces a namehash from supported naming service in hex format with 0x prefix.
-    /// Corresponds to ERC721 token id in case of Ethereum based naming service like ENS or CNS.
+    /// Corresponds to ERC721 token id.
     /// - Throws: ```ResolutionError.unsupportedDomain```  if domain extension is unknown
     ///
     public func namehash(domain: String) throws -> String {

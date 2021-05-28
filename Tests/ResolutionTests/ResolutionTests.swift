@@ -24,7 +24,7 @@ class ResolutionTests: XCTestCase {
     }
     
     func testOldConstructor() throws {
-        // old constructor assumed providerUrl would be the same for cns and ens
+        // old constructor assumed providerUrl would be the same for cns
         // using this key cause it is not limitted by contract whitelist.
         resolution = try Resolution(providerUrl: "https://mainnet.infura.io/v3/d423cf2499584d7fbe171e33b42cfbee", network: "mainnet");
         try testAddr();
