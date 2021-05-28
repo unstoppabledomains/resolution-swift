@@ -33,8 +33,6 @@
 		848E21092507890A008707D2 /* ZNS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848E21082507890A008707D2 /* ZNS.swift */; };
 		848E210C25079D61008707D2 /* Types.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848E210B25079D61008707D2 /* Types.swift */; };
 		B6B202C8260226B700A72AF2 /* BigInt in Frameworks */ = {isa = PBXBuildFile; productRef = B6B202C7260226B700A72AF2 /* BigInt */; };
-		B6E79937260223CE00F65894 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = B6E79935260223CE00F65894 /* README.md */; };
-		B6E79938260223CE00F65894 /* Base58.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6E79936260223CE00F65894 /* Base58.swift */; };
 		B6F2075425DBD89800140CE3 /* ABIEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F2074C25DBD89800140CE3 /* ABIEncoder.swift */; };
 		B6F2075525DBD89800140CE3 /* ABIDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F2074D25DBD89800140CE3 /* ABIDecoder.swift */; };
 		B6F2075625DBD89800140CE3 /* ABIElements.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F2074E25DBD89800140CE3 /* ABIElements.swift */; };
@@ -91,8 +89,6 @@
 		848E210B25079D61008707D2 /* Types.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Types.swift; sourceTree = "<group>"; };
 		849E07CC24F946CA00A793D3 /* LinuxMain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinuxMain.swift; sourceTree = "<group>"; };
 		849E07D124F9499900A793D3 /* XCTestManifests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XCTestManifests.swift; sourceTree = "<group>"; };
-		B6E79935260223CE00F65894 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		B6E79936260223CE00F65894 /* Base58.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Base58.swift; sourceTree = "<group>"; };
 		B6F2074C25DBD89800140CE3 /* ABIEncoder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ABIEncoder.swift; sourceTree = "<group>"; };
 		B6F2074D25DBD89800140CE3 /* ABIDecoder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ABIDecoder.swift; sourceTree = "<group>"; };
 		B6F2074E25DBD89800140CE3 /* ABIElements.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ABIElements.swift; sourceTree = "<group>"; };
@@ -208,7 +204,6 @@
 		3EE4DA0524E367720097540B /* Resolution */ = {
 			isa = PBXGroup;
 			children = (
-				B6E79933260223CE00F65894 /* Support */,
 				3045D143251E071200B65A06 /* Resources */,
 				848E210A25079D43008707D2 /* Helpers */,
 				3E2AC92024E4FA3E008EBC39 /* ABI */,
@@ -271,23 +266,6 @@
 			children = (
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		B6E79933260223CE00F65894 /* Support */ = {
-			isa = PBXGroup;
-			children = (
-				B6E79934260223CE00F65894 /* Base58Swift */,
-			);
-			path = Support;
-			sourceTree = "<group>";
-		};
-		B6E79934260223CE00F65894 /* Base58Swift */ = {
-			isa = PBXGroup;
-			children = (
-				B6E79935260223CE00F65894 /* README.md */,
-				B6E79936260223CE00F65894 /* Base58.swift */,
-			);
-			path = Base58Swift;
 			sourceTree = "<group>";
 		};
 		B6F2074B25DBD89800140CE3 /* EthereumABI */ = {
@@ -421,7 +399,6 @@
 			files = (
 				30AE8615257A8CCD003A0142 /* network-config.json in Resources */,
 				30A69245251385A70079EC69 /* cnsProxyReader.json in Resources */,
-				B6E79937260223CE00F65894 /* README.md in Resources */,
 				3E2AC93E24E4FC9F008EBC39 /* cnsResolver.json in Resources */,
 				3E2AC93F24E4FC9F008EBC39 /* cnsRegistry.json in Resources */,
 			);
@@ -489,7 +466,6 @@
 				3E2AC91F24E4FA35008EBC39 /* NamingService.swift in Sources */,
 				B6F2075525DBD89800140CE3 /* ABIDecoder.swift in Sources */,
 				848E21092507890A008707D2 /* ZNS.swift in Sources */,
-				B6E79938260223CE00F65894 /* Base58.swift in Sources */,
 				3E65912824E381E900D7EC35 /* Errors.swift in Sources */,
 				3EAFA3F724EB59DA008791E9 /* ABICoder.swift in Sources */,
 				3E105520258C95D300652FC7 /* DnsType.swift in Sources */,
