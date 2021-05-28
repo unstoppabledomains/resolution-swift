@@ -53,25 +53,6 @@ import Foundation
 public class Resolution {
     private var services: [NamingService] = []
 
-    // Todo remove the following constructor in the 1.0.0
-    @available(*, deprecated, message: "Please use ```public init(configs: Configurations = Configurations() )```")
-    public init(providerUrl: String, network: String, networking: NetworkingLayer = DefaultNetworkingLayer()) throws {
-        self.services = try constructNetworkServices(
-            Configurations(
-                cns: NamingServiceConfig(
-                    providerUrl: providerUrl,
-                    network: network,
-                    networking: networking
-                ),
-                zns: NamingServiceConfig(
-                    providerUrl: "https://api.zilliqa.com/",
-                    network: network,
-                    networking: networking
-                )
-            )
-        )
-    }
-
     public init(configs: Configurations = Configurations() ) throws {
         self.services = try constructNetworkServices(configs)
     }
@@ -189,24 +170,6 @@ public class Resolution {
                     throw ResolutionError.methodNotSupported
                 }
                 let recordKey = "crypto.\(ticker.uppercased()).version.\(chain.uppercased()).address"
-                let result = try service.record(domain: preparedDomain, key: recordKey)
-                completion(.success(result))
-            } catch {
-                self?.catchError(error, completion: completion)
-            }
-        }
-    }
-
-    // TODO: remove this in 1.0.0
-    @available(*, deprecated, message: "Please use ```public func multiChainAddress(domain: String, ticker: String, chain: String) instead```")
-    public func usdt(domain: String, version: UsdtVersion, completion: @escaping StringResultConsumer ) {
-        let preparedDomain = prepare(domain: domain)
-        DispatchQueue.global(qos: .utility).async { [weak self] in
-            do {
-                guard let service = try self?.getServiceOf(domain: preparedDomain) else {
-                    throw ResolutionError.methodNotSupported
-                }
-                let recordKey = "crypto.USDT.version.\(version).address"
                 let result = try service.record(domain: preparedDomain, key: recordKey)
                 completion(.success(result))
             } catch {

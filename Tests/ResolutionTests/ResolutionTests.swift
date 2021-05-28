@@ -22,14 +22,7 @@ class ResolutionTests: XCTestCase {
         super.setUp()
         resolution = try! Resolution();
     }
-    
-    func testOldConstructor() throws {
-        // old constructor assumed providerUrl would be the same for cns
-        // using this key cause it is not limitted by contract whitelist.
-        resolution = try Resolution(providerUrl: "https://mainnet.infura.io/v3/d423cf2499584d7fbe171e33b42cfbee", network: "mainnet");
-        try testAddr();
-    }
-    
+
     func testNetworkFromUrl() throws {
         resolution = try Resolution(configs: Configurations(
             cns: NamingServiceConfig(providerUrl: "https://rinkeby.infura.io/v3/3c25f57353234b1b853e9861050f4817")
@@ -237,82 +230,6 @@ class ResolutionTests: XCTestCase {
         }
 
         resolution.multiChainAddress(domain: domain, ticker: "usdt", chain: "omni") { (result) in
-            switch result {
-            case .success(let returnValue):
-                omniReceived.fulfill();
-                omni = returnValue;
-            case .failure(let error):
-                XCTFail("Expected omni usdt address, but got \(error)")
-            }
-        }
-        
-        waitForExpectations(timeout: timeout, handler: nil)
-        
-        // Then
-        assert(erc20 == "0xe7474D07fD2FA286e7e0aa23cd107F8379085037")
-        assert(eos == "letsminesome")
-        assert(omni == "19o6LvAdCPkjLi83VsjrCsmvQZUirT4KXJ")
-        assert(tron == "TNemhXhpX7MwzZJa3oXvfCjo5pEeXrfN2h")
-        self.checkError(result: NoRecordResult, expectedError: ResolutionError.recordNotFound)
-    }
-    
-    // TODO: remove this in 1.0.0
-    func testUsdtVersion() throws {
-        // Given
-        let domain: String = "udtestdev-usdt.crypto";
-        
-        let erc20Received = expectation(description: "Erc20 record should be received");
-        var erc20: String = "";
-        
-        let tronReceived = expectation(description: "tron record should be received");
-        var tron: String = "";
-        
-        let eosReceived = expectation(description: "eos record should be received");
-        var eos: String = "";
-        
-        let omniReceived = expectation(description: "omni record should be received");
-        var omni: String = "";
-        
-        let NoRecordReceived = expectation(description: "no record error should be received")
-        var NoRecordResult: Result<String, ResolutionError>!
-        
-        // When
-        resolution.usdt(domain: "brad.crypto", version: .ERC20) {
-            NoRecordResult = $0
-            NoRecordReceived.fulfill()
-        }
-        
-        resolution.usdt(domain: domain, version: .ERC20) { (result) in
-            switch result {
-            case .success(let returnValue):
-                erc20Received.fulfill();
-                erc20 = returnValue;
-            case .failure(let error):
-                XCTFail("Expected erc20 usdt address, but got \(error)")
-            }
-        }
-
-        resolution.usdt(domain: domain, version: .EOS) { (result) in
-            switch result {
-            case .success(let returnValue):
-                eosReceived.fulfill();
-                eos = returnValue;
-            case .failure(let error):
-                XCTFail("Expected eos usdt address, but got \(error)")
-            }
-        }
-
-        resolution.usdt(domain: domain, version: .TRON) { (result) in
-            switch result {
-            case .success(let returnValue):
-                tronReceived.fulfill();
-                tron = returnValue;
-            case .failure(let error):
-                XCTFail("Expected tron usdt address, but got \(error)")
-            }
-        }
-
-        resolution.usdt(domain: domain, version: .OMNI) { (result) in
             switch result {
             case .success(let returnValue):
                 omniReceived.fulfill();
