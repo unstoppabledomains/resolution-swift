@@ -69,11 +69,6 @@ public class Resolution {
                     network: network,
                     networking: networking
                 ),
-                ens: NamingServiceConfig(
-                  providerUrl: providerUrl,
-                  network: network,
-                  networking: networking
-                ),
                 zns: NamingServiceConfig(
                     providerUrl: "https://api.zilliqa.com/",
                     network: network,
@@ -198,8 +193,7 @@ public class Resolution {
         let preparedDomain = prepare(domain: domain)
         DispatchQueue.global(qos: .utility).async { [weak self] in
             do {
-                guard let service = try self?.getServiceOf(domain: preparedDomain),
-                      service.name != "ENS" else {
+                guard let service = try self?.getServiceOf(domain: preparedDomain) else {
                     throw ResolutionError.methodNotSupported
                 }
                 let recordKey = "crypto.\(ticker.uppercased()).version.\(chain.uppercased()).address"
@@ -217,8 +211,7 @@ public class Resolution {
         let preparedDomain = prepare(domain: domain)
         DispatchQueue.global(qos: .utility).async { [weak self] in
             do {
-                guard let service = try self?.getServiceOf(domain: preparedDomain),
-                      service.name != "ENS" else {
+                guard let service = try self?.getServiceOf(domain: preparedDomain) else {
                     throw ResolutionError.methodNotSupported
                 }
                 let recordKey = "crypto.USDT.version.\(version).address"
@@ -375,12 +368,6 @@ public class Resolution {
         var errorService: Error?
         do {
             networkServices.append(try CNS(configs.cns))
-        } catch {
-            errorService = error
-        }
-
-        do {
-            networkServices.append(try ENS(configs.ens))
         } catch {
             errorService = error
         }

@@ -30,9 +30,6 @@
 		3EE4DA1424E367720097540B /* resolution.h in Headers */ = {isa = PBXBuildFile; fileRef = 3EE4DA0624E367720097540B /* resolution.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3EE4DA1E24E367D40097540B /* Resolution.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EE4DA1D24E367D40097540B /* Resolution.swift */; };
 		8402F708250935FE0007F01D /* ContractZNS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8402F707250935FD0007F01D /* ContractZNS.swift */; };
-		8449EDFA25139F2500DABB57 /* ensRegistry.json in Resources */ = {isa = PBXBuildFile; fileRef = 8449EDF925139F2500DABB57 /* ensRegistry.json */; };
-		8449EDFC2513BA3D00DABB57 /* ensResolver.json in Resources */ = {isa = PBXBuildFile; fileRef = 8449EDFB2513BA3D00DABB57 /* ensResolver.json */; };
-		845B401D251389A4006AB08E /* ENS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845B401C251389A4006AB08E /* ENS.swift */; };
 		848E21092507890A008707D2 /* ZNS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848E21082507890A008707D2 /* ZNS.swift */; };
 		848E210C25079D61008707D2 /* Types.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848E210B25079D61008707D2 /* Types.swift */; };
 		B6B202C8260226B700A72AF2 /* BigInt in Frameworks */ = {isa = PBXBuildFile; productRef = B6B202C7260226B700A72AF2 /* BigInt */; };
@@ -90,9 +87,6 @@
 		3EE4DA1D24E367D40097540B /* Resolution.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Resolution.swift; sourceTree = "<group>"; };
 		8402F707250935FD0007F01D /* ContractZNS.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContractZNS.swift; sourceTree = "<group>"; };
 		8425AED824FFBADF00BBCBBA /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		8449EDF925139F2500DABB57 /* ensRegistry.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = ensRegistry.json; sourceTree = "<group>"; };
-		8449EDFB2513BA3D00DABB57 /* ensResolver.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = ensResolver.json; sourceTree = "<group>"; };
-		845B401C251389A4006AB08E /* ENS.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ENS.swift; sourceTree = "<group>"; };
 		848E21082507890A008707D2 /* ZNS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZNS.swift; sourceTree = "<group>"; };
 		848E210B25079D61008707D2 /* Types.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Types.swift; sourceTree = "<group>"; };
 		849E07CC24F946CA00A793D3 /* LinuxMain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinuxMain.swift; sourceTree = "<group>"; };
@@ -137,7 +131,6 @@
 			isa = PBXGroup;
 			children = (
 				3E2AC92124E4FA3E008EBC39 /* CNS */,
-				8449EDF825139F2500DABB57 /* ENS */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -157,7 +150,6 @@
 			children = (
 				3EAFA40324EE32B2008791E9 /* CommonNamingService.swift */,
 				3E2AC91B24E4FA28008EBC39 /* CNS.swift */,
-				845B401C251389A4006AB08E /* ENS.swift */,
 				848E21082507890A008707D2 /* ZNS.swift */,
 			);
 			path = NamingServices;
@@ -251,15 +243,6 @@
 				3EE4DA0524E367720097540B /* Resolution */,
 			);
 			path = Sources;
-			sourceTree = "<group>";
-		};
-		8449EDF825139F2500DABB57 /* ENS */ = {
-			isa = PBXGroup;
-			children = (
-				8449EDF925139F2500DABB57 /* ensRegistry.json */,
-				8449EDFB2513BA3D00DABB57 /* ensResolver.json */,
-			);
-			path = ENS;
 			sourceTree = "<group>";
 		};
 		848E210A25079D43008707D2 /* Helpers */ = {
@@ -407,7 +390,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 3EE4D9FD24E367720097540B /* Build configuration list for PBXProject "Resolution" */;
+			buildConfigurationList = 3EE4D9FD24E367720097540B /* Build configuration list for PBXProject "resolution" */;
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -438,10 +421,8 @@
 			files = (
 				30AE8615257A8CCD003A0142 /* network-config.json in Resources */,
 				30A69245251385A70079EC69 /* cnsProxyReader.json in Resources */,
-				8449EDFC2513BA3D00DABB57 /* ensResolver.json in Resources */,
 				B6E79937260223CE00F65894 /* README.md in Resources */,
 				3E2AC93E24E4FC9F008EBC39 /* cnsResolver.json in Resources */,
-				8449EDFA25139F2500DABB57 /* ensRegistry.json in Resources */,
 				3E2AC93F24E4FC9F008EBC39 /* cnsRegistry.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -500,7 +481,6 @@
 			files = (
 				3ECD84AE25A6AEE1001772DD /* UsdtVersion.swift in Sources */,
 				3E2AC91C24E4FA28008EBC39 /* CNS.swift in Sources */,
-				845B401D251389A4006AB08E /* ENS.swift in Sources */,
 				3E33F99925DCFAB400627C71 /* Configurations.swift in Sources */,
 				B6F2075825DBD89800140CE3 /* ABIParameterTypes.swift in Sources */,
 				B6F2075A25DBD89800140CE3 /* ABIExtensions.swift in Sources */,
@@ -765,7 +745,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		3EE4D9FD24E367720097540B /* Build configuration list for PBXProject "Resolution" */ = {
+		3EE4D9FD24E367720097540B /* Build configuration list for PBXProject "resolution" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3EE4DA1524E367720097540B /* Debug */,
