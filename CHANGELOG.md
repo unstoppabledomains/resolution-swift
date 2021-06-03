@@ -1,4 +1,8 @@
 # Resolution-swift CHANGELOG
+
+## 1.0.0
+- Remove Ens support ([#41](https://github.com/unstoppabledomains/resolution-swift/pull/41)) via [@JohnnyJumper](https://github.com/JohnnyJumper)
+
 ## 0.3.7
 - Zns fix ([#40](https://github.com/unstoppabledomains/resolution-swift/pull/40)) via [@merenkoff](https://github.com/merenkoff)
 - Warning in project due to incorrect podspec #38 ([#39](https://github.com/unstoppabledomains/resolution-swift/pull/39)) via [@merenkoff](https://github.com/merenkoff)
