@@ -18,14 +18,14 @@ Resoultion supports decentralized domains across three main zones:
 ## Cocoa Pods
 
 ```ruby
-pod 'UnstoppableDomainsResolution', '~> 0.3.7'
+pod 'UnstoppableDomainsResolution', '~> 1.0.0'
 ```
 
 ## Swift Package Manager
 
 ```swift
 package.dependencies.append(
-    .package(url: "https://github.com/unstoppabledomains/resolution-swift", from: "0.3.7")
+    .package(url: "https://github.com/unstoppabledomains/resolution-swift", from: "1.0.0")
 )
 ```
 
