@@ -16,12 +16,6 @@ import Foundation
 /// *ZNS*
 ///     .zil
 ///
-/// *ENS*
-///     .eth
-///     .kred
-///     .xyz
-///     .luxe
-///
 /// ```swift
 /// let resolution = try Resolution();
 /// resolution.addr(domain: "brad.crypto", ticker: "btc") { (result) in
@@ -59,30 +53,6 @@ import Foundation
 public class Resolution {
     private var services: [NamingService] = []
 
-    // Todo remove the following constructor in the 1.0.0
-    @available(*, deprecated, message: "Please use ```public init(configs: Configurations = Configurations() )```")
-    public init(providerUrl: String, network: String, networking: NetworkingLayer = DefaultNetworkingLayer()) throws {
-        self.services = try constructNetworkServices(
-            Configurations(
-                cns: NamingServiceConfig(
-                    providerUrl: providerUrl,
-                    network: network,
-                    networking: networking
-                ),
-                ens: NamingServiceConfig(
-                  providerUrl: providerUrl,
-                  network: network,
-                  networking: networking
-                ),
-                zns: NamingServiceConfig(
-                    providerUrl: "https://api.zilliqa.com/",
-                    network: network,
-                    networking: networking
-                )
-            )
-        )
-    }
-
     public init(configs: Configurations = Configurations() ) throws {
         self.services = try constructNetworkServices(configs)
     }
@@ -96,8 +66,6 @@ public class Resolution {
     }
 
     /// Checks if the domain name is valid according to naming service rules for valid domain names.
-    ///
-    /// **Example:** ENS doesn't allow domains that start from '-' symbol.
     ///
     /// - Parameter domain: domain name to be checked
     ///
@@ -115,7 +83,7 @@ public class Resolution {
     /// Resolves a hash  of the `domain` according to https://github.com/ethereum/EIPs/blob/master/EIPS/eip-137.md
     /// - Parameter domain: - domain name to be converted
     /// - Returns: Produces a namehash from supported naming service in hex format with 0x prefix.
-    /// Corresponds to ERC721 token id in case of Ethereum based naming service like ENS or CNS.
+    /// Corresponds to ERC721 token id.
     /// - Throws: ```ResolutionError.unsupportedDomain```  if domain extension is unknown
     ///
     public func namehash(domain: String) throws -> String {
@@ -198,30 +166,10 @@ public class Resolution {
         let preparedDomain = prepare(domain: domain)
         DispatchQueue.global(qos: .utility).async { [weak self] in
             do {
-                guard let service = try self?.getServiceOf(domain: preparedDomain),
-                      service.name != "ENS" else {
+                guard let service = try self?.getServiceOf(domain: preparedDomain) else {
                     throw ResolutionError.methodNotSupported
                 }
                 let recordKey = "crypto.\(ticker.uppercased()).version.\(chain.uppercased()).address"
-                let result = try service.record(domain: preparedDomain, key: recordKey)
-                completion(.success(result))
-            } catch {
-                self?.catchError(error, completion: completion)
-            }
-        }
-    }
-
-    // TODO: remove this in 1.0.0
-    @available(*, deprecated, message: "Please use ```public func multiChainAddress(domain: String, ticker: String, chain: String) instead```")
-    public func usdt(domain: String, version: UsdtVersion, completion: @escaping StringResultConsumer ) {
-        let preparedDomain = prepare(domain: domain)
-        DispatchQueue.global(qos: .utility).async { [weak self] in
-            do {
-                guard let service = try self?.getServiceOf(domain: preparedDomain),
-                      service.name != "ENS" else {
-                    throw ResolutionError.methodNotSupported
-                }
-                let recordKey = "crypto.USDT.version.\(version).address"
                 let result = try service.record(domain: preparedDomain, key: recordKey)
                 completion(.success(result))
             } catch {
@@ -375,12 +323,6 @@ public class Resolution {
         var errorService: Error?
         do {
             networkServices.append(try CNS(configs.cns))
-        } catch {
-            errorService = error
-        }
-
-        do {
-            networkServices.append(try ENS(configs.ens))
         } catch {
             errorService = error
         }

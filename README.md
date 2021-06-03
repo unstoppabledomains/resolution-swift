@@ -13,25 +13,19 @@ Resoultion supports decentralized domains across three main zones:
   - `.crypto`
 - Zilliqa Name Service (ZNS)
   - `.zil`
-- Ethereum Name Service (ENS)
-  - `.eth`
-  - `.kred`
-  - `.xyz`
-  - `.luxe`
-
 # Installation into the project
 
 ## Cocoa Pods
 
 ```ruby
-pod 'UnstoppableDomainsResolution', '~> 0.3.7'
+pod 'UnstoppableDomainsResolution', '~> 1.0.0'
 ```
 
 ## Swift Package Manager
 
 ```swift
 package.dependencies.append(
-    .package(url: "https://github.com/unstoppabledomains/resolution-swift", from: "0.3.7")
+    .package(url: "https://github.com/unstoppabledomains/resolution-swift", from: "1.0.0")
 )
 ```
 
@@ -127,12 +121,10 @@ Version 0.3.0 introduced the `Configurations` struct that is used for configurin
 Library can offer three naming services at the moment:
 
 * `cns` resolves `.crypto` domains,
-* `ens` resolves `.eth` domains,
 * `zns` resolves `.zil` domains
 
 By default, each of them is using the mainnet network via infura provider. 
-Unstoppable domains are using the infura key with no restriction for CNS.
-Unstoppable domains recommends setting up your own provider for ENS, as we don't guarantee ENS Infura key availability. 
+Unstoppable domains are using the infura key with no restriction for CNS. 
 You can update each naming service separately
 
 ```swift
@@ -151,19 +143,6 @@ resolution.addr(domain: "udtestdev-creek.crypto", ticker: "eth") { (result) in
     case .success(let returnValue):
         ethAddress = returnValue
         domainReceived.fulfill()
-    case .failure(let error):
-        XCTFail("Expected Eth Address, but got \(error)")
-    }
-}
-
-// naming services that hasn't been touched by Configrations struct are using default settings
-// the following will look up monkybrain.eth on the mainnet via infura provider
-
-resolution.addr(domain: "monkybrain.eth", ticker: "eth") { (result) in
-    switch result {
-    case .success(let returnValue):
-        ethENSAddress = returnValue
-        domainEthReceived.fulfill()
     case .failure(let error):
         XCTFail("Expected Eth Address, but got \(error)")
     }
