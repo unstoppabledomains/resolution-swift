@@ -42,7 +42,7 @@ internal class CNS: CommonNamingService, NamingService {
     }
 
     func isSupported(domain: String) -> Bool {
-        return domain.hasSuffix(Self.specificDomain)
+        return !domain.hasSuffix(".zil")
     }
 
     struct OwnerResolverRecord {
