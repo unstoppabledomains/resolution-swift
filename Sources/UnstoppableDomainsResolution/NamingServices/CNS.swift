@@ -16,7 +16,6 @@ internal class CNS: CommonNamingService, NamingService {
         let proxyReaderAddress: String
     }
 
-    static let specificDomain = ".crypto"
     static let name = "CNS"
 
     static let getDataForManyMethodName = "getDataForMany"
