@@ -498,6 +498,105 @@ class ResolutionTests: XCTestCase {
         self.checkError(result: unregisteredResult, expectedError: ResolutionError.recordNotFound)
     }
 
+    func testTokenUri() throws {
+        // Given
+        let domainReceived = expectation(description: "Exist domain should be received")
+        let unregisteredReceived = expectation(description: "Unregistered domain should be received")
+
+        var tokenURI = ""
+        var unregisteredResult: Result<String, ResolutionError>!
+
+        // When
+        resolution.tokenURI(domain: "brad.crypto") { (result) in
+            switch result {
+            case .success(let returnValue):
+                domainReceived.fulfill()
+                tokenURI = returnValue
+            case .failure(let error):
+                XCTFail("Expected tokenURI, but got \(error)")
+            }
+        }
+        resolution.tokenURI(domain: "afakedomainthatdoesnotexist-test-20210616.crypto") {
+            unregisteredResult = $0
+            unregisteredReceived.fulfill()
+        }
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        assert(tokenURI == "https://metadata.unstoppabledomains.com/metadata/brad.crypto")
+        self.checkError(result: unregisteredResult, expectedError: ResolutionError.unregisteredDomain)
+    }
+
+    func testTokenUriMetadata() throws {
+        // Given
+        let domainReceived = expectation(description: "Exist domain should be received")
+        let unregisteredReceived = expectation(description: "Unregistered domain should be received")
+
+        var tokenURIMetadata: TokenUriMetadata? = nil
+        var unregisteredResult: Result<TokenUriMetadata, ResolutionError>!
+
+        // When
+        resolution.tokenURIMetadata(domain: "brad.crypto") { (result) in
+            switch result {
+            case .success(let returnValue):
+                domainReceived.fulfill()
+                tokenURIMetadata = returnValue
+            case .failure(let error):
+                XCTFail("Expected tokenURIMetadata, but got \(error)")
+            }
+        }
+        resolution.tokenURIMetadata(domain: "afakedomainthatdoesnotexist-test-20210616.crypto") {
+            unregisteredResult = $0
+            unregisteredReceived.fulfill()
+        }
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        assert(tokenURIMetadata?.name == "brad.crypto")
+        assert(tokenURIMetadata?.attributes.count == 8)
+        assert(self.checkAttributeArrayContains(array: tokenURIMetadata?.attributes ?? [], traitType: "ETH", value: "0x8aaD44321A86b170879d7A244c1e8d360c99DdA8"))
+
+        self.checkError(result: unregisteredResult, expectedError: ResolutionError.unregisteredDomain)
+    }
+
+    func checkAttributeArrayContains(array: [TokenUriMetadataAttribute], traitType: String, value: String) -> Bool {
+        for attr in array {
+            if attr.traitType == traitType && attr.value.value == value {
+                return true
+            }
+        }
+        return false
+    }
+
+    func testUnhash() throws {
+        // Given
+        let domainReceived = expectation(description: "Exist domain should be received")
+        let unregisteredReceived = expectation(description: "Unregistered domain should be received")
+
+        var domainName: String = ""
+        var unregisteredResult: Result<String, ResolutionError>!
+
+        // When
+        resolution.unhash(hash: "0x756e4e998dbffd803c21d23b06cd855cdc7a4b57706c95964a37e24b47c10fc9", serviceName: "CNS") { (result) in
+            switch result {
+            case .success(let returnValue):
+                domainReceived.fulfill()
+                domainName = returnValue
+            case .failure(let error):
+                XCTFail("Expected domainName, but got \(error)")
+            }
+        }
+        resolution.unhash(hash: "0xdeaddeaddead", serviceName: "CNS") {
+            unregisteredResult = $0
+            unregisteredReceived.fulfill()
+        }
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        assert(domainName == "brad.crypto")
+        self.checkError(result: unregisteredResult, expectedError: ResolutionError.unregisteredDomain)
+    }
+
     func testGetMany() throws {
 
         // Given
@@ -557,6 +656,16 @@ class ResolutionTests: XCTestCase {
     }
     
     func checkError(result: Result<[String?], ResolutionError>, expectedError: ResolutionError) {
+        switch result {
+        case .success:
+            XCTFail("Expected \(expectedError), but got none")
+        case .failure(let error):
+            assert(error == expectedError, "Expected \(expectedError), but got \(error)")
+            return
+        }
+    }
+
+    func checkError(result: Result<TokenUriMetadata, ResolutionError>, expectedError: ResolutionError) {
         switch result {
         case .success:
             XCTFail("Expected \(expectedError), but got none")

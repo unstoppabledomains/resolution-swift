@@ -71,6 +71,10 @@ internal class ZNS: CommonNamingService, NamingService {
         return filtered
     }
 
+    func getTokenUri(tokenId: String) throws -> String {
+        throw ResolutionError.methodNotSupported
+    }
+
     // MARK: - get Resolver
     func resolver(domain: String) throws -> String {
         let recordAddresses = try self.recordsAddresses(domain: domain)
