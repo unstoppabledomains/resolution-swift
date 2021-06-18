@@ -16,7 +16,6 @@ internal class CNS: CommonNamingService, NamingService {
         let proxyReaderAddress: String
     }
 
-    static let specificDomain = ".crypto"
     static let name = "CNS"
 
     static let getDataForManyMethodName = "getDataForMany"
@@ -42,7 +41,7 @@ internal class CNS: CommonNamingService, NamingService {
     }
 
     func isSupported(domain: String) -> Bool {
-        return domain.hasSuffix(Self.specificDomain)
+        return !domain.hasSuffix(".zil")
     }
 
     struct OwnerResolverRecord {

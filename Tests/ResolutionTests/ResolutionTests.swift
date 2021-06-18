@@ -113,18 +113,18 @@ class ResolutionTests: XCTestCase {
 
     func testSupportedDomains() throws {
         // Given // When // Then
-        assert(false == resolution.isSupported(domain: "notsupported.crypto1"))
+        assert(true == resolution.isSupported(domain: "notsupported.crypto1"))
         assert(true == resolution.isSupported(domain: "supported.crypto"))
         assert(true == resolution.isSupported(domain: "supported.zil"))
-        assert(false == resolution.isSupported(domain: "notsupported.eth1"))
-        assert(false == resolution.isSupported(domain: "supported.eth"))
-        assert(false == resolution.isSupported(domain: "notsupported.xyz1"))
-        assert(false == resolution.isSupported(domain: "supported.xyz"))
-        assert(false == resolution.isSupported(domain: "notsupported.luxe1"))
-        assert(false == resolution.isSupported(domain: "supported.luxe"))
-        assert(false == resolution.isSupported(domain: "-notsupported.eth"))
-        assert(false == resolution.isSupported(domain: "supported.kred"))
-        assert(false == resolution.isSupported(domain: "supported.addr.reverse"))
+        assert(true == resolution.isSupported(domain: "notsupported.eth1"))
+        assert(true == resolution.isSupported(domain: "supported.eth"))
+        assert(true == resolution.isSupported(domain: "notsupported.xyz1"))
+        assert(true == resolution.isSupported(domain: "supported.xyz"))
+        assert(true == resolution.isSupported(domain: "notsupported.luxe1"))
+        assert(true == resolution.isSupported(domain: "supported.luxe"))
+        assert(true == resolution.isSupported(domain: "-notsupported.eth"))
+        assert(true == resolution.isSupported(domain: "supported.kred"))
+        assert(true == resolution.isSupported(domain: "supported.addr.reverse"))
     }
     
     func testNamehash() throws {
