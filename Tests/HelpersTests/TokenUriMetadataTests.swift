@@ -70,10 +70,7 @@ class TokenUriMetadataTests: XCTestCase {
             let attribute = try parseJsonAttribute(jsonString: "{\"trait_type\": \"incorrect\",\"value\": [\"some\", \"values\"]}")
             XCTFail("Expected DecodingError, but got none")
         } catch {
-            if let catched = error as? DecodingError {
-                return
-            }
-            XCTFail("Expected ResolutionError, but got different \(error)")
+            assert(error is DecodingError, "Expected DecodingError, but got different \(error)")
         }
     }
 
