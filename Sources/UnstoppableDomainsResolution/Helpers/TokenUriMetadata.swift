@@ -3,7 +3,7 @@ import Foundation
 public struct TokenUriMetadata : Codable {
     let name: String
     let description: String
-    let externalURL: String
+    let externalUrl: String
     let image: String
     let attributes: [TokenUriMetadataAttribute]
     var backgroundColor: String?
@@ -15,7 +15,7 @@ public struct TokenUriMetadata : Codable {
     enum CodingKeys: String, CodingKey {
         case name
         case description
-        case externalURL = "external_url"
+        case externalUrl = "external_url"
         case image
         case attributes
         case backgroundColor = "background_color"
@@ -27,7 +27,7 @@ public struct TokenUriMetadata : Codable {
 }
 
 // MARK: - Attribute
-struct TokenUriMetadataAttribute: Codable {
+public struct TokenUriMetadataAttribute: Codable {
     let displayType: String?
     let traitType: String?
     let value: TokenUriMetadataValue
@@ -58,7 +58,7 @@ struct TokenUriMetadataValue: Codable {
         } else if let bool = try? container.decode(Bool.self) {
             value = bool.description
         } else {
-            throw DecodingError.typeMismatch(String.self, .init(codingPath: decoder.codingPath, debugDescription: ""))
+            throw DecodingError.typeMismatch(String.self, .init(codingPath: decoder.codingPath, debugDescription: "Failed to decode token metadata attribute value."))
         }
     }
 
