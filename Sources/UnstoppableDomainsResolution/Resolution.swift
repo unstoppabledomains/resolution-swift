@@ -149,7 +149,7 @@ public class Resolution {
         DispatchQueue.global(qos: .utility).async { [weak self] in
             do {
                 guard let service = self?.services.first(where: { $0.name == service }) else {
-                    throw ResolutionError.recordNotFound
+                    throw ResolutionError.unsupportedServiceName
                 }
                 let result = try service.tokensOwnedBy(address: address)
                 completion(.success(result))

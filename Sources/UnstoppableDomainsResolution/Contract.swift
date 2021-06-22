@@ -31,7 +31,7 @@ internal class Contract {
         self.networking = networking
     }
 
-    func callMethod(methodName: String, args: [Any]) throws -> Any? {
+    func callMethod(methodName: String, args: [Any]) throws -> Any {
         let encodedData = try self.coder.encode(method: methodName, args: args)
         let body = JsonRpcPayload(id: "1", data: encodedData, to: address)
         let response = try postRequestForString(body)!
