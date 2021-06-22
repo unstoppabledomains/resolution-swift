@@ -17,6 +17,7 @@ protocol NamingService {
     func isSupported(domain: String) -> Bool
 
     func owner(domain: String) throws -> String
+    func tokensOwnedBy(address: String) throws -> [String]
     func addr(domain: String, ticker: String) throws -> String
     func resolver(domain: String) throws -> String
 

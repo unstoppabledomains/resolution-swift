@@ -91,6 +91,42 @@ internal class CNS: CommonNamingService, NamingService {
         }
     }
 
+    func tokensOwnedBy(address: String) throws -> [String] {
+        let registryContract = try self.buildContract(address: self.contracts.registryAddress, type: .registry)
+        let transferLogs = try registryContract.callLogs(
+            fromBlock: "0x8A958B",
+            signatureHash: "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+            for: address.normalized32,
+            isTransfer: true
+        ).compactMap {
+            $0.topics[3]
+        }
+
+        let domainsData = try transferLogs.compactMap {
+            try registryContract.callLogs(
+                fromBlock: "0x8A958b",
+                signatureHash: "0xc5beef08f693b11c316c0c8394a377a0033c9cf701b8cd8afd79cecef60c3952",
+                for: $0.normalized32,
+                isTransfer: false
+            )[0].data
+        }
+
+        let possibleDomains = Array(Set(
+                domainsData.compactMap {
+                    ABIDecoder.decodeSingleType(type: .string, data: Data(hex: $0)).value as? String
+                }
+            )
+        )
+
+        let owners = try batchOwners(domains: possibleDomains)
+        var domains: [String] = []
+
+        for (ind, addr) in owners.enumerated() where addr == address {
+            domains.append(possibleDomains[ind])
+        }
+        return domains
+    }
+
     func resolver(domain: String) throws -> String {
         let tokenId = super.namehash(domain: domain)
         return try self.resolver(tokenId: tokenId)
@@ -220,5 +256,36 @@ internal class CNS: CommonNamingService, NamingService {
                                 .callMethod(methodName: Self.getDataForManyMethodName,
                                             args: [keys, tokenIds]) { return result }
         throw ResolutionError.proxyReaderNonInitialized
+    }
+}
+
+fileprivate extension String {
+    var normalized32: String {
+        let droppedHexPrefix = self.hasPrefix("0x") ? String(self.dropFirst("0x".count)) : self
+        let cleanAddress = droppedHexPrefix.lowercased()
+        if cleanAddress.count < 64 {
+            let zeroCharacter: Character = "0"
+            let arr = Array(repeating: zeroCharacter, count: 64 - cleanAddress.count)
+            let zeros = String(arr)
+
+            return "0x" + zeros + cleanAddress
+        }
+        return "0x" + cleanAddress
+    }
+}
+
+fileprivate extension Data {
+    init?(hex: String) {
+        guard hex.count.isMultiple(of: 2) else {
+            return nil
+        }
+
+        let chars = hex.map { $0 }
+        let bytes = stride(from: 0, to: chars.count, by: 2)
+            .map { String(chars[$0]) + String(chars[$0 + 1]) }
+            .compactMap { UInt8($0, radix: 16) }
+
+        guard hex.count / bytes.count == 2 else { return nil }
+        self.init(bytes)
     }
 }

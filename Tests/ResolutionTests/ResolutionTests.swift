@@ -436,6 +436,34 @@ class ResolutionTests: XCTestCase {
         assert(chatID == "0x8912623832e174f2eb1f59cc3b587444d619376ad5bf10070e937e0dc22b9ffb2e3ae059e6ebf729f87746b2f71e5d88ec99c1fb3c7c49b8617e2520d474c48e1c")
     }
     
+    func testForTokensOwnedByCns() throws {
+        let tetReceived = expectation(description: "This is just for test");
+        let resolutionB = try Resolution(configs: Configurations(
+                 cns: NamingServiceConfig(
+                   providerUrl: "https://mainnet.infura.io/v3/e05c36b6b2134ccc9f2594ddff94c136",
+                   network: "mainnet"
+                )
+        ))
+        var returnedDomains: [String] = [];
+        resolutionB.tokensOwnedBy(address: "0x8aaD44321A86b170879d7A244c1e8d360c99DdA8", service: "CNS") { (result) in
+            switch result {
+            case .success(let returnValue):
+                returnedDomains = returnValue.compactMap{ $0 }
+                tetReceived.fulfill()
+            case .failure(let error):
+                XCTFail("something went wrong \(error)")
+            }
+
+        }
+        waitForExpectations(timeout: timeout, handler: nil)
+        assert(returnedDomains.count == 4)
+        assert(returnedDomains.contains("checkoutwithadomain.crypto"))
+        assert(returnedDomains.contains("brad.crypto"))
+        assert(returnedDomains.contains("bradley.chat.crypto"))
+        assert(returnedDomains.contains("kdslkfjadasdfd.crypto"))
+    }
+    
+    
     func testIpfs() throws {
         // Given
         let domainReceived = expectation(description: "Exist domain should be received")
