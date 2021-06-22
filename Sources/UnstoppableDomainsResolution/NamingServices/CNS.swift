@@ -19,6 +19,7 @@ internal class CNS: CommonNamingService, NamingService {
     static let name = "CNS"
 
     static let getDataForManyMethodName = "getDataForMany"
+    static let tokenURIMethodName = "tokenURI"
 
     let network: String
     let contracts: ContractAddresses
@@ -160,6 +161,24 @@ internal class CNS: CommonNamingService, NamingService {
             dict[key] = value
         }
         return returnValue
+    }
+
+    func getTokenUri(tokenId: String) throws -> String {
+        do {
+            if let result = try proxyReaderContract?
+                                    .callMethod(methodName: Self.tokenURIMethodName,
+                                                args: [tokenId]) 
+            { 
+                let dict = result as? Dictionary<String, Any>
+                if let val = dict?["0"] as? String {
+                    return val
+                }
+                throw ResolutionError.unregisteredDomain
+            }
+            throw ResolutionError.proxyReaderNonInitialized
+        } catch APIError.decodingError {
+            throw ResolutionError.unregisteredDomain
+        }
     }
 
     // MARK: - Helper functions
