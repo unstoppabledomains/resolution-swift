@@ -18,6 +18,8 @@ internal class CNS: CommonNamingService, NamingService {
 
     static let specificDomain = ".crypto"
     static let name = "CNS"
+    static let TransferEventSignature = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"
+    static let NewURIEventSignature = "0xc5beef08f693b11c316c0c8394a377a0033c9cf701b8cd8afd79cecef60c3952"
 
     static let getDataForManyMethodName = "getDataForMany"
 
@@ -93,21 +95,23 @@ internal class CNS: CommonNamingService, NamingService {
 
     func tokensOwnedBy(address: String) throws -> [String] {
         let registryContract = try self.buildContract(address: self.contracts.registryAddress, type: .registry)
+        let origin = self.getOriginBlockFrom(network: self.network)
+
         let transferLogs = try registryContract.callLogs(
-            fromBlock: "0x8A958B",
-            signatureHash: "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
-            for: address.normalized32,
-            isTransfer: true
+                fromBlock: origin,
+                signatureHash: Self.TransferEventSignature,
+                for: address.normalized32,
+                isTransfer: true
         ).compactMap {
             $0.topics[3]
         }
 
         let domainsData = try transferLogs.compactMap {
             try registryContract.callLogs(
-                fromBlock: "0x8A958b",
-                signatureHash: "0xc5beef08f693b11c316c0c8394a377a0033c9cf701b8cd8afd79cecef60c3952",
-                for: $0.normalized32,
-                isTransfer: false
+                    fromBlock: origin,
+                    signatureHash: Self.NewURIEventSignature,
+                    for: $0.normalized32,
+                    isTransfer: false
             )[0].data
         }
 
@@ -226,6 +230,17 @@ internal class CNS: CommonNamingService, NamingService {
             return unfoldAddressForMany(element)
         }
         return nil
+    }
+
+    private func getOriginBlockFrom(network: String) -> String {
+        switch network {
+        case "mainnet":
+            return "0x8A958B"
+        case "rinkeby":
+            return "0x7232BC"
+        default:
+            return "earliest"
+        }
     }
 
     private func getOwnerResolverRecord(tokenId: String, key: String) throws -> OwnerResolverRecord {
