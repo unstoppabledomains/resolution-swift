@@ -31,7 +31,7 @@ internal class UNS: CommonNamingService, NamingService {
             : config.network
 
         guard let contractsContainer = try Self.parseContractAddresses(network: network),
-              let registry = contractsContainer[ContractType.registry.name]?.address,
+              let registry = contractsContainer[ContractType.unsRegistry.name]?.address,
               let resolver = contractsContainer[ContractType.resolver.name]?.address,
               let proxyReader = contractsContainer[ContractType.proxyReader.name]?.address else { throw ResolutionError.unsupportedNetwork }
         self.contracts = ContractAddresses(registryAddress: registry, resolverAddress: resolver, proxyReaderAddress: proxyReader)

@@ -17,7 +17,7 @@ class CommonNamingService {
     let networking: NetworkingLayer
 
     enum ContractType: String {
-        case registry = "CNSRegistry"
+        case unsRegistry = "UNSRegistry"
         case resolver = "Resolver"
         case proxyReader = "ProxyReader"
 
@@ -37,7 +37,7 @@ class CommonNamingService {
 
         let nameLowCased = name.lowercased()
         switch type {
-        case .registry:
+        case .unsRegistry:
             jsonFileName = "\(nameLowCased)Registry"
         case .resolver:
             jsonFileName = "\(nameLowCased)Resolver"
@@ -103,7 +103,8 @@ extension CommonNamingService {
 
     struct ContractAddressEntry: Decodable {
         let address: String
-        let legacyAddresses: [String]?
+        let legacyAddresses: [String]
+        let deploymentBlock: String
     }
 
     static func parseContractAddresses(network: String) throws -> [String: ContractAddressEntry]? {
@@ -113,7 +114,6 @@ extension CommonNamingService {
         let bundler = Bundle(for: self)
         #endif
 
-        print(network)
         guard let idString = networkIds[network] else { throw ResolutionError.unsupportedNetwork }
 
         if let filePath = bundler.url(forResource: Self.networkConfigFileName, withExtension: "json") {
