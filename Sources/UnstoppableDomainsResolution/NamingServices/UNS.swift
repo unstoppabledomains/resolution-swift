@@ -166,9 +166,8 @@ internal class UNS: CommonNamingService, NamingService {
         do {
             if let result = try proxyReaderContract?
                                     .callMethod(methodName: Self.tokenURIMethodName,
-                                                args: [tokenId]) 
-            { 
-                let dict = result as? Dictionary<String, Any>
+                                                args: [tokenId]) {
+                let dict = result as? [String: Any]
                 if let val = dict?["0"] as? String {
                     return val
                 }

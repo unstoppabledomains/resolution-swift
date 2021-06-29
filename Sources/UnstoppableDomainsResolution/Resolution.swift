@@ -433,9 +433,9 @@ public class Resolution {
 
     /// Gets the token metadata from metadata API
     private func fetchTokenUriMetadata(tokenURI: String, completion:@escaping TokenUriMetadataResultConsumer) throws {
-        let networking = MetadataAPIRequest()
+        let networking = DefaultNetworkingLayer()
         let url = URL(string: tokenURI)
-        networking.makeHttpRequest(url: url!,
+        networking.makeHttpGetRequest(url: url!,
                                     completion: {result in
                                         switch result {
                                         case .success(let response):
