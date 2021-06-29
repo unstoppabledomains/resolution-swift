@@ -10,7 +10,7 @@ import Foundation
 ///
 /// Supported domain zones:
 ///
-/// *CNS:*
+/// *UNS:*
 ///     .crypto
 ///
 /// *ZNS*
@@ -34,7 +34,7 @@ import Foundation
 /// ```swift
 /// let resolution = try Resolution(
 ///   configs: Configurations(
-///     cns: NamingServiceConfig(
+///     uns: NamingServiceConfig(
 ///       providerUrl: "https://rinkeby.infura.io/v3/3c25f57353234b1b853e9861050f4817",
 ///       network: "rinkeby"
 ///    )
@@ -267,7 +267,7 @@ public class Resolution {
         DispatchQueue.global(qos: .utility).async { [weak self] in
             do {
                 guard let service = try self?.getServiceOf(domain: preparedDomain),
-                      service.name == "CNS" else {
+                      service.name == "UNS" else {
                     throw ResolutionError.methodNotSupported
                 }
 
@@ -322,7 +322,7 @@ public class Resolution {
         var networkServices: [NamingService] = []
         var errorService: Error?
         do {
-            networkServices.append(try CNS(configs.cns))
+            networkServices.append(try UNS(configs.uns))
         } catch {
             errorService = error
         }

@@ -25,20 +25,20 @@ class ResolutionTests: XCTestCase {
 
     func testNetworkFromUrl() throws {
         resolution = try Resolution(configs: Configurations(
-            cns: NamingServiceConfig(providerUrl: "https://rinkeby.infura.io/v3/3c25f57353234b1b853e9861050f4817")
+            uns: NamingServiceConfig(providerUrl: "https://rinkeby.infura.io/v3/3c25f57353234b1b853e9861050f4817")
             )
         );
         
-        let cnsNetwork = try resolution.getNetwork(from: "cns");
+        let unsNetwork = try resolution.getNetwork(from: "uns");
         let znsNetwork = try resolution.getNetwork(from: "zns");
-        assert(cnsNetwork == "rinkeby");
+        assert(unsNetwork == "rinkeby");
         assert(znsNetwork == "mainnet");
     }
     
     func testUnsupportedNetwork() throws {
         self.checkError(completion: {
             try Resolution(configs: Configurations(
-                cns: NamingServiceConfig(providerUrl: "https://ropsten.infura.io/v3/3c25f57353234b1b853e9861050f4817")
+                uns: NamingServiceConfig(providerUrl: "https://ropsten.infura.io/v3/3c25f57353234b1b853e9861050f4817")
             ));
         }, expectedError: .unsupportedNetwork)
     }
@@ -67,7 +67,7 @@ class ResolutionTests: XCTestCase {
     
     func testRinkeby() throws {
         resolution = try Resolution(configs: Configurations(
-                cns: NamingServiceConfig(
+                uns: NamingServiceConfig(
                     providerUrl: "https://rinkeby.infura.io/v3/3c25f57353234b1b853e9861050f4817",
                     network: "rinkeby"
                 )

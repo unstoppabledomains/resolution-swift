@@ -1,5 +1,5 @@
 //
-//  CNS.swift
+//  UNS.swift
 //  resolution
 //
 //  Created by Johnny Good on 8/11/20.
@@ -9,7 +9,7 @@
 import Foundation
 import EthereumAddress
 
-internal class CNS: CommonNamingService, NamingService {
+internal class UNS: CommonNamingService, NamingService {
     struct ContractAddresses {
         let registryAddress: String
         let resolverAddress: String
@@ -17,7 +17,7 @@ internal class CNS: CommonNamingService, NamingService {
     }
 
     static let specificDomain = ".crypto"
-    static let name = "CNS"
+    static let name = "UNS"
 
     static let getDataForManyMethodName = "getDataForMany"
 
