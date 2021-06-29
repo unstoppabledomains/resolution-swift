@@ -118,12 +118,8 @@ extension CommonNamingService {
 
         if let filePath = bundler.url(forResource: Self.networkConfigFileName, withExtension: "json") {
             guard let data = try? Data(contentsOf: filePath) else { return nil }
-            guard let info = try? JSONDecoder().decode(NewtorkConfigJson.self, from: data) else {
-                return nil
-            }
-            guard let currentNetwork = info.networks[idString] else {
-                return nil
-            }
+            guard let info = try? JSONDecoder().decode(NewtorkConfigJson.self, from: data) else { return nil }
+            guard let currentNetwork = info.networks[idString] else { return nil }
             return currentNetwork.contracts
         }
         return nil
