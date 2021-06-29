@@ -315,6 +315,61 @@ public class Resolution {
         }
     }
 
+    /// Retrieves the tokenURI from the registry smart contract.
+    /// - Parameter domain: - domain name to be resolved
+    /// - Parameter  completion: A callback that resolves `Result`  with a `tokenURI` for a specific domain or `Error`
+    public func tokenURI(domain: String, completion:@escaping StringResultConsumer) {
+        do {
+            let namehash = try self.namehash(domain: domain)
+            let result = try self.getServiceOf(domain: domain).getTokenUri(tokenId: namehash)
+            completion(.success(result))
+        } catch {
+            self.catchError(error, completion: completion)
+        }
+    }
+
+    /// Retrieves the data from the endpoint provided by tokenURI from the registry smart contract.
+    /// - Parameter domain: - domain name to be resolved
+    /// - Parameter  completion: A callback that resolves `Result` with a `TokenUriMetadata` for a specific domain or `Error`
+    public func tokenURIMetadata(domain: String, completion:@escaping TokenUriMetadataResultConsumer) {
+        do {
+            let namehash = try self.namehash(domain: domain)
+            let tokenURI = try self.getServiceOf(domain: domain).getTokenUri(tokenId: namehash)
+            try self.fetchTokenUriMetadata(tokenURI: tokenURI, completion: completion)
+        } catch {
+            self.catchError(error, completion: completion)
+        }
+    }
+
+    /// Retrieves the domain name from token metadata that is provided by tokenURI from the registry smart contract.
+    /// The function will throw an error if the domain in the metadata does not match the hash (e.g. if the metadata is outdated).
+    /// - Parameter hash: - domain hash to be resolved
+    /// - Parameter serviceName: - name of the service to use to get metadata
+    /// - Parameter completion: A callback that resolves `Result` with a `domainName` for a specific domain or `Error`
+    public func unhash(hash: String, serviceName: String, completion:@escaping StringResultConsumer) {
+        do {
+            let tokenURI = try self.findService(name: serviceName).getTokenUri(tokenId: hash)
+            try self.fetchTokenUriMetadata(tokenURI: tokenURI, completion: {result in
+                switch result {
+                case .success(let response):
+                    do {
+                        let receivedHash = try self.namehash(domain: response.name)
+                        if receivedHash != hash {
+                            completion(.failure(ResolutionError.badRequestOrResponse))
+                        }
+                        completion(.success(response.name))
+                    } catch {
+                        self.catchError(error, completion: completion)
+                    }
+                case .failure(let error):
+                    self.catchError(error, completion: completion)
+                }
+            })
+        } catch {
+            self.catchError(error, completion: completion)
+        }
+    }
+
     // MARK: - Uttilities function
 
     /// this returns [NamingService] from the configurations
@@ -368,6 +423,29 @@ public class Resolution {
         return service!
     }
 
+    /// This returns the correct naming service based on the service name asked for
+    private func findService(name: String) throws -> NamingService {
+        guard let service = services.first(where: {$0.name == name.uppercased()}) else {
+            throw ResolutionError.unsupportedServiceName
+        }
+        return service
+    }
+
+    /// Gets the token metadata from metadata API
+    private func fetchTokenUriMetadata(tokenURI: String, completion:@escaping TokenUriMetadataResultConsumer) throws {
+        let networking = MetadataAPIRequest()
+        let url = URL(string: tokenURI)
+        networking.makeHttpRequest(url: url!,
+                                    completion: {result in
+                                        switch result {
+                                        case .success(let response):
+                                            completion(.success(response))
+                                        case .failure(let error):
+                                            self.catchError(error, completion: completion)
+                                        }
+                                    })
+    }
+
     /// Preproccess the `domain`
     private func prepare(domain: String) -> String {
         return domain.lowercased()
@@ -407,6 +485,15 @@ public class Resolution {
                 return
             }
             completion(.failure(catched))
+            return
+        }
+        completion(.failure(catched))
+    }
+
+    /// Process the 'error'
+    private func catchError(_ error: Error, completion:@escaping TokenUriMetadataResultConsumer ) {
+        guard let catched = error as? ResolutionError else {
+            completion(.failure(.unknownError(error)))
             return
         }
         completion(.failure(catched))

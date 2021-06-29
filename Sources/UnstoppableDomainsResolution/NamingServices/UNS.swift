@@ -16,10 +16,9 @@ internal class UNS: CommonNamingService, NamingService {
         let proxyReaderAddress: String
     }
 
-    static let specificDomain = ".crypto"
     static let name = "UNS"
-
     static let getDataForManyMethodName = "getDataForMany"
+    static let tokenURIMethodName = "tokenURI"
 
     let network: String
     let contracts: ContractAddresses
@@ -42,7 +41,7 @@ internal class UNS: CommonNamingService, NamingService {
     }
 
     func isSupported(domain: String) -> Bool {
-        return domain.hasSuffix(Self.specificDomain)
+        return !domain.hasSuffix(".zil")
     }
 
     struct OwnerResolverRecord {
@@ -161,6 +160,24 @@ internal class UNS: CommonNamingService, NamingService {
             dict[key] = value
         }
         return returnValue
+    }
+
+    func getTokenUri(tokenId: String) throws -> String {
+        do {
+            if let result = try proxyReaderContract?
+                                    .callMethod(methodName: Self.tokenURIMethodName,
+                                                args: [tokenId]) 
+            { 
+                let dict = result as? Dictionary<String, Any>
+                if let val = dict?["0"] as? String {
+                    return val
+                }
+                throw ResolutionError.unregisteredDomain
+            }
+            throw ResolutionError.proxyReaderNonInitialized
+        } catch APIError.decodingError {
+            throw ResolutionError.unregisteredDomain
+        }
     }
 
     // MARK: - Helper functions

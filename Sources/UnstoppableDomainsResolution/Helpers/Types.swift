@@ -12,3 +12,4 @@ public typealias StringResultConsumer = (Result<String, ResolutionError>) -> Voi
 public typealias StringsArrayResultConsumer = (Result<[String?], ResolutionError>) -> Void
 public typealias DictionaryResultConsumer = (Result<[String: String], ResolutionError>) -> Void
 public typealias DnsRecordsResultConsumer = (Result<[DnsRecord], Error>) -> Void
+public typealias TokenUriMetadataResultConsumer = (Result<TokenUriMetadata, ResolutionError>) -> Void
