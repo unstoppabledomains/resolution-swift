@@ -26,6 +26,7 @@ internal class UNS: CommonNamingService, NamingService {
     static let NewURIEventSignature = "0xc5beef08f693b11c316c0c8394a377a0033c9cf701b8cd8afd79cecef60c3952"
     static let getDataForManyMethodName = "getDataForMany"
     static let tokenURIMethodName = "tokenURI"
+    static let existName = "exists"
 
     let network: String
     let contracts: ContractAddresses
@@ -64,7 +65,20 @@ internal class UNS: CommonNamingService, NamingService {
     }
 
     func isSupported(domain: String) -> Bool {
-        return !domain.hasSuffix(".zil")
+        let split = domain.split(separator: ".")
+        let tld = split.suffix(1).joined(separator: "")
+        if tld == "zil" {
+            return false
+        }
+        let tokenId = self.namehash(domain: tld)
+        if let response = try? self.proxyReaderContract?.callMethod(methodName: Self.existName, args: [tokenId]) {
+            // swiftlint:disable force_cast
+            let result = response as! [String: Bool]
+            // swiftlint:enable force_cast
+            guard let isExist = result["0"] else { return false }
+            return isExist
+        }
+        return false
     }
 
     struct OwnerResolverRecord {

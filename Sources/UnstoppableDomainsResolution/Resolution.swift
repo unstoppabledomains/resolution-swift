@@ -68,15 +68,17 @@ public class Resolution {
     /// Checks if the domain name is valid according to naming service rules for valid domain names.
     ///
     /// - Parameter domain: domain name to be checked
+    /// - Parameter completion: A callback that resolves `Result` with  a `Bool` value
     ///
-    /// - Returns: The return true or false.
-    ///
-    public func isSupported(domain: String) -> Bool {
-        do {
-            let preparedDomain = prepare(domain: domain)
-            return try getServiceOf(domain: preparedDomain).isSupported(domain: preparedDomain)
-        } catch {
-            return false
+    public func isSupported(domain: String, completion: @escaping BoolResultConsumer) {
+        let preparedDomain = prepare(domain: domain)
+        DispatchQueue.global(qos: .utility).async { [weak self] in
+            do {
+                _ = try self?.getServiceOf(domain: preparedDomain)
+                completion(.success(true))
+            } catch {
+                completion(.success(false))
+            }
         }
     }
 
