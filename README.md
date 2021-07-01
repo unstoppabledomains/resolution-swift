@@ -9,7 +9,7 @@ Resolution is primarily built and maintained by [Unstoppable Domains](https://un
 
 Resoultion supports decentralized domains across three main zones:
 
-- Crypto Name Service (UNS)
+- Crypto Name Service (uns)
   - `.crypto`
   - `.coin`
   - `.wallet`
@@ -19,7 +19,7 @@ Resoultion supports decentralized domains across three main zones:
   - `.888`
   - `.nft`
   - `.dao`
-- Zilliqa Name Service (ZNS)
+- Zilliqa Name Service (zns)
   - `.zil`
 # Installation into the project
 
@@ -132,7 +132,7 @@ Library can offer three naming services at the moment:
 * `zns` resolves `.zil` domains
 
 By default, each of them is using the mainnet network via infura provider. 
-Unstoppable domains are using the infura key with no restriction for UNS. 
+Unstoppable domains are using the infura key with no restriction for uns. 
 You can update each naming service separately
 
 ```swift
@@ -161,7 +161,7 @@ resolution.addr(domain: "udtestdev-creek.crypto", ticker: "eth") { (result) in
 
 Version 0.1.3 introduced the `batchOwners(domains: _, completion: _ )` method which adds additional convenience when making multiple domain owner queries.
 
-> This method is only compatible with UNS-based domains. Using this method with any other domain type will throw the error: `ResolutionError.methodNotSupported`.
+> This method is only compatible with uns-based domains. Using this method with any other domain type will throw the error: `ResolutionError.methodNotSupported`.
 
 As opposed to the single `owner(domain: _, completion: _)` method, this batch request will return an array of owners `[String?]`. If the the domain is not registered or its value is `null`, the corresponding array element of the response will be `nil` without throwing an error.
  
