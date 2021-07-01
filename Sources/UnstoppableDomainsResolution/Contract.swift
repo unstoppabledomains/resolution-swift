@@ -34,7 +34,7 @@ internal class Contract {
     func callMethod(methodName: String, args: [Any]) throws -> Any {
         let encodedData = try self.coder.encode(method: methodName, args: args)
         let body = JsonRpcPayload(id: "1", data: encodedData, to: address)
-        let response = try postRequest(body)!
+        let response = try postRequestForString(body)!
         return try self.coder.decode(response, from: methodName)
     }
 
@@ -58,9 +58,42 @@ internal class Contract {
             }
             return IdentifiableResult<Any?>(id: responseElement.id, result: res)
         }
-}
+    }
 
-    private func postRequest(_ body: JsonRpcPayload) throws -> String? {
+    func callLogs(fromBlock: String, signatureHash: String, for userAddress: String, isTransfer: Bool ) throws  -> [JsonRpcLogResponse] {
+        let topics = isTransfer ? [signatureHash, nil, userAddress ] : [signatureHash, userAddress]
+        let params = ParamLogClass(fromBlock: fromBlock, address: self.address, topics: topics)
+        let body = JsonRpcPayload(params: params)
+
+        return try postRequestForLogArray(body) ?? []
+    }
+
+    private func postRequestForLogArray(_ body: JsonRpcPayload) throws -> [JsonRpcLogResponse]? {
+        let postResponse = try postRequest(body)
+        if case .array(let arrayOfElements) = postResponse {
+            return arrayOfElements.compactMap {
+                switch $0 {
+                case .paramLogResponse(let val):
+                    return val
+                case _:
+                    return nil
+                }
+            }
+        }
+        return []
+    }
+
+    private func postRequestForString(_ body: JsonRpcPayload) throws -> String? {
+        let postResponse = try postRequest(body)
+        switch postResponse {
+        case .string(let result):
+            return result
+        default:
+            return nil
+        }
+    }
+
+    private func postRequest(_ body: JsonRpcPayload) throws -> ParamElement? {
         let postRequest = APIRequest(providerUrl, networking: networking)
         var resp: JsonRpcResponseArray?
         var err: Error?
@@ -78,12 +111,7 @@ internal class Contract {
         guard err == nil else {
             throw err!
         }
-        switch resp?[0].result {
-        case .string(let result):
-            return result
-        default:
-            return nil
-        }
+       return resp?[0].result
     }
 
     private func postBatchRequest(_ bodyArray: [JsonRpcPayload]) throws -> [IdentifiableResult<String>?] {

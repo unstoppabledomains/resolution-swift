@@ -254,6 +254,7 @@
 		848E210A25079D43008707D2 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				3E889D2B268DA25F000C5330 /* TokenUriMetadata.swift */,
 				3E10551E258C95BD00652FC7 /* DNS */,
 				3E889CC7268AF94E000C5330 /* TokenUriMetadata.swift */,
 				3EAFA40124EE312A008791E9 /* Utilities.swift */,
