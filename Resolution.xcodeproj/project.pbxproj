@@ -22,6 +22,7 @@
 		3E889CC8268AF94E000C5330 /* TokenUriMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E889CC7268AF94E000C5330 /* TokenUriMetadata.swift */; };
 		3E889CCE268AFA83000C5330 /* supported-keys.json in Resources */ = {isa = PBXBuildFile; fileRef = 3E889CCD268AFA83000C5330 /* supported-keys.json */; };
 		3E889D12268B1BBB000C5330 /* uns-config.json in Resources */ = {isa = PBXBuildFile; fileRef = 3E889D11268B1BBB000C5330 /* uns-config.json */; };
+		3E889D1E268D51CF000C5330 /* cnsRegistry.json in Resources */ = {isa = PBXBuildFile; fileRef = 3E889D1D268D51CF000C5330 /* cnsRegistry.json */; };
 		3EAFA3F724EB59DA008791E9 /* ABICoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EAFA3F624EB59DA008791E9 /* ABICoder.swift */; };
 		3EAFA3FE24EE03E0008791E9 /* JSON_RPC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EAFA3FD24EE03E0008791E9 /* JSON_RPC.swift */; };
 		3EAFA40024EE0CFD008791E9 /* APIRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EAFA3FF24EE0CFD008791E9 /* APIRequest.swift */; };
@@ -76,6 +77,7 @@
 		3E889CC7268AF94E000C5330 /* TokenUriMetadata.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TokenUriMetadata.swift; sourceTree = "<group>"; };
 		3E889CCD268AFA83000C5330 /* supported-keys.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "supported-keys.json"; sourceTree = "<group>"; };
 		3E889D11268B1BBB000C5330 /* uns-config.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "uns-config.json"; sourceTree = "<group>"; };
+		3E889D1D268D51CF000C5330 /* cnsRegistry.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = cnsRegistry.json; sourceTree = "<group>"; };
 		3EAFA3F624EB59DA008791E9 /* ABICoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ABICoder.swift; sourceTree = "<group>"; };
 		3EAFA3FD24EE03E0008791E9 /* JSON_RPC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSON_RPC.swift; sourceTree = "<group>"; };
 		3EAFA3FF24EE0CFD008791E9 /* APIRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIRequest.swift; sourceTree = "<group>"; };
@@ -179,6 +181,7 @@
 			isa = PBXGroup;
 			children = (
 				3E889D11268B1BBB000C5330 /* uns-config.json */,
+				3E889D1D268D51CF000C5330 /* cnsRegistry.json */,
 				3E889CCD268AFA83000C5330 /* supported-keys.json */,
 				3E2AC93D24E4FC9F008EBC39 /* unsRegistry.json */,
 				3E2AC93C24E4FC9F008EBC39 /* unsResolver.json */,
@@ -406,6 +409,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3E889D1E268D51CF000C5330 /* cnsRegistry.json in Resources */,
 				3E889D12268B1BBB000C5330 /* uns-config.json in Resources */,
 				30AE8615257A8CCD003A0142 /* network-config.json in Resources */,
 				30A69245251385A70079EC69 /* unsProxyReader.json in Resources */,

@@ -11,7 +11,8 @@ import EthereumAddress
 
 internal class UNS: CommonNamingService, NamingService {
     struct ContractAddresses {
-        let registryAddress: String
+        let unsRegistryAddress: String
+        let cnsRegistryAddress: String
         let resolverAddress: String
         let proxyReaderAddress: String
     }
@@ -31,10 +32,17 @@ internal class UNS: CommonNamingService, NamingService {
             : config.network
 
         guard let contractsContainer = try Self.parseContractAddresses(network: network),
-              let registry = contractsContainer[ContractType.unsRegistry.name]?.address,
+              let unsRegistry = contractsContainer[ContractType.unsRegistry.name]?.address,
+              let cnsRegistry = contractsContainer[ContractType.cnsRegistry.name]?.address,
               let resolver = contractsContainer[ContractType.resolver.name]?.address,
               let proxyReader = contractsContainer[ContractType.proxyReader.name]?.address else { throw ResolutionError.unsupportedNetwork }
-        self.contracts = ContractAddresses(registryAddress: registry, resolverAddress: resolver, proxyReaderAddress: proxyReader)
+
+        self.contracts = ContractAddresses(
+            unsRegistryAddress: unsRegistry,
+            cnsRegistryAddress: cnsRegistry,
+            resolverAddress: resolver,
+            proxyReaderAddress: proxyReader
+        )
 
         super.init(name: Self.name, providerUrl: config.providerUrl, networking: config.networking)
         proxyReaderContract = try super.buildContract(address: self.contracts.proxyReaderAddress, type: .proxyReader)

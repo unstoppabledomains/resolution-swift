@@ -11,6 +11,14 @@ Resoultion supports decentralized domains across three main zones:
 
 - Crypto Name Service (UNS)
   - `.crypto`
+  - `.coin`
+  - `.wallet`
+  - `.bitcoin`
+  - `.blockchain`
+  - `.x`
+  - `.888`
+  - `.nft`
+  - `.dao`
 - Zilliqa Name Service (ZNS)
   - `.zil`
 # Installation into the project
@@ -120,7 +128,7 @@ resolution.record(domain: "ryan.crypto", record: "custom.record.value") { result
 Version 0.3.0 introduced the `Configurations` struct that is used for configuring each connected naming service.
 Library can offer three naming services at the moment:
 
-* `uns` resolves `.crypto` domains,
+* `uns` resolves `.crypto` ,  `.coin`,  `.wallet`,  `.bitcoin`,  `.blockchain`, `.x`, `.888`, `.nft`, `.dao`domains,
 * `zns` resolves `.zil` domains
 
 By default, each of them is using the mainnet network via infura provider. 
