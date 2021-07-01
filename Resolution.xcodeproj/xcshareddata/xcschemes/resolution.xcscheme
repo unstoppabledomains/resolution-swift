@@ -17,7 +17,7 @@
                BlueprintIdentifier = "3EE4DA0224E367720097540B"
                BuildableName = "Resolution.framework"
                BlueprintName = "UnstoppableDomainsResolution"
-               ReferencedContainer = "container:Resolution.xcodeproj">
+               ReferencedContainer = "container:resolution.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -35,7 +35,7 @@
                BlueprintIdentifier = "3EE4DA0B24E367720097540B"
                BuildableName = "ResolutionTests.xctest"
                BlueprintName = "ResolutionTests"
-               ReferencedContainer = "container:Resolution.xcodeproj">
+               ReferencedContainer = "container:resolution.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -63,7 +63,7 @@
             BlueprintIdentifier = "3EE4DA0224E367720097540B"
             BuildableName = "Resolution.framework"
             BlueprintName = "UnstoppableDomainsResolution"
-            ReferencedContainer = "container:Resolution.xcodeproj">
+            ReferencedContainer = "container:resolution.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>

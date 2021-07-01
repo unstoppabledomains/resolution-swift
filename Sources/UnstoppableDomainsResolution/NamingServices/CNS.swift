@@ -17,6 +17,8 @@ internal class CNS: CommonNamingService, NamingService {
     }
 
     static let name = "CNS"
+    static let TransferEventSignature = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"
+    static let NewURIEventSignature = "0xc5beef08f693b11c316c0c8394a377a0033c9cf701b8cd8afd79cecef60c3952"
 
     static let getDataForManyMethodName = "getDataForMany"
     static let tokenURIMethodName = "tokenURI"
@@ -91,6 +93,44 @@ internal class CNS: CommonNamingService, NamingService {
         return ownersFolded.map { let address = unfoldAddress($0)
             return Utillities.isNotEmpty(address) ? address : nil
         }
+    }
+
+    func tokensOwnedBy(address: String) throws -> [String] {
+        let registryContract = try self.buildContract(address: self.contracts.registryAddress, type: .registry)
+        let origin = self.getOriginBlockFrom(network: self.network)
+
+        let transferLogs = try registryContract.callLogs(
+                fromBlock: origin,
+                signatureHash: Self.TransferEventSignature,
+                for: address.normalized32,
+                isTransfer: true
+        ).compactMap {
+            $0.topics[3]
+        }
+
+        let domainsData = try transferLogs.compactMap {
+            try registryContract.callLogs(
+                    fromBlock: origin,
+                    signatureHash: Self.NewURIEventSignature,
+                    for: $0.normalized32,
+                    isTransfer: false
+            )[0].data
+        }
+
+        let possibleDomains = Array(Set(
+                domainsData.compactMap {
+                    ABIDecoder.decodeSingleType(type: .string, data: Data(hex: $0)).value as? String
+                }
+            )
+        )
+
+        let owners = try batchOwners(domains: possibleDomains)
+        var domains: [String] = []
+
+        for (ind, addr) in owners.enumerated() where addr == address {
+            domains.append(possibleDomains[ind])
+        }
+        return domains
     }
 
     func resolver(domain: String) throws -> String {
@@ -229,6 +269,17 @@ internal class CNS: CommonNamingService, NamingService {
         return nil
     }
 
+    private func getOriginBlockFrom(network: String) -> String {
+        switch network {
+        case "mainnet":
+            return "0x8A958B"
+        case "rinkeby":
+            return "0x7232BC"
+        default:
+            return "earliest"
+        }
+    }
+
     private func getOwnerResolverRecord(tokenId: String, key: String) throws -> OwnerResolverRecord {
         let res = try self.getDataForMany(keys: [key], for: [tokenId])
         if let dict = res as? [String: Any] {
@@ -257,5 +308,36 @@ internal class CNS: CommonNamingService, NamingService {
                                 .callMethod(methodName: Self.getDataForManyMethodName,
                                             args: [keys, tokenIds]) { return result }
         throw ResolutionError.proxyReaderNonInitialized
+    }
+}
+
+fileprivate extension String {
+    var normalized32: String {
+        let droppedHexPrefix = self.hasPrefix("0x") ? String(self.dropFirst("0x".count)) : self
+        let cleanAddress = droppedHexPrefix.lowercased()
+        if cleanAddress.count < 64 {
+            let zeroCharacter: Character = "0"
+            let arr = Array(repeating: zeroCharacter, count: 64 - cleanAddress.count)
+            let zeros = String(arr)
+
+            return "0x" + zeros + cleanAddress
+        }
+        return "0x" + cleanAddress
+    }
+}
+
+fileprivate extension Data {
+    init?(hex: String) {
+        guard hex.count.isMultiple(of: 2) else {
+            return nil
+        }
+
+        let chars = hex.map { $0 }
+        let bytes = stride(from: 0, to: chars.count, by: 2)
+            .map { String(chars[$0]) + String(chars[$0 + 1]) }
+            .compactMap { UInt8($0, radix: 16) }
+
+        guard hex.count / bytes.count == 2 else { return nil }
+        self.init(bytes)
     }
 }

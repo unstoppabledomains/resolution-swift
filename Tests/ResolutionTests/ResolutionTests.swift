@@ -74,12 +74,22 @@ class ResolutionTests: XCTestCase {
             )
         );
         let domainReceived = expectation(description: "Exist domain should be received")
+        let ownerReceived = expectation(description: "Exist domain should be received")
         var ethAddress = ""
         resolution.addr(domain: "udtestdev-creek.crypto", ticker: "eth") { (result) in
             switch result {
             case .success(let returnValue):
                 ethAddress = returnValue
                 domainReceived.fulfill()
+            case .failure(let error):
+                XCTFail("Expected Eth Address, but got \(error)")
+            }
+        }
+        resolution.owner(domain: "udtestdev-creek.crypto") { (result) in
+            switch result {
+            case .success(let returnValue):
+                print(returnValue)
+                ownerReceived.fulfill()
             case .failure(let error):
                 XCTFail("Expected Eth Address, but got \(error)")
             }
@@ -434,6 +444,59 @@ class ResolutionTests: XCTestCase {
 
         // Then
         assert(chatID == "0x8912623832e174f2eb1f59cc3b587444d619376ad5bf10070e937e0dc22b9ffb2e3ae059e6ebf729f87746b2f71e5d88ec99c1fb3c7c49b8617e2520d474c48e1c")
+    }
+    
+    func testForTokensOwnedByCns() throws {
+        let tokenReceived = expectation(description: "tokens for 0x8aaD44321A86b170879d7A244c1e8d360c99DdA8 address should be received");
+        let resolution = try Resolution(configs: Configurations(
+                 cns: NamingServiceConfig(
+                   providerUrl: "https://mainnet.infura.io/v3/e05c36b6b2134ccc9f2594ddff94c136",
+                   network: "mainnet"
+                )
+        ))
+        var returnedDomains: [String] = [];
+        resolution.tokensOwnedBy(address: "0x8aaD44321A86b170879d7A244c1e8d360c99DdA8", service: "CNS") { (result) in
+            switch result {
+            case .success(let returnValue):
+                returnedDomains = returnValue.compactMap{ $0 }
+                tokenReceived.fulfill()
+            case .failure(let error):
+                XCTFail("something went wrong \(error)")
+            }
+
+        }
+        waitForExpectations(timeout: timeout, handler: nil)
+        assert(returnedDomains.count >= 4)
+        assert(returnedDomains.contains("checkoutwithadomain.crypto"))
+        assert(returnedDomains.contains("brad.crypto"))
+        assert(returnedDomains.contains("bradley.chat.crypto"))
+        assert(returnedDomains.contains("kdslkfjadasdfd.crypto"))
+    }
+    
+    func testForTokensOwnedByCnsFromRinkeby() throws {
+        let tetReceived = expectation(description: "This is just for test");
+        let resolutionB = try Resolution(configs: Configurations(
+            cns: NamingServiceConfig(
+                providerUrl: "https://rinkeby.infura.io/v3/e05c36b6b2134ccc9f2594ddff94c136",
+                network: "rinkeby"
+            )))
+        var returnedDomains: [String] = [];
+        resolutionB.tokensOwnedBy(address: "0x6EC0DEeD30605Bcd19342f3c30201DB263291589", service: "CNS") { (result) in
+            switch result {
+            case .success(let returnValue):
+                returnedDomains = returnValue.compactMap{ $0 }
+                tetReceived.fulfill()
+            case .failure(let error):
+                XCTFail("something went wrong \(error)")
+            }
+
+        }
+        waitForExpectations(timeout: timeout, handler: nil)
+        assert(returnedDomains.count == 4)
+        assert(returnedDomains.contains("udtestdev-creek.crypto"))
+        assert(returnedDomains.contains("reseller-test-udtesting-630444001358.crypto"))
+        assert(returnedDomains.contains("test-test-test-test.crypto"))
+        assert(returnedDomains.contains("reseller-test-udtesting-483809515990.crypto"))
     }
     
     func testIpfs() throws {

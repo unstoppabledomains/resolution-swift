@@ -34,41 +34,8 @@ internal class Contract {
     func callMethod(methodName: String, args: [Any]) throws -> Any {
         let encodedData = try self.coder.encode(method: methodName, args: args)
         let body = JsonRpcPayload(id: "1", data: encodedData, to: address)
-        let response = try postRequest(body)!
-        guard case .string(let result) = response else {
-            throw ResolutionError.badRequestOrResponse
-        }
-        return try self.coder.decode(result, from: methodName)
-    }
-
-    func getLogs(eventName: String, params: [String:String]) throws -> [[String: Any]] {
-        let topics = try self.coder.encodeEventTopics(eventName: eventName, params: params)
-        let body = JsonRpcPayload(jsonrpc: "2.0", id: "1", method: "eth_getLogs", params: [ParamElement.dictionary(
-                                                                        [
-                                                                            "address": ParamElement.string(self.address),
-                                                                            "fromBlock" : ParamElement.string("earliest"), 
-                                                                            "toBlock" : ParamElement.string("latest"),
-                                                                            "topics": ParamElement.array(topics.map({str in ParamElement.string(str)}))
-                                                                        ])
-                                                                    ])
-        let response = try postRequest(body)!
-        guard case .array(let resultArray) = response else {
-            throw ResolutionError.badRequestOrResponse
-        }
-        var eventLogs: [[String: Any]] = []
-        for resultItem in resultArray {
-            guard case .dictionary(let result) = resultItem else {
-                throw ResolutionError.badRequestOrResponse
-            }
-            let data = try self.stringParamElementToData(result["data"])
-
-            guard case .array(let resultTopicsArray) = result["topics"] else {
-                throw ResolutionError.badRequestOrResponse
-            }
-            let resultTopics = try resultTopicsArray.map({topic in try self.stringParamElementToData(topic)})
-            eventLogs.append(try self.coder.decodeEventTopics(eventName: eventName, eventLogTopics: resultTopics, eventLogData: data))
-        }
-        return eventLogs
+        let response = try postRequestForString(body)!
+        return try self.coder.decode(response, from: methodName)
     }
 
     func callBatchMethod(methodName: String, argsArray: [[Any]]) throws -> [IdentifiableResult<Any?>] {
@@ -90,6 +57,39 @@ internal class Contract {
                 res = nil
             }
             return IdentifiableResult<Any?>(id: responseElement.id, result: res)
+        }
+    }
+
+    func callLogs(fromBlock: String, signatureHash: String, for userAddress: String, isTransfer: Bool ) throws  -> [JsonRpcLogResponse] {
+        let topics = isTransfer ? [signatureHash, nil, userAddress ] : [signatureHash, userAddress]
+        let params = ParamLogClass(fromBlock: fromBlock, address: self.address, topics: topics)
+        let body = JsonRpcPayload(params: params)
+
+        return try postRequestForLogArray(body) ?? []
+    }
+
+    private func postRequestForLogArray(_ body: JsonRpcPayload) throws -> [JsonRpcLogResponse]? {
+        let postResponse = try postRequest(body)
+        if case .array(let arrayOfElements) = postResponse {
+            return arrayOfElements.compactMap {
+                switch $0 {
+                case .paramLogResponse(let val):
+                    return val
+                case _:
+                    return nil
+                }
+            }
+        }
+        return []
+    }
+
+    private func postRequestForString(_ body: JsonRpcPayload) throws -> String? {
+        let postResponse = try postRequest(body)
+        switch postResponse {
+        case .string(let result):
+            return result
+        default:
+            return nil
         }
     }
 
