@@ -46,6 +46,10 @@ internal class ZNS: CommonNamingService, NamingService {
         throw ResolutionError.methodNotSupported
     }
 
+    func tokensOwnedBy(address: String) throws -> [String] {
+        throw ResolutionError.methodNotSupported
+    }
+
     func addr(domain: String, ticker: String) throws -> String {
         let key = "crypto.\(ticker.uppercased()).address"
         let result = try record(domain: domain, key: key)
