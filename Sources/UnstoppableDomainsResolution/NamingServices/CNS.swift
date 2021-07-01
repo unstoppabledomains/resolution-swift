@@ -26,7 +26,6 @@ internal class CNS: CommonNamingService, NamingService {
     let network: String
     let contracts: ContractAddresses
     var proxyReaderContract: Contract?
-    var registryContract: Contract?
 
     init(_ config: NamingServiceConfig) throws {
 
@@ -42,7 +41,6 @@ internal class CNS: CommonNamingService, NamingService {
 
         super.init(name: Self.name, providerUrl: config.providerUrl, networking: config.networking)
         proxyReaderContract = try super.buildContract(address: self.contracts.proxyReaderAddress, type: .proxyReader)
-        registryContract = try super.buildContract(address: self.contracts.registryAddress, type: .registry)
     }
 
     func isSupported(domain: String) -> Bool {
@@ -224,20 +222,21 @@ internal class CNS: CommonNamingService, NamingService {
     }
 
     func getDomainName(tokenId: String) throws -> String {
-        do {
-            if let result = try registryContract?.getLogs(eventName: "NewURI", params: [
-                "tokenId": tokenId
-            ])
-            {
-                if result.count > 0, let val = result[0]["uri"] as? String {
-                    return val
-                }
-                throw ResolutionError.unregisteredDomain
-            }
-            throw ResolutionError.proxyReaderNonInitialized
-        } catch APIError.decodingError {
+        let registryContract = try self.buildContract(address: self.contracts.registryAddress, type: .registry)
+        let result = try registryContract.callLogs(
+            fromBlock: "earliest", 
+            signatureHash: Self.NewURIEventSignature, 
+            for: tokenId, 
+            isTransfer: false)
+
+        guard result.count > 0 else {
             throw ResolutionError.unregisteredDomain
         }
+
+        if let domainName = try ABIDecoder.decodeSingleType(type: .string, data: Data(hex: result[0].data)).value as? String {
+            return domainName
+        }
+        throw ResolutionError.badRequestOrResponse
     }
 
     // MARK: - Helper functions

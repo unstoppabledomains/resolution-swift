@@ -101,8 +101,6 @@ internal class ContractZNS {
                 return self.map(array: array)
             case .dictionary(let dictionary):
                 return self.reduce(dict: dictionary)
-            case .boolean(let elem):
-                return elem
             }
         }
     }
