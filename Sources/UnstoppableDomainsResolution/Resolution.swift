@@ -74,7 +74,9 @@ public class Resolution {
         let preparedDomain = prepare(domain: domain)
         DispatchQueue.global(qos: .utility).async { [weak self] in
             do {
-                _ = try self?.getServiceOf(domain: preparedDomain)
+                guard let _ = self?.services.first(where: {$0.isSupported(domain: preparedDomain)}) else {
+                    throw ResolutionError.unsupportedDomain
+                }
                 completion(.success(true))
             } catch {
                 completion(.success(false))
@@ -421,10 +423,10 @@ public class Resolution {
 
     /// This returns the correct naming service based on the `domain` asked for
     private func getServiceOf(domain: String) throws -> NamingService {
-        guard let service = services.first(where: {$0.isSupported(domain: domain)}) else {
-            throw ResolutionError.unsupportedDomain
+        if domain.hasSuffix(".zil") {
+            return try self.findService(name: .zns)
         }
-        return service
+        return try self.findService(name: .uns)
     }
 
     /// This returns the correct naming service based on the `domain`'s array asked for
@@ -433,8 +435,8 @@ public class Resolution {
             throw ResolutionError.unsupportedDomain
         }
 
-        let possibleServices = domains.compactMap { domain in
-            return services.first(where: {$0.isSupported(domain: domain)})
+        let possibleServices = try domains.compactMap { domain in
+            return try self.getServiceOf(domain: domain)
         }
         guard possibleServices.count == domains.count else {
             throw ResolutionError.unsupportedDomain
