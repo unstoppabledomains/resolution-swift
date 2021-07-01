@@ -222,21 +222,25 @@ internal class CNS: CommonNamingService, NamingService {
     }
 
     func getDomainName(tokenId: String) throws -> String {
-        let registryContract = try self.buildContract(address: self.contracts.registryAddress, type: .registry)
-        let result = try registryContract.callLogs(
-            fromBlock: "earliest", 
-            signatureHash: Self.NewURIEventSignature, 
-            for: tokenId, 
-            isTransfer: false)
+        do {
+            let registryContract = try self.buildContract(address: self.contracts.registryAddress, type: .registry)
+            let result = try registryContract.callLogs(
+                fromBlock: "earliest", 
+                signatureHash: Self.NewURIEventSignature, 
+                for: tokenId, 
+                isTransfer: false)
 
-        guard result.count > 0 else {
+            guard result.count > 0 else {
+                throw ResolutionError.unregisteredDomain
+            }
+
+            if let domainName = try ABIDecoder.decodeSingleType(type: .string, data: Data(hex: result[0].data)).value as? String {
+                return domainName
+            }
+            throw ResolutionError.unregisteredDomain
+        } catch APIError.decodingError {
             throw ResolutionError.unregisteredDomain
         }
-
-        if let domainName = try ABIDecoder.decodeSingleType(type: .string, data: Data(hex: result[0].data)).value as? String {
-            return domainName
-        }
-        throw ResolutionError.badRequestOrResponse
     }
 
     // MARK: - Helper functions
