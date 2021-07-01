@@ -1,5 +1,5 @@
 //
-//  UNS.swift
+//  uns.swift
 //  resolution
 //
 //  Created by Johnny Good on 8/11/20.
@@ -17,7 +17,7 @@ internal class UNS: CommonNamingService, NamingService {
         let proxyReaderAddress: String
     }
 
-    static let name = "UNS"
+    static let name: NamingServiceName = .uns
     static let getDataForManyMethodName = "getDataForMany"
     static let tokenURIMethodName = "tokenURI"
 

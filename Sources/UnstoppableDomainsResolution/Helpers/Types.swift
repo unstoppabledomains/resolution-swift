@@ -13,3 +13,8 @@ public typealias StringsArrayResultConsumer = (Result<[String?], ResolutionError
 public typealias DictionaryResultConsumer = (Result<[String: String], ResolutionError>) -> Void
 public typealias DnsRecordsResultConsumer = (Result<[DnsRecord], Error>) -> Void
 public typealias TokenUriMetadataResultConsumer = (Result<TokenUriMetadata, ResolutionError>) -> Void
+
+public enum NamingServiceName: String {
+    case uns
+    case zns
+}

@@ -22,6 +22,7 @@ public protocol NetworkingLayer {
                               httpHeaderContentType: String,
                               httpBody: Data,
                               completion: @escaping(Result<JsonRpcResponseArray, Error>) -> Void)
+    func makeHttpGetRequest(url: URL, completion: @escaping TokenUriMetadataResultConsumer )
 }
 
 struct APIRequest {

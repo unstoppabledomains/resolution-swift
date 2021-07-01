@@ -12,7 +12,7 @@ class CommonNamingService {
     static let hexadecimalPrefix = "0x"
     static let jsonExtension = "json"
 
-    let name: String
+    let name: NamingServiceName
     let providerUrl: String
     let networking: NetworkingLayer
 
@@ -27,7 +27,7 @@ class CommonNamingService {
         }
     }
 
-    init(name: String, providerUrl: String, networking: NetworkingLayer) {
+    init(name: NamingServiceName, providerUrl: String, networking: NetworkingLayer) {
         self.name = name
         self.providerUrl = providerUrl
         self.networking = networking
@@ -36,7 +36,7 @@ class CommonNamingService {
     func buildContract(address: String, type: ContractType) throws -> Contract {
         let jsonFileName: String
 
-        let nameLowCased = name.lowercased()
+        let nameLowCased = name.rawValue.lowercased()
         switch type {
         case .unsRegistry:
             jsonFileName = "\(nameLowCased)Registry"
