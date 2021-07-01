@@ -72,10 +72,11 @@ internal class UNS: CommonNamingService, NamingService {
         }
         let tokenId = self.namehash(domain: tld)
         if let response = try? self.proxyReaderContract?.callMethod(methodName: Self.existName, args: [tokenId]) {
-            // swiftlint:disable force_cast
-            let result = response as! [String: Bool]
-            // swiftlint:enable force_cast
-            guard let isExist = result["0"] else { return false }
+            guard
+                 let result = response as? [String: Bool],
+                 let isExist = result["0"] else {
+                   return false
+               }
             return isExist
         }
         return false
