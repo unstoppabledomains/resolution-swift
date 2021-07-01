@@ -41,7 +41,7 @@ class CommonNamingService {
         case .unsRegistry:
             jsonFileName = "\(nameLowCased)Registry"
         case .cnsRegistry:
-            jsonFileName = "\(nameLowCased)"
+            jsonFileName = "cnsRegistry"
         case .resolver:
             jsonFileName = "\(nameLowCased)Resolver"
         case .proxyReader:
