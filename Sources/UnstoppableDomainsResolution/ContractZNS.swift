@@ -78,6 +78,8 @@ internal class ContractZNS {
                 dict[key] = self.map(array: array)
             case .dictionary(let dictionary):
                 dict[key] = self.reduce(dict: dictionary)
+            case .boolean(let elem):
+                dict[key] = elem
             }
         }
     }
@@ -93,6 +95,8 @@ internal class ContractZNS {
                 return self.map(array: array)
             case .dictionary(let dictionary):
                 return self.reduce(dict: dictionary)
+            case .boolean(let elem):
+                return elem
             }
         }
     }

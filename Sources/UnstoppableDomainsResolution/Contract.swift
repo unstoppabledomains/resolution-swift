@@ -35,7 +35,40 @@ internal class Contract {
         let encodedData = try self.coder.encode(method: methodName, args: args)
         let body = JsonRpcPayload(id: "1", data: encodedData, to: address)
         let response = try postRequest(body)!
-        return try self.coder.decode(response, from: methodName)
+        guard case .string(let result) = response else {
+            throw ResolutionError.badRequestOrResponse
+        }
+        return try self.coder.decode(result, from: methodName)
+    }
+
+    func getLogs(eventName: String, params: [String:String]) throws -> [[String: Any]] {
+        let topics = try self.coder.encodeEventTopics(eventName: eventName, params: params)
+        let body = JsonRpcPayload(jsonrpc: "2.0", id: "1", method: "eth_getLogs", params: [ParamElement.dictionary(
+                                                                        [
+                                                                            "address": ParamElement.string(self.address),
+                                                                            "fromBlock" : ParamElement.string("earliest"), 
+                                                                            "toBlock" : ParamElement.string("latest"),
+                                                                            "topics": ParamElement.array(topics.map({str in ParamElement.string(str)}))
+                                                                        ])
+                                                                    ])
+        let response = try postRequest(body)!
+        guard case .array(let resultArray) = response else {
+            throw ResolutionError.badRequestOrResponse
+        }
+        var eventLogs: [[String: Any]] = []
+        for resultItem in resultArray {
+            guard case .dictionary(let result) = resultItem else {
+                throw ResolutionError.badRequestOrResponse
+            }
+            let data = try self.stringParamElementToData(result["data"])
+
+            guard case .array(let resultTopicsArray) = result["topics"] else {
+                throw ResolutionError.badRequestOrResponse
+            }
+            let resultTopics = try resultTopicsArray.map({topic in try self.stringParamElementToData(topic)})
+            eventLogs.append(try self.coder.decodeEventTopics(eventName: eventName, eventLogTopics: resultTopics, eventLogData: data))
+        }
+        return eventLogs
     }
 
     func callBatchMethod(methodName: String, argsArray: [[Any]]) throws -> [IdentifiableResult<Any?>] {
@@ -58,9 +91,9 @@ internal class Contract {
             }
             return IdentifiableResult<Any?>(id: responseElement.id, result: res)
         }
-}
+    }
 
-    private func postRequest(_ body: JsonRpcPayload) throws -> String? {
+    private func postRequest(_ body: JsonRpcPayload) throws -> ParamElement? {
         let postRequest = APIRequest(providerUrl, networking: networking)
         var resp: JsonRpcResponseArray?
         var err: Error?
@@ -78,12 +111,7 @@ internal class Contract {
         guard err == nil else {
             throw err!
         }
-        switch resp?[0].result {
-        case .string(let result):
-            return result
-        default:
-            return nil
-        }
+        return resp?[0].result
     }
 
     private func postBatchRequest(_ bodyArray: [JsonRpcPayload]) throws -> [IdentifiableResult<String>?] {
@@ -114,5 +142,12 @@ internal class Contract {
             return nil
         }
         return parsedResponseArray
+    }
+
+    private func stringParamElementToData(_ param: ParamElement?) throws -> Data {
+        guard case .string(let paramString) = param else {
+            throw ResolutionError.badRequestOrResponse
+        }
+        return Data(hex: paramString)
     }
 }

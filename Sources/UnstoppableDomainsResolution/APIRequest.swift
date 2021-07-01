@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import FoundationNetworking
 
 public enum APIError: Error {
     case responseError
@@ -89,6 +90,39 @@ public struct DefaultNetworkingLayer: NetworkingLayer {
                     } else {
                         completion(.failure(APIError.decodingError))
                     }
+                }
+            }
+        }
+        dataTask.resume()
+    }
+}
+
+public struct MetadataAPIRequest{
+    public init() { }
+
+    public func makeHttpRequest(url: URL,
+                                completion: @escaping(Result<TokenUriMetadata, Error>) -> Void) {
+        var urlRequest = URLRequest(url: url)
+        urlRequest.httpMethod = "GET"
+        urlRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        let dataTask = URLSession.shared.dataTask(with: urlRequest) { data, response, _ in
+            guard let httpResponse = response as? HTTPURLResponse,
+                  httpResponse.statusCode == 200,
+                  let jsonData = data else {
+                completion(.failure(APIError.responseError))
+                return
+            }
+
+            do {
+                let result = try JSONDecoder().decode(TokenUriMetadata.self, from: jsonData)
+                completion(.success(result))
+            } catch {
+                if let errorResponse = try? JSONDecoder().decode(NetworkErrorResponse.self, from: jsonData),
+                    let errorExplained = ResolutionError.parse(errorResponse: errorResponse) {
+                    completion(.failure(errorExplained))
+                } else {
+                    completion(.failure(APIError.decodingError))
                 }
             }
         }

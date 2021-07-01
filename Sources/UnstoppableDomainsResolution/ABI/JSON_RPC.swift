@@ -42,6 +42,7 @@ public enum ParamElement: Codable {
     case string(String)
     case array([ParamElement])
     case dictionary([String: ParamElement])
+    case boolean(Bool)
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
@@ -59,6 +60,10 @@ public enum ParamElement: Codable {
         }
         if let elem = try? container.decode([String: ParamElement].self) {
             self = .dictionary(elem)
+            return
+        }
+        if let elem = try? container.decode(Bool.self) {
+            self = .boolean(elem)
             return
         }
 
@@ -80,6 +85,8 @@ public enum ParamElement: Codable {
             try container.encode(array)
         case .dictionary(let dict):
             try container.encode(dict)
+        case .boolean(let elem):
+            try container.encode(elem)
         }
     }
 }

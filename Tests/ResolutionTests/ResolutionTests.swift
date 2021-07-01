@@ -570,7 +570,7 @@ class ResolutionTests: XCTestCase {
 
     func testUnhash() throws {
         // Given
-        let domainReceived = expectation(description: "Exist domain should be received")
+        let domainReceived = expectation(description: "Existing domain should be received")
         let unregisteredReceived = expectation(description: "Unregistered domain should be received")
 
         var domainName: String = ""

@@ -24,6 +24,7 @@ internal class CNS: CommonNamingService, NamingService {
     let network: String
     let contracts: ContractAddresses
     var proxyReaderContract: Contract?
+    var registryContract: Contract?
 
     init(_ config: NamingServiceConfig) throws {
 
@@ -39,6 +40,7 @@ internal class CNS: CommonNamingService, NamingService {
 
         super.init(name: Self.name, providerUrl: config.providerUrl, networking: config.networking)
         proxyReaderContract = try super.buildContract(address: self.contracts.proxyReaderAddress, type: .proxyReader)
+        registryContract = try super.buildContract(address: self.contracts.registryAddress, type: .registry)
     }
 
     func isSupported(domain: String) -> Bool {
@@ -171,6 +173,23 @@ internal class CNS: CommonNamingService, NamingService {
             { 
                 let dict = result as? Dictionary<String, Any>
                 if let val = dict?["0"] as? String {
+                    return val
+                }
+                throw ResolutionError.unregisteredDomain
+            }
+            throw ResolutionError.proxyReaderNonInitialized
+        } catch APIError.decodingError {
+            throw ResolutionError.unregisteredDomain
+        }
+    }
+
+    func getDomainName(tokenId: String) throws -> String {
+        do {
+            if let result = try registryContract?.getLogs(eventName: "NewURI", params: [
+                "tokenId": tokenId
+            ])
+            {
+                if result.count > 0, let val = result[0]["uri"] as? String {
                     return val
                 }
                 throw ResolutionError.unregisteredDomain
