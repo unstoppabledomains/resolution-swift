@@ -13,7 +13,6 @@ internal class UNS: CommonNamingService, NamingService {
     struct ContractAddresses {
         let unsRegistry: ContractEntry
         let cnsRegistry: ContractEntry
-        let resolver: ContractEntry
         let proxyReader: ContractEntry
     }
 
@@ -43,8 +42,6 @@ internal class UNS: CommonNamingService, NamingService {
               let unsRegistryDeploymentBlock = contractsContainer[ContractType.unsRegistry.name]?.deploymentBlock,
               let cnsRegistry = contractsContainer[ContractType.cnsRegistry.name]?.address,
               let cnsRegistryDeploymentBlock = contractsContainer[ContractType.cnsRegistry.name]?.deploymentBlock,
-              let resolver = contractsContainer[ContractType.resolver.name]?.address,
-              let resolverDeploymentBlock = contractsContainer[ContractType.resolver.name]?.deploymentBlock,
               let proxyReader = contractsContainer[ContractType.proxyReader.name]?.address,
               let proxyReaderDeploymentBlock = contractsContainer[ContractType.proxyReader.name]?.deploymentBlock
               else { throw ResolutionError.unsupportedNetwork }
@@ -56,9 +53,6 @@ internal class UNS: CommonNamingService, NamingService {
             cnsRegistry: ContractEntry(
                 address: cnsRegistry,
                 deploymentBlock: cnsRegistryDeploymentBlock == "0x0" ? "earliest" : cnsRegistryDeploymentBlock),
-            resolver: ContractEntry(
-                address: resolver,
-                deploymentBlock: resolverDeploymentBlock == "0x0" ? "earliest" : resolverDeploymentBlock),
             proxyReader: ContractEntry(
                 address: proxyReader,
                 deploymentBlock: proxyReaderDeploymentBlock == "0x0" ? "earliest" : proxyReaderDeploymentBlock)
