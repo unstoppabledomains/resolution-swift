@@ -11,10 +11,15 @@ import EthereumAddress
 
 internal class UNS: CommonNamingService, NamingService {
     struct ContractAddresses {
-        let unsRegistryAddress: String
-        let cnsRegistryAddress: String
-        let resolverAddress: String
-        let proxyReaderAddress: String
+        let unsRegistry: ContractEntry
+        let cnsRegistry: ContractEntry
+        let resolver: ContractEntry
+        let proxyReader: ContractEntry
+    }
+
+    struct ContractEntry {
+        let address: String
+        let deploymentBlock: String
     }
 
     static let name: NamingServiceName = .uns
@@ -35,19 +40,33 @@ internal class UNS: CommonNamingService, NamingService {
 
         guard let contractsContainer = try Self.parseContractAddresses(network: network),
               let unsRegistry = contractsContainer[ContractType.unsRegistry.name]?.address,
+              let unsRegistryDeploymentBlock = contractsContainer[ContractType.unsRegistry.name]?.deploymentBlock,
               let cnsRegistry = contractsContainer[ContractType.cnsRegistry.name]?.address,
+              let cnsRegistryDeploymentBlock = contractsContainer[ContractType.cnsRegistry.name]?.deploymentBlock,
               let resolver = contractsContainer[ContractType.resolver.name]?.address,
-              let proxyReader = contractsContainer[ContractType.proxyReader.name]?.address else { throw ResolutionError.unsupportedNetwork }
+              let resolverDeploymentBlock = contractsContainer[ContractType.resolver.name]?.deploymentBlock,
+              let proxyReader = contractsContainer[ContractType.proxyReader.name]?.address,
+              let proxyReaderDeploymentBlock = contractsContainer[ContractType.proxyReader.name]?.deploymentBlock
+              else { throw ResolutionError.unsupportedNetwork }
 
         self.contracts = ContractAddresses(
-            unsRegistryAddress: unsRegistry,
-            cnsRegistryAddress: cnsRegistry,
-            resolverAddress: resolver,
-            proxyReaderAddress: proxyReader
+            unsRegistry: ContractEntry(
+                address: unsRegistry,
+                deploymentBlock: unsRegistryDeploymentBlock == "0x0" ? "earliest" : unsRegistryDeploymentBlock),
+            cnsRegistry: ContractEntry(
+                address: cnsRegistry,
+                deploymentBlock: cnsRegistryDeploymentBlock == "0x0" ? "earliest" : cnsRegistryDeploymentBlock),
+            resolver: ContractEntry(
+                address: resolver,
+                deploymentBlock: resolverDeploymentBlock == "0x0" ? "earliest" : resolverDeploymentBlock),
+            proxyReader: ContractEntry(
+                address: proxyReader,
+                deploymentBlock: proxyReaderDeploymentBlock == "0x0" ? "earliest" : proxyReaderDeploymentBlock)
         )
 
         super.init(name: Self.name, providerUrl: config.providerUrl, networking: config.networking)
-        proxyReaderContract = try super.buildContract(address: self.contracts.proxyReaderAddress, type: .proxyReader)
+
+        proxyReaderContract = try super.buildContract(address: self.contracts.proxyReader.address, type: .proxyReader)
     }
 
     func isSupported(domain: String) -> Bool {
@@ -100,27 +119,22 @@ internal class UNS: CommonNamingService, NamingService {
         }
     }
 
-    func tokensOwnedBy(address: String) throws -> [String] {
-        let registryContract = try self.buildContract(address: self.contracts.cnsRegistryAddress, type: .cnsRegistry)
-        let origin = self.getOriginBlockFrom(network: self.network)
-
-        let transferLogs = try registryContract.callLogs(
-                fromBlock: origin,
-                signatureHash: Self.TransferEventSignature,
-                for: address.normalized32,
-                isTransfer: true
-        ).compactMap {
-            $0.topics[3]
-        }
+    private func parseContractForNewUri(contract: Contract, for address: String, since origin: String ) throws -> [String] {
+        let transferLogs = try contract.callLogs(
+            fromBlock: origin,
+            signatureHash: Self.TransferEventSignature,
+            for: address.normalized32,
+            isTransfer: true
+        ).compactMap { $0.topics[3] }
 
         let domainsData = try transferLogs.compactMap {
-            try registryContract.callLogs(
-                    fromBlock: origin,
-                    signatureHash: Self.NewURIEventSignature,
-                    for: $0.normalized32,
-                    isTransfer: false
-            )[0].data
-        }
+                    try contract.callLogs(
+                            fromBlock: origin,
+                            signatureHash: Self.NewURIEventSignature,
+                            for: $0.normalized32,
+                            isTransfer: false
+                    )[0].data
+                }
 
         let possibleDomains = Array(Set(
                 domainsData.compactMap {
@@ -128,6 +142,24 @@ internal class UNS: CommonNamingService, NamingService {
                 }
             )
         )
+        return possibleDomains
+    }
+
+    func tokensOwnedBy(address: String) throws -> [String] {
+        let cnsRegistryContract = try self.buildContract(address: self.contracts.cnsRegistry.address, type: .cnsRegistry)
+        let unsRegistryContract = try self.buildContract(address: self.contracts.unsRegistry.address, type: .unsRegistry)
+
+        let cnsPossibleDomains = try self.parseContractForNewUri(
+                contract: cnsRegistryContract,
+                for: address,
+                since: contracts.cnsRegistry.deploymentBlock
+            )
+        let unsPossibleDomains = try self.parseContractForNewUri(
+            contract: unsRegistryContract,
+            for: address,
+            since: contracts.unsRegistry.deploymentBlock
+        )
+        let possibleDomains = cnsPossibleDomains + unsPossibleDomains
 
         let owners = try batchOwners(domains: possibleDomains)
         var domains: [String] = []
@@ -254,17 +286,6 @@ internal class UNS: CommonNamingService, NamingService {
             return unfoldAddressForMany(element)
         }
         return nil
-    }
-
-    private func getOriginBlockFrom(network: String) -> String {
-        switch network {
-        case "mainnet":
-            return "0x8A958B"
-        case "rinkeby":
-            return "0x7232BC"
-        default:
-            return "earliest"
-        }
     }
 
     private func getOwnerResolverRecord(tokenId: String, key: String) throws -> OwnerResolverRecord {

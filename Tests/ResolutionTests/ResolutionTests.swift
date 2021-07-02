@@ -492,8 +492,9 @@ class ResolutionTests: XCTestCase {
 
         }
         waitForExpectations(timeout: timeout, handler: nil)
-        assert(returnedDomains.count == 4)
+        assert(returnedDomains.count == 5)
         assert(returnedDomains.contains("udtestdev-creek.crypto"))
+        assert(returnedDomains.contains("udtestdev-my-new-tls.wallet"))
         assert(returnedDomains.contains("reseller-test-udtesting-630444001358.crypto"))
         assert(returnedDomains.contains("test-test-test-test.crypto"))
         assert(returnedDomains.contains("reseller-test-udtesting-483809515990.crypto"))
