@@ -76,6 +76,7 @@ private func parseFunction(abiRecord: ABI.Record) throws -> ABI.Element.Function
     })
     let abiOutputs = outputs != nil ? outputs! : [ABI.Element.InOut]()
     let name = abiRecord.name != nil ? abiRecord.name! : ""
+
     let payable = abiRecord.stateMutability != nil ?
         (abiRecord.stateMutability == "payable" || (abiRecord.payable != nil && abiRecord.payable!)) : false
     let constant = (abiRecord.constant == true || abiRecord.stateMutability == "view" || abiRecord.stateMutability == "pure")

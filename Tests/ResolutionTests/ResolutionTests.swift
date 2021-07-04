@@ -131,18 +131,73 @@ class ResolutionTests: XCTestCase {
 
     func testSupportedDomains() throws {
         // Given // When // Then
-        assert(true == resolution.isSupported(domain: "notsupported.crypto1"))
-        assert(true == resolution.isSupported(domain: "supported.crypto"))
-        assert(true == resolution.isSupported(domain: "supported.zil"))
-        assert(true == resolution.isSupported(domain: "notsupported.eth1"))
-        assert(true == resolution.isSupported(domain: "supported.eth"))
-        assert(true == resolution.isSupported(domain: "notsupported.xyz1"))
-        assert(true == resolution.isSupported(domain: "supported.xyz"))
-        assert(true == resolution.isSupported(domain: "notsupported.luxe1"))
-        assert(true == resolution.isSupported(domain: "supported.luxe"))
-        assert(true == resolution.isSupported(domain: "-notsupported.eth"))
-        assert(true == resolution.isSupported(domain: "supported.kred"))
-        assert(true == resolution.isSupported(domain: "supported.addr.reverse"))
+        resolution = try Resolution(configs: Configurations(
+            uns: NamingServiceConfig(
+                providerUrl: "https://rinkeby.infura.io/v3/3c25f57353234b1b853e9861050f4817",
+                network: "rinkeby"
+            ),
+            zns: NamingServiceConfig(
+                providerUrl: "https://dev-api.zilliqa.com",
+                network: "testnet"
+            )
+        ));
+        
+        struct TestCase {
+            let domain: String
+            let expectation: XCTestExpectation
+            var result: Bool?
+            let expectedResult: Bool
+        }
+        
+        let domains: [String] = [
+            "supported.crypto",
+            "supported.zil",
+            "supported.nft",
+            "supported.888",
+            "supported.coin",
+            "supported.blockchain",
+            "supported.dao",
+            "supported.bitcoin",
+            "supported.wallet",
+            "supported.x",
+            "notsupported.crypto1",
+            "notsupported.eth1",
+            "notsupported.eth",
+            "notsupported.xyz1",
+            "notsupported.xyz",
+            "notsupported.luxe1",
+            "-notsupported.eth",
+            "notsupported.kred",
+            "notsupported.addr.reverse",
+            "notsupported.definetelynotright"
+        ]
+        
+        var cases = domains.compactMap {
+            TestCase(
+                domain: $0,
+                expectation: expectation(description: "received answer for \($0)"),
+                result: nil,
+                expectedResult: $0.components(separatedBy: ".").first! == "supported"
+            )
+        }
+
+        for i in 0..<cases.count {
+            resolution.isSupported(domain: cases[i].domain) { result in
+                switch result {
+                case .success(let returnValue):
+                    cases[i].result = returnValue
+                    cases[i].expectation.fulfill()
+                case .failure(let error):
+                    XCTFail("Expected boolen, but got \(error)")
+                }
+            }
+        }
+        
+        waitForExpectations(timeout: timeout, handler: nil)
+        
+        for i in 0..<cases.count {
+            assert(cases[i].result == cases[i].expectedResult)
+        }
     }
     
     func testNamehash() throws {
