@@ -12,6 +12,7 @@ protocol NamingService {
     var name: String { get }
     var network: String { get }
     var providerUrl: String { get }
+    var networking: NetworkingLayer { get }
 
     func namehash(domain: String) -> String
     func isSupported(domain: String) -> Bool

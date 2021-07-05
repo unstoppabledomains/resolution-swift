@@ -23,6 +23,9 @@ public protocol NetworkingLayer {
                               httpHeaderContentType: String,
                               httpBody: Data,
                               completion: @escaping(Result<JsonRpcResponseArray, Error>) -> Void)
+
+    func makeHttpGetRequest (url: URL,
+                             completion: @escaping(Result<TokenUriMetadata, Error>) -> Void)
 }
 
 struct APIRequest {
@@ -95,13 +98,9 @@ public struct DefaultNetworkingLayer: NetworkingLayer {
         }
         dataTask.resume()
     }
-}
 
-public struct MetadataAPIRequest{
-    public init() { }
-
-    public func makeHttpRequest(url: URL,
-                                completion: @escaping(Result<TokenUriMetadata, Error>) -> Void) {
+    public func makeHttpGetRequest(url: URL,
+                                   completion: @escaping(Result<TokenUriMetadata, Error>) -> Void) {
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = "GET"
         urlRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")

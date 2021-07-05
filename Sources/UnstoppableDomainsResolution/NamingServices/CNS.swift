@@ -22,6 +22,7 @@ internal class CNS: CommonNamingService, NamingService {
 
     static let getDataForManyMethodName = "getDataForMany"
     static let tokenURIMethodName = "tokenURI"
+    static let registryOfMethodName = "registryOf"
 
     let network: String
     let contracts: ContractAddresses
@@ -223,7 +224,8 @@ internal class CNS: CommonNamingService, NamingService {
 
     func getDomainName(tokenId: String) throws -> String {
         do {
-            let registryContract = try self.buildContract(address: self.contracts.registryAddress, type: .registry)
+            let registryAddress = try self.getRegistryAddress(tokenId: tokenId)
+            let registryContract = try self.buildContract(address: registryAddress, type: .registry)
             let result = try registryContract.callLogs(
                 fromBlock: "earliest", 
                 signatureHash: Self.NewURIEventSignature, 
@@ -311,6 +313,24 @@ internal class CNS: CommonNamingService, NamingService {
                                 .callMethod(methodName: Self.getDataForManyMethodName,
                                             args: [keys, tokenIds]) { return result }
         throw ResolutionError.proxyReaderNonInitialized
+    }
+
+    private func getRegistryAddress(tokenId: String) throws -> String {
+        do {
+            if let result = try proxyReaderContract?
+                                    .callMethod(methodName: Self.registryOfMethodName,
+                                                args: [tokenId]) 
+            { 
+                let dict = result as? Dictionary<String, Any>
+                if let val = dict?["0"] as? String {
+                    return val
+                }
+                throw ResolutionError.unregisteredDomain
+            }
+            throw ResolutionError.proxyReaderNonInitialized
+        } catch APIError.decodingError {
+            throw ResolutionError.unregisteredDomain
+        }
     }
 }
 
