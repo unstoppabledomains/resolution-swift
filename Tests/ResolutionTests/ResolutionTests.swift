@@ -20,7 +20,10 @@ class ResolutionTests: XCTestCase {
     let timeout: TimeInterval = 30
     override func setUp() {
         super.setUp()
-        resolution = try! Resolution();
+        resolution = try! Resolution(configs: Configurations(
+            cns: NamingServiceConfig(providerUrl: "https://rinkeby.infura.io/v3/3c25f57353234b1b853e9861050f4817")
+            )
+        );
     }
 
     func testNetworkFromUrl() throws {
@@ -153,7 +156,7 @@ class ResolutionTests: XCTestCase {
     func testDns() throws {
         
         // Given
-        let domain: String = "udtestdev-reseller-test-udtesting-875948372642.crypto";
+        let domain: String = "test-usdt-and-dns-records.crypto";
         let domainDnsReceived = expectation(description: "Dns record should be received")
         let dnsTypes: [DnsType] = [.A, .AAAA];
         
@@ -186,7 +189,7 @@ class ResolutionTests: XCTestCase {
     
     func testMultiChainAddress() throws {
         // Given
-        let domain: String = "udtestdev-usdt.crypto";
+        let domain: String = "test-usdt-and-dns-records.crypto";
         
         let erc20Received = expectation(description: "Erc20 record should be received");
         var erc20: String = "";
@@ -299,7 +302,7 @@ class ResolutionTests: XCTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        assert(owner.lowercased() == "0x8aaD44321A86b170879d7A244c1e8d360c99DdA8".lowercased())
+        assert(owner.lowercased() == "0x499dD6D875787869670900a2130223D85d4F6Aa7".lowercased())
         assert(zilOwner.lowercased() == "0x2d418942dce1afa02d0733a2000c71b371a6ac07".lowercased())
         self.checkError(result: unregisteredResult, expectedError: ResolutionError.unregisteredDomain)
     }
@@ -314,7 +317,7 @@ class ResolutionTests: XCTestCase {
         var partialResult: Result<[String?], ResolutionError>!
 
         // When
-        resolution.batchOwners(domains: ["brad.crypto", "unstoppablecaribou.crypto"]) { (result) in
+        resolution.batchOwners(domains: ["brad.crypto", "testing.crypto"]) { (result) in
             switch result {
             case .success(let returnValue):
                 owners = returnValue
@@ -335,7 +338,7 @@ class ResolutionTests: XCTestCase {
         switch partialResult {
         case .success(let array):
             let lowercasedOwners = array.map( {$0?.lowercased()} )
-            assert( lowercasedOwners[0] == "0x8aaD44321A86b170879d7A244c1e8d360c99DdA8".lowercased() )
+            assert( lowercasedOwners[0] == "0x499dD6D875787869670900a2130223D85d4F6Aa7".lowercased() )
             assert( lowercasedOwners[1] == nil )
 
         case .failure(let error):
@@ -345,8 +348,8 @@ class ResolutionTests: XCTestCase {
         }
         
         let lowercasedOwners = owners.compactMap({$0}).map{$0.lowercased()}
-        assert( lowercasedOwners[0] == "0x8aaD44321A86b170879d7A244c1e8d360c99DdA8".lowercased() )
-        assert( lowercasedOwners[1] == "0x53E238E686BeFF9853b2d8ede1D6B3067A921AAa".lowercased() )
+        assert( lowercasedOwners[0] == "0x499dD6D875787869670900a2130223D85d4F6Aa7".lowercased() )
+        assert( lowercasedOwners[1] == "0x58ca45e932a88b2e7d0130712b3aa9fb7c5781e2".lowercased() )
     }
     
     func testGetResolver() throws {
@@ -376,7 +379,7 @@ class ResolutionTests: XCTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        assert(resolverAddress.lowercased() == "0xb66DcE2DA6afAAa98F2013446dBCB0f4B0ab2842".lowercased())
+        assert(resolverAddress.lowercased() == "0x95ae1515367aa64c462c71e87157771165b1287a".lowercased())
         self.checkError(result: unregisteredResult, expectedError: ResolutionError.unspecifiedResolver)
     }
 
@@ -444,33 +447,6 @@ class ResolutionTests: XCTestCase {
 
         // Then
         assert(chatID == "0x8912623832e174f2eb1f59cc3b587444d619376ad5bf10070e937e0dc22b9ffb2e3ae059e6ebf729f87746b2f71e5d88ec99c1fb3c7c49b8617e2520d474c48e1c")
-    }
-    
-    func testForTokensOwnedByCns() throws {
-        let tokenReceived = expectation(description: "tokens for 0x8aaD44321A86b170879d7A244c1e8d360c99DdA8 address should be received");
-        let resolution = try Resolution(configs: Configurations(
-                 cns: NamingServiceConfig(
-                   providerUrl: "https://mainnet.infura.io/v3/e05c36b6b2134ccc9f2594ddff94c136",
-                   network: "mainnet"
-                )
-        ))
-        var returnedDomains: [String] = [];
-        resolution.tokensOwnedBy(address: "0x8aaD44321A86b170879d7A244c1e8d360c99DdA8", service: "CNS") { (result) in
-            switch result {
-            case .success(let returnValue):
-                returnedDomains = returnValue.compactMap{ $0 }
-                tokenReceived.fulfill()
-            case .failure(let error):
-                XCTFail("something went wrong \(error)")
-            }
-
-        }
-        waitForExpectations(timeout: timeout, handler: nil)
-        assert(returnedDomains.count >= 4)
-        assert(returnedDomains.contains("checkoutwithadomain.crypto"))
-        assert(returnedDomains.contains("brad.crypto"))
-        assert(returnedDomains.contains("bradley.chat.crypto"))
-        assert(returnedDomains.contains("kdslkfjadasdfd.crypto"))
     }
     
     func testForTokensOwnedByCnsFromRinkeby() throws {
@@ -586,7 +562,7 @@ class ResolutionTests: XCTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        assert(tokenURI == "https://metadata.unstoppabledomains.com/metadata/brad.crypto")
+        assert(tokenURI == "https://staging-dot-dot-crypto-metadata.appspot.com/metadata/brad.crypto")
         self.checkError(result: unregisteredResult, expectedError: ResolutionError.unregisteredDomain)
     }
 

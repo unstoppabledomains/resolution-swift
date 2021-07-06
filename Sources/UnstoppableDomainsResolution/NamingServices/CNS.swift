@@ -322,8 +322,8 @@ internal class CNS: CommonNamingService, NamingService {
                                                 args: [tokenId]) 
             { 
                 let dict = result as? Dictionary<String, Any>
-                if let val = dict?["0"] as? String {
-                    return val
+                if let val = dict?["0"] as? EthereumAddress {
+                    return val.address
                 }
                 throw ResolutionError.unregisteredDomain
             }
