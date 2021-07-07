@@ -20,6 +20,8 @@ class ResolutionTests: XCTestCase {
     static let TEST_DOMAIN: String = "udtestdev-265f8f.crypto"
     static let TEST_DOMAIN2: String = "johnnytestdev6357.crypto"
     static let TEST_DOMAIN3: String = "brad.crypto"
+    static let TEST_WALLET_DOMAIN: String = "udtestdev-johnnywallet.wallet"
+    static let TEST_COIN_DOMAIN: String = "udtestdev-johnnycoin.coin"
     static let UNREGISTERED_DOMAIN: String = "unregistered.crypto"
     
     let timeout: TimeInterval = 30
@@ -223,6 +225,38 @@ class ResolutionTests: XCTestCase {
         assert(walletHashTest == "0x2ee016c6cd8a5de80ec6a944b0d553ea0b86401ca87a515afb38d1553a85e197")
         assert(blockchainHashTest == "0x08b9bf8e0e42054ae8770a5cb8980c891f0b3842207692c375ea225a85962562")
         assert(daoHashTest == "0x5220cb2715d1d8df103752df7fbfc64b2ee51ede0c5cb57c534a984893e349c4")
+    }
+    
+    func testWalletDomain() throws {
+        let domainReceived = expectation(description: "Exist domain should be received")
+        var ethAddress = "";
+        resolution.addr(domain: ResolutionTests.TEST_WALLET_DOMAIN, ticker: "eth") { (result) in
+            switch result {
+            case .success(let returnValue):
+                ethAddress = returnValue
+                domainReceived.fulfill()
+            case .failure(let error):
+                XCTFail("Expected Eth Address, but got \(error)")
+            }
+        }
+        waitForExpectations(timeout: timeout, handler: nil)
+        assert(ethAddress == "0xe7474D07fD2FA286e7e0aa23cd107F8379085037")
+    }
+
+    func testCoinDomain() throws {
+        let domainReceived = expectation(description: "Exist domain should be received")
+        var ethAddress = "";
+        resolution.addr(domain: ResolutionTests.TEST_COIN_DOMAIN, ticker: "eth") { (result) in
+            switch result {
+            case .success(let returnValue):
+                ethAddress = returnValue
+                domainReceived.fulfill()
+            case .failure(let error):
+                XCTFail("Expected Eth Address, but got \(error)")
+            }
+        }
+        waitForExpectations(timeout: timeout, handler: nil)
+        assert(ethAddress == "0xe7474D07fD2FA286e7e0aa23cd107F8379085037")
     }
     
     func testDns() throws {
