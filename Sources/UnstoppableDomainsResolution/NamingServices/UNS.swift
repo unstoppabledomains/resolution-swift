@@ -128,46 +128,77 @@ internal class UNS: CommonNamingService, NamingService {
         }
     }
 
-    private func parseContractForNewUri(contract: Contract, for address: String, since origin: String ) throws -> [String] {
-        let transferLogs = try contract.callLogs(
-            fromBlock: origin,
-            signatureHash: Self.TransferEventSignature,
-            for: address.normalized32,
-            isTransfer: true
-        ).compactMap { $0.topics[3] }
+    private func parseContractForNewUri(
+        contract: Contract,
+        for address: String,
+        since origin: String,
+        completion: @escaping (Result<[String], Error>) -> Void) throws {
+        do {
+            let transferLogs = try contract.callLogs(
+                fromBlock: origin,
+                signatureHash: Self.TransferEventSignature,
+                for: address.normalized32,
+                isTransfer: true
+            ).compactMap { $0.topics[3] }
 
-        let domainsData = try transferLogs.compactMap {
-                    try contract.callLogs(
-                            fromBlock: origin,
-                            signatureHash: Self.NewURIEventSignature,
-                            for: $0.normalized32,
-                            isTransfer: false
-                    )[0].data
-                }
+            let domainsData = try transferLogs.compactMap {
+                        try contract.callLogs(
+                                fromBlock: origin,
+                                signatureHash: Self.NewURIEventSignature,
+                                for: $0.normalized32,
+                                isTransfer: false
+                        )[0].data
+                    }
 
-        let possibleDomains = Array(Set(
-                domainsData.compactMap {
-                    ABIDecoder.decodeSingleType(type: .string, data: Data(hex: $0)).value as? String
-                }
+            let possibleDomains = Array(Set(
+                    domainsData.compactMap {
+                        ABIDecoder.decodeSingleType(type: .string, data: Data(hex: $0)).value as? String
+                    }
+                )
             )
-        )
-        return possibleDomains
+            completion(.success(possibleDomains))
+        } catch {
+            completion(.failure(error))
+        }
     }
 
     func tokensOwnedBy(address: String) throws -> [String] {
         let cnsRegistryContract = try self.buildContract(address: self.contracts.cnsRegistry.address, type: .cnsRegistry)
         let unsRegistryContract = try self.buildContract(address: self.contracts.unsRegistry.address, type: .unsRegistry)
 
-        let cnsPossibleDomains = try self.parseContractForNewUri(
+        let asyncGroup = DispatchGroup()
+        var cnsPossibleDomains: [String] = []
+        var unsPossibleDomains: [String] = []
+        asyncGroup.enter()
+        try self.parseContractForNewUri(
                 contract: cnsRegistryContract,
                 for: address,
                 since: contracts.cnsRegistry.deploymentBlock
-            )
-        let unsPossibleDomains = try self.parseContractForNewUri(
+        ) { result in
+            switch result {
+            case .success(let possibleDomains):
+                cnsPossibleDomains = possibleDomains
+            case .failure:
+                cnsPossibleDomains = []
+            }
+            asyncGroup.leave()
+        }
+        asyncGroup.enter()
+        try self.parseContractForNewUri(
             contract: unsRegistryContract,
             for: address,
             since: contracts.unsRegistry.deploymentBlock
-        )
+        ) { result in
+            switch result {
+            case .success(let possibleDomains):
+                unsPossibleDomains = possibleDomains
+            case .failure:
+                unsPossibleDomains = []
+            }
+            asyncGroup.leave()
+        }
+
+        asyncGroup.wait()
         let possibleDomains = cnsPossibleDomains + unsPossibleDomains
 
         let owners = try batchOwners(domains: possibleDomains)
