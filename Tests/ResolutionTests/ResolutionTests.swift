@@ -650,7 +650,7 @@ class ResolutionTests: XCTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        assert(customRecord == "custom.vlaue")
+        assert(customRecord == "custom.value")
         self.checkError(result: unregisteredResult, expectedError: ResolutionError.recordNotFound)
     }
 

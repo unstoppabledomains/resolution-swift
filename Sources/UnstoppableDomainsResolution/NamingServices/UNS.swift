@@ -131,8 +131,8 @@ internal class UNS: CommonNamingService, NamingService {
     private func parseContractForNewUri(
         contract: Contract,
         for address: String,
-        since origin: String,
-        completion: @escaping (Result<[String], Error>) -> Void) throws {
+        since origin: String
+    ) throws -> [String] {
         do {
             let transferLogs = try contract.callLogs(
                 fromBlock: origin,
@@ -156,9 +156,9 @@ internal class UNS: CommonNamingService, NamingService {
                     }
                 )
             )
-            completion(.success(possibleDomains))
+           return possibleDomains
         } catch {
-            completion(.failure(error))
+            return []
         }
     }
 
@@ -169,44 +169,58 @@ internal class UNS: CommonNamingService, NamingService {
         let asyncGroup = DispatchGroup()
         var cnsPossibleDomains: [String] = []
         var unsPossibleDomains: [String] = []
+
         asyncGroup.enter()
-        try self.parseContractForNewUri(
-                contract: cnsRegistryContract,
-                for: address,
-                since: contracts.cnsRegistry.deploymentBlock
-        ) { result in
-            switch result {
-            case .success(let possibleDomains):
-                cnsPossibleDomains = possibleDomains
-            case .failure:
+        DispatchQueue.global().async { [weak self] in
+            guard let self = self else { return }
+            do {
+                cnsPossibleDomains = try self.parseContractForNewUri(
+                        contract: cnsRegistryContract,
+                        for: address,
+                    since: self.contracts.cnsRegistry.deploymentBlock
+                )
+                asyncGroup.leave()
+            } catch {
                 cnsPossibleDomains = []
+                asyncGroup.leave()
             }
-            asyncGroup.leave()
         }
+
         asyncGroup.enter()
-        try self.parseContractForNewUri(
-            contract: unsRegistryContract,
-            for: address,
-            since: contracts.unsRegistry.deploymentBlock
-        ) { result in
-            switch result {
-            case .success(let possibleDomains):
-                unsPossibleDomains = possibleDomains
-            case .failure:
+        DispatchQueue.global().async { [weak self] in
+            guard let self = self else { return }
+            do {
+                unsPossibleDomains = try self.parseContractForNewUri(
+                    contract: unsRegistryContract,
+                    for: address,
+                    since: self.contracts.unsRegistry.deploymentBlock
+                )
+                asyncGroup.leave()
+                } catch {
                 unsPossibleDomains = []
+                asyncGroup.leave()
             }
-            asyncGroup.leave()
         }
 
-        asyncGroup.wait()
-        let possibleDomains = cnsPossibleDomains + unsPossibleDomains
-
-        let owners = try batchOwners(domains: possibleDomains)
         var domains: [String] = []
+        let semaphore = DispatchSemaphore(value: 0)
+        asyncGroup.notify(queue: .global()) { [weak self] in
+            guard let self = self else { return }
+            do {
+                let possibleDomains = cnsPossibleDomains + unsPossibleDomains
+                let owners = try self.batchOwners(domains: possibleDomains)
 
-        for (ind, addr) in owners.enumerated() where addr == address {
-            domains.append(possibleDomains[ind])
+                for (ind, addr) in owners.enumerated() where addr == address {
+                    domains.append(possibleDomains[ind])
+                }
+                semaphore.signal()
+            } catch {
+                domains = []
+                print(error)
+                semaphore.signal()
+            }
         }
+        semaphore.wait()
         return domains
     }
 
