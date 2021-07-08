@@ -216,7 +216,6 @@ internal class UNS: CommonNamingService, NamingService {
                 semaphore.signal()
             } catch {
                 domains = []
-                print(error)
                 semaphore.signal()
             }
         }
