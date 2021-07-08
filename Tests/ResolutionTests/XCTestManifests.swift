@@ -6,6 +6,7 @@ public func allTests() -> [XCTestCaseEntry] {
         testCase(ResolutionTests.allTests),
         testCase(EthereumABITests.allTests),
         testCase(TokenUriMetadataTests.allTests)
+        testCase(ABICoderTests.allTests)
     ]
 }
 #endif

@@ -34,19 +34,6 @@ internal class ABICoder {
         return toReturn
     }
 
-    private var events: [String: ABI.Element] {
-        var toReturn = [String: ABI.Element]()
-        for m in self.abi {
-            switch m {
-            case .event(let event):
-                toReturn[event.name] = m
-            default:
-                continue
-            }
-        }
-        return toReturn
-    }
-
     init(_ abi: ABIContract) {
         self.abi = abi
     }
@@ -71,21 +58,6 @@ internal class ABICoder {
         return decoded
     }
 
-    public func decodeEventTopics(eventName: String, eventLogTopics: [Data], eventLogData: Data) throws -> [String: Any] {
-        guard let abiEvent = self.events[eventName] else {
-            throw ABICoderError.wrongABIInterfaceForMethod(method: eventName)
-        }
-
-        guard case .event(let event) = abiEvent else {
-            throw ABICoderError.wrongABIInterfaceForMethod(method: eventName)
-        }
-
-        guard let decodedEvents = event.decodeReturnedLogs(eventLogTopics: eventLogTopics, eventLogData: eventLogData) else {
-            throw ABICoderError.couldNotDecode(method: eventName, value: "")
-        }
-        return decodedEvents
-    }
-
     // MARK: - Encode Block
     public func encode(method: String, args: [Any]) throws -> String {
 
@@ -107,29 +79,4 @@ internal class ABICoder {
         return encoded
     }
 
-    public func encodeEventTopics(eventName: String, params: [String: String]) throws -> [String] {
-        guard let abiEvent = self.events[eventName] else {
-            throw ABICoderError.wrongABIInterfaceForMethod(method: eventName)
-        }
-
-        guard case .event(let event) = abiEvent else {
-            throw ABICoderError.wrongABIInterfaceForMethod(method: eventName)
-        }
-
-        var encodedTopics: [String] = []
-        encodedTopics.append(event.topic.toHexString().addHexPrefix())
-        for item in event.inputs {
-            if item.indexed {
-                if let filterVal = params[item.name] {
-                    guard let encodedValue = ABIEncoder.encodeSingleType(type: item.type, value: filterVal as AnyObject)?.toHexString().addHexPrefix() else {
-                        throw ABICoderError.couldNotEncode(method: eventName, args: [item.name, filterVal])
-                    }
-                    encodedTopics.append(encodedValue)
-                } else {
-                    encodedTopics.append("")
-                }
-            }
-        }
-        return encodedTopics
-    }
 }

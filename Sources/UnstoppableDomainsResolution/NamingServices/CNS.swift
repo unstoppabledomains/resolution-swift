@@ -236,7 +236,7 @@ internal class CNS: CommonNamingService, NamingService {
                 throw ResolutionError.unregisteredDomain
             }
 
-            if let domainName = try ABIDecoder.decodeSingleType(type: .string, data: Data(hex: result[0].data)).value as? String {
+            if let domainName = ABIDecoder.decodeSingleType(type: .string, data: Data(hex: result[0].data)).value as? String {
                 return domainName
             }
             throw ResolutionError.unregisteredDomain
