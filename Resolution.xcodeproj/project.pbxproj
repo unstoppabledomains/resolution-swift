@@ -3,23 +3,25 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		30A69245251385A70079EC69 /* cnsProxyReader.json in Resources */ = {isa = PBXBuildFile; fileRef = 30A69244251385A70079EC69 /* cnsProxyReader.json */; };
-		30AE8615257A8CCD003A0142 /* network-config.json in Resources */ = {isa = PBXBuildFile; fileRef = 30AE8614257A8CCD003A0142 /* network-config.json */; };
+		30A69245251385A70079EC69 /* unsProxyReader.json in Resources */ = {isa = PBXBuildFile; fileRef = 30A69244251385A70079EC69 /* unsProxyReader.json */; };
 		3E105520258C95D300652FC7 /* DnsType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E10551F258C95D300652FC7 /* DnsType.swift */; };
 		3E105524258CB73400652FC7 /* DnsUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E105523258CB73400652FC7 /* DnsUtils.swift */; };
 		3E10552E258CBD0900652FC7 /* DnsRecordsError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E10552D258CBD0900652FC7 /* DnsRecordsError.swift */; };
-		3E2AC91C24E4FA28008EBC39 /* CNS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E2AC91B24E4FA28008EBC39 /* CNS.swift */; };
+		3E2AC91C24E4FA28008EBC39 /* UNS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E2AC91B24E4FA28008EBC39 /* UNS.swift */; };
 		3E2AC91F24E4FA35008EBC39 /* NamingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E2AC91E24E4FA35008EBC39 /* NamingService.swift */; };
-		3E2AC93E24E4FC9F008EBC39 /* cnsResolver.json in Resources */ = {isa = PBXBuildFile; fileRef = 3E2AC93C24E4FC9F008EBC39 /* cnsResolver.json */; };
-		3E2AC93F24E4FC9F008EBC39 /* cnsRegistry.json in Resources */ = {isa = PBXBuildFile; fileRef = 3E2AC93D24E4FC9F008EBC39 /* cnsRegistry.json */; };
+		3E2AC93E24E4FC9F008EBC39 /* unsResolver.json in Resources */ = {isa = PBXBuildFile; fileRef = 3E2AC93C24E4FC9F008EBC39 /* unsResolver.json */; };
+		3E2AC93F24E4FC9F008EBC39 /* unsRegistry.json in Resources */ = {isa = PBXBuildFile; fileRef = 3E2AC93D24E4FC9F008EBC39 /* unsRegistry.json */; };
 		3E33F99925DCFAB400627C71 /* Configurations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E33F99825DCFAB400627C71 /* Configurations.swift */; };
 		3E65912824E381E900D7EC35 /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E65912724E381E900D7EC35 /* Errors.swift */; };
 		3E65913124E4ADAC00D7EC35 /* Contract.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E65913024E4ADAC00D7EC35 /* Contract.swift */; };
-		3E889D2C268DA25F000C5330 /* TokenUriMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E889D2B268DA25F000C5330 /* TokenUriMetadata.swift */; };
+		3E889CC8268AF94E000C5330 /* TokenUriMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E889CC7268AF94E000C5330 /* TokenUriMetadata.swift */; };
+		3E889CCE268AFA83000C5330 /* supported-keys.json in Resources */ = {isa = PBXBuildFile; fileRef = 3E889CCD268AFA83000C5330 /* supported-keys.json */; };
+		3E889D12268B1BBB000C5330 /* uns-config.json in Resources */ = {isa = PBXBuildFile; fileRef = 3E889D11268B1BBB000C5330 /* uns-config.json */; };
+		3E889D1E268D51CF000C5330 /* cnsRegistry.json in Resources */ = {isa = PBXBuildFile; fileRef = 3E889D1D268D51CF000C5330 /* cnsRegistry.json */; };
 		3EAFA3F724EB59DA008791E9 /* ABICoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EAFA3F624EB59DA008791E9 /* ABICoder.swift */; };
 		3EAFA3FE24EE03E0008791E9 /* JSON_RPC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EAFA3FD24EE03E0008791E9 /* JSON_RPC.swift */; };
 		3EAFA40024EE0CFD008791E9 /* APIRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EAFA3FF24EE0CFD008791E9 /* APIRequest.swift */; };
@@ -59,19 +61,21 @@
 
 /* Begin PBXFileReference section */
 		3045D148251E2C6200B65A06 /* LICENSE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = LICENSE.md; sourceTree = "<group>"; };
-		30A69244251385A70079EC69 /* cnsProxyReader.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = cnsProxyReader.json; sourceTree = "<group>"; };
-		30AE8614257A8CCD003A0142 /* network-config.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "network-config.json"; sourceTree = "<group>"; };
+		30A69244251385A70079EC69 /* unsProxyReader.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = unsProxyReader.json; sourceTree = "<group>"; };
 		3E10551F258C95D300652FC7 /* DnsType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DnsType.swift; sourceTree = "<group>"; };
 		3E105523258CB73400652FC7 /* DnsUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DnsUtils.swift; sourceTree = "<group>"; };
 		3E10552D258CBD0900652FC7 /* DnsRecordsError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DnsRecordsError.swift; sourceTree = "<group>"; };
-		3E2AC91B24E4FA28008EBC39 /* CNS.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CNS.swift; sourceTree = "<group>"; };
+		3E2AC91B24E4FA28008EBC39 /* UNS.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UNS.swift; sourceTree = "<group>"; };
 		3E2AC91E24E4FA35008EBC39 /* NamingService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NamingService.swift; sourceTree = "<group>"; };
-		3E2AC93C24E4FC9F008EBC39 /* cnsResolver.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = cnsResolver.json; sourceTree = "<group>"; };
-		3E2AC93D24E4FC9F008EBC39 /* cnsRegistry.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = cnsRegistry.json; sourceTree = "<group>"; };
+		3E2AC93C24E4FC9F008EBC39 /* unsResolver.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = unsResolver.json; sourceTree = "<group>"; };
+		3E2AC93D24E4FC9F008EBC39 /* unsRegistry.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = unsRegistry.json; sourceTree = "<group>"; };
 		3E33F99825DCFAB400627C71 /* Configurations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Configurations.swift; sourceTree = "<group>"; };
 		3E65912724E381E900D7EC35 /* Errors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
 		3E65913024E4ADAC00D7EC35 /* Contract.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Contract.swift; sourceTree = "<group>"; };
-		3E889D2B268DA25F000C5330 /* TokenUriMetadata.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TokenUriMetadata.swift; sourceTree = "<group>"; };
+		3E889CC7268AF94E000C5330 /* TokenUriMetadata.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TokenUriMetadata.swift; sourceTree = "<group>"; };
+		3E889CCD268AFA83000C5330 /* supported-keys.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "supported-keys.json"; sourceTree = "<group>"; };
+		3E889D11268B1BBB000C5330 /* uns-config.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "uns-config.json"; sourceTree = "<group>"; };
+		3E889D1D268D51CF000C5330 /* cnsRegistry.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = cnsRegistry.json; sourceTree = "<group>"; };
 		3EAFA3F624EB59DA008791E9 /* ABICoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ABICoder.swift; sourceTree = "<group>"; };
 		3EAFA3FD24EE03E0008791E9 /* JSON_RPC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSON_RPC.swift; sourceTree = "<group>"; };
 		3EAFA3FF24EE0CFD008791E9 /* APIRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIRequest.swift; sourceTree = "<group>"; };
@@ -128,7 +132,7 @@
 		3045D143251E071200B65A06 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				3E2AC92124E4FA3E008EBC39 /* CNS */,
+				3E2AC92124E4FA3E008EBC39 /* UNS */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -147,7 +151,7 @@
 			isa = PBXGroup;
 			children = (
 				3EAFA40324EE32B2008791E9 /* CommonNamingService.swift */,
-				3E2AC91B24E4FA28008EBC39 /* CNS.swift */,
+				3E2AC91B24E4FA28008EBC39 /* UNS.swift */,
 				848E21082507890A008707D2 /* ZNS.swift */,
 			);
 			path = NamingServices;
@@ -171,15 +175,17 @@
 			path = ABI;
 			sourceTree = "<group>";
 		};
-		3E2AC92124E4FA3E008EBC39 /* CNS */ = {
+		3E2AC92124E4FA3E008EBC39 /* UNS */ = {
 			isa = PBXGroup;
 			children = (
-				3E2AC93D24E4FC9F008EBC39 /* cnsRegistry.json */,
-				3E2AC93C24E4FC9F008EBC39 /* cnsResolver.json */,
-				30A69244251385A70079EC69 /* cnsProxyReader.json */,
-				30AE8614257A8CCD003A0142 /* network-config.json */,
+				3E889D11268B1BBB000C5330 /* uns-config.json */,
+				3E889D1D268D51CF000C5330 /* cnsRegistry.json */,
+				3E889CCD268AFA83000C5330 /* supported-keys.json */,
+				3E2AC93D24E4FC9F008EBC39 /* unsRegistry.json */,
+				3E2AC93C24E4FC9F008EBC39 /* unsResolver.json */,
+				30A69244251385A70079EC69 /* unsProxyReader.json */,
 			);
-			path = CNS;
+			path = UNS;
 			sourceTree = "<group>";
 		};
 		3EE4D9F924E367720097540B = {
@@ -245,8 +251,8 @@
 		848E210A25079D43008707D2 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
-				3E889D2B268DA25F000C5330 /* TokenUriMetadata.swift */,
 				3E10551E258C95BD00652FC7 /* DNS */,
+				3E889CC7268AF94E000C5330 /* TokenUriMetadata.swift */,
 				3EAFA40124EE312A008791E9 /* Utilities.swift */,
 				848E210B25079D61008707D2 /* Types.swift */,
 				3ECD84AD25A6AEE1001772DD /* UsdtVersion.swift */,
@@ -314,11 +320,11 @@
 			buildConfigurationList = 3EE4DA1724E367720097540B /* Build configuration list for PBXNativeTarget "UnstoppableDomainsResolution" */;
 			buildPhases = (
 				3EE4D9FE24E367720097540B /* Headers */,
+				3E889CD3268B0D7F000C5330 /* Fetch network configurations */,
 				3EE4D9FF24E367720097540B /* Sources */,
 				84412BFF25029A0E0025EE78 /* Run swiftlint */,
 				3EE4DA0024E367720097540B /* Frameworks */,
 				3EE4DA0124E367720097540B /* Resources */,
-				30D54741253F006A00818D62 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -400,10 +406,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				30AE8615257A8CCD003A0142 /* network-config.json in Resources */,
-				30A69245251385A70079EC69 /* cnsProxyReader.json in Resources */,
-				3E2AC93E24E4FC9F008EBC39 /* cnsResolver.json in Resources */,
-				3E2AC93F24E4FC9F008EBC39 /* cnsRegistry.json in Resources */,
+				3E889D1E268D51CF000C5330 /* cnsRegistry.json in Resources */,
+				3E889D12268B1BBB000C5330 /* uns-config.json in Resources */,
+				30A69245251385A70079EC69 /* unsProxyReader.json in Resources */,
+				3E2AC93E24E4FC9F008EBC39 /* unsResolver.json in Resources */,
+				3E2AC93F24E4FC9F008EBC39 /* unsRegistry.json in Resources */,
+				3E889CCE268AFA83000C5330 /* supported-keys.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -417,22 +425,24 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		30D54741253F006A00818D62 /* ShellScript */ = {
+		3E889CD3268B0D7F000C5330 /* Fetch network configurations */ = {
 			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
+			alwaysOutOfDate = 1;
+			buildActionMask = 12;
 			files = (
 			);
 			inputFileListPaths = (
 			);
 			inputPaths = (
 			);
+			name = "Fetch network configurations";
 			outputFileListPaths = (
 			);
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if which swiftlint >/dev/null; then\n  swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\ncurl \"https://raw.githubusercontent.com/unstoppabledomains/uns/main/uns-config.json\" -o \"$PROJECT_DIR/Sources/UnstoppableDomainsResolution/Resources/UNS/uns-config.json\"\ncurl \"https://raw.githubusercontent.com/unstoppabledomains/dot-crypto/master/src/supported-keys/supported-keys.json\" -o \"$PROJECT_DIR/Sources/UnstoppableDomainsResolution/Resources/UNS/supported-keys.json\"\n";
 		};
 		84412BFF25029A0E0025EE78 /* Run swiftlint */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -460,7 +470,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3ECD84AE25A6AEE1001772DD /* UsdtVersion.swift in Sources */,
-				3E2AC91C24E4FA28008EBC39 /* CNS.swift in Sources */,
+				3E2AC91C24E4FA28008EBC39 /* UNS.swift in Sources */,
 				3E33F99925DCFAB400627C71 /* Configurations.swift in Sources */,
 				B6F2075825DBD89800140CE3 /* ABIParameterTypes.swift in Sources */,
 				B6F2075A25DBD89800140CE3 /* ABIExtensions.swift in Sources */,
@@ -470,7 +480,7 @@
 				B6F2075525DBD89800140CE3 /* ABIDecoder.swift in Sources */,
 				848E21092507890A008707D2 /* ZNS.swift in Sources */,
 				3E65912824E381E900D7EC35 /* Errors.swift in Sources */,
-				3E889D2C268DA25F000C5330 /* TokenUriMetadata.swift in Sources */,
+				3E889CC8268AF94E000C5330 /* TokenUriMetadata.swift in Sources */,
 				3EAFA3F724EB59DA008791E9 /* ABICoder.swift in Sources */,
 				3E105520258C95D300652FC7 /* DnsType.swift in Sources */,
 				B6F2075725DBD89800140CE3 /* ABITypeParser.swift in Sources */,

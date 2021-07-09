@@ -12,12 +12,13 @@ class CommonNamingService {
     static let hexadecimalPrefix = "0x"
     static let jsonExtension = "json"
 
-    let name: String
+    let name: NamingServiceName
     let providerUrl: String
     let networking: NetworkingLayer
 
     enum ContractType: String {
-        case registry = "Registry"
+        case unsRegistry = "UNSRegistry"
+        case cnsRegistry = "CNSRegistry"
         case resolver = "Resolver"
         case proxyReader = "ProxyReader"
 
@@ -26,7 +27,7 @@ class CommonNamingService {
         }
     }
 
-    init(name: String, providerUrl: String, networking: NetworkingLayer) {
+    init(name: NamingServiceName, providerUrl: String, networking: NetworkingLayer) {
         self.name = name
         self.providerUrl = providerUrl
         self.networking = networking
@@ -35,10 +36,12 @@ class CommonNamingService {
     func buildContract(address: String, type: ContractType) throws -> Contract {
         let jsonFileName: String
 
-        let nameLowCased = name.lowercased()
+        let nameLowCased = name.rawValue.lowercased()
         switch type {
-        case .registry:
+        case .unsRegistry:
             jsonFileName = "\(nameLowCased)Registry"
+        case .cnsRegistry:
+            jsonFileName = "cnsRegistry"
         case .resolver:
             jsonFileName = "\(nameLowCased)Resolver"
         case .proxyReader:
@@ -86,7 +89,7 @@ class CommonNamingService {
 }
 
 extension CommonNamingService {
-    static let networkConfigFileName = "network-config"
+    static let networkConfigFileName = "uns-config"
     static let networkIds = ["mainnet": "1",
                              "ropsten": "3",
                              "rinkeby": "4",
@@ -104,6 +107,7 @@ extension CommonNamingService {
     struct ContractAddressEntry: Decodable {
         let address: String
         let legacyAddresses: [String]
+        let deploymentBlock: String
     }
 
     static func parseContractAddresses(network: String) throws -> [String: ContractAddressEntry]? {
@@ -118,9 +122,7 @@ extension CommonNamingService {
         if let filePath = bundler.url(forResource: Self.networkConfigFileName, withExtension: "json") {
             guard let data = try? Data(contentsOf: filePath) else { return nil }
             guard let info = try? JSONDecoder().decode(NewtorkConfigJson.self, from: data) else { return nil }
-            guard let currentNetwork = info.networks[idString] else {
-                return nil
-            }
+            guard let currentNetwork = info.networks[idString] else { return nil }
             return currentNetwork.contracts
         }
         return nil

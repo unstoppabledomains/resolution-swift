@@ -1,5 +1,5 @@
 //
-//  CNS.swift
+//  uns.swift
 //  resolution
 //
 //  Created by Johnny Good on 8/11/20.
@@ -9,19 +9,24 @@
 import Foundation
 import EthereumAddress
 
-internal class CNS: CommonNamingService, NamingService {
+internal class UNS: CommonNamingService, NamingService {
     struct ContractAddresses {
-        let registryAddress: String
-        let resolverAddress: String
-        let proxyReaderAddress: String
+        let unsRegistry: ContractEntry
+        let cnsRegistry: ContractEntry
+        let proxyReader: ContractEntry
     }
 
-    static let name = "CNS"
+    struct ContractEntry {
+        let address: String
+        let deploymentBlock: String
+    }
+
+    static let name: NamingServiceName = .uns
     static let TransferEventSignature = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"
     static let NewURIEventSignature = "0xc5beef08f693b11c316c0c8394a377a0033c9cf701b8cd8afd79cecef60c3952"
-
     static let getDataForManyMethodName = "getDataForMany"
     static let tokenURIMethodName = "tokenURI"
+    static let existName = "exists"
 
     let network: String
     let contracts: ContractAddresses
@@ -34,17 +39,47 @@ internal class CNS: CommonNamingService, NamingService {
             : config.network
 
         guard let contractsContainer = try Self.parseContractAddresses(network: network),
-              let registry = contractsContainer[ContractType.registry.name]?.address,
-              let resolver = contractsContainer[ContractType.resolver.name]?.address,
-              let proxyReader = contractsContainer[ContractType.proxyReader.name]?.address else { throw ResolutionError.unsupportedNetwork }
-        self.contracts = ContractAddresses(registryAddress: registry, resolverAddress: resolver, proxyReaderAddress: proxyReader)
+              let unsRegistry = contractsContainer[ContractType.unsRegistry.name]?.address,
+              let unsRegistryDeploymentBlock = contractsContainer[ContractType.unsRegistry.name]?.deploymentBlock,
+              let cnsRegistry = contractsContainer[ContractType.cnsRegistry.name]?.address,
+              let cnsRegistryDeploymentBlock = contractsContainer[ContractType.cnsRegistry.name]?.deploymentBlock,
+              let proxyReader = contractsContainer[ContractType.proxyReader.name]?.address,
+              let proxyReaderDeploymentBlock = contractsContainer[ContractType.proxyReader.name]?.deploymentBlock
+              else { throw ResolutionError.unsupportedNetwork }
+
+        self.contracts = ContractAddresses(
+            unsRegistry: ContractEntry(
+                address: unsRegistry,
+                deploymentBlock: unsRegistryDeploymentBlock == "0x0" ? "earliest" : unsRegistryDeploymentBlock),
+            cnsRegistry: ContractEntry(
+                address: cnsRegistry,
+                deploymentBlock: cnsRegistryDeploymentBlock == "0x0" ? "earliest" : cnsRegistryDeploymentBlock),
+            proxyReader: ContractEntry(
+                address: proxyReader,
+                deploymentBlock: proxyReaderDeploymentBlock == "0x0" ? "earliest" : proxyReaderDeploymentBlock)
+        )
 
         super.init(name: Self.name, providerUrl: config.providerUrl, networking: config.networking)
-        proxyReaderContract = try super.buildContract(address: self.contracts.proxyReaderAddress, type: .proxyReader)
+
+        proxyReaderContract = try super.buildContract(address: self.contracts.proxyReader.address, type: .proxyReader)
     }
 
     func isSupported(domain: String) -> Bool {
-        return !domain.hasSuffix(".zil")
+        let split = domain.split(separator: ".")
+        let tld = split.suffix(1).joined(separator: "")
+        if tld == "zil" {
+            return false
+        }
+        let tokenId = self.namehash(domain: tld)
+        if let response = try? self.proxyReaderContract?.callMethod(methodName: Self.existName, args: [tokenId]) {
+            guard
+                 let result = response as? [String: Bool],
+                 let isExist = result["0"] else {
+                   return false
+               }
+            return isExist
+        }
+        return false
     }
 
     struct OwnerResolverRecord {
@@ -93,41 +128,98 @@ internal class CNS: CommonNamingService, NamingService {
         }
     }
 
-    func tokensOwnedBy(address: String) throws -> [String] {
-        let registryContract = try self.buildContract(address: self.contracts.registryAddress, type: .registry)
-        let origin = self.getOriginBlockFrom(network: self.network)
-
-        let transferLogs = try registryContract.callLogs(
+    private func parseContractForNewUri(
+        contract: Contract,
+        for address: String,
+        since origin: String
+    ) throws -> [String] {
+        do {
+            let transferLogs = try contract.callLogs(
                 fromBlock: origin,
                 signatureHash: Self.TransferEventSignature,
                 for: address.normalized32,
                 isTransfer: true
-        ).compactMap {
-            $0.topics[3]
-        }
+            ).compactMap { $0.topics[3] }
 
-        let domainsData = try transferLogs.compactMap {
-            try registryContract.callLogs(
-                    fromBlock: origin,
-                    signatureHash: Self.NewURIEventSignature,
-                    for: $0.normalized32,
-                    isTransfer: false
-            )[0].data
-        }
+            let domainsData = try transferLogs.compactMap {
+                        try contract.callLogs(
+                                fromBlock: origin,
+                                signatureHash: Self.NewURIEventSignature,
+                                for: $0.normalized32,
+                                isTransfer: false
+                        )[0].data
+                    }
 
-        let possibleDomains = Array(Set(
-                domainsData.compactMap {
-                    ABIDecoder.decodeSingleType(type: .string, data: Data(hex: $0)).value as? String
-                }
+            let possibleDomains = Array(Set(
+                    domainsData.compactMap {
+                        ABIDecoder.decodeSingleType(type: .string, data: Data(hex: $0)).value as? String
+                    }
+                )
             )
-        )
-
-        let owners = try batchOwners(domains: possibleDomains)
-        var domains: [String] = []
-
-        for (ind, addr) in owners.enumerated() where addr == address {
-            domains.append(possibleDomains[ind])
+           return possibleDomains
+        } catch {
+            return []
         }
+    }
+
+    func tokensOwnedBy(address: String) throws -> [String] {
+        let cnsRegistryContract = try self.buildContract(address: self.contracts.cnsRegistry.address, type: .cnsRegistry)
+        let unsRegistryContract = try self.buildContract(address: self.contracts.unsRegistry.address, type: .unsRegistry)
+
+        let asyncGroup = DispatchGroup()
+        var cnsPossibleDomains: [String] = []
+        var unsPossibleDomains: [String] = []
+
+        asyncGroup.enter()
+        DispatchQueue.global().async { [weak self] in
+            guard let self = self else { return }
+            do {
+                cnsPossibleDomains = try self.parseContractForNewUri(
+                        contract: cnsRegistryContract,
+                        for: address,
+                    since: self.contracts.cnsRegistry.deploymentBlock
+                )
+                asyncGroup.leave()
+            } catch {
+                cnsPossibleDomains = []
+                asyncGroup.leave()
+            }
+        }
+
+        asyncGroup.enter()
+        DispatchQueue.global().async { [weak self] in
+            guard let self = self else { return }
+            do {
+                unsPossibleDomains = try self.parseContractForNewUri(
+                    contract: unsRegistryContract,
+                    for: address,
+                    since: self.contracts.unsRegistry.deploymentBlock
+                )
+                asyncGroup.leave()
+                } catch {
+                unsPossibleDomains = []
+                asyncGroup.leave()
+            }
+        }
+
+        var domains: [String] = []
+        let semaphore = DispatchSemaphore(value: 0)
+        asyncGroup.notify(queue: .global()) { [weak self] in
+            guard let self = self else { return }
+            do {
+                let possibleDomains = cnsPossibleDomains + unsPossibleDomains
+                let owners = try self.batchOwners(domains: possibleDomains)
+
+                for (ind, addr) in owners.enumerated() where addr == address {
+                    domains.append(possibleDomains[ind])
+                }
+                semaphore.signal()
+            } catch {
+                domains = []
+                semaphore.signal()
+            }
+        }
+        semaphore.wait()
         return domains
     }
 
@@ -207,9 +299,8 @@ internal class CNS: CommonNamingService, NamingService {
         do {
             if let result = try proxyReaderContract?
                                     .callMethod(methodName: Self.tokenURIMethodName,
-                                                args: [tokenId]) 
-            { 
-                let dict = result as? Dictionary<String, Any>
+                                                args: [tokenId]) {
+                let dict = result as? [String: Any]
                 if let val = dict?["0"] as? String {
                     return val
                 }
@@ -248,17 +339,6 @@ internal class CNS: CommonNamingService, NamingService {
             return unfoldAddressForMany(element)
         }
         return nil
-    }
-
-    private func getOriginBlockFrom(network: String) -> String {
-        switch network {
-        case "mainnet":
-            return "0x8A958B"
-        case "rinkeby":
-            return "0x7232BC"
-        default:
-            return "earliest"
-        }
     }
 
     private func getOwnerResolverRecord(tokenId: String, key: String) throws -> OwnerResolverRecord {

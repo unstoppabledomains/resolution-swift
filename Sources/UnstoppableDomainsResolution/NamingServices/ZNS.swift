@@ -1,5 +1,5 @@
 //
-//  ZNS.swift
+//  zns.swift
 //  Resolution
 //
 //  Created by Serg Merenkov on 9/8/20.
@@ -25,7 +25,7 @@ internal class ZNS: CommonNamingService, NamingService {
         self.network = config.network
 
         self.registryAddress = registryAddress
-        super.init(name: "ZNS", providerUrl: config.providerUrl, networking: config.networking)
+        super.init(name: .zns, providerUrl: config.providerUrl, networking: config.networking)
     }
 
     func isSupported(domain: String) -> Bool {

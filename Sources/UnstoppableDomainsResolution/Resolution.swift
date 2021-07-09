@@ -10,10 +10,10 @@ import Foundation
 ///
 /// Supported domain zones:
 ///
-/// *CNS:*
+/// *uns:*
 ///     .crypto
 ///
-/// *ZNS*
+/// *zns*
 ///     .zil
 ///
 /// ```swift
@@ -34,7 +34,7 @@ import Foundation
 /// ```swift
 /// let resolution = try Resolution(
 ///   configs: Configurations(
-///     cns: NamingServiceConfig(
+///     uns: NamingServiceConfig(
 ///       providerUrl: "https://rinkeby.infura.io/v3/3c25f57353234b1b853e9861050f4817",
 ///       network: "rinkeby"
 ///    )
@@ -59,7 +59,7 @@ public class Resolution {
 
     /// Returns a network that NamingService was configure with
     public func getNetwork(from serviceName: String) throws -> String {
-        guard let service = services.first(where: {$0.name == serviceName.uppercased() }) else {
+        guard let service = services.first(where: {$0.name.rawValue == serviceName.lowercased() }) else {
             throw ResolutionError.unsupportedServiceName
         }
         return service.network
@@ -68,15 +68,19 @@ public class Resolution {
     /// Checks if the domain name is valid according to naming service rules for valid domain names.
     ///
     /// - Parameter domain: domain name to be checked
+    /// - Parameter completion: A callback that resolves `Result` with  a `Bool` value
     ///
-    /// - Returns: The return true or false.
-    ///
-    public func isSupported(domain: String) -> Bool {
-        do {
-            let preparedDomain = prepare(domain: domain)
-            return try getServiceOf(domain: preparedDomain).isSupported(domain: preparedDomain)
-        } catch {
-            return false
+    public func isSupported(domain: String, completion: @escaping BoolResultConsumer) {
+        let preparedDomain = prepare(domain: domain)
+        DispatchQueue.global(qos: .utility).async { [weak self] in
+            do {
+                guard let _ = self?.services.first(where: {$0.isSupported(domain: preparedDomain)}) else {
+                    throw ResolutionError.unsupportedDomain
+                }
+                completion(.success(true))
+            } catch {
+                completion(.success(false))
+            }
         }
     }
 
@@ -148,10 +152,12 @@ public class Resolution {
     public func tokensOwnedBy(address: String, service: String, completion: @escaping StringsArrayResultConsumer ) {
         DispatchQueue.global(qos: .utility).async { [weak self] in
             do {
-                guard let service = self?.services.first(where: { $0.name == service }) else {
+
+                guard let serviceName = NamingServiceName(rawValue: service),
+                    let namingService = self?.services.first(where: { $0.name == serviceName }) else {
                     throw ResolutionError.unsupportedServiceName
                 }
-                let result = try service.tokensOwnedBy(address: address)
+                let result = try namingService.tokensOwnedBy(address: address)
                 completion(.success(result))
             } catch {
                 self?.catchError(error, completion: completion)
@@ -285,7 +291,7 @@ public class Resolution {
         DispatchQueue.global(qos: .utility).async { [weak self] in
             do {
                 guard let service = try self?.getServiceOf(domain: preparedDomain),
-                      service.name == "CNS" else {
+                      service.name == .uns else {
                     throw ResolutionError.methodNotSupported
                 }
 
@@ -366,7 +372,10 @@ public class Resolution {
     /// - Parameter completion: A callback that resolves `Result` with a `domainName` for a specific domain or `Error`
     public func unhash(hash: String, serviceName: String, completion:@escaping StringResultConsumer) {
         do {
-            let tokenURI = try self.findService(name: serviceName).getTokenUri(tokenId: hash)
+            guard let name = NamingServiceName(rawValue: serviceName) else {
+               return self.catchError(ResolutionError.unsupportedServiceName, completion: completion)
+            }
+            let tokenURI = try self.findService(name: name).getTokenUri(tokenId: hash)
             try self.fetchTokenUriMetadata(tokenURI: tokenURI, completion: {result in
                 switch result {
                 case .success(let response):
@@ -395,7 +404,7 @@ public class Resolution {
         var networkServices: [NamingService] = []
         var errorService: Error?
         do {
-            networkServices.append(try CNS(configs.cns))
+            networkServices.append(try UNS(configs.uns))
         } catch {
             errorService = error
         }
@@ -414,10 +423,10 @@ public class Resolution {
 
     /// This returns the correct naming service based on the `domain` asked for
     private func getServiceOf(domain: String) throws -> NamingService {
-        guard let service = services.first(where: {$0.isSupported(domain: domain)}) else {
-            throw ResolutionError.unsupportedDomain
+        if domain.hasSuffix(".zil") {
+            return try self.findService(name: .zns)
         }
-        return service
+        return try self.findService(name: .uns)
     }
 
     /// This returns the correct naming service based on the `domain`'s array asked for
@@ -426,8 +435,8 @@ public class Resolution {
             throw ResolutionError.unsupportedDomain
         }
 
-        let possibleServices = domains.compactMap { domain in
-            return services.first(where: {$0.isSupported(domain: domain)})
+        let possibleServices = try domains.compactMap { domain in
+            return try self.getServiceOf(domain: domain)
         }
         guard possibleServices.count == domains.count else {
             throw ResolutionError.unsupportedDomain
@@ -442,8 +451,8 @@ public class Resolution {
     }
 
     /// This returns the correct naming service based on the service name asked for
-    private func findService(name: String) throws -> NamingService {
-        guard let service = services.first(where: {$0.name == name.uppercased()}) else {
+    private func findService(name: NamingServiceName) throws -> NamingService {
+        guard let service = services.first(where: {$0.name == name}) else {
             throw ResolutionError.unsupportedServiceName
         }
         return service
@@ -451,9 +460,9 @@ public class Resolution {
 
     /// Gets the token metadata from metadata API
     private func fetchTokenUriMetadata(tokenURI: String, completion:@escaping TokenUriMetadataResultConsumer) throws {
-        let networking = MetadataAPIRequest()
+        let networking = try findService(name: .uns).networking
         let url = URL(string: tokenURI)
-        networking.makeHttpRequest(url: url!,
+        networking.makeHttpGetRequest(url: url!,
                                     completion: {result in
                                         switch result {
                                         case .success(let response):
