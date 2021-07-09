@@ -441,7 +441,7 @@ public class Resolution {
         if domain.hasSuffix(".zil") {
             return try self.findService(name: .zns)
         }
-        if domain.hasSuffix(".eth") || domain.hasSuffix(".kred") || domain.hasSuffix(".luxe") || domain.hasSuffix(".xyz") {
+        if domain ~= "^[^-]*[^-]*\\.(eth|luxe|xyz|kred|addr\\.reverse)$" {
             return try self.findService(name: .ens)
         }
         return try self.findService(name: .uns)
