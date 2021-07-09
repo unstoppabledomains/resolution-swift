@@ -86,6 +86,7 @@
 		3EAFA40124EE312A008791E9 /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
 		3EAFA40324EE32B2008791E9 /* CommonNamingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonNamingService.swift; sourceTree = "<group>"; };
 		3EC9E04B2697FF84001521B4 /* CHANGELOG.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CHANGELOG.md; sourceTree = "<group>"; };
+		3EC9E04E2698002F001521B4 /* UnstoppableDomainsResolution.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = UnstoppableDomainsResolution.podspec; sourceTree = "<group>"; };
 		3ECD84AD25A6AEE1001772DD /* UsdtVersion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsdtVersion.swift; sourceTree = "<group>"; };
 		3EE4DA0324E367720097540B /* Resolution.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Resolution.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3EE4DA0624E367720097540B /* resolution.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = resolution.h; sourceTree = "<group>"; };
@@ -203,6 +204,7 @@
 		3EE4D9F924E367720097540B = {
 			isa = PBXGroup;
 			children = (
+				3EC9E04E2698002F001521B4 /* UnstoppableDomainsResolution.podspec */,
 				3EC9E04B2697FF84001521B4 /* CHANGELOG.md */,
 				8425AED824FFBADF00BBCBBA /* README.md */,
 				3045D148251E2C6200B65A06 /* LICENSE.md */,
