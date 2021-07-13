@@ -22,11 +22,12 @@ let package = Package(
             name: "UnstoppableDomainsResolution",
             dependencies: ["CryptoSwift", "BigInt", "EthereumAddress"],
             resources: [
-                .process("Resources/CNS/supported-keys.json"),
-                .process("Resources/CNS/cnsProxyReader.json"),
-                .process("Resources/CNS/cnsRegistry.json"),
-                .process("Resources/CNS/cnsResolver.json"),
-                .process("Resources/CNS/network-config.json"),
+                .process("Resources/UNS/supported-keys.json"),
+                .process("Resources/UNS/unsProxyReader.json"),
+                .process("Resources/UNS/unsRegistry.json"),
+                .process("Resources/UNS/cnsRegistry.json"),
+                .process("Resources/UNS/unsResolver.json"),
+                .process("Resources/UNS/uns-config.json"),
                 .process("Resources/ENS/ensRegistry.json"),
                 .process("Resources/ENS/ensResolver.json")
             ],

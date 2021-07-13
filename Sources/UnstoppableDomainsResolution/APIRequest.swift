@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import FoundationNetworking
 
 public enum APIError: Error {
     case responseError

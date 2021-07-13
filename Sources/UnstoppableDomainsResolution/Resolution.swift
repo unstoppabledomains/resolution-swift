@@ -370,28 +370,15 @@ public class Resolution {
     /// - Parameter hash: - domain hash to be resolved
     /// - Parameter serviceName: - name of the service to use to get metadata
     /// - Parameter completion: A callback that resolves `Result` with a `domainName` for a specific domain or `Error`
-    public func unhash(hash: String, serviceName: String, completion:@escaping StringResultConsumer) {
+    public func unhash(hash: String, serviceName: NamingServiceName, completion:@escaping StringResultConsumer) {
         do {
-            guard let name = NamingServiceName(rawValue: serviceName) else {
-               return self.catchError(ResolutionError.unsupportedServiceName, completion: completion)
+            let domain = try self.findService(name: serviceName).getDomainName(tokenId: hash)
+            
+            let receivedHash = try self.namehash(domain: domain)
+            if receivedHash != hash {
+                completion(.failure(ResolutionError.badRequestOrResponse))
             }
-            let tokenURI = try self.findService(name: name).getTokenUri(tokenId: hash)
-            try self.fetchTokenUriMetadata(tokenURI: tokenURI, completion: {result in
-                switch result {
-                case .success(let response):
-                    do {
-                        let receivedHash = try self.namehash(domain: response.name)
-                        if receivedHash != hash {
-                            completion(.failure(ResolutionError.badRequestOrResponse))
-                        }
-                        completion(.success(response.name))
-                    } catch {
-                        self.catchError(error, completion: completion)
-                    }
-                case .failure(let error):
-                    self.catchError(error, completion: completion)
-                }
-            })
+            completion(.success(domain))
         } catch {
             self.catchError(error, completion: completion)
         }
