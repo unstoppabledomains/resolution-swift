@@ -25,18 +25,18 @@ public struct NamingServiceConfig {
 }
 
 public struct Configurations {
-    let cns: NamingServiceConfig
+    let uns: NamingServiceConfig
     let zns: NamingServiceConfig
 
     public init(
-        cns: NamingServiceConfig = NamingServiceConfig(
+        uns: NamingServiceConfig = NamingServiceConfig(
             providerUrl: "https://mainnet.infura.io/v3/3c25f57353234b1b853e9861050f4817",
             network: "mainnet"),
         zns: NamingServiceConfig = NamingServiceConfig(
             providerUrl: "https://api.zilliqa.com",
             network: "mainnet")
     ) {
-        self.cns = cns
+        self.uns = uns
         self.zns = zns
     }
 }

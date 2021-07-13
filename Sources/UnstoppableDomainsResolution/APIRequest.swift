@@ -23,9 +23,7 @@ public protocol NetworkingLayer {
                               httpHeaderContentType: String,
                               httpBody: Data,
                               completion: @escaping(Result<JsonRpcResponseArray, Error>) -> Void)
-
-    func makeHttpGetRequest (url: URL,
-                             completion: @escaping(Result<TokenUriMetadata, Error>) -> Void)
+    func makeHttpGetRequest(url: URL, completion: @escaping TokenUriMetadataResultConsumer )
 }
 
 struct APIRequest {
@@ -99,8 +97,7 @@ public struct DefaultNetworkingLayer: NetworkingLayer {
         dataTask.resume()
     }
 
-    public func makeHttpGetRequest(url: URL,
-                                   completion: @escaping(Result<TokenUriMetadata, Error>) -> Void) {
+    public func makeHttpGetRequest(url: URL, completion: @escaping TokenUriMetadataResultConsumer ) {
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = "GET"
         urlRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -109,7 +106,7 @@ public struct DefaultNetworkingLayer: NetworkingLayer {
             guard let httpResponse = response as? HTTPURLResponse,
                   httpResponse.statusCode == 200,
                   let jsonData = data else {
-                completion(.failure(APIError.responseError))
+                completion(.failure(ResolutionError.badRequestOrResponse))
                 return
             }
 
@@ -117,12 +114,7 @@ public struct DefaultNetworkingLayer: NetworkingLayer {
                 let result = try JSONDecoder().decode(TokenUriMetadata.self, from: jsonData)
                 completion(.success(result))
             } catch {
-                if let errorResponse = try? JSONDecoder().decode(NetworkErrorResponse.self, from: jsonData),
-                    let errorExplained = ResolutionError.parse(errorResponse: errorResponse) {
-                    completion(.failure(errorExplained))
-                } else {
-                    completion(.failure(APIError.decodingError))
-                }
+                completion(.failure(ResolutionError.badRequestOrResponse))
             }
         }
         dataTask.resume()

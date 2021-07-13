@@ -1,6 +1,6 @@
 import Foundation
 
-public struct TokenUriMetadata : Codable {
+public struct TokenUriMetadata: Codable {
     let name: String
     let description: String
     let externalUrl: String
@@ -67,4 +67,3 @@ struct TokenUriMetadataValue: Codable {
         try container.encode(value)
     }
 }
-
