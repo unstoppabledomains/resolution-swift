@@ -316,7 +316,7 @@ internal class UNS: CommonNamingService, NamingService {
     func getDomainName(tokenId: String) throws -> String {
         do {
             let registryAddress = try self.getRegistryAddress(tokenId: tokenId)
-            let registryContract = try self.buildContract(address: registryAddress, type: .registry)
+            let registryContract = try self.buildContract(address: registryAddress, type: .unsRegistry)
             let result = try registryContract.callLogs(
                 fromBlock: "earliest", 
                 signatureHash: Self.NewURIEventSignature, 

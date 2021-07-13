@@ -370,7 +370,7 @@ public class Resolution {
     /// - Parameter hash: - domain hash to be resolved
     /// - Parameter serviceName: - name of the service to use to get metadata
     /// - Parameter completion: A callback that resolves `Result` with a `domainName` for a specific domain or `Error`
-    public func unhash(hash: String, serviceName: String, completion:@escaping StringResultConsumer) {
+    public func unhash(hash: String, serviceName: NamingServiceName, completion:@escaping StringResultConsumer) {
         do {
             let domain = try self.findService(name: serviceName).getDomainName(tokenId: hash)
             

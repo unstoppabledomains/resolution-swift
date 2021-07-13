@@ -660,12 +660,9 @@ class ResolutionTests: XCTestCase {
 
         var tokenURI = ""
         var unregisteredResult: Result<String, ResolutionError>!
-
-        // TODO set the metada endpoint for rinkeby domain
-        resolution = try Resolution()
         
         // When
-        resolution.tokenURI(domain: "brad.crypto") { (result) in
+        resolution.tokenURI(domain: ResolutionTests.TEST_DOMAIN3) { (result) in
             switch result {
             case .success(let returnValue):
                 domainReceived.fulfill()
@@ -735,7 +732,7 @@ class ResolutionTests: XCTestCase {
         var unregisteredResult: Result<String, ResolutionError>!
 
         // When
-        resolution.unhash(hash: "0x756e4e998dbffd803c21d23b06cd855cdc7a4b57706c95964a37e24b47c10fc9", serviceName: "uns") { (result) in
+        resolution.unhash(hash: "0x756e4e998dbffd803c21d23b06cd855cdc7a4b57706c95964a37e24b47c10fc9", serviceName: .uns) { (result) in
             switch result {
             case .success(let returnValue):
                 domainReceived.fulfill()
@@ -744,7 +741,7 @@ class ResolutionTests: XCTestCase {
                 XCTFail("Expected domainName, but got \(error)")
             }
         }
-        resolution.unhash(hash: "0xdeaddeaddead", serviceName: "uns") {
+        resolution.unhash(hash: "0xdeaddeaddead", serviceName: .uns) {
             unregisteredResult = $0
             unregisteredReceived.fulfill()
         }
