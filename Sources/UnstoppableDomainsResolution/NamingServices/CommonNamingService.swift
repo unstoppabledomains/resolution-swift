@@ -117,7 +117,7 @@ extension CommonNamingService {
         let bundler = Bundle(for: self)
         #endif
 
-        guard let idString = networkIds[network] else { throw ResolutionError.unsupportedNetwork }
+        guard let idString = networkIds[network] else { return nil }
 
         if let filePath = bundler.url(forResource: Self.networkConfigFileName, withExtension: "json") {
             guard let data = try? Data(contentsOf: filePath) else { return nil }

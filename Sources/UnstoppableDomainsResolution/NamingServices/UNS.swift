@@ -10,14 +10,9 @@ import Foundation
 import EthereumAddress
 
 internal class UNS: CommonNamingService, NamingService {
-    struct ContractAddresses {
-        let unsRegistry: ContractEntry
-        let cnsRegistry: ContractEntry
-        let proxyReader: ContractEntry
-    }
 
-    struct ContractEntry {
-        let address: String
+    struct NSRegistry {
+        let contract: Contract
         let deploymentBlock: String
     }
 
@@ -29,7 +24,7 @@ internal class UNS: CommonNamingService, NamingService {
     static let existName = "exists"
 
     let network: String
-    let contracts: ContractAddresses
+    var nsRegistries: [NSRegistry]
     var proxyReaderContract: Contract?
 
     init(_ config: NamingServiceConfig) throws {
@@ -37,31 +32,44 @@ internal class UNS: CommonNamingService, NamingService {
         self.network = config.network.isEmpty
             ? try Self.getNetworkId(providerUrl: config.providerUrl, networking: config.networking)
             : config.network
-
-        guard let contractsContainer = try Self.parseContractAddresses(network: network),
-              let unsRegistry = contractsContainer[ContractType.unsRegistry.name]?.address,
-              let unsRegistryDeploymentBlock = contractsContainer[ContractType.unsRegistry.name]?.deploymentBlock,
-              let cnsRegistry = contractsContainer[ContractType.cnsRegistry.name]?.address,
-              let cnsRegistryDeploymentBlock = contractsContainer[ContractType.cnsRegistry.name]?.deploymentBlock,
-              let proxyReader = contractsContainer[ContractType.proxyReader.name]?.address,
-              let proxyReaderDeploymentBlock = contractsContainer[ContractType.proxyReader.name]?.deploymentBlock
-              else { throw ResolutionError.unsupportedNetwork }
-
-        self.contracts = ContractAddresses(
-            unsRegistry: ContractEntry(
-                address: unsRegistry,
-                deploymentBlock: unsRegistryDeploymentBlock == "0x0" ? "earliest" : unsRegistryDeploymentBlock),
-            cnsRegistry: ContractEntry(
-                address: cnsRegistry,
-                deploymentBlock: cnsRegistryDeploymentBlock == "0x0" ? "earliest" : cnsRegistryDeploymentBlock),
-            proxyReader: ContractEntry(
-                address: proxyReader,
-                deploymentBlock: proxyReaderDeploymentBlock == "0x0" ? "earliest" : proxyReaderDeploymentBlock)
-        )
+        self.nsRegistries = []
 
         super.init(name: Self.name, providerUrl: config.providerUrl, networking: config.networking)
 
-        proxyReaderContract = try super.buildContract(address: self.contracts.proxyReader.address, type: .proxyReader)
+        if let contractsContainer = try Self.parseContractAddresses(network: network) {
+
+            if let unsRegistry = contractsContainer[ContractType.unsRegistry.name]?.address {
+                let unsContract = try super.buildContract(address: unsRegistry, type: .unsRegistry)
+                let deploymentBlock = contractsContainer[ContractType.unsRegistry.name]?.deploymentBlock ?? "earliest"
+                self.nsRegistries.append(NSRegistry(contract: unsContract, deploymentBlock: deploymentBlock))
+            }
+
+            if let cnsRegistry = contractsContainer[ContractType.cnsRegistry.name]?.address {
+                let cnsContract = try super.buildContract(address: cnsRegistry, type: .cnsRegistry)
+                let deploymentBlock = contractsContainer[ContractType.cnsRegistry.name]?.deploymentBlock ?? "earliest"
+                self.nsRegistries.append(NSRegistry(contract: cnsContract, deploymentBlock: deploymentBlock))
+            }
+
+            if let proxyReader = contractsContainer[ContractType.proxyReader.name]?.address {
+                proxyReaderContract = try super.buildContract(address: proxyReader, type: .proxyReader)
+            }
+
+        }
+
+        if config.proxyReader != nil {
+            proxyReaderContract = try super.buildContract(address: config.proxyReader!, type: .proxyReader)
+        }
+
+        if config.registryAddresses != nil && !config.registryAddresses!.isEmpty {
+            self.nsRegistries = try config.registryAddresses!.compactMap {
+                let contract = try super.buildContract(address: $0, type: .unsRegistry)
+                return NSRegistry(contract: contract, deploymentBlock: "earliest")
+            }
+        }
+
+        guard proxyReaderContract != nil else {
+            throw ResolutionError.proxyReaderNonInitialized
+        }
     }
 
     func isSupported(domain: String) -> Bool {
@@ -163,42 +171,24 @@ internal class UNS: CommonNamingService, NamingService {
     }
 
     func tokensOwnedBy(address: String) throws -> [String] {
-        let cnsRegistryContract = try self.buildContract(address: self.contracts.cnsRegistry.address, type: .cnsRegistry)
-        let unsRegistryContract = try self.buildContract(address: self.contracts.unsRegistry.address, type: .unsRegistry)
-
         let asyncGroup = DispatchGroup()
-        var cnsPossibleDomains: [String] = []
-        var unsPossibleDomains: [String] = []
+        var possibleDomains: [String] = []
 
-        asyncGroup.enter()
-        DispatchQueue.global().async { [weak self] in
-            guard let self = self else { return }
-            do {
-                cnsPossibleDomains = try self.parseContractForNewUri(
-                        contract: cnsRegistryContract,
-                        for: address,
-                    since: self.contracts.cnsRegistry.deploymentBlock
-                )
-                asyncGroup.leave()
-            } catch {
-                cnsPossibleDomains = []
-                asyncGroup.leave()
-            }
-        }
-
-        asyncGroup.enter()
-        DispatchQueue.global().async { [weak self] in
-            guard let self = self else { return }
-            do {
-                unsPossibleDomains = try self.parseContractForNewUri(
-                    contract: unsRegistryContract,
-                    for: address,
-                    since: self.contracts.unsRegistry.deploymentBlock
-                )
-                asyncGroup.leave()
+        self.nsRegistries.forEach { registry in
+            asyncGroup.enter()
+            DispatchQueue.global().async { [weak self] in
+                guard let self = self else { return }
+                do {
+                    let domainsFromLogs = try self.parseContractForNewUri(
+                        contract: registry.contract,
+                            for: address,
+                        since: registry.deploymentBlock
+                    )
+                    possibleDomains += domainsFromLogs
+                    asyncGroup.leave()
                 } catch {
-                unsPossibleDomains = []
-                asyncGroup.leave()
+                    asyncGroup.leave()
+                }
             }
         }
 
@@ -207,9 +197,7 @@ internal class UNS: CommonNamingService, NamingService {
         asyncGroup.notify(queue: .global()) { [weak self] in
             guard let self = self else { return }
             do {
-                let possibleDomains = cnsPossibleDomains + unsPossibleDomains
                 let owners = try self.batchOwners(domains: possibleDomains)
-
                 for (ind, addr) in owners.enumerated() where addr == address {
                     domains.append(possibleDomains[ind])
                 }

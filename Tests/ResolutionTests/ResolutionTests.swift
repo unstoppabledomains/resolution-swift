@@ -57,8 +57,22 @@ class ResolutionTests: XCTestCase {
             try Resolution(configs: Configurations(
                 uns: NamingServiceConfig(providerUrl: "https://ropsten.infura.io/v3/3c25f57353234b1b853e9861050f4817")
             ));
-        }, expectedError: .unsupportedNetwork)
+        }, expectedError: .proxyReaderNonInitialized)
     }
+    
+    func testCustomNetwork() throws {
+        let resolution = try Resolution(configs: Configurations(
+                uns: NamingServiceConfig(
+                    providerUrl: "https://rinkeby.infura.io/v3/3c25f57353234b1b853e9861050f4817",
+                    network: "somethingCustom",
+                    proxyReader: "0x299974AeD8911bcbd2C61262605b89F591a53E83",
+                    registryAddresses: ["0x7fb83000B8eD59D3eAD22f0D584Df3a85fBC0086", "0xAad76bea7CFEc82927239415BB18D2e93518ecBB"]
+                )
+        ));
+        let unsNetwork = try resolution.getNetwork(from: "uns")
+        assert(unsNetwork == "somethingCustom")
+    }
+    
     
     func testForUnregisteredDomain() throws {
         let UnregirestedDomainExpectation = expectation(description: "Domain should not be registered!")
