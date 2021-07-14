@@ -19,6 +19,7 @@ class CommonNamingService {
     enum ContractType: String {
         case unsRegistry = "UNSRegistry"
         case cnsRegistry = "CNSRegistry"
+        case ensRegistry = "ENSRegistry"
         case resolver = "Resolver"
         case proxyReader = "ProxyReader"
 
@@ -39,6 +40,8 @@ class CommonNamingService {
         let nameLowCased = name.rawValue.lowercased()
         switch type {
         case .unsRegistry:
+            jsonFileName = "\(nameLowCased)Registry"
+        case .ensRegistry:
             jsonFileName = "\(nameLowCased)Registry"
         case .cnsRegistry:
             jsonFileName = "cnsRegistry"

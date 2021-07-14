@@ -8,7 +8,6 @@
 
 import Foundation
 import BigInt
-import EthereumAddress
 
 extension ABI.Element {
 

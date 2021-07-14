@@ -1,4 +1,6 @@
 # Resolution-swift CHANGELOG
+## 1.1.0
+- Return Ens support
 
 ## 1.0.0
 - Remove Ens support ([#41](https://github.com/unstoppabledomains/resolution-swift/pull/41)) via [@JohnnyJumper](https://github.com/JohnnyJumper)
