@@ -95,7 +95,7 @@ public class Resolution {
     /// Resolves a hash  of the `domain` according to https://github.com/ethereum/EIPs/blob/master/EIPS/eip-137.md
     /// - Parameter domain: - domain name to be converted
     /// - Returns: Produces a namehash from supported naming service in hex format with 0x prefix.
-    /// Corresponds to ERC721 token id in case of Ethereum based naming service like ENS or CNS.
+    /// Corresponds to ERC721 token id in case of Ethereum based naming service like ENS or UNS.
     /// - Throws: ```ResolutionError.unsupportedDomain```  if domain extension is unknown
     ///
     public func namehash(domain: String) throws -> String {
