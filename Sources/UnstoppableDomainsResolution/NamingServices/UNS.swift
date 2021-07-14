@@ -65,6 +65,9 @@ internal class UNS: CommonNamingService, NamingService {
     }
 
     func isSupported(domain: String) -> Bool {
+        if domain ~= "^[^-]*[^-]*\\.(eth|luxe|xyz|kred|addr\\.reverse)$" {
+            return false
+        }
         let split = domain.split(separator: ".")
         let tld = split.suffix(1).joined(separator: "")
         if tld == "zil" {

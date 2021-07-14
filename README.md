@@ -21,6 +21,12 @@ Resoultion supports decentralized domains across three main zones:
   - `.dao`
 - Zilliqa Name Service (zns)
   - `.zil`
+- Ethereum Name Service (ENS)
+  - `.eth`
+  - `.kred`
+  - `.xyz`
+  - `.luxe`
+
 # Installation into the project
 
 ## Cocoa Pods
@@ -128,11 +134,14 @@ resolution.record(domain: "ryan.crypto", record: "custom.record.value") { result
 Version 0.3.0 introduced the `Configurations` struct that is used for configuring each connected naming service.
 Library can offer three naming services at the moment:
 
-* `uns` resolves `.crypto` ,  `.coin`,  `.wallet`,  `.bitcoin`,  `.blockchain`, `.x`, `.888`, `.nft`, `.dao`domains,
+* `uns` resolves `.crypto` ,  `.coin`,  `.wallet`,  `.bitcoin`,  `.blockchain`, `.x`, `.888`, `.nft`, `.dao` domains,
+* `ens` resolves `.eth`, `.kred`, `.xyz`, `.luxe` domains
 * `zns` resolves `.zil` domains
 
 By default, each of them is using the mainnet network via infura provider. 
-Unstoppable domains are using the infura key with no restriction for uns. 
+Unstoppable domains are using the infura key with no restriction for UNS. 
+Unstoppable domains recommends setting up your own provider for ENS, as we don't guarantee ENS Infura key availability. 
+
 You can update each naming service separately
 
 ```swift
@@ -151,6 +160,19 @@ resolution.addr(domain: "udtestdev-creek.crypto", ticker: "eth") { (result) in
     case .success(let returnValue):
         ethAddress = returnValue
         domainReceived.fulfill()
+    case .failure(let error):
+        XCTFail("Expected Eth Address, but got \(error)")
+    }
+}
+
+// naming services that hasn't been touched by Configrations struct are using default settings
+// the following will look up monkybrain.eth on the mainnet via infura provider
+
+resolution.addr(domain: "monkybrain.eth", ticker: "eth") { (result) in
+    switch result {
+    case .success(let returnValue):
+        ethENSAddress = returnValue
+        domainEthReceived.fulfill()
     case .failure(let error):
         XCTFail("Expected Eth Address, but got \(error)")
     }
