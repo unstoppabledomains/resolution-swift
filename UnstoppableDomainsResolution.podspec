@@ -23,7 +23,6 @@ Pod::Spec.new do |spec|
 
   spec.resources = "Sources/UnstoppableDomainsResolution/Resources/**/*.json"
 
-  spec.dependency 'EthereumAddress', '~> 1.3'
-  spec.dependency 'CryptoSwift', '~> 1.0'
+  spec.dependency 'CryptoSwift', '~> 1.4.1'
   spec.dependency 'BigInt'
 end

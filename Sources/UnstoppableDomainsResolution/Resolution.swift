@@ -373,7 +373,7 @@ public class Resolution {
     public func unhash(hash: String, serviceName: NamingServiceName, completion:@escaping StringResultConsumer) {
         do {
             let domain = try self.findService(name: serviceName).getDomainName(tokenId: hash)
-            
+
             let receivedHash = try self.namehash(domain: domain)
             if receivedHash != hash {
                 completion(.failure(ResolutionError.badRequestOrResponse))

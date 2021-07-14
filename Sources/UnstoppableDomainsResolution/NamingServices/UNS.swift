@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import EthereumAddress
 
 internal class UNS: CommonNamingService, NamingService {
     struct ContractAddresses {
@@ -318,9 +317,9 @@ internal class UNS: CommonNamingService, NamingService {
             let registryAddress = try self.getRegistryAddress(tokenId: tokenId)
             let registryContract = try self.buildContract(address: registryAddress, type: .unsRegistry)
             let result = try registryContract.callLogs(
-                fromBlock: "earliest", 
-                signatureHash: Self.NewURIEventSignature, 
-                for: tokenId, 
+                fromBlock: "earliest",
+                signatureHash: Self.NewURIEventSignature,
+                for: tokenId,
                 isTransfer: false)
 
             guard result.count > 0 else {
@@ -399,9 +398,8 @@ internal class UNS: CommonNamingService, NamingService {
         do {
             if let result = try proxyReaderContract?
                                     .callMethod(methodName: Self.registryOfMethodName,
-                                                args: [tokenId]) 
-            { 
-                let dict = result as? Dictionary<String, Any>
+                                                args: [tokenId]) {
+                let dict = result as? [String: Any]
                 if let val = dict?["0"] as? EthereumAddress {
                     return val.address
                 }
