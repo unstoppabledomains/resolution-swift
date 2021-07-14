@@ -42,7 +42,7 @@ class ResolutionTests: XCTestCase {
     func testNetworkFromUrl() throws {
         resolution = try Resolution(configs: Configurations(
             uns: NamingServiceConfig(providerUrl: "https://rinkeby.infura.io/v3/3c25f57353234b1b853e9861050f4817"),
-            ens: NamingServiceConfig(providerUrl: "https://ropsten.infura.io/v3/3c25f57353234b1b853e9861050f4817")
+            ens: NamingServiceConfig(providerUrl: "https://ropsten.infura.io/v3/d423cf2499584d7fbe171e33b42cfbee")
             )
         );
         
@@ -63,7 +63,7 @@ class ResolutionTests: XCTestCase {
         
         self.checkError(completion: {
             try Resolution(configs: Configurations(
-                ens: NamingServiceConfig(providerUrl: "https://kovan.infura.io/v3/3c25f57353234b1b853e9861050f4817")
+                ens: NamingServiceConfig(providerUrl: "https://kovan.infura.io/v3/d423cf2499584d7fbe171e33b42cfbee")
             ));
         }, expectedError: .unsupportedNetwork)
     }

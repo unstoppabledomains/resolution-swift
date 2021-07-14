@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import EthereumAddress
 
 internal class ENS: CommonNamingService, NamingService {
     let network: String
@@ -102,6 +101,10 @@ internal class ENS: CommonNamingService, NamingService {
     }
 
     func getTokenUri(tokenId: String) throws -> String {
+        throw ResolutionError.methodNotSupported
+    }
+
+    func getDomainName(tokenId: String) throws -> String {
         throw ResolutionError.methodNotSupported
     }
 

@@ -38,7 +38,7 @@
 		845B401D251389A4006AB08E /* ENS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845B401C251389A4006AB08E /* ENS.swift */; };
 		848E21092507890A008707D2 /* ZNS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848E21082507890A008707D2 /* ZNS.swift */; };
 		848E210C25079D61008707D2 /* Types.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848E210B25079D61008707D2 /* Types.swift */; };
-		B630A178269F03BB00792EE7 /* EthereumAddress.swift in Sources */ = {isa = PBXBuildFile; fileRef = B630A176269F03BB00792EE7 /* EthereumAddress.swift */; };
+		B650B487269F23460054727E /* EthereumAddress.swift in Sources */ = {isa = PBXBuildFile; fileRef = B650B486269F23460054727E /* EthereumAddress.swift */; };
 		B6B202C8260226B700A72AF2 /* BigInt in Frameworks */ = {isa = PBXBuildFile; productRef = B6B202C7260226B700A72AF2 /* BigInt */; };
 		B6E79938260223CE00F65894 /* Base58.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6E79936260223CE00F65894 /* Base58.swift */; };
 		B6F2075425DBD89800140CE3 /* ABIEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F2074C25DBD89800140CE3 /* ABIEncoder.swift */; };
@@ -104,7 +104,7 @@
 		848E210B25079D61008707D2 /* Types.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Types.swift; sourceTree = "<group>"; };
 		849E07CC24F946CA00A793D3 /* LinuxMain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinuxMain.swift; sourceTree = "<group>"; };
 		849E07D124F9499900A793D3 /* XCTestManifests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XCTestManifests.swift; sourceTree = "<group>"; };
-		B6E79936260223CE00F65894 /* EthereumAddress.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EthereumAddress.swift; sourceTree = "<group>"; };
+		B650B486269F23460054727E /* EthereumAddress.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EthereumAddress.swift; sourceTree = "<group>"; };
 		B6E79935260223CE00F65894 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		B6E79936260223CE00F65894 /* Base58.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Base58.swift; sourceTree = "<group>"; };
 		B6F2074C25DBD89800140CE3 /* ABIEncoder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ABIEncoder.swift; sourceTree = "<group>"; };
@@ -295,28 +295,12 @@
 			path = Tests;
 			sourceTree = "<group>";
 		};
-		B630A174269F03BB00792EE7 /* Support */ = {
+		B650B485269F23460054727E /* EthereumAddress */ = {
 			isa = PBXGroup;
 			children = (
-				B630A175269F03BB00792EE7 /* EthereumAddress */,
-				B630A177269F03BB00792EE7 /* Base58Swift */,
-			);
-			path = Support;
-			sourceTree = "<group>";
-		};
-		B630A175269F03BB00792EE7 /* EthereumAddress */ = {
-			isa = PBXGroup;
-			children = (
-				B630A176269F03BB00792EE7 /* EthereumAddress.swift */,
+				B650B486269F23460054727E /* EthereumAddress.swift */,
 			);
 			path = EthereumAddress;
-			sourceTree = "<group>";
-		};
-		B630A177269F03BB00792EE7 /* Base58Swift */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Base58Swift;
 			sourceTree = "<group>";
 		};
 		B6E2A65C251BA87B00E927FC /* Frameworks */ = {
@@ -330,6 +314,7 @@
 			isa = PBXGroup;
 			children = (
 				B6E79934260223CE00F65894 /* Base58Swift */,
+				B650B485269F23460054727E /* EthereumAddress */,
 			);
 			path = Support;
 			sourceTree = "<group>";
@@ -337,8 +322,8 @@
 		B6E79934260223CE00F65894 /* Base58Swift */ = {
 			isa = PBXGroup;
 			children = (
-				B6E79935260223CE00F65894 /* README.md */,
 				B6E79936260223CE00F65894 /* Base58.swift */,
+				B6E79935260223CE00F65894 /* README.md */,
 			);
 			path = Base58Swift;
 			sourceTree = "<group>";
@@ -547,10 +532,10 @@
 				B6F2075525DBD89800140CE3 /* ABIDecoder.swift in Sources */,
 				848E21092507890A008707D2 /* ZNS.swift in Sources */,
 				B6E79938260223CE00F65894 /* Base58.swift in Sources */,
+				B650B487269F23460054727E /* EthereumAddress.swift in Sources */,
 				3E65912824E381E900D7EC35 /* Errors.swift in Sources */,
 				3E889CC8268AF94E000C5330 /* TokenUriMetadata.swift in Sources */,
 				3EAFA3F724EB59DA008791E9 /* ABICoder.swift in Sources */,
-				B630A178269F03BB00792EE7 /* EthereumAddress.swift in Sources */,
 				3E105520258C95D300652FC7 /* DnsType.swift in Sources */,
 				B6F2075725DBD89800140CE3 /* ABITypeParser.swift in Sources */,
 				B6F2075425DBD89800140CE3 /* ABIEncoder.swift in Sources */,
