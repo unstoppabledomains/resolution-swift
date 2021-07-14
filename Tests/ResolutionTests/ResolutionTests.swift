@@ -65,13 +65,13 @@ class ResolutionTests: XCTestCase {
             try Resolution(configs: Configurations(
                 ens: NamingServiceConfig(providerUrl: "https://kovan.infura.io/v3/d423cf2499584d7fbe171e33b42cfbee")
             ));
-        }, expectedError: .unsupportedNetwork)
+        }, expectedError: .registryAddressIsNotProvided)
         
         self.checkError(completion: {
             try Resolution(configs: Configurations(
                 zns: NamingServiceConfig(providerUrl: "https://kovan.infura.io/v3/d423cf2499584d7fbe171e33b42cfbee")
             ));
-        }, expectedError: .unsupportedNetwork)
+        }, expectedError: .registryAddressIsNotProvided)
     }
     
     func testCustomNetwork() throws {
@@ -958,6 +958,8 @@ extension ResolutionError: Equatable {
             return true
         case (.unsupportedServiceName, .unsupportedServiceName):
             return true
+        case (.registryAddressIsNotProvided, .registryAddressIsNotProvided):
+            return true
             
         case (.unregisteredDomain, _),
              (.unsupportedDomain, _),
@@ -971,7 +973,8 @@ extension ResolutionError: Equatable {
              (.proxyReaderNonInitialized, _),
              (.tooManyResponses, _),
              (.badRequestOrResponse, _),
-             (.unsupportedServiceName, _):
+             (.unsupportedServiceName, _),
+             (.registryAddressIsNotProvided, _):
             
             return false
         // Xcode with Version 12.4 (12D4e) can't compile this without default

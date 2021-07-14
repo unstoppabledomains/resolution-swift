@@ -26,7 +26,7 @@ internal class ZNS: CommonNamingService, NamingService {
         }
 
         guard registryAddress != nil else {
-            throw ResolutionError.unsupportedNetwork
+            throw ResolutionError.registryAddressIsNotProvided
         }
         self.registryAddress = registryAddress!
         super.init(name: .zns, providerUrl: config.providerUrl, networking: config.networking)

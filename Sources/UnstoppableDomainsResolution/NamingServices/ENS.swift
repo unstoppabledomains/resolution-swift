@@ -30,7 +30,7 @@ internal class ENS: CommonNamingService, NamingService {
         }
 
         guard registryAddress != nil else {
-            throw ResolutionError.unsupportedNetwork
+            throw ResolutionError.registryAddressIsNotProvided
         }
         self.registryAddress = registryAddress!
         super.init(name: .ens, providerUrl: config.providerUrl, networking: config.networking)
