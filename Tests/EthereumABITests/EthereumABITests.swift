@@ -1,6 +1,5 @@
 import XCTest
 import BigInt
-import EthereumAddress
 
 #if INSIDE_PM
 @testable import UnstoppableDomainsResolution

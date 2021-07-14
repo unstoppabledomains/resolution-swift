@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import EthereumAddress
 
 internal class UNS: CommonNamingService, NamingService {
     struct ContractAddresses {
@@ -26,6 +25,7 @@ internal class UNS: CommonNamingService, NamingService {
     static let NewURIEventSignature = "0xc5beef08f693b11c316c0c8394a377a0033c9cf701b8cd8afd79cecef60c3952"
     static let getDataForManyMethodName = "getDataForMany"
     static let tokenURIMethodName = "tokenURI"
+    static let registryOfMethodName = "registryOf"
     static let existName = "exists"
 
     let network: String
@@ -315,6 +315,29 @@ internal class UNS: CommonNamingService, NamingService {
         }
     }
 
+    func getDomainName(tokenId: String) throws -> String {
+        do {
+            let registryAddress = try self.getRegistryAddress(tokenId: tokenId)
+            let registryContract = try self.buildContract(address: registryAddress, type: .unsRegistry)
+            let result = try registryContract.callLogs(
+                fromBlock: "earliest",
+                signatureHash: Self.NewURIEventSignature,
+                for: tokenId,
+                isTransfer: false)
+
+            guard result.count > 0 else {
+                throw ResolutionError.unregisteredDomain
+            }
+
+            if let domainName = ABIDecoder.decodeSingleType(type: .string, data: Data(hex: result[0].data)).value as? String {
+                return domainName
+            }
+            throw ResolutionError.unregisteredDomain
+        } catch APIError.decodingError {
+            throw ResolutionError.unregisteredDomain
+        }
+    }
+
     // MARK: - Helper functions
     private func unfoldAddress<T> (_ incomingData: T) -> String? {
         if let eth = incomingData as? EthereumAddress {
@@ -372,6 +395,23 @@ internal class UNS: CommonNamingService, NamingService {
                                 .callMethod(methodName: Self.getDataForManyMethodName,
                                             args: [keys, tokenIds]) { return result }
         throw ResolutionError.proxyReaderNonInitialized
+    }
+
+    private func getRegistryAddress(tokenId: String) throws -> String {
+        do {
+            if let result = try proxyReaderContract?
+                                    .callMethod(methodName: Self.registryOfMethodName,
+                                                args: [tokenId]) {
+                let dict = result as? [String: Any]
+                if let val = dict?["0"] as? EthereumAddress {
+                    return val.address
+                }
+                throw ResolutionError.unregisteredDomain
+            }
+            throw ResolutionError.proxyReaderNonInitialized
+        } catch APIError.decodingError {
+            throw ResolutionError.unregisteredDomain
+        }
     }
 }
 

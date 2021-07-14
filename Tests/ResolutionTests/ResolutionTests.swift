@@ -35,7 +35,6 @@ class ResolutionTests: XCTestCase {
                 zns: NamingServiceConfig(
                     providerUrl: "https://dev-api.zilliqa.com",
                     network: "testnet")
-                
             )
         );
     }
@@ -727,12 +726,9 @@ class ResolutionTests: XCTestCase {
 
         var tokenURI = ""
         var unregisteredResult: Result<String, ResolutionError>!
-
-        // TODO set the metada endpoint for rinkeby domain
-        resolution = try Resolution()
         
         // When
-        resolution.tokenURI(domain: "brad.crypto") { (result) in
+        resolution.tokenURI(domain: ResolutionTests.TEST_DOMAIN3) { (result) in
             switch result {
             case .success(let returnValue):
                 domainReceived.fulfill()
@@ -748,7 +744,7 @@ class ResolutionTests: XCTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        assert(tokenURI == "https://metadata.unstoppabledomains.com/metadata/brad.crypto")
+        assert(tokenURI == "https://staging-dot-dot-crypto-metadata.appspot.com/metadata/brad.crypto")
         self.checkError(result: unregisteredResult, expectedError: ResolutionError.unregisteredDomain)
     }
 
@@ -795,14 +791,14 @@ class ResolutionTests: XCTestCase {
 
     func testUnhash() throws {
         // Given
-        let domainReceived = expectation(description: "Exist domain should be received")
+        let domainReceived = expectation(description: "Existing domain should be received")
         let unregisteredReceived = expectation(description: "Unregistered domain should be received")
 
         var domainName: String = ""
         var unregisteredResult: Result<String, ResolutionError>!
 
         // When
-        resolution.unhash(hash: "0x756e4e998dbffd803c21d23b06cd855cdc7a4b57706c95964a37e24b47c10fc9", serviceName: "uns") { (result) in
+        resolution.unhash(hash: "0x756e4e998dbffd803c21d23b06cd855cdc7a4b57706c95964a37e24b47c10fc9", serviceName: .uns) { (result) in
             switch result {
             case .success(let returnValue):
                 domainReceived.fulfill()
@@ -811,7 +807,7 @@ class ResolutionTests: XCTestCase {
                 XCTFail("Expected domainName, but got \(error)")
             }
         }
-        resolution.unhash(hash: "0xdeaddeaddead", serviceName: "uns") {
+        resolution.unhash(hash: "0xdeaddeaddead", serviceName: .uns) {
             unregisteredResult = $0
             unregisteredReceived.fulfill()
         }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1200"
+   LastUpgradeVersion = "1250"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -17,7 +17,7 @@
                BlueprintIdentifier = "3EE4DA0224E367720097540B"
                BuildableName = "Resolution.framework"
                BlueprintName = "UnstoppableDomainsResolution"
-               ReferencedContainer = "container:resolution.xcodeproj">
+               ReferencedContainer = "container:Resolution.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -35,7 +35,7 @@
                BlueprintIdentifier = "3EE4DA0B24E367720097540B"
                BuildableName = "ResolutionTests.xctest"
                BlueprintName = "ResolutionTests"
-               ReferencedContainer = "container:resolution.xcodeproj">
+               ReferencedContainer = "container:Resolution.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -63,7 +63,7 @@
             BlueprintIdentifier = "3EE4DA0224E367720097540B"
             BuildableName = "Resolution.framework"
             BlueprintName = "UnstoppableDomainsResolution"
-            ReferencedContainer = "container:resolution.xcodeproj">
+            ReferencedContainer = "container:Resolution.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>
