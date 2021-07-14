@@ -18,13 +18,17 @@ internal class ZNS: CommonNamingService, NamingService {
     ]
 
     init(_ config: NamingServiceConfig) throws {
-
-        guard let registryAddress = registryMap[config.network] else {
-            throw ResolutionError.unsupportedNetwork
-        }
         self.network = config.network
 
-        self.registryAddress = registryAddress
+        var registryAddress: String? = registryMap[self.network]
+        if config.registryAddresses != nil && !config.registryAddresses!.isEmpty {
+            registryAddress = config.registryAddresses![0]
+        }
+
+        guard registryAddress != nil else {
+            throw ResolutionError.unsupportedNetwork
+        }
+        self.registryAddress = registryAddress!
         super.init(name: .zns, providerUrl: config.providerUrl, networking: config.networking)
     }
 
