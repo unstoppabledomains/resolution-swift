@@ -1,5 +1,12 @@
 # Resolution-swift CHANGELOG
-## 1.1.0
+## 2.0.0
+- Replaced CNS with UNS 
+- Support new TLD's ( .888, .nft, .coin, .blockchain, .wallet, .x, .bitcoin, .dao )
+- Introduce Resolution#tokenURI - Retrieves the tokenURI from the registry smart contract
+- Introduce Resolution#tokenURIMetadata - Retrieves the data from the endpoint provided by tokenURI from the registry smart contract.
+- Introduce Resolution#unhash - Retrieves the domain name from token metadata that is provided by tokenURI from the registry smart contract
+- Updated configuration file to 0.1.0
+- Update script for supported-keys and uns-config
 - Return Ens support
 
 ## 1.0.0
