@@ -59,14 +59,48 @@ class ResolutionTests: XCTestCase {
             try Resolution(configs: Configurations(
                 uns: NamingServiceConfig(providerUrl: "https://ropsten.infura.io/v3/3c25f57353234b1b853e9861050f4817")
             ));
-        }, expectedError: .unsupportedNetwork)
+        }, expectedError: .proxyReaderNonInitialized)
         
         self.checkError(completion: {
             try Resolution(configs: Configurations(
                 ens: NamingServiceConfig(providerUrl: "https://kovan.infura.io/v3/d423cf2499584d7fbe171e33b42cfbee")
             ));
-        }, expectedError: .unsupportedNetwork)
+        }, expectedError: .registryAddressIsNotProvided)
+        
+        self.checkError(completion: {
+            try Resolution(configs: Configurations(
+                zns: NamingServiceConfig(providerUrl: "https://kovan.infura.io/v3/d423cf2499584d7fbe171e33b42cfbee")
+            ));
+        }, expectedError: .registryAddressIsNotProvided)
     }
+    
+    func testCustomNetwork() throws {
+        let resolution = try Resolution(configs: Configurations(
+            uns: NamingServiceConfig(
+                providerUrl: "https://rinkeby.infura.io/v3/3c25f57353234b1b853e9861050f4817",
+                network: "somethingCustom",
+                proxyReader: "0x299974AeD8911bcbd2C61262605b89F591a53E83",
+                registryAddresses: ["0x7fb83000B8eD59D3eAD22f0D584Df3a85fBC0086", "0xAad76bea7CFEc82927239415BB18D2e93518ecBB"]
+            ),
+            ens: NamingServiceConfig(
+                providerUrl: "https://kovan.infura.io/v3/d423cf2499584d7fbe171e33b42cfbee",
+                network: "customKovan",
+                registryAddresses: ["0x7fb83000B8eD59D3eAD22f0D584Df3a85fBC0086"]
+            ),
+            zns: NamingServiceConfig(
+                providerUrl: "https://kovan.infura.io/v3/d423cf2499584d7fbe171e33b42cfbee",
+                network: "customKovanPortZil",
+                registryAddresses: ["0x7fb83000B8eD59D3eAD22f0D584Df3a85fBC0086"]
+            )
+            ));
+        let unsNetwork = try resolution.getNetwork(from: "uns")
+        let ensNetwork = try resolution.getNetwork(from: "ens")
+        let znsNetwork = try resolution.getNetwork(from: "zns")
+        assert(unsNetwork == "somethingCustom")
+        assert(ensNetwork == "customKovan")
+        assert(znsNetwork == "customKovanPortZil")
+    }
+    
     
     func testForUnregisteredDomain() throws {
         let UnregirestedDomainExpectation = expectation(description: "Domain should not be registered!")
@@ -924,6 +958,8 @@ extension ResolutionError: Equatable {
             return true
         case (.unsupportedServiceName, .unsupportedServiceName):
             return true
+        case (.registryAddressIsNotProvided, .registryAddressIsNotProvided):
+            return true
             
         case (.unregisteredDomain, _),
              (.unsupportedDomain, _),
@@ -937,7 +973,8 @@ extension ResolutionError: Equatable {
              (.proxyReaderNonInitialized, _),
              (.tooManyResponses, _),
              (.badRequestOrResponse, _),
-             (.unsupportedServiceName, _):
+             (.unsupportedServiceName, _),
+             (.registryAddressIsNotProvided, _):
             
             return false
         // Xcode with Version 12.4 (12D4e) can't compile this without default

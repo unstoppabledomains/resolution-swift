@@ -24,10 +24,15 @@ internal class ENS: CommonNamingService, NamingService {
             ? try Self.getNetworkId(providerUrl: config.providerUrl, networking: config.networking)
             : config.network
 
-        guard let registryAddress = registryMap[self.network] else {
-            throw ResolutionError.unsupportedNetwork
+        var registryAddress: String? = registryMap[self.network]
+        if config.registryAddresses != nil && !config.registryAddresses!.isEmpty {
+            registryAddress = config.registryAddresses![0]
         }
-        self.registryAddress = registryAddress
+
+        guard registryAddress != nil else {
+            throw ResolutionError.registryAddressIsNotProvided
+        }
+        self.registryAddress = registryAddress!
         super.init(name: .ens, providerUrl: config.providerUrl, networking: config.networking)
     }
 

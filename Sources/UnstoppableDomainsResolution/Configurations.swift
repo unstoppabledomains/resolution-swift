@@ -12,15 +12,21 @@ public struct NamingServiceConfig {
     let network: String
     let providerUrl: String
     let networking: NetworkingLayer
+    let proxyReader: String?
+    let registryAddresses: [String]?
 
     public init(
         providerUrl: String,
         network: String = "",
-        networking: NetworkingLayer = DefaultNetworkingLayer()
+        networking: NetworkingLayer = DefaultNetworkingLayer(),
+        proxyReader: String? = nil,
+        registryAddresses: [String]? = nil
     ) {
         self.network = network
         self.providerUrl = providerUrl
         self.networking = networking
+        self.proxyReader = proxyReader
+        self.registryAddresses = registryAddresses
     }
 }
 

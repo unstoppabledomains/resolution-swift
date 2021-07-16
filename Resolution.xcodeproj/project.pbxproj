@@ -73,6 +73,8 @@
 		3E2AC91E24E4FA35008EBC39 /* NamingService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NamingService.swift; sourceTree = "<group>"; };
 		3E2AC93C24E4FC9F008EBC39 /* unsResolver.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = unsResolver.json; sourceTree = "<group>"; };
 		3E2AC93D24E4FC9F008EBC39 /* unsRegistry.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = unsRegistry.json; sourceTree = "<group>"; };
+		3E322BA0269F5542007023A6 /* ABICoderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ABICoderTests.swift; path = ABICoderTests/ABICoderTests.swift; sourceTree = "<group>"; };
+		3E322BA1269F5552007023A6 /* TokenUriMetadataTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TokenUriMetadataTests.swift; path = HelpersTests/TokenUriMetadataTests.swift; sourceTree = "<group>"; };
 		3E33F99825DCFAB400627C71 /* Configurations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Configurations.swift; sourceTree = "<group>"; };
 		3E65912724E381E900D7EC35 /* Errors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
 		3E65913024E4ADAC00D7EC35 /* Contract.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Contract.swift; sourceTree = "<group>"; };
@@ -288,6 +290,8 @@
 		849E07CB24F946CA00A793D3 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				3E322BA1269F5552007023A6 /* TokenUriMetadataTests.swift */,
+				3E322BA0269F5542007023A6 /* ABICoderTests.swift */,
 				849E07CC24F946CA00A793D3 /* LinuxMain.swift */,
 				B6F2075E25DBD8C700140CE3 /* EthereumABITests */,
 				3EE4DA1024E367720097540B /* ResolutionTests */,
@@ -427,7 +431,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 3EE4D9FD24E367720097540B /* Build configuration list for PBXProject "Resolution" */;
+			buildConfigurationList = 3EE4D9FD24E367720097540B /* Build configuration list for PBXProject "resolution" */;
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -789,7 +793,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		3EE4D9FD24E367720097540B /* Build configuration list for PBXProject "Resolution" */ = {
+		3EE4D9FD24E367720097540B /* Build configuration list for PBXProject "resolution" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3EE4DA1524E367720097540B /* Debug */,
