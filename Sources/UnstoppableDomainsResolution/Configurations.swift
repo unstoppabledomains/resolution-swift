@@ -12,31 +12,42 @@ public struct NamingServiceConfig {
     let network: String
     let providerUrl: String
     let networking: NetworkingLayer
+    let proxyReader: String?
+    let registryAddresses: [String]?
 
     public init(
         providerUrl: String,
         network: String = "",
-        networking: NetworkingLayer = DefaultNetworkingLayer()
+        networking: NetworkingLayer = DefaultNetworkingLayer(),
+        proxyReader: String? = nil,
+        registryAddresses: [String]? = nil
     ) {
         self.network = network
         self.providerUrl = providerUrl
         self.networking = networking
+        self.proxyReader = proxyReader
+        self.registryAddresses = registryAddresses
     }
 }
 
 public struct Configurations {
-    let cns: NamingServiceConfig
+    let uns: NamingServiceConfig
     let zns: NamingServiceConfig
+    let ens: NamingServiceConfig
 
     public init(
-        cns: NamingServiceConfig = NamingServiceConfig(
+        uns: NamingServiceConfig = NamingServiceConfig(
             providerUrl: "https://mainnet.infura.io/v3/3c25f57353234b1b853e9861050f4817",
+            network: "mainnet"),
+        ens: NamingServiceConfig = NamingServiceConfig(
+            providerUrl: "https://mainnet.infura.io/v3/d423cf2499584d7fbe171e33b42cfbee",
             network: "mainnet"),
         zns: NamingServiceConfig = NamingServiceConfig(
             providerUrl: "https://api.zilliqa.com",
             network: "mainnet")
     ) {
-        self.cns = cns
+        self.uns = uns
+        self.ens = ens
         self.zns = zns
     }
 }

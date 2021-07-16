@@ -1,4 +1,14 @@
 # Resolution-swift CHANGELOG
+## 2.0.0
+- Replaced CNS with UNS 
+- Support new TLD's ( .888, .nft, .coin, .blockchain, .wallet, .x, .bitcoin, .dao )
+- Introduce Resolution#tokenURI - Retrieves the tokenURI from the registry smart contract
+- Introduce Resolution#tokenURIMetadata - Retrieves the data from the endpoint provided by tokenURI from the registry smart contract.
+- Introduce Resolution#unhash - Retrieves the domain name from token metadata that is provided by tokenURI from the registry smart contract
+- Updated configuration file to 0.1.0
+- Update script for supported-keys and uns-config
+- Return Ens support
+- Allowed custom networks for each of the naming services. If custom network has been set, it is required to set the proxyReader contract address for UNS and registryAddress for ENS && ZNS (see Sources/UnstoppableDomainsResolution/Resources/UNS/uns-config.json)
 
 ## 1.0.0
 - Remove Ens support ([#41](https://github.com/unstoppabledomains/resolution-swift/pull/41)) via [@JohnnyJumper](https://github.com/JohnnyJumper)

@@ -9,9 +9,10 @@
 import Foundation
 
 protocol NamingService {
-    var name: String { get }
+    var name: NamingServiceName { get }
     var network: String { get }
     var providerUrl: String { get }
+    var networking: NetworkingLayer { get }
 
     func namehash(domain: String) -> String
     func isSupported(domain: String) -> Bool
@@ -25,4 +26,8 @@ protocol NamingService {
 
     func record(domain: String, key: String) throws -> String
     func records(keys: [String], for domain: String) throws -> [String: String]
+
+    func getTokenUri(tokenId: String) throws -> String
+
+    func getDomainName(tokenId: String) throws -> String
 }

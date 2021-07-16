@@ -10,11 +10,17 @@ import Foundation
 ///
 /// Supported domain zones:
 ///
-/// *CNS:*
+/// *uns:*
 ///     .crypto
 ///
-/// *ZNS*
+/// *zns*
 ///     .zil
+///
+/// *ENS*
+///     .eth
+///     .kred
+///     .xyz
+///     .luxe
 ///
 /// ```swift
 /// let resolution = try Resolution();
@@ -34,7 +40,7 @@ import Foundation
 /// ```swift
 /// let resolution = try Resolution(
 ///   configs: Configurations(
-///     cns: NamingServiceConfig(
+///     uns: NamingServiceConfig(
 ///       providerUrl: "https://rinkeby.infura.io/v3/3c25f57353234b1b853e9861050f4817",
 ///       network: "rinkeby"
 ///    )
@@ -59,7 +65,7 @@ public class Resolution {
 
     /// Returns a network that NamingService was configure with
     public func getNetwork(from serviceName: String) throws -> String {
-        guard let service = services.first(where: {$0.name == serviceName.uppercased() }) else {
+        guard let service = services.first(where: {$0.name.rawValue == serviceName.lowercased() }) else {
             throw ResolutionError.unsupportedServiceName
         }
         return service.network
@@ -67,23 +73,29 @@ public class Resolution {
 
     /// Checks if the domain name is valid according to naming service rules for valid domain names.
     ///
+    /// **Example:** ENS doesn't allow domains that start from '-' symbol.
+    ///
     /// - Parameter domain: domain name to be checked
+    /// - Parameter completion: A callback that resolves `Result` with  a `Bool` value
     ///
-    /// - Returns: The return true or false.
-    ///
-    public func isSupported(domain: String) -> Bool {
-        do {
-            let preparedDomain = prepare(domain: domain)
-            return try getServiceOf(domain: preparedDomain).isSupported(domain: preparedDomain)
-        } catch {
-            return false
+    public func isSupported(domain: String, completion: @escaping BoolResultConsumer) {
+        let preparedDomain = prepare(domain: domain)
+        DispatchQueue.global(qos: .utility).async { [weak self] in
+            do {
+                guard self?.services.first(where: {$0.isSupported(domain: preparedDomain)}) != nil  else {
+                    throw ResolutionError.unsupportedDomain
+                }
+                completion(.success(true))
+            } catch {
+                completion(.success(false))
+            }
         }
     }
 
     /// Resolves a hash  of the `domain` according to https://github.com/ethereum/EIPs/blob/master/EIPS/eip-137.md
     /// - Parameter domain: - domain name to be converted
     /// - Returns: Produces a namehash from supported naming service in hex format with 0x prefix.
-    /// Corresponds to ERC721 token id.
+    /// Corresponds to ERC721 token id in case of Ethereum based naming service like ENS or UNS.
     /// - Throws: ```ResolutionError.unsupportedDomain```  if domain extension is unknown
     ///
     public func namehash(domain: String) throws -> String {
@@ -148,10 +160,12 @@ public class Resolution {
     public func tokensOwnedBy(address: String, service: String, completion: @escaping StringsArrayResultConsumer ) {
         DispatchQueue.global(qos: .utility).async { [weak self] in
             do {
-                guard let service = self?.services.first(where: { $0.name == service }) else {
+
+                guard let serviceName = NamingServiceName(rawValue: service),
+                    let namingService = self?.services.first(where: { $0.name == serviceName }) else {
                     throw ResolutionError.unsupportedServiceName
                 }
-                let result = try service.tokensOwnedBy(address: address)
+                let result = try namingService.tokensOwnedBy(address: address)
                 completion(.success(result))
             } catch {
                 self?.catchError(error, completion: completion)
@@ -184,7 +198,8 @@ public class Resolution {
         let preparedDomain = prepare(domain: domain)
         DispatchQueue.global(qos: .utility).async { [weak self] in
             do {
-                guard let service = try self?.getServiceOf(domain: preparedDomain) else {
+                guard let service = try self?.getServiceOf(domain: preparedDomain),
+                      service.name != .ens else {
                     throw ResolutionError.methodNotSupported
                 }
                 let recordKey = "crypto.\(ticker.uppercased()).version.\(chain.uppercased()).address"
@@ -285,7 +300,7 @@ public class Resolution {
         DispatchQueue.global(qos: .utility).async { [weak self] in
             do {
                 guard let service = try self?.getServiceOf(domain: preparedDomain),
-                      service.name == "CNS" else {
+                      service.name == .uns else {
                     throw ResolutionError.methodNotSupported
                 }
 
@@ -333,6 +348,51 @@ public class Resolution {
         }
     }
 
+    /// Retrieves the tokenURI from the registry smart contract.
+    /// - Parameter domain: - domain name to be resolved
+    /// - Parameter  completion: A callback that resolves `Result`  with a `tokenURI` for a specific domain or `Error`
+    public func tokenURI(domain: String, completion:@escaping StringResultConsumer) {
+        do {
+            let namehash = try self.namehash(domain: domain)
+            let result = try self.getServiceOf(domain: domain).getTokenUri(tokenId: namehash)
+            completion(.success(result))
+        } catch {
+            self.catchError(error, completion: completion)
+        }
+    }
+
+    /// Retrieves the data from the endpoint provided by tokenURI from the registry smart contract.
+    /// - Parameter domain: - domain name to be resolved
+    /// - Parameter  completion: A callback that resolves `Result` with a `TokenUriMetadata` for a specific domain or `Error`
+    public func tokenURIMetadata(domain: String, completion:@escaping TokenUriMetadataResultConsumer) {
+        do {
+            let namehash = try self.namehash(domain: domain)
+            let tokenURI = try self.getServiceOf(domain: domain).getTokenUri(tokenId: namehash)
+            try self.fetchTokenUriMetadata(tokenURI: tokenURI, completion: completion)
+        } catch {
+            self.catchError(error, completion: completion)
+        }
+    }
+
+    /// Retrieves the domain name from token metadata that is provided by tokenURI from the registry smart contract.
+    /// The function will throw an error if the domain in the metadata does not match the hash (e.g. if the metadata is outdated).
+    /// - Parameter hash: - domain hash to be resolved
+    /// - Parameter serviceName: - name of the service to use to get metadata
+    /// - Parameter completion: A callback that resolves `Result` with a `domainName` for a specific domain or `Error`
+    public func unhash(hash: String, serviceName: NamingServiceName, completion:@escaping StringResultConsumer) {
+        do {
+            let domain = try self.findService(name: serviceName).getDomainName(tokenId: hash)
+
+            let receivedHash = try self.namehash(domain: domain)
+            if receivedHash != hash {
+                completion(.failure(ResolutionError.badRequestOrResponse))
+            }
+            completion(.success(domain))
+        } catch {
+            self.catchError(error, completion: completion)
+        }
+    }
+
     // MARK: - Uttilities function
 
     /// this returns [NamingService] from the configurations
@@ -340,7 +400,13 @@ public class Resolution {
         var networkServices: [NamingService] = []
         var errorService: Error?
         do {
-            networkServices.append(try CNS(configs.cns))
+            networkServices.append(try UNS(configs.uns))
+        } catch {
+            errorService = error
+        }
+
+        do {
+            networkServices.append(try ENS(configs.ens))
         } catch {
             errorService = error
         }
@@ -359,10 +425,13 @@ public class Resolution {
 
     /// This returns the correct naming service based on the `domain` asked for
     private func getServiceOf(domain: String) throws -> NamingService {
-        guard let service = services.first(where: {$0.isSupported(domain: domain)}) else {
-            throw ResolutionError.unsupportedDomain
+        if domain.hasSuffix(".zil") {
+            return try self.findService(name: .zns)
         }
-        return service
+        if domain ~= "^[^-]*[^-]*\\.(eth|luxe|xyz|kred|addr\\.reverse)$" {
+            return try self.findService(name: .ens)
+        }
+        return try self.findService(name: .uns)
     }
 
     /// This returns the correct naming service based on the `domain`'s array asked for
@@ -371,8 +440,8 @@ public class Resolution {
             throw ResolutionError.unsupportedDomain
         }
 
-        let possibleServices = domains.compactMap { domain in
-            return services.first(where: {$0.isSupported(domain: domain)})
+        let possibleServices = try domains.compactMap { domain in
+            return try self.getServiceOf(domain: domain)
         }
         guard possibleServices.count == domains.count else {
             throw ResolutionError.unsupportedDomain
@@ -384,6 +453,29 @@ public class Resolution {
             return currNS
         })
         return service!
+    }
+
+    /// This returns the correct naming service based on the service name asked for
+    private func findService(name: NamingServiceName) throws -> NamingService {
+        guard let service = services.first(where: {$0.name == name}) else {
+            throw ResolutionError.unsupportedServiceName
+        }
+        return service
+    }
+
+    /// Gets the token metadata from metadata API
+    private func fetchTokenUriMetadata(tokenURI: String, completion:@escaping TokenUriMetadataResultConsumer) throws {
+        let networking = try findService(name: .uns).networking
+        let url = URL(string: tokenURI)
+        networking.makeHttpGetRequest(url: url!,
+                                    completion: {result in
+                                        switch result {
+                                        case .success(let response):
+                                            completion(.success(response))
+                                        case .failure(let error):
+                                            self.catchError(error, completion: completion)
+                                        }
+                                    })
     }
 
     /// Preproccess the `domain`
@@ -425,6 +517,15 @@ public class Resolution {
                 return
             }
             completion(.failure(catched))
+            return
+        }
+        completion(.failure(catched))
+    }
+
+    /// Process the 'error'
+    private func catchError(_ error: Error, completion:@escaping TokenUriMetadataResultConsumer ) {
+        guard let catched = error as? ResolutionError else {
+            completion(.failure(.unknownError(error)))
             return
         }
         completion(.failure(catched))

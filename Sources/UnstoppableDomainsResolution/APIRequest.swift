@@ -22,6 +22,7 @@ public protocol NetworkingLayer {
                               httpHeaderContentType: String,
                               httpBody: Data,
                               completion: @escaping(Result<JsonRpcResponseArray, Error>) -> Void)
+    func makeHttpGetRequest(url: URL, completion: @escaping TokenUriMetadataResultConsumer )
 }
 
 struct APIRequest {
@@ -90,6 +91,29 @@ public struct DefaultNetworkingLayer: NetworkingLayer {
                         completion(.failure(APIError.decodingError))
                     }
                 }
+            }
+        }
+        dataTask.resume()
+    }
+
+    public func makeHttpGetRequest(url: URL, completion: @escaping TokenUriMetadataResultConsumer ) {
+        var urlRequest = URLRequest(url: url)
+        urlRequest.httpMethod = "GET"
+        urlRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        let dataTask = URLSession.shared.dataTask(with: urlRequest) { data, response, _ in
+            guard let httpResponse = response as? HTTPURLResponse,
+                  httpResponse.statusCode == 200,
+                  let jsonData = data else {
+                completion(.failure(ResolutionError.badRequestOrResponse))
+                return
+            }
+
+            do {
+                let result = try JSONDecoder().decode(TokenUriMetadata.self, from: jsonData)
+                completion(.success(result))
+            } catch {
+                completion(.failure(ResolutionError.badRequestOrResponse))
             }
         }
         dataTask.resume()
