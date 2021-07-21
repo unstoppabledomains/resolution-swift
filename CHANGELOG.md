@@ -4,8 +4,9 @@
 
 ### Breaking changes
 
-- `Configurations` class accepts `uns` configs instead of  `cns`
 - `Resolution#isSupported` is now making an async call. Method signature was changed.
+- `Configurations` class accepts `uns` configs instead of  `cns`. 
+  - For example: `let resolution = try Resolution(configs: Configurations(uns: NamingServiceConfig(...uns config)));`
 
 ### New methods and features
 
