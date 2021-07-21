@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
   spec.name         = "UnstoppableDomainsResolution"
-  spec.version      = "1.0.0"
+  spec.version      = "2.0.0"
   spec.summary      = "Swift framework for resolving Unstoppable domains."
 
   spec.description  = <<-DESC
@@ -23,6 +23,6 @@ Pod::Spec.new do |spec|
 
   spec.resources = "Sources/UnstoppableDomainsResolution/Resources/**/*.json"
 
-  spec.dependency 'CryptoSwift', '~> 1.4.1'
+  spec.dependency 'CryptoSwift'
   spec.dependency 'BigInt'
 end
