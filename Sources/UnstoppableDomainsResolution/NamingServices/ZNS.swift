@@ -1,5 +1,5 @@
 //
-//  ZNS.swift
+//  zns.swift
 //  Resolution
 //
 //  Created by Serg Merenkov on 9/8/20.
@@ -18,14 +18,18 @@ internal class ZNS: CommonNamingService, NamingService {
     ]
 
     init(_ config: NamingServiceConfig) throws {
-
-        guard let registryAddress = registryMap[config.network] else {
-            throw ResolutionError.unsupportedNetwork
-        }
         self.network = config.network
 
-        self.registryAddress = registryAddress
-        super.init(name: "ZNS", providerUrl: config.providerUrl, networking: config.networking)
+        var registryAddress: String? = registryMap[self.network]
+        if config.registryAddresses != nil && !config.registryAddresses!.isEmpty {
+            registryAddress = config.registryAddresses![0]
+        }
+
+        guard registryAddress != nil else {
+            throw ResolutionError.registryAddressIsNotProvided
+        }
+        self.registryAddress = registryAddress!
+        super.init(name: .zns, providerUrl: config.providerUrl, networking: config.networking)
     }
 
     func isSupported(domain: String) -> Bool {
@@ -73,6 +77,14 @@ internal class ZNS: CommonNamingService, NamingService {
         }
         let filtered = records.filter { keys.contains($0.key) }
         return filtered
+    }
+
+    func getTokenUri(tokenId: String) throws -> String {
+        throw ResolutionError.methodNotSupported
+    }
+
+    func getDomainName(tokenId: String) throws -> String {
+        throw ResolutionError.methodNotSupported
     }
 
     // MARK: - get Resolver

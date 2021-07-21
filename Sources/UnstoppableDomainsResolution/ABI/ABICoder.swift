@@ -78,4 +78,5 @@ internal class ABICoder {
         let encoded = encodedData.toHexString().addHexPrefix()
         return encoded
     }
+
 }

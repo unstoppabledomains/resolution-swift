@@ -13,20 +13,20 @@ let package = Package(
             targets: ["UnstoppableDomainsResolution"])
     ],
     dependencies: [
-        .package(url: "https://github.com/krzyzanowskim/CryptoSwift.git", from: "1.0.0"),
-        .package(url: "https://github.com/attaswift/BigInt.git", from: "5.0.0"),
-        .package(url: "https://github.com/shamatar/EthereumAddress.git", from: "1.3.0")
+        .package(url: "https://github.com/krzyzanowskim/CryptoSwift.git", from: "1.3.8"),
+        .package(url: "https://github.com/attaswift/BigInt.git", from: "5.0.0")
     ],
     targets: [
         .target(
             name: "UnstoppableDomainsResolution",
-            dependencies: ["CryptoSwift", "BigInt", "EthereumAddress"],
+            dependencies: ["CryptoSwift", "BigInt"],
             resources: [
-                .process("Resources/CNS/supported-keys.json"),
-                .process("Resources/CNS/cnsProxyReader.json"),
-                .process("Resources/CNS/cnsRegistry.json"),
-                .process("Resources/CNS/cnsResolver.json"),
-                .process("Resources/CNS/network-config.json"),
+                .process("Resources/UNS/supported-keys.json"),
+                .process("Resources/UNS/unsProxyReader.json"),
+                .process("Resources/UNS/unsRegistry.json"),
+                .process("Resources/UNS/cnsRegistry.json"),
+                .process("Resources/UNS/unsResolver.json"),
+                .process("Resources/UNS/uns-config.json"),
                 .process("Resources/ENS/ensRegistry.json"),
                 .process("Resources/ENS/ensResolver.json")
             ],
@@ -35,7 +35,7 @@ let package = Package(
         .testTarget(
             name: "ResolutionTests",
             dependencies: ["UnstoppableDomainsResolution"],
-            exclude:["Info.plist"],
+            exclude: ["Info.plist"],
             swiftSettings: [.define("INSIDE_PM")]
         )
     ]

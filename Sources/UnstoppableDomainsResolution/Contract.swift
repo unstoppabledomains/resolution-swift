@@ -111,7 +111,7 @@ internal class Contract {
         guard err == nil else {
             throw err!
         }
-       return resp?[0].result
+        return resp?[0].result
     }
 
     private func postBatchRequest(_ bodyArray: [JsonRpcPayload]) throws -> [IdentifiableResult<String>?] {
@@ -142,5 +142,12 @@ internal class Contract {
             return nil
         }
         return parsedResponseArray
+    }
+
+    private func stringParamElementToData(_ param: ParamElement?) throws -> Data {
+        guard case .string(let paramString) = param else {
+            throw ResolutionError.badRequestOrResponse
+        }
+        return Data(hex: paramString)
     }
 }
