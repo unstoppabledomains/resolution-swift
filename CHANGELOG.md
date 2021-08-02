@@ -1,5 +1,8 @@
 # Resolution-swift CHANGELOG
 
+## 2.0.1
+- Fix `Resolution#tokensOwnedBy` issue with lowercased addresses.
+
 ## 2.0.0
 
 ### Breaking changes
