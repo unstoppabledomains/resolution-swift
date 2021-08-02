@@ -201,7 +201,7 @@ internal class UNS: CommonNamingService, NamingService {
             guard let self = self else { return }
             do {
                 let owners = try self.batchOwners(domains: possibleDomains)
-                for (ind, addr) in owners.enumerated() where addr == address {
+                for (ind, addr) in owners.enumerated() where addr?.lowercased() == address.lowercased() {
                     domains.append(possibleDomains[ind])
                 }
                 semaphore.signal()

@@ -631,6 +631,27 @@ class ResolutionTests: XCTestCase {
         assert(chatID == "0x8912623832e174f2eb1f59cc3b587444d619376ad5bf10070e937e0dc22b9ffb2e3ae059e6ebf729f87746b2f71e5d88ec99c1fb3c7c49b8617e2520d474c48e1c")
     }
     
+    func testForTokensOwnedByUns() throws  {
+        let tokenReceived = expectation(description: "tokens for 0xac54c586798912c9a6d4a26d3e9fe19f384256de address should be received");
+        var returnedDomains: [String] = [];
+        
+        resolution.tokensOwnedBy(address: "0xac54c586798912c9a6d4a26d3e9fe19f384256de", service: "uns") { result in
+            switch result {
+            case .success(let domains):
+                returnedDomains = domains.compactMap{ $0 };
+                tokenReceived.fulfill()
+            case .failure(let error):
+                XCTFail("Expected domains, but got \(error)")
+            }
+        }
+        waitForExpectations(timeout: 500, handler: nil)
+        assert(returnedDomains.count >= 3);
+        assert(returnedDomains.contains("amazing.crypto"));
+        assert(returnedDomains.contains("july23.bitcoin"));
+        assert(returnedDomains.contains("roman.bitcoin"));
+        
+    }
+    
     func testForTokensOwnedByCns() throws {
         let tokenReceived = expectation(description: "tokens for 0x8aaD44321A86b170879d7A244c1e8d360c99DdA8 address should be received");
         var returnedDomains: [String] = [];
