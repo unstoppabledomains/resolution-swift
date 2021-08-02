@@ -644,7 +644,7 @@ class ResolutionTests: XCTestCase {
                 XCTFail("Expected domains, but got \(error)")
             }
         }
-        waitForExpectations(timeout: 500, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
         assert(returnedDomains.count >= 3);
         assert(returnedDomains.contains("amazing.crypto"));
         assert(returnedDomains.contains("july23.bitcoin"));
