@@ -799,7 +799,7 @@ class ResolutionTests: XCTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        assert(tokenURI == "https://staging-dot-dot-crypto-metadata.appspot.com/metadata/brad.crypto")
+        assert(tokenURI == "https://metadata.staging.unstoppabledomains.com/metadata/brad.crypto")
         self.checkError(result: unregisteredResult, expectedError: ResolutionError.unregisteredDomain)
     }
 
