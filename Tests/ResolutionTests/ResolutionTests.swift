@@ -18,6 +18,7 @@ var resolution: Resolution!
 class ResolutionTests: XCTestCase {
 
     static let TEST_DOMAIN: String = "udtestdev-265f8f.crypto"
+    static let TEST_UNNORMALIZED_DOMAIN: String = "    UDTESTDEV-265f8F.CRYPTO    "
     static let TEST_DOMAIN2: String = "johnnytestdev6357.crypto"
     static let TEST_DOMAIN3: String = "brad.crypto"
     static let TEST_WALLET_DOMAIN: String = "udtestdev-johnnywallet.wallet"
@@ -341,6 +342,7 @@ class ResolutionTests: XCTestCase {
     func testMultiChainAddress() throws {
         // Given
         let domain: String = ResolutionTests.TEST_DOMAIN;
+        let unNormalizedDomain: String = ResolutionTests.TEST_UNNORMALIZED_DOMAIN;
         
         let erc20Received = expectation(description: "Erc20 record should be received");
         var erc20: String = "";
@@ -373,7 +375,7 @@ class ResolutionTests: XCTestCase {
             }
         }
 
-        resolution.multiChainAddress(domain: domain, ticker: "usdt", chain: "eos") { (result) in
+        resolution.multiChainAddress(domain: unNormalizedDomain, ticker: "usdt", chain: "eos") { (result) in
             switch result {
             case .success(let returnValue):
                 eosReceived.fulfill();
@@ -393,7 +395,7 @@ class ResolutionTests: XCTestCase {
             }
         }
 
-        resolution.multiChainAddress(domain: domain, ticker: "usdt", chain: "omni") { (result) in
+        resolution.multiChainAddress(domain: unNormalizedDomain, ticker: "usdt", chain: "omni") { (result) in
             switch result {
             case .success(let returnValue):
                 omniReceived.fulfill();
@@ -414,8 +416,7 @@ class ResolutionTests: XCTestCase {
     }
 
     func testGetOwner() throws {
-
-        let CNSDomain = ResolutionTests.TEST_DOMAIN;
+        let unNormalizedDomain: String = ResolutionTests.TEST_UNNORMALIZED_DOMAIN;
         // Given
         let domainCryptoReceived = expectation(description: "Exist Crypto domain should be received")
         let domainEthReceived = expectation(description: "Exist ETH domain should be received")
@@ -426,7 +427,7 @@ class ResolutionTests: XCTestCase {
         var unregisteredResult: Result<String, ResolutionError>!
 
         // When
-        resolution.owner(domain: CNSDomain) { (result) in
+        resolution.owner(domain: unNormalizedDomain) { (result) in
             switch result {
             case .success(let returnValue):
                 domainCryptoReceived.fulfill()
@@ -470,7 +471,7 @@ class ResolutionTests: XCTestCase {
         var partialResult: Result<[String?], ResolutionError>!
 
         // When
-        resolution.batchOwners(domains: [ResolutionTests.TEST_DOMAIN, ResolutionTests.TEST_DOMAIN2]) { (result) in
+        resolution.batchOwners(domains: [ResolutionTests.TEST_UNNORMALIZED_DOMAIN, ResolutionTests.TEST_DOMAIN2]) { (result) in
             switch result {
             case .success(let returnValue):
                 owners = returnValue
@@ -516,7 +517,7 @@ class ResolutionTests: XCTestCase {
         var unregisteredResult: Result<String, ResolutionError>!
 
         // When
-        resolution.resolver(domain: ResolutionTests.TEST_DOMAIN) { (result) in
+        resolution.resolver(domain: ResolutionTests.TEST_UNNORMALIZED_DOMAIN) { (result) in
             switch result {
             case .success(let returnValue):
                 domainCryptoReceived.fulfill()

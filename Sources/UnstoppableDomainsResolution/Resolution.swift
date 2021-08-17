@@ -480,7 +480,7 @@ public class Resolution {
 
     /// Preproccess the `domain`
     private func prepare(domain: String) -> String {
-        return domain.lowercased()
+        return domain.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
     /// Process the 'error'
