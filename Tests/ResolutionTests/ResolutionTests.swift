@@ -902,6 +902,27 @@ class ResolutionTests: XCTestCase {
         assert(values["someweirdstuf"] == "")
     }
 
+    func testCheckDomain() throws {
+        // Given
+        let validDomainName: String = "valid.domain-test-123.crypto"
+        let invalidDomainName: String = "in!va(li)d+domain"
+
+        // When
+        do {
+            _ = try resolution.namehash(domain: validDomainName)
+        } catch {
+            // Then
+            XCTFail("Expected to not throw, but got \(error)")
+        }
+
+        do {
+            _ = try resolution.namehash(domain: invalidDomainName)
+        } catch {
+            // Then
+            assert(error as! ResolutionError == ResolutionError.invalidDomainName, "Expected \(ResolutionError.invalidDomainName), but got \(error)")
+        }
+    }
+
     func testPerformanceExample() throws {
         // This is an example of a performance test case.
         self.measure {
@@ -982,6 +1003,8 @@ extension ResolutionError: Equatable {
             return true
         case (.registryAddressIsNotProvided, .registryAddressIsNotProvided):
             return true
+        case (.invalidDomainName, .invalidDomainName):
+            return true
             
         case (.unregisteredDomain, _),
              (.unsupportedDomain, _),
@@ -996,7 +1019,8 @@ extension ResolutionError: Equatable {
              (.tooManyResponses, _),
              (.badRequestOrResponse, _),
              (.unsupportedServiceName, _),
-             (.registryAddressIsNotProvided, _):
+             (.registryAddressIsNotProvided, _),
+             (.invalidDomainName, _):
             
             return false
         // Xcode with Version 12.4 (12D4e) can't compile this without default
