@@ -58,7 +58,7 @@ import Foundation
 /// ```
 public class Resolution {
     private var services: [NamingService] = []
-
+    // swiftlint:disable:next force_try
     private var domainRegex = try! NSRegularExpression(pattern: "^[.a-z\\d-]+$")
 
     public init(configs: Configurations = Configurations() ) throws {

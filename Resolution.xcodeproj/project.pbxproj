@@ -19,7 +19,6 @@
 		3E65912824E381E900D7EC35 /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E65912724E381E900D7EC35 /* Errors.swift */; };
 		3E65913124E4ADAC00D7EC35 /* Contract.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E65913024E4ADAC00D7EC35 /* Contract.swift */; };
 		3E889CC8268AF94E000C5330 /* TokenUriMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E889CC7268AF94E000C5330 /* TokenUriMetadata.swift */; };
-		3E889CCE268AFA83000C5330 /* supported-keys.json in Resources */ = {isa = PBXBuildFile; fileRef = 3E889CCD268AFA83000C5330 /* supported-keys.json */; };
 		3E889D12268B1BBB000C5330 /* uns-config.json in Resources */ = {isa = PBXBuildFile; fileRef = 3E889D11268B1BBB000C5330 /* uns-config.json */; };
 		3E889D1E268D51CF000C5330 /* cnsRegistry.json in Resources */ = {isa = PBXBuildFile; fileRef = 3E889D1D268D51CF000C5330 /* cnsRegistry.json */; };
 		3EAFA3F724EB59DA008791E9 /* ABICoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EAFA3F624EB59DA008791E9 /* ABICoder.swift */; };
@@ -27,6 +26,7 @@
 		3EAFA40024EE0CFD008791E9 /* APIRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EAFA3FF24EE0CFD008791E9 /* APIRequest.swift */; };
 		3EAFA40224EE312A008791E9 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EAFA40124EE312A008791E9 /* Utilities.swift */; };
 		3EAFA40424EE32B2008791E9 /* CommonNamingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EAFA40324EE32B2008791E9 /* CommonNamingService.swift */; };
+		3EB45BCC26E9684B00D25F10 /* resolver-keys.json in Resources */ = {isa = PBXBuildFile; fileRef = 3EB45BCB26E9684B00D25F10 /* resolver-keys.json */; };
 		3EC9E0482697F2E0001521B4 /* ensResolver.json in Resources */ = {isa = PBXBuildFile; fileRef = 8449EDFB2513BA3D00DABB57 /* ensResolver.json */; };
 		3ECD84AE25A6AEE1001772DD /* UsdtVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ECD84AD25A6AEE1001772DD /* UsdtVersion.swift */; };
 		3EE4DA0D24E367720097540B /* Resolution.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3EE4DA0324E367720097540B /* Resolution.framework */; };
@@ -79,7 +79,6 @@
 		3E65912724E381E900D7EC35 /* Errors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
 		3E65913024E4ADAC00D7EC35 /* Contract.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Contract.swift; sourceTree = "<group>"; };
 		3E889CC7268AF94E000C5330 /* TokenUriMetadata.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TokenUriMetadata.swift; sourceTree = "<group>"; };
-		3E889CCD268AFA83000C5330 /* supported-keys.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "supported-keys.json"; sourceTree = "<group>"; };
 		3E889D11268B1BBB000C5330 /* uns-config.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "uns-config.json"; sourceTree = "<group>"; };
 		3E889D1D268D51CF000C5330 /* cnsRegistry.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = cnsRegistry.json; sourceTree = "<group>"; };
 		3EAFA3F624EB59DA008791E9 /* ABICoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ABICoder.swift; sourceTree = "<group>"; };
@@ -87,6 +86,7 @@
 		3EAFA3FF24EE0CFD008791E9 /* APIRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIRequest.swift; sourceTree = "<group>"; };
 		3EAFA40124EE312A008791E9 /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
 		3EAFA40324EE32B2008791E9 /* CommonNamingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonNamingService.swift; sourceTree = "<group>"; };
+		3EB45BCB26E9684B00D25F10 /* resolver-keys.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "resolver-keys.json"; sourceTree = "<group>"; };
 		3EC9E04B2697FF84001521B4 /* CHANGELOG.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CHANGELOG.md; sourceTree = "<group>"; };
 		3EC9E04E2698002F001521B4 /* UnstoppableDomainsResolution.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = UnstoppableDomainsResolution.podspec; sourceTree = "<group>"; };
 		3ECD84AD25A6AEE1001772DD /* UsdtVersion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsdtVersion.swift; sourceTree = "<group>"; };
@@ -193,9 +193,9 @@
 		3E2AC92124E4FA3E008EBC39 /* UNS */ = {
 			isa = PBXGroup;
 			children = (
+				3EB45BCB26E9684B00D25F10 /* resolver-keys.json */,
 				3E889D11268B1BBB000C5330 /* uns-config.json */,
 				3E889D1D268D51CF000C5330 /* cnsRegistry.json */,
-				3E889CCD268AFA83000C5330 /* supported-keys.json */,
 				3E2AC93D24E4FC9F008EBC39 /* unsRegistry.json */,
 				3E2AC93C24E4FC9F008EBC39 /* unsResolver.json */,
 				30A69244251385A70079EC69 /* unsProxyReader.json */,
@@ -464,9 +464,9 @@
 				3E889D12268B1BBB000C5330 /* uns-config.json in Resources */,
 				30A69245251385A70079EC69 /* unsProxyReader.json in Resources */,
 				3E2AC93E24E4FC9F008EBC39 /* unsResolver.json in Resources */,
+				3EB45BCC26E9684B00D25F10 /* resolver-keys.json in Resources */,
 				3E2AC93F24E4FC9F008EBC39 /* unsRegistry.json in Resources */,
 				8449EDFA25139F2500DABB57 /* ensRegistry.json in Resources */,
-				3E889CCE268AFA83000C5330 /* supported-keys.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -497,7 +497,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\ncurl \"https://raw.githubusercontent.com/unstoppabledomains/uns/main/uns-config.json\" -o \"$PROJECT_DIR/Sources/UnstoppableDomainsResolution/Resources/UNS/uns-config.json\"\ncurl \"https://raw.githubusercontent.com/unstoppabledomains/dot-crypto/master/src/supported-keys/supported-keys.json\" -o \"$PROJECT_DIR/Sources/UnstoppableDomainsResolution/Resources/UNS/supported-keys.json\"\n";
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\ncurl \"https://raw.githubusercontent.com/unstoppabledomains/uns/main/uns-config.json\" -o \"$PROJECT_DIR/Sources/UnstoppableDomainsResolution/Resources/UNS/uns-config.json\"\ncurl \"https://raw.githubusercontent.com/unstoppabledomains/uns/main/resolver-keys.json\" -o \"$PROJECT_DIR/Sources/UnstoppableDomainsResolution/Resources/UNS/resolver-keys.json\"\n";
 		};
 		84412BFF25029A0E0025EE78 /* Run swiftlint */ = {
 			isa = PBXShellScriptBuildPhase;
