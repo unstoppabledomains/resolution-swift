@@ -21,7 +21,7 @@ let package = Package(
             name: "UnstoppableDomainsResolution",
             dependencies: ["CryptoSwift", "BigInt"],
             resources: [
-                .process("Resources/UNS/supported-keys.json"),
+                .process("Resources/UNS/resolver-keys.json"),
                 .process("Resources/UNS/unsProxyReader.json"),
                 .process("Resources/UNS/unsRegistry.json"),
                 .process("Resources/UNS/cnsRegistry.json"),
