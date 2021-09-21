@@ -9,427 +9,208 @@
 import Foundation
 
 internal class UNS: CommonNamingService, NamingService {
-
-    struct NSRegistry {
-        let contract: Contract
-        let deploymentBlock: String
-    }
+    var layer1: UNSLayer!
+    var layer2: UNSLayer!
+    let asyncResolver: AsyncResolver
 
     static let name: NamingServiceName = .uns
-    static let TransferEventSignature = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"
-    static let NewURIEventSignature = "0xc5beef08f693b11c316c0c8394a377a0033c9cf701b8cd8afd79cecef60c3952"
-    static let getDataForManyMethodName = "getDataForMany"
-    static let tokenURIMethodName = "tokenURI"
-    static let registryOfMethodName = "registryOf"
-    static let existName = "exists"
 
-    let network: String
-    var nsRegistries: [NSRegistry]
-    var proxyReaderContract: Contract?
+    init(_ config: UNSConfig) throws {
+        self.asyncResolver = AsyncResolver()
+        super.init(name: Self.name, providerUrl: config.layer1.providerUrl, networking: config.layer1.networking)
+        let layer1Contracts = try parseContractAddresses(config: config.layer1)
+        let layer2Contracts = try parseContractAddresses(config: config.layer2)
 
-    init(_ config: NamingServiceConfig) throws {
+        self.layer1 = try UNSLayer(name: .unsl1, config: config.layer1, contracts: layer1Contracts)
+        self.layer2 = try UNSLayer(name: .unsl2, config: config.layer2, contracts: layer2Contracts)
 
-        self.network = config.network.isEmpty
+        guard self.layer1 != nil, self.layer2 != nil else {
+            throw ResolutionError.proxyReaderNonInitialized
+        }
+    }
+
+    private func parseContractAddresses(config: NamingServiceConfig) throws -> [UNSContract] {
+        var contracts: [UNSContract] = []
+        var proxyReaderContract: UNSContract?
+        var unsContract: UNSContract?
+        var cnsContract: UNSContract?
+
+        let network = config.network.isEmpty
             ? try Self.getNetworkId(providerUrl: config.providerUrl, networking: config.networking)
             : config.network
-        self.nsRegistries = []
-
-        super.init(name: Self.name, providerUrl: config.providerUrl, networking: config.networking)
 
         if let contractsContainer = try Self.parseContractAddresses(network: network) {
-
-            if let unsRegistry = contractsContainer[ContractType.unsRegistry.name]?.address {
-                let unsContract = try super.buildContract(address: unsRegistry, type: .unsRegistry)
-                let deploymentBlock = contractsContainer[ContractType.unsRegistry.name]?.deploymentBlock ?? "earliest"
-                self.nsRegistries.append(NSRegistry(contract: unsContract, deploymentBlock: deploymentBlock))
-            }
-
-            if let cnsRegistry = contractsContainer[ContractType.cnsRegistry.name]?.address {
-                let cnsContract = try super.buildContract(address: cnsRegistry, type: .cnsRegistry)
-                let deploymentBlock = contractsContainer[ContractType.cnsRegistry.name]?.deploymentBlock ?? "earliest"
-                self.nsRegistries.append(NSRegistry(contract: cnsContract, deploymentBlock: deploymentBlock))
-            }
-
-            if let proxyReader = contractsContainer[ContractType.proxyReader.name]?.address {
-                proxyReaderContract = try super.buildContract(address: proxyReader, type: .proxyReader)
-            }
-
+            unsContract = try getUNSContract(contracts: contractsContainer, type: .unsRegistry, providerUrl: config.providerUrl)
+            cnsContract = try getUNSContract(contracts: contractsContainer, type: .cnsRegistry, providerUrl: config.providerUrl)
+            proxyReaderContract = try getUNSContract(contracts: contractsContainer, type: .proxyReader, providerUrl: config.providerUrl)
         }
 
         if config.proxyReader != nil {
-            proxyReaderContract = try super.buildContract(address: config.proxyReader!, type: .proxyReader)
-        }
-
-        if config.registryAddresses != nil && !config.registryAddresses!.isEmpty {
-            self.nsRegistries = try config.registryAddresses!.compactMap {
-                let contract = try super.buildContract(address: $0, type: .unsRegistry)
-                return NSRegistry(contract: contract, deploymentBlock: "earliest")
-            }
+            let contract = try super.buildContract(address: config.proxyReader!, type: .proxyReader, providerUrl: config.providerUrl)
+            proxyReaderContract = UNSContract(name: "ProxyReader", contract: contract, deploymentBlock: "earliest")
         }
 
         guard proxyReaderContract != nil else {
             throw ResolutionError.proxyReaderNonInitialized
         }
+        contracts.append(proxyReaderContract!)
+        if config.registryAddresses != nil && !config.registryAddresses!.isEmpty {
+            try config.registryAddresses!.forEach {
+                let contract = try super.buildContract(address: $0, type: .unsRegistry, providerUrl: config.providerUrl)
+                contracts.append(UNSContract(name: "Registry", contract: contract, deploymentBlock: "earliest"))
+            }
+        }
+
+        // if no registryAddresses has been provided to the config use the default ones
+        if contracts.count == 1 {
+            guard unsContract != nil else {
+                throw ResolutionError.contractNotInitialized("UNSContract")
+            }
+            guard cnsContract != nil else {
+                throw ResolutionError.contractNotInitialized("CNSContract")
+            }
+            contracts.append(unsContract!)
+            contracts.append(cnsContract!)
+        }
+
+        return contracts
+    }
+
+    private func getUNSContract(contracts: [String: CommonNamingService.ContractAddressEntry], type: ContractType, providerUrl: String ) throws -> UNSContract? {
+        if let address = contracts[type.name]?.address {
+            let contract = try super.buildContract(address: address, type: type, providerUrl: providerUrl)
+            let deploymentBlock = contracts[type.name]?.deploymentBlock ?? "earliest"
+            return UNSContract(name: type.name, contract: contract, deploymentBlock: deploymentBlock)
+        }
+        return nil
     }
 
     func isSupported(domain: String) -> Bool {
-        if domain ~= "^[^-]*[^-]*\\.(eth|luxe|xyz|kred|addr\\.reverse)$" {
-            return false
-        }
-        let split = domain.split(separator: ".")
-        let tld = split.suffix(1).joined(separator: "")
-        if tld == "zil" {
-            return false
-        }
-        let tokenId = self.namehash(domain: tld)
-        if let response = try? self.proxyReaderContract?.callMethod(methodName: Self.existName, args: [tokenId]) {
-            guard
-                 let result = response as? [String: Bool],
-                 let isExist = result["0"] else {
-                   return false
-               }
-            return isExist
-        }
-        return false
+        return layer2.isSupported(domain: domain)
     }
 
-    struct OwnerResolverRecord {
-        let owner: String
-        let resolver: String
-        let record: String
-    }
-
-    // MARK: - geters of Owner and Resolver
     func owner(domain: String) throws -> String {
-        let tokenId = super.namehash(domain: domain)
-        let res: Any
-        do {
-            res = try self.getDataForMany(keys: [Contract.ownersKey], for: [tokenId])
-        } catch {
-            if error is ABICoderError {
-                throw ResolutionError.unregisteredDomain
-            }
-            throw error
-        }
-        guard let rec = self.unfoldForMany(contractResult: res, key: Contract.ownersKey),
-              rec.count > 0 else {
-            throw ResolutionError.unregisteredDomain
-        }
-
-        guard Utillities.isNotEmpty(rec[0]) else {
-            throw ResolutionError.unregisteredDomain
-        }
-        return rec[0]
-    }
-
-    func batchOwners(domains: [String]) throws -> [String?] {
-        let tokenIds = domains.map { super.namehash(domain: $0) }
-        let res: Any
-        do {
-            res = try self.getDataForMany(keys: [Contract.ownersKey], for: tokenIds)
-        } catch {
-            throw error
-        }
-        guard let data = res as? [String: Any],
-              let ownersFolded = data["1"] as? [Any] else {
-            return []
-        }
-        return ownersFolded.map { let address = unfoldAddress($0)
-            return Utillities.isNotEmpty(address) ? address : nil
-        }
-    }
-
-    private func parseContractForNewUri(
-        contract: Contract,
-        for address: String,
-        since origin: String
-    ) throws -> [String] {
-        do {
-            let transferLogs = try contract.callLogs(
-                fromBlock: origin,
-                signatureHash: Self.TransferEventSignature,
-                for: address.normalized32,
-                isTransfer: true
-            ).compactMap { $0.topics[3] }
-
-            let domainsData = try transferLogs.compactMap {
-                        try contract.callLogs(
-                                fromBlock: origin,
-                                signatureHash: Self.NewURIEventSignature,
-                                for: $0.normalized32,
-                                isTransfer: false
-                        )[0].data
-                    }
-
-            let possibleDomains = Array(Set(
-                    domainsData.compactMap {
-                        ABIDecoder.decodeSingleType(type: .string, data: Data(hex: $0)).value as? String
-                    }
-                )
-            )
-           return possibleDomains
-        } catch {
-            return []
-        }
+        return try asyncResolver.resolve(l1func: layer1.owner, l2func: layer2.owner, arg: domain)
     }
 
     func tokensOwnedBy(address: String) throws -> [String] {
-        let asyncGroup = DispatchGroup()
-        var possibleDomains: [String] = []
-
-        self.nsRegistries.forEach { registry in
-            asyncGroup.enter()
-            DispatchQueue.global().async { [weak self] in
-                guard let self = self else { return }
-                do {
-                    let domainsFromLogs = try self.parseContractForNewUri(
-                        contract: registry.contract,
-                            for: address,
-                        since: registry.deploymentBlock
-                    )
-                    possibleDomains += domainsFromLogs
-                    asyncGroup.leave()
-                } catch {
-                    asyncGroup.leave()
-                }
-            }
-        }
-
-        var domains: [String] = []
-        let semaphore = DispatchSemaphore(value: 0)
-        asyncGroup.notify(queue: .global()) { [weak self] in
-            guard let self = self else { return }
-            do {
-                let owners = try self.batchOwners(domains: possibleDomains)
-                for (ind, addr) in owners.enumerated() where addr?.lowercased() == address.lowercased() {
-                    domains.append(possibleDomains[ind])
-                }
-                semaphore.signal()
-            } catch {
-                domains = []
-                semaphore.signal()
-            }
-        }
-        semaphore.wait()
-        return domains
-    }
-
-    func resolver(domain: String) throws -> String {
-        let tokenId = super.namehash(domain: domain)
-        return try self.resolver(tokenId: tokenId)
-    }
-
-    func resolver(tokenId: String) throws -> String {
-        let res: Any
-        do {
-            res = try self.getDataForMany(keys: [Contract.resolversKey], for: [tokenId])
-        } catch {
-            if error is ABICoderError {
-                throw ResolutionError.unspecifiedResolver
-            }
-            throw error
-        }
-        guard let rec = self.unfoldForMany(contractResult: res, key: Contract.resolversKey),
-              rec.count > 0  else {
-            throw ResolutionError.unspecifiedResolver
-        }
-        guard Utillities.isNotEmpty(rec[0]) else {
-            throw ResolutionError.unspecifiedResolver
-        }
-        return rec[0]
+        return try asyncResolver.resolve(l1func: layer1.tokensOwnedBy, l2func: layer2.tokensOwnedBy, arg: address)
     }
 
     func addr(domain: String, ticker: String) throws -> String {
-        let key = "crypto.\(ticker.uppercased()).address"
-        let result = try record(domain: domain, key: key)
-        return result
+        return try layer2.addr(domain: domain, ticker: ticker)
+//        return try asyncResolver.resolve(l1func: layer1.addr, l2func: layer2.addr, arg1: domain, arg2: ticker)
     }
 
-    // MARK: - Get Record
+    func resolver(domain: String) throws -> String {
+        return try asyncResolver.resolve(l1func: layer1.resolver, l2func: layer2.resolver, arg: domain)
+    }
+
+    func batchOwners(domains: [String]) throws -> [String?] {
+        return try asyncResolver.resolve(l1func: layer1.batchOwners, l2func: layer2.batchOwners, arg: domains)
+    }
+
     func record(domain: String, key: String) throws -> String {
-        let tokenId = super.namehash(domain: domain)
-        let result = try record(tokenId: tokenId, key: key)
-        guard Utillities.isNotEmpty(result) else {
-            throw ResolutionError.recordNotFound
-        }
-        return result
-    }
-
-    func record(tokenId: String, key: String) throws -> String {
-        let result: OwnerResolverRecord
-        do {
-            result = try self.getOwnerResolverRecord(tokenId: tokenId, key: key)
-        } catch {
-            if error is ABICoderError {
-                throw ResolutionError.unspecifiedResolver
-            }
-            throw error
-        }
-        guard Utillities.isNotEmpty(result.owner) else { throw ResolutionError.unregisteredDomain }
-        guard Utillities.isNotEmpty(result.resolver) else { throw ResolutionError.unspecifiedResolver }
-
-        return result.record
+        return try asyncResolver.resolve(l1func: layer1.record, l2func: layer2.record, arg1: domain, arg2: key)
     }
 
     func records(keys: [String], for domain: String) throws -> [String: String] {
-        let tokenId = super.namehash(domain: domain)
-        guard let dict = try proxyReaderContract?.callMethod(methodName: "getMany", args: [keys, tokenId]) as? [String: [String]],
-              let result = dict["0"]
-        else {
-            throw ResolutionError.recordNotFound
-        }
-
-        let returnValue = zip(keys, result).reduce(into: [String: String]()) { dict, pair in
-            let (key, value) = pair
-            dict[key] = value
-        }
-        return returnValue
+//        return try layer1.records(keys: keys, for: domain)
+        return try asyncResolver.resolve(l1func: layer1.records, l2func: layer2.records, arg1: keys, arg2: domain)
     }
 
     func getTokenUri(tokenId: String) throws -> String {
-        do {
-            if let result = try proxyReaderContract?
-                                    .callMethod(methodName: Self.tokenURIMethodName,
-                                                args: [tokenId]) {
-                let dict = result as? [String: Any]
-                if let val = dict?["0"] as? String {
-                    return val
-                }
-                throw ResolutionError.unregisteredDomain
-            }
-            throw ResolutionError.proxyReaderNonInitialized
-        } catch APIError.decodingError {
-            throw ResolutionError.unregisteredDomain
-        }
+        return try asyncResolver.resolve(l1func: layer1.getTokenUri, l2func: layer2.getTokenUri, arg: tokenId)
     }
 
     func getDomainName(tokenId: String) throws -> String {
-        do {
-            let registryAddress = try self.getRegistryAddress(tokenId: tokenId)
-            let registryContract = try self.buildContract(address: registryAddress, type: .unsRegistry)
-            let result = try registryContract.callLogs(
-                fromBlock: "earliest",
-                signatureHash: Self.NewURIEventSignature,
-                for: tokenId,
-                isTransfer: false)
-
-            guard result.count > 0 else {
-                throw ResolutionError.unregisteredDomain
-            }
-
-            if let domainName = ABIDecoder.decodeSingleType(type: .string, data: Data(hex: result[0].data)).value as? String {
-                return domainName
-            }
-            throw ResolutionError.unregisteredDomain
-        } catch APIError.decodingError {
-            throw ResolutionError.unregisteredDomain
-        }
-    }
-
-    // MARK: - Helper functions
-    private func unfoldAddress<T> (_ incomingData: T) -> String? {
-        if let eth = incomingData as? EthereumAddress {
-            return eth.address
-        }
-        if let str = incomingData as? String {
-            return str
-        }
-        return nil
-    }
-
-    private func unfoldAddressForMany<T> (_ incomingData: T) -> [String]? {
-        if let ethArray = incomingData as? [EthereumAddress] {
-            return ethArray.map { $0.address }
-        }
-        if let strArray = incomingData as? [String] {
-            return strArray
-        }
-        return nil
-    }
-
-    private func unfoldForMany(contractResult: Any, key: String = "0") -> [String]? {
-        if let dict = contractResult as? [String: Any],
-           let element = dict[key] {
-            return unfoldAddressForMany(element)
-        }
-        return nil
-    }
-
-    private func getOwnerResolverRecord(tokenId: String, key: String) throws -> OwnerResolverRecord {
-        let res = try self.getDataForMany(keys: [key], for: [tokenId])
-        if let dict = res as? [String: Any] {
-            if let owners = unfoldAddressForMany(dict[Contract.ownersKey]),
-               let resolvers = unfoldAddressForMany(dict[Contract.resolversKey]),
-               let valuesArray = dict[Contract.valuesKey] as? [[String]] {
-                guard Utillities.isNotEmpty(owners[0]) else {
-                    throw ResolutionError.unregisteredDomain
-                }
-
-                guard Utillities.isNotEmpty(resolvers[0]),
-                      valuesArray.count > 0,
-                      valuesArray[0].count > 0 else {
-                    throw ResolutionError.unspecifiedResolver
-                }
-
-                let record = valuesArray[0][0]
-                return OwnerResolverRecord(owner: owners[0], resolver: resolvers[0], record: record)
-            }
-        }
-        throw ResolutionError.unregisteredDomain
-    }
-
-    private func getDataForMany(keys: [String], for tokenIds: [String]) throws -> Any {
-        if let result = try proxyReaderContract?
-                                .callMethod(methodName: Self.getDataForManyMethodName,
-                                            args: [keys, tokenIds]) { return result }
-        throw ResolutionError.proxyReaderNonInitialized
-    }
-
-    private func getRegistryAddress(tokenId: String) throws -> String {
-        do {
-            if let result = try proxyReaderContract?
-                                    .callMethod(methodName: Self.registryOfMethodName,
-                                                args: [tokenId]) {
-                let dict = result as? [String: Any]
-                if let val = dict?["0"] as? EthereumAddress {
-                    return val.address
-                }
-                throw ResolutionError.unregisteredDomain
-            }
-            throw ResolutionError.proxyReaderNonInitialized
-        } catch APIError.decodingError {
-            throw ResolutionError.unregisteredDomain
-        }
+        return try asyncResolver.resolve(l1func: layer1.getDomainName, l2func: layer2.getDomainName, arg: tokenId)
     }
 }
 
-fileprivate extension String {
-    var normalized32: String {
-        let droppedHexPrefix = self.hasPrefix("0x") ? String(self.dropFirst("0x".count)) : self
-        let cleanAddress = droppedHexPrefix.lowercased()
-        if cleanAddress.count < 64 {
-            let zeroCharacter: Character = "0"
-            let arr = Array(repeating: zeroCharacter, count: 64 - cleanAddress.count)
-            let zeros = String(arr)
+class AsyncResolver {
 
-            return "0x" + zeros + cleanAddress
+    typealias ResultConsumer<T> = (T?, Error?)
+    typealias GenericFunction<T, U> = (_: T) throws -> (_: U)
+    typealias GenericFunctionTwoArgs<T, U, Z> = (_: T, _: U) throws -> (_: Z)
+
+    let asyncGroup = DispatchGroup()
+
+    func resolve<T, U, Z>(l1func: @escaping GenericFunctionTwoArgs<T, U, Z>, l2func: @escaping GenericFunctionTwoArgs<T, U, Z>, arg1: T, arg2: U) throws -> Z {
+        var results: [UNSLocation: ResultConsumer<Z>] = [:]
+        let functions: [UNSLocation: GenericFunctionTwoArgs<T, U, Z>] = [.l2: l2func, .l1: l1func]
+
+        functions.forEach { function in
+            self.asyncGroup.enter()
+            DispatchQueue.global().async { [weak self] in
+                guard let self = self else { return }
+                do {
+                    let value = try function.value(arg1, arg2)
+                    results[function.key] = (value, nil)
+                    self.asyncGroup.leave()
+                } catch {
+                    results[function.key] = (nil, error)
+                    self.asyncGroup.leave()
+                }
+            }
         }
-        return "0x" + cleanAddress
+        let semaphore = DispatchSemaphore(value: 0)
+        self.asyncGroup.notify(queue: .global()) {
+            semaphore.signal()
+        }
+        semaphore.wait()
+        return try parseResult(results)
     }
-}
 
-fileprivate extension Data {
-    init?(hex: String) {
-        guard hex.count.isMultiple(of: 2) else {
-            return nil
+    func resolve<T, U>(l1func: @escaping GenericFunction<T, U>, l2func: @escaping GenericFunction<T, U>, arg: T) throws -> U {
+        var results: [UNSLocation: ResultConsumer<U>] = [:]
+        let functions: [UNSLocation: GenericFunction<T, U>] = [.l2: l2func, .l1: l1func]
+
+        functions.forEach { function in
+            self.asyncGroup.enter()
+            DispatchQueue.global().async { [weak self] in
+                guard let self = self else { return }
+                do {
+                    let value = try function.value(arg)
+                    results[function.key] = (value, nil)
+                    self.asyncGroup.leave()
+                } catch {
+                    results[function.key] = (nil, error)
+                    self.asyncGroup.leave()
+                }
+            }
         }
+        let semaphore = DispatchSemaphore(value: 0)
+        self.asyncGroup.notify(queue: .global()) {
+            semaphore.signal()
+        }
+        semaphore.wait()
+        return try parseResult(results)
+    }
 
-        let chars = hex.map { $0 }
-        let bytes = stride(from: 0, to: chars.count, by: 2)
-            .map { String(chars[$0]) + String(chars[$0 + 1]) }
-            .compactMap { UInt8($0, radix: 16) }
+    private func parseResult<T>(_ results: [UNSLocation: ResultConsumer<T>] ) throws -> T {
+        let l2Result = results[.l2]!
+        let l1Result = results[.l1]!
 
-        guard hex.count / bytes.count == 2 else { return nil }
-        self.init(bytes)
+        guard l2Result.1 == nil else {
+            if !isUnregisteredDomain(error: l2Result.1) {
+                throw l2Result.1!
+            }
+
+            guard l1Result.1 == nil else {
+                throw l1Result.1!
+            }
+            return l1Result.0!
+        }
+        return l2Result.0!
+    }
+
+    private func isUnregisteredDomain(error: Error?) -> Bool {
+        if let error = error as? ResolutionError {
+            if case ResolutionError.unregisteredDomain = error {
+                return true
+            }
+        }
+        return false
     }
 }

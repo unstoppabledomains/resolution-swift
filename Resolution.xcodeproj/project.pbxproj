@@ -27,6 +27,8 @@
 		3EAFA40224EE312A008791E9 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EAFA40124EE312A008791E9 /* Utilities.swift */; };
 		3EAFA40424EE32B2008791E9 /* CommonNamingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EAFA40324EE32B2008791E9 /* CommonNamingService.swift */; };
 		3EB45BCC26E9684B00D25F10 /* resolver-keys.json in Resources */ = {isa = PBXBuildFile; fileRef = 3EB45BCB26E9684B00D25F10 /* resolver-keys.json */; };
+		3EB45BD726E96FC500D25F10 /* UNSLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EB45BD626E96FC500D25F10 /* UNSLayer.swift */; };
+		3EB45BDD26EAB26100D25F10 /* AsyncHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EB45BDC26EAB26100D25F10 /* AsyncHelper.swift */; };
 		3EC9E0482697F2E0001521B4 /* ensResolver.json in Resources */ = {isa = PBXBuildFile; fileRef = 8449EDFB2513BA3D00DABB57 /* ensResolver.json */; };
 		3ECD84AE25A6AEE1001772DD /* UsdtVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ECD84AD25A6AEE1001772DD /* UsdtVersion.swift */; };
 		3EE4DA0D24E367720097540B /* Resolution.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3EE4DA0324E367720097540B /* Resolution.framework */; };
@@ -87,6 +89,8 @@
 		3EAFA40124EE312A008791E9 /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
 		3EAFA40324EE32B2008791E9 /* CommonNamingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonNamingService.swift; sourceTree = "<group>"; };
 		3EB45BCB26E9684B00D25F10 /* resolver-keys.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "resolver-keys.json"; sourceTree = "<group>"; };
+		3EB45BD626E96FC500D25F10 /* UNSLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UNSLayer.swift; sourceTree = "<group>"; };
+		3EB45BDC26EAB26100D25F10 /* AsyncHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncHelper.swift; sourceTree = "<group>"; };
 		3EC9E04B2697FF84001521B4 /* CHANGELOG.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CHANGELOG.md; sourceTree = "<group>"; };
 		3EC9E04E2698002F001521B4 /* UnstoppableDomainsResolution.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = UnstoppableDomainsResolution.podspec; sourceTree = "<group>"; };
 		3ECD84AD25A6AEE1001772DD /* UsdtVersion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsdtVersion.swift; sourceTree = "<group>"; };
@@ -165,8 +169,9 @@
 			isa = PBXGroup;
 			children = (
 				3EAFA40324EE32B2008791E9 /* CommonNamingService.swift */,
-				3E2AC91B24E4FA28008EBC39 /* UNS.swift */,
 				845B401C251389A4006AB08E /* ENS.swift */,
+				3E2AC91B24E4FA28008EBC39 /* UNS.swift */,
+				3EB45BD626E96FC500D25F10 /* UNSLayer.swift */,
 				848E21082507890A008707D2 /* ZNS.swift */,
 			);
 			path = NamingServices;
@@ -283,6 +288,7 @@
 				3EAFA40124EE312A008791E9 /* Utilities.swift */,
 				848E210B25079D61008707D2 /* Types.swift */,
 				3ECD84AD25A6AEE1001772DD /* UsdtVersion.swift */,
+				3EB45BDC26EAB26100D25F10 /* AsyncHelper.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -527,12 +533,14 @@
 				3ECD84AE25A6AEE1001772DD /* UsdtVersion.swift in Sources */,
 				3E2AC91C24E4FA28008EBC39 /* UNS.swift in Sources */,
 				845B401D251389A4006AB08E /* ENS.swift in Sources */,
+				3EB45BD726E96FC500D25F10 /* UNSLayer.swift in Sources */,
 				3E33F99925DCFAB400627C71 /* Configurations.swift in Sources */,
 				B6F2075825DBD89800140CE3 /* ABIParameterTypes.swift in Sources */,
 				B6F2075A25DBD89800140CE3 /* ABIExtensions.swift in Sources */,
 				B6F2075625DBD89800140CE3 /* ABIElements.swift in Sources */,
 				3EAFA40424EE32B2008791E9 /* CommonNamingService.swift in Sources */,
 				3E2AC91F24E4FA35008EBC39 /* NamingService.swift in Sources */,
+				3EB45BDD26EAB26100D25F10 /* AsyncHelper.swift in Sources */,
 				B6F2075525DBD89800140CE3 /* ABIDecoder.swift in Sources */,
 				848E21092507890A008707D2 /* ZNS.swift in Sources */,
 				B6E79938260223CE00F65894 /* Base58.swift in Sources */,

@@ -17,7 +17,20 @@ public typealias BoolResultConsumer = (Result<Bool, Error>) -> Void
 
 public enum NamingServiceName: String {
     case uns
+    case unsl1
+    case unsl2
     case ens
     case zns
+}
+
+public enum UNSLocation: String {
+    case l1
+    case l2
+}
+
+public struct UNSContract {
+    let name: String
+    let contract: Contract
+    let deploymentBlock: String
 }
 public let ethCoinIndex = 60

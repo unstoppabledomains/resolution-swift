@@ -65,14 +65,6 @@ public class Resolution {
         self.services = try constructNetworkServices(configs)
     }
 
-    /// Returns a network that NamingService was configure with
-    public func getNetwork(from serviceName: String) throws -> String {
-        guard let service = services.first(where: {$0.name.rawValue == serviceName.lowercased() }) else {
-            throw ResolutionError.unsupportedServiceName
-        }
-        return service.network
-    }
-
     /// Checks if the domain name is valid according to naming service rules for valid domain names.
     ///
     /// **Example:** ENS doesn't allow domains that start from '-' symbol.

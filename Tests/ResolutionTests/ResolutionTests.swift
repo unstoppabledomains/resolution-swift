@@ -30,9 +30,14 @@ class ResolutionTests: XCTestCase {
         super.setUp()
         resolution = try! Resolution(
             configs: Configurations(
-                uns: NamingServiceConfig(
-                    providerUrl: "https://rinkeby.infura.io/v3/3c25f57353234b1b853e9861050f4817",
-                    network: "rinkeby"),
+                uns: UNSConfig(
+                    layer1: NamingServiceConfig(
+                                providerUrl: "https://rinkeby.infura.io/v3/3c25f57353234b1b853e9861050f4817",
+                                network: "rinkeby"),
+                    layer2: NamingServiceConfig(
+                                providerUrl: "https://polygon-mumbai.infura.io/v3/a521c8d92d0046789639803245f35eec",
+                                network: "polygon-mumbai")
+                ),
                 zns: NamingServiceConfig(
                     providerUrl: "https://dev-api.zilliqa.com",
                     network: "testnet")
@@ -40,25 +45,15 @@ class ResolutionTests: XCTestCase {
         );
     }
     
-    func testNetworkFromUrl() throws {
-        resolution = try Resolution(configs: Configurations(
-            uns: NamingServiceConfig(providerUrl: "https://rinkeby.infura.io/v3/3c25f57353234b1b853e9861050f4817"),
-            ens: NamingServiceConfig(providerUrl: "https://ropsten.infura.io/v3/d423cf2499584d7fbe171e33b42cfbee")
-            )
-        );
-        
-        let unsNetwork = try resolution.getNetwork(from: "uns");
-        let znsNetwork = try resolution.getNetwork(from: "zns");
-        let ensNetwork = try resolution.getNetwork(from: "ens");
-        assert(unsNetwork == "rinkeby");
-        assert(ensNetwork == "ropsten");
-        assert(znsNetwork == "mainnet");
-    }
-    
     func testUnsupportedNetwork() throws {
         self.checkError(completion: {
             try Resolution(configs: Configurations(
-                uns: NamingServiceConfig(providerUrl: "https://ropsten.infura.io/v3/3c25f57353234b1b853e9861050f4817")
+                uns:UNSConfig(
+                    layer1: NamingServiceConfig(providerUrl: "https://ropsten.infura.io/v3/3c25f57353234b1b853e9861050f4817"),
+                    layer2: NamingServiceConfig(
+                                providerUrl: "https://polygon-mumbai.infura.io/v3/3c25f57353234b1b853e9861050f4817",
+                                network: "polygon-mumbai")
+                )
             ));
         }, expectedError: .proxyReaderNonInitialized)
         
@@ -75,33 +70,21 @@ class ResolutionTests: XCTestCase {
         }, expectedError: .registryAddressIsNotProvided)
     }
     
-    func testCustomNetwork() throws {
-        let resolution = try Resolution(configs: Configurations(
-            uns: NamingServiceConfig(
-                providerUrl: "https://rinkeby.infura.io/v3/3c25f57353234b1b853e9861050f4817",
-                network: "somethingCustom",
-                proxyReader: "0x299974AeD8911bcbd2C61262605b89F591a53E83",
-                registryAddresses: ["0x7fb83000B8eD59D3eAD22f0D584Df3a85fBC0086", "0xAad76bea7CFEc82927239415BB18D2e93518ecBB"]
-            ),
-            ens: NamingServiceConfig(
-                providerUrl: "https://kovan.infura.io/v3/d423cf2499584d7fbe171e33b42cfbee",
-                network: "customKovan",
-                registryAddresses: ["0x7fb83000B8eD59D3eAD22f0D584Df3a85fBC0086"]
-            ),
-            zns: NamingServiceConfig(
-                providerUrl: "https://kovan.infura.io/v3/d423cf2499584d7fbe171e33b42cfbee",
-                network: "customKovanPortZil",
-                registryAddresses: ["0x7fb83000B8eD59D3eAD22f0D584Df3a85fBC0086"]
-            )
-            ));
-        let unsNetwork = try resolution.getNetwork(from: "uns")
-        let ensNetwork = try resolution.getNetwork(from: "ens")
-        let znsNetwork = try resolution.getNetwork(from: "zns")
-        assert(unsNetwork == "somethingCustom")
-        assert(ensNetwork == "customKovan")
-        assert(znsNetwork == "customKovanPortZil")
-    }
     
+    func testForL2DomainAddr() throws {
+        let delivered = expectation(description: "Domain should have an ETH address")
+        var address: String = "";
+        resolution.addr(domain: "udtestdev-gymco.nft", ticker: "eth") { result in
+            switch result {
+                case .success(let addr):
+                    delivered.fulfill()
+                    address = addr;
+                case .failure(let error):
+                    XCTFail("Expected Owner Address, but got \(error)")
+            }
+        }
+        waitForExpectations(timeout: 500, handler: nil)
+    }
     
     func testForUnregisteredDomain() throws {
         let UnregirestedDomainExpectation = expectation(description: "Domain should not be registered!")
@@ -127,9 +110,14 @@ class ResolutionTests: XCTestCase {
     
     func testRinkeby() throws {
         resolution = try Resolution(configs: Configurations(
-                uns: NamingServiceConfig(
-                    providerUrl: "https://rinkeby.infura.io/v3/3c25f57353234b1b853e9861050f4817",
-                    network: "rinkeby"
+                uns: UNSConfig(
+                    layer1: NamingServiceConfig(
+                        providerUrl: "https://rinkeby.infura.io/v3/3c25f57353234b1b853e9861050f4817",
+                        network: "rinkeby"
+                    ),
+                    layer2: NamingServiceConfig(
+                        providerUrl: "https://polygon-mumbai.infura.io/v3/e0c0cb9d12c440a29379df066de587e6",
+                        network: "polygon-mumbai")
                 )
             )
         );
@@ -177,9 +165,13 @@ class ResolutionTests: XCTestCase {
     func testSupportedDomains() throws {
         // Given // When // Then
         resolution = try Resolution(configs: Configurations(
-            uns: NamingServiceConfig(
-                providerUrl: "https://rinkeby.infura.io/v3/3c25f57353234b1b853e9861050f4817",
-                network: "rinkeby"
+            uns: UNSConfig(
+                layer1: NamingServiceConfig(
+                            providerUrl: "https://rinkeby.infura.io/v3/3c25f57353234b1b853e9861050f4817",
+                            network: "rinkeby"),
+                layer2: NamingServiceConfig(
+                            providerUrl: "https://polygon-mumbai.infura.io/v3/e0c0cb9d12c440a29379df066de587e6",
+                            network: "polygon-mumbai")
             ),
             zns: NamingServiceConfig(
                 providerUrl: "https://dev-api.zilliqa.com",
@@ -676,9 +668,13 @@ class ResolutionTests: XCTestCase {
     func testForTokensOwnedByCnsFromRinkeby() throws {
         let tetReceived = expectation(description: "This is just for test");
         let resolutionB = try Resolution(configs: Configurations(
-            uns: NamingServiceConfig(
-                providerUrl: "https://rinkeby.infura.io/v3/e05c36b6b2134ccc9f2594ddff94c136",
-                network: "rinkeby"
+            uns:UNSConfig(
+                layer1: NamingServiceConfig(
+                            providerUrl: "https://rinkeby.infura.io/v3/e05c36b6b2134ccc9f2594ddff94c136",
+                            network: "rinkeby"),
+                layer2: NamingServiceConfig(
+                            providerUrl: "https://polygon-mumbai.infura.io/v3/e0c0cb9d12c440a29379df066de587e6",
+                            network: "polygon-mumbai")
             )))
         var returnedDomains: [String] = [];
         resolutionB.tokensOwnedBy(address: "0x6EC0DEeD30605Bcd19342f3c30201DB263291589", service: "uns") { (result) in
