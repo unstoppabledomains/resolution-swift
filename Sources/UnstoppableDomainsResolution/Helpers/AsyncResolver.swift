@@ -10,9 +10,9 @@
 
 internal class AsyncResolver {
 
-    typealias ResultConsumer<T> = (T?, Error?);
-    typealias GeneralFunction<T> = () throws -> T;
-    
+    typealias ResultConsumer<T> = (T?, Error?)
+    typealias GeneralFunction<T> = () throws -> T
+
     let asyncGroup = DispatchGroup()
 
     func safeResolve<T>(
@@ -37,11 +37,10 @@ internal class AsyncResolver {
                 do {
                     let value = try function.value()
                     results[function.key] = (value, nil)
-                    self.asyncGroup.leave()
                 } catch {
                     results[function.key] = (nil, error)
-                    self.asyncGroup.leave()
                 }
+                self.asyncGroup.leave()
             }
         }
         let semaphore = DispatchSemaphore(value: 0)
@@ -57,7 +56,7 @@ internal class AsyncResolver {
         let l1Result = results[.layer1]!
 
         if let l2error = l2Result.1 {
-            if !Self.isUnregisteredDomain(error: l2error) {
+            if !isUnregisteredDomain(error: l2error) {
                 throw l2error
             }
         } else {
@@ -72,7 +71,7 @@ internal class AsyncResolver {
         return l1Result.0!
     }
 
-    static func isUnregisteredDomain(error: Error?) -> Bool {
+    private func isUnregisteredDomain(error: Error?) -> Bool {
         if let error = error as? ResolutionError {
             if case ResolutionError.unregisteredDomain = error {
                 return true
