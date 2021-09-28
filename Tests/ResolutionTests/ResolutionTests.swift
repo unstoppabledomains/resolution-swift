@@ -457,7 +457,7 @@ class ResolutionTests: XCTestCase {
 
         // Then
         assert(owner.lowercased() == "0xe7474D07fD2FA286e7e0aa23cd107F8379085037".lowercased())
-        assert(ethOwner.lowercased() == "0x714ef33943d925731fbb89c99af5780d888bd106".lowercased())
+        assert(ethOwner.lowercased() == "0xa59C818Ddb801f1253edEbf0Cf08c9E481EA2fE5".lowercased())
         self.checkError(result: unregisteredResult, expectedError: ResolutionError.unregisteredDomain)
     }
     
