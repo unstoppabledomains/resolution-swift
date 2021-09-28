@@ -47,6 +47,10 @@ class TestHelpers {
             
     ]
     
+    static func getTestDomain(_ type: DOMAINS) -> String {
+        return Self.TEST_DOMAINS[type]!;
+    }
+    
     static func checkError(completion: @escaping() throws -> Void, expectedError: ResolutionError) {
         do {
             try completion()

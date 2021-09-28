@@ -92,7 +92,7 @@ internal class UNS: CommonNamingService, NamingService {
     func owner(domain: String) throws -> String {
         return try asyncResolver.safeResolve(l1func: layer1.owner, l2func: layer2.owner, arg: domain)
     }
-    
+
     func record(domain: String, key: String) throws -> String {
         return try asyncResolver.safeResolve(l1func: layer1.record, l2func: layer2.record, arg1: domain, arg2: key)
     }
@@ -137,7 +137,7 @@ internal class UNS: CommonNamingService, NamingService {
 
         return tokens.uniqued()
     }
-    
+
     func batchOwners(domains: [String]) throws -> [String?] {
         let results = try asyncResolver.resolve(l1func: layer1.batchOwners, l2func: layer2.batchOwners, arg: domains)
         var owners: [String?] = []

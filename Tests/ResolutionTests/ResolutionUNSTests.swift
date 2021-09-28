@@ -50,7 +50,7 @@ class ResolutionUNSTests: XCTestCase {
         var unregisteredResult: Result<String, ResolutionError>!
 
         // When
-        resolution.owner(domain: TestHelpers.TEST_DOMAINS[.LAYER2_DOMAIN]!) { (result) in
+        resolution.owner(domain: TestHelpers.getTestDomain(.LAYER2_DOMAIN)) { (result) in
             switch result {
             case .success(let returnValue):
                 layer2OwnerReceived.fulfill()
@@ -60,7 +60,7 @@ class ResolutionUNSTests: XCTestCase {
             }
         }
         
-        resolution.owner(domain: TestHelpers.TEST_DOMAINS[.DOMAIN]!) { (result) in
+        resolution.owner(domain: TestHelpers.getTestDomain(.DOMAIN)) { (result) in
             switch result {
             case .success(let returnValue):
                 layer1OwnerReceived.fulfill();
@@ -70,7 +70,7 @@ class ResolutionUNSTests: XCTestCase {
             }
         }
         
-        resolution.owner(domain: TestHelpers.TEST_DOMAINS[.UNREGISTERED_DOMAIN]!) {
+        resolution.owner(domain: TestHelpers.getTestDomain(.UNREGISTERED_DOMAIN)) {
             unregisteredResult = $0
             unregisteredReceived.fulfill()
         }
@@ -85,9 +85,9 @@ class ResolutionUNSTests: XCTestCase {
     
     
     func testGetBatchOwner() throws {
-        let layer2Domain: String = TestHelpers.TEST_DOMAINS[.LAYER2_DOMAIN]!;
-        let layer1Domain: String = TestHelpers.TEST_DOMAINS[.DOMAIN]!;
-        let unregisteredDomain: String = TestHelpers.TEST_DOMAINS[.UNREGISTERED_DOMAIN]!;
+        let layer2Domain: String = TestHelpers.getTestDomain(.LAYER2_DOMAIN);
+        let layer1Domain: String = TestHelpers.getTestDomain(.DOMAIN);
+        let unregisteredDomain: String = TestHelpers.getTestDomain(.UNREGISTERED_DOMAIN);
         
         // Given
         let domainCryptoReceived = expectation(description: "Existing Crypto domains' owners should be received")
@@ -145,7 +145,7 @@ class ResolutionUNSTests: XCTestCase {
         var noRecordResult: Result<String, ResolutionError>!
 
         // When
-        resolution.addr(domain: TestHelpers.TEST_DOMAINS[.LAYER2_DOMAIN]!, ticker: "eth") { (result) in
+        resolution.addr(domain: TestHelpers.getTestDomain(.LAYER2_DOMAIN), ticker: "eth") { (result) in
             switch result {
             case .success(let returnValue):
                 layer2EthAddress = returnValue
@@ -155,7 +155,7 @@ class ResolutionUNSTests: XCTestCase {
             }
         }
 
-        resolution.addr(domain: TestHelpers.TEST_DOMAINS[.DOMAIN]!, ticker: "eth") { (result) in
+        resolution.addr(domain: TestHelpers.getTestDomain(.DOMAIN), ticker: "eth") { (result) in
             switch result {
             case .success(let returnValue):
                 layer1EthAddress = returnValue
@@ -165,12 +165,12 @@ class ResolutionUNSTests: XCTestCase {
             }
         }
         
-        resolution.addr(domain: TestHelpers.TEST_DOMAINS[.UNREGISTERED_DOMAIN]!, ticker: "unknown") {
+        resolution.addr(domain: TestHelpers.getTestDomain(.UNREGISTERED_DOMAIN), ticker: "unknown") {
             unregisteredResult = $0;
             unregisteredReceived.fulfill()
         }
 
-        resolution.addr(domain: TestHelpers.TEST_DOMAINS[.LAYER2_DOMAIN]!, ticker: "dummy") {
+        resolution.addr(domain: TestHelpers.getTestDomain(.LAYER2_DOMAIN), ticker: "dummy") {
             noRecordResult = $0;
             noRecordReceived.fulfill();
         }
@@ -192,7 +192,7 @@ class ResolutionUNSTests: XCTestCase {
         var customRecord = "";
         var noRecordResut: Result<String, ResolutionError>!;
         // When
-        resolution.record(domain: TestHelpers.TEST_DOMAINS[.LAYER2_DOMAIN]!, key: "custom.record") { (result) in
+        resolution.record(domain: TestHelpers.getTestDomain(.LAYER2_DOMAIN), key: "custom.record") { (result) in
             switch result {
             case.success(let returnValue):
                 customRecord = returnValue;
@@ -202,7 +202,7 @@ class ResolutionUNSTests: XCTestCase {
             }
         }
         
-        resolution.record(domain: TestHelpers.TEST_DOMAINS[.LAYER2_DOMAIN]!, key: "noSuchRecord") {
+        resolution.record(domain: TestHelpers.getTestDomain(.LAYER2_DOMAIN), key: "noSuchRecord") {
             noRecordResut = $0;
             noRecordReceived.fulfill();
         }
@@ -221,7 +221,7 @@ class ResolutionUNSTests: XCTestCase {
         
         var layer2Records: [String: String] = [:]
         // When
-        resolution.records(domain: TestHelpers.TEST_DOMAINS[.LAYER2_DOMAIN]!, keys: recordKeys) { result in
+        resolution.records(domain: TestHelpers.getTestDomain(.LAYER2_DOMAIN), keys: recordKeys) { result in
             switch result {
             case .success(let returnValue):
                 layer2Records = returnValue;
@@ -247,7 +247,7 @@ class ResolutionUNSTests: XCTestCase {
         var layer1TokenUri = "";
         
         
-        resolution.tokenURI(domain: TestHelpers.TEST_DOMAINS[.LAYER2_DOMAIN]!) { result in
+        resolution.tokenURI(domain: TestHelpers.getTestDomain(.LAYER2_DOMAIN)) { result in
             switch result {
             case .success(let returnValue):
                 layer2TokenUri = returnValue;
@@ -257,7 +257,7 @@ class ResolutionUNSTests: XCTestCase {
             }
         }
         
-        resolution.tokenURI(domain: TestHelpers.TEST_DOMAINS[.DOMAIN]!) { result in
+        resolution.tokenURI(domain: TestHelpers.getTestDomain(.DOMAIN)) { result in
             switch result {
             case .success(let returnValue):
                 layer1TokenUri = returnValue;

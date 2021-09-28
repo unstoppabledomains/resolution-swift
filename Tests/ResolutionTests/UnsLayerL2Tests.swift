@@ -69,7 +69,7 @@ class UnsLayerL2Tests: XCTestCase {
     // functions batchOwner and tokensOwnedBy will return either array full of nil or empty [String]
     // It is expected to parse and combine the results of above functions with results from layer1
     func testUnregistered() throws {
-        let domain = TestHelpers.TEST_DOMAINS[.UNREGISTERED_DOMAIN]!;
+        let domain = TestHelpers.getTestDomain(.UNREGISTERED_DOMAIN);
         let tokenId = "0x6d8b296e38dfd295f2f4feb9ef2721c48210b7d77c0a08867123d9bd5150cf47";
         TestHelpers.checkError(
             completion: { let _ = try self.unsLayer.owner(domain: domain) },
