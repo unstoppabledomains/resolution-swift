@@ -90,35 +90,59 @@ internal class UNS: CommonNamingService, NamingService {
     }
 
     func owner(domain: String) throws -> String {
-        return try asyncResolver.safeResolve(l1func: layer1.owner, l2func: layer2.owner, arg: domain)
+        return try asyncResolver.safeResolve(
+            l1func: self.layer1.owner(domain: domain),
+            l2func: self.layer2.owner(domain: domain)
+        )
     }
 
     func record(domain: String, key: String) throws -> String {
-        return try asyncResolver.safeResolve(l1func: layer1.record, l2func: layer2.record, arg1: domain, arg2: key)
+        return try asyncResolver.safeResolve(
+            l1func: self.layer1.record(domain: domain, key: key),
+            l2func: self.layer2.record(domain: domain, key: key)
+        )
     }
 
     func records(keys: [String], for domain: String) throws -> [String: String] {
-        return try asyncResolver.safeResolve(l1func: layer1.records, l2func: layer2.records, arg1: keys, arg2: domain)
+        return try asyncResolver.safeResolve(
+            l1func: self.layer1.records(keys: keys, for: domain),
+            l2func: self.layer2.records(keys: keys, for: domain)
+        )
     }
 
     func getTokenUri(tokenId: String) throws -> String {
-        return try asyncResolver.safeResolve(l1func: layer1.getTokenUri, l2func: layer2.getTokenUri, arg: tokenId)
+        return try asyncResolver.safeResolve(
+            l1func: self.layer1.getTokenUri(tokenId: tokenId),
+            l2func: self.layer2.getTokenUri(tokenId: tokenId)
+        )
     }
 
     func getDomainName(tokenId: String) throws -> String {
-        return try asyncResolver.safeResolve(l1func: layer1.getDomainName, l2func: layer2.getDomainName, arg: tokenId)
+        return try asyncResolver.safeResolve(
+            l1func: self.layer1.getDomainName(tokenId: tokenId),
+            l2func: self.layer2.getDomainName(tokenId: tokenId)
+        )
     }
 
     func addr(domain: String, ticker: String) throws -> String {
-        return try asyncResolver.safeResolve(l1func: layer1.addr, l2func: layer2.addr, arg1: domain, arg2: ticker)
+        return try asyncResolver.safeResolve(
+            l1func: self.layer1.addr(domain: domain, ticker: ticker),
+            l2func: self.layer2.addr(domain: domain, ticker: ticker)
+        )
     }
 
     func resolver(domain: String) throws -> String {
-        return try asyncResolver.safeResolve(l1func: layer1.resolver, l2func: layer2.resolver, arg: domain)
+        return try asyncResolver.safeResolve(
+            l1func: self.layer1.resolver(domain: domain),
+            l2func: self.layer2.resolver(domain: domain)
+        )
     }
 
     func tokensOwnedBy(address: String) throws -> [String] {
-        let results = try asyncResolver.resolve(l1func: layer1.tokensOwnedBy, l2func: layer2.tokensOwnedBy, arg: address)
+        let results = try asyncResolver.resolve(
+            l1func: self.layer1.tokensOwnedBy(address: address),
+            l2func: self.layer2.tokensOwnedBy(address: address)
+        )
         var tokens: [String] = []
 
         let l2Results = results[.layer2]!
@@ -139,7 +163,10 @@ internal class UNS: CommonNamingService, NamingService {
     }
 
     func batchOwners(domains: [String]) throws -> [String?] {
-        let results = try asyncResolver.resolve(l1func: layer1.batchOwners, l2func: layer2.batchOwners, arg: domains)
+        let results = try asyncResolver.resolve(
+            l1func: self.layer1.batchOwners(domains: domains),
+            l2func: self.layer2.batchOwners(domains: domains)
+        )
         var owners: [String?] = []
         let l2Result = results[.layer2]!
         let l1Result = results[.layer1]!
