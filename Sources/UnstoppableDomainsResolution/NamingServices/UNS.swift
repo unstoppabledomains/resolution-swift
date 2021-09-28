@@ -138,6 +138,13 @@ internal class UNS: CommonNamingService, NamingService {
         )
     }
 
+    func locations(domains: [String]) throws -> [String: Location] {
+        return try asyncResolver.safeResolve(
+            l1func: self.layer1.locations(domains: domains),
+            l2func: self.layer2.locations(domains: domains)
+        )
+    }
+
     func tokensOwnedBy(address: String) throws -> [String] {
         let results = try asyncResolver.resolve(
             l1func: self.layer1.tokensOwnedBy(address: address),

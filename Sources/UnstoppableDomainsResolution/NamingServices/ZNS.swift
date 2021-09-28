@@ -87,6 +87,10 @@ internal class ZNS: CommonNamingService, NamingService {
         throw ResolutionError.methodNotSupported
     }
 
+    func locations(domains: [String]) throws -> [String: Location] {
+        throw ResolutionError.methodNotSupported
+    }
+
     // MARK: - get Resolver
     func resolver(domain: String) throws -> String {
         let recordAddresses = try self.recordsAddresses(domain: domain)

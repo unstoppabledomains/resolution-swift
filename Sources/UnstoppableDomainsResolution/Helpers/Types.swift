@@ -11,6 +11,7 @@ import Foundation
 public typealias StringResultConsumer = (Result<String, ResolutionError>) -> Void
 public typealias StringsArrayResultConsumer = (Result<[String?], ResolutionError>) -> Void
 public typealias DictionaryResultConsumer = (Result<[String: String], ResolutionError>) -> Void
+public typealias DictionaryLocationResultConsumer = (Result<[String: Location], ResolutionError>) -> Void
 public typealias DnsRecordsResultConsumer = (Result<[DnsRecord], Error>) -> Void
 public typealias TokenUriMetadataResultConsumer = (Result<TokenUriMetadata, ResolutionError>) -> Void
 public typealias BoolResultConsumer = (Result<Bool, Error>) -> Void
@@ -31,4 +32,14 @@ public struct UNSContract {
     let contract: Contract
     let deploymentBlock: String
 }
+
+public struct Location {
+    let registryAddress: String
+    let resolverAddress: String
+    let networkId: String
+//    let blockchain: String
+    let owner: String
+    let providerURL: String
+}
+
 public let ethCoinIndex = 60

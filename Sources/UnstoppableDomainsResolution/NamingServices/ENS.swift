@@ -113,6 +113,10 @@ internal class ENS: CommonNamingService, NamingService {
         throw ResolutionError.methodNotSupported
     }
 
+    func locations(domains: [String]) throws -> [String: Location] {
+        throw ResolutionError.methodNotSupported
+    }
+
     // MARK: - get Resolver
     func resolver(domain: String) throws -> String {
         let tokenId = super.namehash(domain: domain)

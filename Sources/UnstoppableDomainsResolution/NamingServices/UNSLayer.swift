@@ -262,6 +262,10 @@ internal class UNSLayer: CommonNamingService, NamingService {
         throw ResolutionError.recordNotFound
     }
 
+    func locations(domains: [String]) throws -> [String: Location] {
+        return [:]
+    }
+
     func getTokenUri(tokenId: String) throws -> String {
         do {
             if let result = try proxyReaderContract?
