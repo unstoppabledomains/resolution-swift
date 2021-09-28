@@ -92,6 +92,30 @@ internal class UNS: CommonNamingService, NamingService {
     func owner(domain: String) throws -> String {
         return try asyncResolver.safeResolve(l1func: layer1.owner, l2func: layer2.owner, arg: domain)
     }
+    
+    func record(domain: String, key: String) throws -> String {
+        return try asyncResolver.safeResolve(l1func: layer1.record, l2func: layer2.record, arg1: domain, arg2: key)
+    }
+
+    func records(keys: [String], for domain: String) throws -> [String: String] {
+        return try asyncResolver.safeResolve(l1func: layer1.records, l2func: layer2.records, arg1: keys, arg2: domain)
+    }
+
+    func getTokenUri(tokenId: String) throws -> String {
+        return try asyncResolver.safeResolve(l1func: layer1.getTokenUri, l2func: layer2.getTokenUri, arg: tokenId)
+    }
+
+    func getDomainName(tokenId: String) throws -> String {
+        return try asyncResolver.safeResolve(l1func: layer1.getDomainName, l2func: layer2.getDomainName, arg: tokenId)
+    }
+
+    func addr(domain: String, ticker: String) throws -> String {
+        return try asyncResolver.safeResolve(l1func: layer1.addr, l2func: layer2.addr, arg1: domain, arg2: ticker)
+    }
+
+    func resolver(domain: String) throws -> String {
+        return try asyncResolver.safeResolve(l1func: layer1.resolver, l2func: layer2.resolver, arg: domain)
+    }
 
     func tokensOwnedBy(address: String) throws -> [String] {
         let results = try asyncResolver.resolve(l1func: layer1.tokensOwnedBy, l2func: layer2.tokensOwnedBy, arg: address)
@@ -113,15 +137,7 @@ internal class UNS: CommonNamingService, NamingService {
 
         return tokens.uniqued()
     }
-
-    func addr(domain: String, ticker: String) throws -> String {
-        return try asyncResolver.safeResolve(l1func: layer1.addr, l2func: layer2.addr, arg1: domain, arg2: ticker)
-    }
-
-    func resolver(domain: String) throws -> String {
-        return try asyncResolver.safeResolve(l1func: layer1.resolver, l2func: layer2.resolver, arg: domain)
-    }
-
+    
     func batchOwners(domains: [String]) throws -> [String?] {
         let results = try asyncResolver.resolve(l1func: layer1.batchOwners, l2func: layer2.batchOwners, arg: domains)
         var owners: [String?] = []
@@ -141,122 +157,6 @@ internal class UNS: CommonNamingService, NamingService {
             owners.append(ownerAddress)
         }
         return owners
-    }
-
-    func record(domain: String, key: String) throws -> String {
-        return try asyncResolver.safeResolve(l1func: layer1.record, l2func: layer2.record, arg1: domain, arg2: key)
-    }
-
-    func records(keys: [String], for domain: String) throws -> [String: String] {
-        return try asyncResolver.safeResolve(l1func: layer1.records, l2func: layer2.records, arg1: keys, arg2: domain)
-    }
-
-    func getTokenUri(tokenId: String) throws -> String {
-        return try asyncResolver.safeResolve(l1func: layer1.getTokenUri, l2func: layer2.getTokenUri, arg: tokenId)
-    }
-
-    func getDomainName(tokenId: String) throws -> String {
-        return try asyncResolver.safeResolve(l1func: layer1.getDomainName, l2func: layer2.getDomainName, arg: tokenId)
-    }
-}
-
-internal class AsyncResolver {
-
-    typealias ResultConsumer<T> = (T?, Error?)
-    typealias GenericFunction<T, U> = (_: T) throws -> (_: U)
-    typealias GenericFunctionTwoArgs<T, U, Z> = (_: T, _: U) throws -> (_: Z)
-
-    let asyncGroup = DispatchGroup()
-
-    func safeResolve<T, U>(l1func: @escaping GenericFunction<T, U>, l2func: @escaping GenericFunction<T, U>, arg: T) throws -> U {
-        let results = try resolve(l1func: l1func, l2func: l2func, arg: arg)
-        return try parseResult(results)
-    }
-
-    func safeResolve<T, U, Z>(l1func: @escaping GenericFunctionTwoArgs<T, U, Z>, l2func: @escaping GenericFunctionTwoArgs<T, U, Z>, arg1: T, arg2: U) throws -> Z {
-        let results = try resolve(l1func: l1func, l2func: l2func, arg1: arg1, arg2: arg2)
-        return try parseResult(results)
-    }
-
-    func resolve<T, U, Z>(l1func: @escaping GenericFunctionTwoArgs<T, U, Z>, l2func: @escaping GenericFunctionTwoArgs<T, U, Z>, arg1: T, arg2: U) throws -> [UNSLocation: ResultConsumer<Z>] {
-        var results: [UNSLocation: ResultConsumer<Z>] = [:]
-        let functions: [UNSLocation: GenericFunctionTwoArgs<T, U, Z>] = [.layer2: l2func, .layer1: l1func]
-
-        functions.forEach { function in
-            self.asyncGroup.enter()
-            DispatchQueue.global().async { [weak self] in
-                guard let self = self else { return }
-                do {
-                    let value = try function.value(arg1, arg2)
-                    results[function.key] = (value, nil)
-                    self.asyncGroup.leave()
-                } catch {
-                    results[function.key] = (nil, error)
-                    self.asyncGroup.leave()
-                }
-            }
-        }
-        let semaphore = DispatchSemaphore(value: 0)
-        self.asyncGroup.notify(queue: .global()) {
-            semaphore.signal()
-        }
-        semaphore.wait()
-        return results
-    }
-
-    func resolve<T, U>(l1func: @escaping GenericFunction<T, U>, l2func: @escaping GenericFunction<T, U>, arg: T) throws -> [UNSLocation: ResultConsumer<U>] {
-        var results: [UNSLocation: ResultConsumer<U>] = [:]
-        let functions: [UNSLocation: GenericFunction<T, U>] = [.layer2: l2func, .layer1: l1func]
-
-        functions.forEach { function in
-            self.asyncGroup.enter()
-            DispatchQueue.global().async { [weak self] in
-                guard let self = self else { return }
-                do {
-                    let value = try function.value(arg)
-                    results[function.key] = (value, nil)
-                    self.asyncGroup.leave()
-                } catch {
-                    results[function.key] = (nil, error)
-                    self.asyncGroup.leave()
-                }
-            }
-        }
-        let semaphore = DispatchSemaphore(value: 0)
-        self.asyncGroup.notify(queue: .global()) {
-            semaphore.signal()
-        }
-        semaphore.wait()
-        return results
-    }
-
-    private func parseResult<T>(_ results: [UNSLocation: ResultConsumer<T>] ) throws -> T {
-        let l2Result = results[.layer2]!
-        let l1Result = results[.layer1]!
-
-        if let l2error = l2Result.1 {
-            if !isUnregisteredDomain(error: l2error) {
-                throw l2error
-            }
-        } else {
-            if let l2answer = l2Result.0 {
-                return l2answer
-            }
-        }
-
-        if let l1error = l1Result.1 {
-            throw l1error
-        }
-        return l1Result.0!
-    }
-
-    private func isUnregisteredDomain(error: Error?) -> Bool {
-        if let error = error as? ResolutionError {
-            if case ResolutionError.unregisteredDomain = error {
-                return true
-            }
-        }
-        return false
     }
 }
 
