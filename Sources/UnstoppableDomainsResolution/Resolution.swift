@@ -155,26 +155,6 @@ public class Resolution {
         }
     }
 
-    /// Returns domains owned by `address`
-    /// - Parameter address: - address of a user you want to get domains of
-    /// - Parameter service: - name of the service you want to check agains CNS or ZNS
-    /// - Parameter completion: - A callback taht resolves `Result` with an `array of domain names` or `Error`
-    public func tokensOwnedBy(address: String, service: String, completion: @escaping StringsArrayResultConsumer ) {
-        DispatchQueue.global(qos: .utility).async { [weak self] in
-            do {
-
-                guard let serviceName = NamingServiceName(rawValue: service),
-                    let namingService = self?.services.first(where: { $0.name == serviceName }) else {
-                    throw ResolutionError.unsupportedServiceName
-                }
-                let result = try namingService.tokensOwnedBy(address: address)
-                completion(.success(result))
-            } catch {
-                self?.catchError(error, completion: completion)
-            }
-        }
-    }
-
     /// Resolves a resolver address of a `domain`
     /// - Parameter  domain: - domain name to be resolved
     /// - Parameter  completion: A callback that resolves `Result`  with a `resolver address` for a specific domain or `Error`
