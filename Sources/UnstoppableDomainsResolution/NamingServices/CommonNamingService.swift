@@ -44,9 +44,6 @@ class CommonNamingService {
         var nameLowCased = name.rawValue.lowercased()
         switch type {
         case .unsRegistry:
-            if nameLowCased == "unsl1" || nameLowCased == "unsl2" {
-                nameLowCased = "uns"
-            }
             jsonFileName = "\(nameLowCased)Registry"
         case .ensRegistry:
             jsonFileName = "\(nameLowCased)Registry"

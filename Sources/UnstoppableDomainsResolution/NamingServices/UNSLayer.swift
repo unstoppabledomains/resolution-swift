@@ -140,7 +140,7 @@ internal class UNSLayer: CommonNamingService, NamingService {
     func tokensOwnedBy(address: String) throws -> [String] {
         let asyncGroup = DispatchGroup()
         var possibleDomains: [String] = []
-
+        let queque = DispatchQueue(label: "possibleDomainsAppend")
         self.nsRegistries.forEach { registry in
             asyncGroup.enter()
             DispatchQueue.global().async { [weak self] in
@@ -151,8 +151,10 @@ internal class UNSLayer: CommonNamingService, NamingService {
                             for: address,
                         since: registry.deploymentBlock
                     )
-                    possibleDomains += domainsFromLogs
-                    asyncGroup.leave()
+                    queque.sync {
+                        possibleDomains += domainsFromLogs
+                        asyncGroup.leave()
+                    }
                 } catch {
                     asyncGroup.leave()
                 }
@@ -186,7 +188,11 @@ internal class UNSLayer: CommonNamingService, NamingService {
     private func resolverFromTokenId(tokenId: String) throws -> String {
         let res: Any
         do {
-            res = try self.getDataForMany(keys: [Contract.resolversKey], for: [tokenId])
+            res = try self.getDataForMany(keys: [Contract.resolversKey, Contract.ownersKey], for: [tokenId])
+            guard let owners = self.unfoldForMany(contractResult: res, key: Contract.ownersKey),
+                  Utillities.isNotEmpty(owners[0]) else {
+                throw ResolutionError.unregisteredDomain
+            }
         } catch {
             if error is ABICoderError {
                 throw ResolutionError.unspecifiedResolver
@@ -219,7 +225,7 @@ internal class UNSLayer: CommonNamingService, NamingService {
         return result
     }
 
-    func recordFromTokenId(tokenId: String, key: String) throws -> String {
+    private func recordFromTokenId(tokenId: String, key: String) throws -> String {
         let result: OwnerResolverRecord
         do {
             result = try self.getOwnerResolverRecord(tokenId: tokenId, key: key)
@@ -237,17 +243,23 @@ internal class UNSLayer: CommonNamingService, NamingService {
 
     func records(keys: [String], for domain: String) throws -> [String: String] {
         let tokenId = super.namehash(domain: domain)
-        guard let dict = try proxyReaderContract?.callMethod(methodName: "GetMany", args: [keys, tokenId]) as? [String: [String]],
-              let result = dict["0"]
-        else {
-            throw ResolutionError.recordNotFound
-        }
 
-        let returnValue = zip(keys, result).reduce(into: [String: String]()) { dict, pair in
-            let (key, value) = pair
-            dict[key] = value
+        guard let dict  = try self.getDataForMany(keys: keys, for: [tokenId]) as? [String: Any],
+        let owners = self.unfoldForMany(contractResult: dict, key: Contract.ownersKey),
+              Utillities.isNotEmpty(owners[0]) else {
+            throw ResolutionError.unregisteredDomain
         }
-        return returnValue
+        if let valuesArray = dict[Contract.valuesKey] as? [[String]],
+           valuesArray.count > 0,
+           valuesArray[0].count > 0 {
+            let result = valuesArray[0]
+            let returnValue = zip(keys, result).reduce(into: [String: String]()) { dict, pair in
+                let (key, value) = pair
+                dict[key] = value
+            }
+            return returnValue
+        }
+        throw ResolutionError.recordNotFound
     }
 
     func getTokenUri(tokenId: String) throws -> String {
@@ -356,6 +368,9 @@ internal class UNSLayer: CommonNamingService, NamingService {
                                                 args: [tokenId]) {
                 let dict = result as? [String: Any]
                 if let val = dict?["0"] as? EthereumAddress {
+                    if !Utillities.isNotEmpty(val.address) {
+                        throw ResolutionError.unregisteredDomain
+                    }
                     return val.address
                 }
                 throw ResolutionError.unregisteredDomain

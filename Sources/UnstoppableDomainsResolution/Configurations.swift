@@ -30,7 +30,7 @@ public struct NamingServiceConfig {
     }
 }
 
-public struct UNSConfig {
+public struct UnsLocations {
     let layer1: NamingServiceConfig
     let layer2: NamingServiceConfig
 
@@ -44,12 +44,12 @@ public struct UNSConfig {
 }
 
 public struct Configurations {
-    let uns: UNSConfig
+    let uns: UnsLocations
     let zns: NamingServiceConfig
     let ens: NamingServiceConfig
 
     public init(
-        uns: UNSConfig = UNSConfig(
+        uns: UnsLocations = UnsLocations(
             layer1: NamingServiceConfig(
                 providerUrl: "https://mainnet.infura.io/v3/3c25f57353234b1b853e9861050f4817",
                 network: "mainnet"),

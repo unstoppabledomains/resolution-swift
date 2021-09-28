@@ -17,15 +17,13 @@ public typealias BoolResultConsumer = (Result<Bool, Error>) -> Void
 
 public enum NamingServiceName: String {
     case uns
-    case unsl1
-    case unsl2
     case ens
     case zns
 }
 
 public enum UNSLocation: String {
-    case l1
-    case l2
+    case layer1
+    case layer2
 }
 
 public struct UNSContract {
