@@ -489,26 +489,7 @@ public class Resolution {
         throw ResolutionError.invalidDomainName
     }
 
-    /// Process the 'error'
-    private func catchError(_ error: Error, completion:@escaping DictionaryResultConsumer ) {
-        guard let catched = error as? ResolutionError else {
-            completion(.failure(.unknownError(error)))
-            return
-        }
-        completion(.failure(catched))
-    }
-
-    /// Process the 'error'
-    private func catchError(_ error: Error, completion:@escaping StringResultConsumer ) {
-        guard let catched = error as? ResolutionError else {
-            completion(.failure(.unknownError(error)))
-            return
-        }
-        completion(.failure(catched))
-    }
-
-    /// Process the 'error'
-    private func catchError(_ error: Error, completion:@escaping StringsArrayResultConsumer ) {
+    private func catchError<T>(_ error: Error, completion: @escaping (Result<T, ResolutionError>) -> Void) {
         guard let catched = error as? ResolutionError else {
             completion(.failure(.unknownError(error)))
             return
@@ -523,15 +504,6 @@ public class Resolution {
                 return
             }
             completion(.failure(catched))
-            return
-        }
-        completion(.failure(catched))
-    }
-
-    /// Process the 'error'
-    private func catchError(_ error: Error, completion:@escaping TokenUriMetadataResultConsumer ) {
-        guard let catched = error as? ResolutionError else {
-            completion(.failure(.unknownError(error)))
             return
         }
         completion(.failure(catched))
