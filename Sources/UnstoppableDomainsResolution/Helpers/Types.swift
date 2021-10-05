@@ -15,7 +15,8 @@ public typealias DictionaryLocationResultConsumer = (Result<[String: Location], 
 public typealias DnsRecordsResultConsumer = (Result<[DnsRecord], Error>) -> Void
 public typealias TokenUriMetadataResultConsumer = (Result<TokenUriMetadata, ResolutionError>) -> Void
 public typealias BoolResultConsumer = (Result<Bool, Error>) -> Void
-public typealias ResultConsumer<T> = (T?, Error?)
+
+internal typealias AsyncConsumer<T> = (T?, Error?)
 
 public enum NamingServiceName: String {
     case uns

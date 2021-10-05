@@ -45,7 +45,7 @@ internal class Contract {
         let decodedResponse = try self.coder.decode(response, from: Self.multiCallMethodName) as? [String: Any]
         guard let decoded = decodedResponse,
               let decodedResults = decoded["results"] as? [Data] else {
-            throw ABICoderError.couldNotDecode(method: "multicall", value: response)
+            throw ABICoderError.couldNotDecode(method: Self.multiCallMethodName, value: response)
         }
         return decodedResults
     }

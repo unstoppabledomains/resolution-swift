@@ -26,11 +26,11 @@ internal class Utillities {
         return array.count > 0
     }
 
-    static func getLayerResultWrapper<T>(from results: [UNSLocation: ResultConsumer<T>], for location: UNSLocation) -> ResultConsumer<T> {
+    static func getLayerResultWrapper<T>(from results: [UNSLocation: AsyncConsumer<T>], for location: UNSLocation) -> AsyncConsumer<T> {
         return results[location]!
     }
 
-    static func getLayerResult<T>(from results: [UNSLocation: ResultConsumer<T>], for location: UNSLocation) -> T {
+    static func getLayerResult<T>(from results: [UNSLocation: AsyncConsumer<T>], for location: UNSLocation) -> T {
         let wrapper = Self.getLayerResultWrapper(from: results, for: location)
         return wrapper.0!
     }

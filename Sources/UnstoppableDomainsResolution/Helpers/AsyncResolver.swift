@@ -25,8 +25,8 @@ internal class AsyncResolver {
     func resolve<T>(
         l1func: @escaping @autoclosure GeneralFunction<T>,
         l2func: @escaping @autoclosure GeneralFunction<T>
-    ) throws -> [UNSLocation: ResultConsumer<T>] {
-        var results: [UNSLocation: ResultConsumer<T>] = [:]
+    ) throws -> [UNSLocation: AsyncConsumer<T>] {
+        var results: [UNSLocation: AsyncConsumer<T>] = [:]
         let functions: [UNSLocation: GeneralFunction<T>] = [.layer2: l2func, .layer1: l1func]
 
         functions.forEach { function in
@@ -50,7 +50,7 @@ internal class AsyncResolver {
         return results
     }
 
-    private func parseResult<T>(_ results: [UNSLocation: ResultConsumer<T>] ) throws -> T {
+    private func parseResult<T>(_ results: [UNSLocation: AsyncConsumer<T>] ) throws -> T {
         let l2Result = Utillities.getLayerResultWrapper(from: results, for: .layer2)
         let l1Result = Utillities.getLayerResultWrapper(from: results, for: .layer1)
 

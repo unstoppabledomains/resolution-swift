@@ -178,7 +178,7 @@ internal class UNS: CommonNamingService, NamingService {
     }
 
     // This is used only when both layers should not throw any errors. Methods like batchOwners or locations require both layers.
-    private func throwIfLayerHasError<T>(_ results: [UNSLocation: ResultConsumer<T>]) throws {
+    private func throwIfLayerHasError<T>(_ results: [UNSLocation: AsyncConsumer<T>]) throws {
         let l2Results = Utillities.getLayerResultWrapper(from: results, for: .layer2)
         let l1Results = Utillities.getLayerResultWrapper(from: results, for: .layer1)
 
