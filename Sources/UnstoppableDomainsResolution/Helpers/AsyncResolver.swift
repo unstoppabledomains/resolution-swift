@@ -10,7 +10,6 @@
 
 internal class AsyncResolver {
 
-    typealias ResultConsumer<T> = (T?, Error?)
     typealias GeneralFunction<T> = () throws -> T
 
     let asyncGroup = DispatchGroup()
@@ -52,8 +51,8 @@ internal class AsyncResolver {
     }
 
     private func parseResult<T>(_ results: [UNSLocation: ResultConsumer<T>] ) throws -> T {
-        let l2Result = results[.layer2]!
-        let l1Result = results[.layer1]!
+        let l2Result = Utillities.getLayerResultWrapper(from: results, for: .layer2)
+        let l1Result = Utillities.getLayerResultWrapper(from: results, for: .layer1)
 
         if let l2error = l2Result.1 {
             if !isUnregisteredDomain(error: l2error) {

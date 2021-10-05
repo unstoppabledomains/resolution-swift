@@ -15,6 +15,7 @@ public typealias DictionaryLocationResultConsumer = (Result<[String: Location], 
 public typealias DnsRecordsResultConsumer = (Result<[DnsRecord], Error>) -> Void
 public typealias TokenUriMetadataResultConsumer = (Result<TokenUriMetadata, ResolutionError>) -> Void
 public typealias BoolResultConsumer = (Result<Bool, Error>) -> Void
+public typealias ResultConsumer<T> = (T?, Error?)
 
 public enum NamingServiceName: String {
     case uns
@@ -33,13 +34,13 @@ public struct UNSContract {
     let deploymentBlock: String
 }
 
-public struct Location {
-    let registryAddress: String
-    let resolverAddress: String
-    let networkId: String
-//    let blockchain: String
-    let owner: String
-    let providerURL: String
+public struct Location: Equatable {
+    var registryAddress: String?
+    var resolverAddress: String?
+    var networkId: String?
+    var blockchain: String?
+    var owner: String?
+    var providerURL: String?
 }
 
 public let ethCoinIndex = 60

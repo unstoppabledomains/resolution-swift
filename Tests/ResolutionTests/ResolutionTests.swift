@@ -866,6 +866,71 @@ class ResolutionTests: XCTestCase {
         assert(values["someweirdstuf"] == "")
     }
 
+    func testLocations() throws {
+        let locationsReceived = expectation(description: "Locations for each domain should be received");
+        let domains = [
+            TestHelpers.getTestDomain(.DOMAIN),
+            TestHelpers.getTestDomain(.LAYER2_DOMAIN),
+            TestHelpers.getTestDomain(.COIN_DOMAIN),
+            TestHelpers.getTestDomain(.UNREGISTERED_DOMAIN)
+        ];
+        
+        var locations: [String: Location] = [:];
+        resolution.locations(domains: domains) { result in
+            switch result {
+            case .success(let returnValue):
+                locationsReceived.fulfill()
+                locations = returnValue;
+            case .failure(let error):
+                XCTFail("Expected locations, but got \(error)");
+            }
+        }
+        
+        waitForExpectations(timeout: timeout, handler: nil);
+        
+        let answers: [String: Location] = [
+            TestHelpers.getTestDomain(.UNREGISTERED_DOMAIN): Location(
+                registryAddress: nil,
+                resolverAddress: nil,
+                networkId: nil,
+                blockchain: nil,
+                owner: nil,
+                providerURL: nil
+            ),
+            TestHelpers.getTestDomain(.DOMAIN): Location(
+                registryAddress: "0xaad76bea7cfec82927239415bb18d2e93518ecbb",
+                resolverAddress: "0x95AE1515367aa64C462c71e87157771165B1287A",
+                networkId: "4",
+                blockchain: "ETH",
+                owner: "0xe7474D07fD2FA286e7e0aa23cd107F8379085037",
+                providerURL: "https://rinkeby.infura.io/v3/3c25f57353234b1b853e9861050f4817"
+            ),
+            TestHelpers.getTestDomain(.COIN_DOMAIN):Location(
+                registryAddress: "0x7fb83000b8ed59d3ead22f0d584df3a85fbc0086",
+                resolverAddress: "0x7fb83000B8eD59D3eAD22f0D584Df3a85fBC0086",
+                networkId: "4",
+                blockchain: "ETH",
+                owner: "0xe7474D07fD2FA286e7e0aa23cd107F8379085037",
+                providerURL: "https://rinkeby.infura.io/v3/3c25f57353234b1b853e9861050f4817"
+            ),
+            TestHelpers.getTestDomain(.LAYER2_DOMAIN): Location(
+                registryAddress: "0x2a93c52e7b6e7054870758e15a1446e769edfb93",
+                resolverAddress: "0x2a93C52E7B6E7054870758e15A1446E769EdfB93",
+                networkId: "80001",
+                blockchain: "MATIC",
+                owner: "0xe7474D07fD2FA286e7e0aa23cd107F8379085037",
+                providerURL: "https://matic-testnet-archive-rpc.bwarelabs.com"
+            ),
+        ];
+        
+        assert(!locations.isEmpty);
+        assert(locations.count == domains.count);
+        domains.forEach { domain in
+            assert(locations[domain] == answers[domain])
+        }
+    }
+    
+    
     func testCheckDomain() throws {
         // Given
         let validDomainName: String = "valid.domain-test-123.crypto"

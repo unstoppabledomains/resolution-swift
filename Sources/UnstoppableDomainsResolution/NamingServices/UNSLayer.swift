@@ -17,6 +17,7 @@ internal class UNSLayer: CommonNamingService, NamingService {
     static let existName = "exists"
 
     let network: String
+    let blockchain: String
     var nsRegistries: [UNSContract]
     var proxyReaderContract: Contract?
 
@@ -24,6 +25,7 @@ internal class UNSLayer: CommonNamingService, NamingService {
         self.network = config.network.isEmpty
             ? try Self.getNetworkId(providerUrl: config.providerUrl, networking: config.networking)
             : config.network
+        self.blockchain = self.network == "polygon-mumbai" ? "MATIC" : "ETH"
         self.nsRegistries = []
 
         super.init(name: name, providerUrl: config.providerUrl, networking: config.networking)
@@ -263,7 +265,11 @@ internal class UNSLayer: CommonNamingService, NamingService {
     }
 
     func locations(domains: [String]) throws -> [String: Location] {
-        return [:]
+        let tokenIds = domains.map { self.namehash(domain: $0) }
+        var calls = tokenIds.map { return MultiCallData(methodName: Self.registryOfMethodName, args: [$0]) }
+        calls.append(MultiCallData(methodName: Self.getDataForManyMethodName, args: [[], tokenIds]))
+        let multiCallBytes = try proxyReaderContract?.multiCall(calls: calls)
+        return try parseMultiCallForLocations(multiCallBytes!, from: calls, for: domains)
     }
 
     func getTokenUri(tokenId: String) throws -> String {
@@ -307,6 +313,60 @@ internal class UNSLayer: CommonNamingService, NamingService {
     }
 
     // MARK: - Helper functions
+    private func parseMultiCallForLocations(
+        _ multiCallBytes: [Data],
+        from calls: [MultiCallData],
+        for domains: [String]
+    ) throws -> [String: Location] {
+
+        var registries: [String] = []
+        var owners: [String] = []
+        var resolvers: [String] = []
+
+        for (data, call) in zip(multiCallBytes, calls) {
+            switch call.methodName {
+            case Self.registryOfMethodName:
+                let hexMessage = "0x" + data.toHexString()
+                if let result = try proxyReaderContract?.coder.decode(hexMessage, from: Self.registryOfMethodName),
+                   let dict = result as? [String: Any],
+                   let val = dict["0"] as? EthereumAddress {
+                        registries.append(val._address)
+                    }
+            case Self.getDataForManyMethodName:
+                let hexMessage = "0x" + data.toHexString()
+                if let dict = try proxyReaderContract?.coder.decode(hexMessage, from: Self.getDataForManyMethodName),
+                   let domainOwners = self.unfoldForMany(contractResult: dict, key: Contract.ownersKey),
+                   let domainResolvers = self.unfoldForMany(contractResult: dict, key: Contract.resolversKey) {
+                        owners += domainOwners
+                        resolvers += domainResolvers
+                    }
+            default:
+                throw ResolutionError.methodNotSupported
+            }
+        }
+
+        return buildLocations(domains: domains, owners: owners, resolvers: resolvers, registries: registries)
+    }
+
+    private func buildLocations(domains: [String], owners: [String], resolvers: [String], registries: [String]) -> [String: Location] {
+        var locations: [String: Location] = [:]
+        for (domain, (owner, (resolver, registry))) in zip(domains, zip(owners, zip(resolvers, registries))) {
+            if Utillities.isNotEmpty(owner) {
+                locations[domain] = Location(
+                    registryAddress: registry,
+                    resolverAddress: resolver,
+                    networkId: CommonNamingService.networkIds[self.network]!,
+                    blockchain: self.blockchain,
+                    owner: owner,
+                    providerURL: self.providerUrl
+                )
+            } else {
+                locations[domain] = Location()
+            }
+        }
+        return locations
+    }
+
     private func unfoldAddress<T> (_ incomingData: T) -> String? {
         if let eth = incomingData as? EthereumAddress {
             return eth.address
