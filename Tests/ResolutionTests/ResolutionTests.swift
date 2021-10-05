@@ -425,6 +425,7 @@ class ResolutionTests: XCTestCase {
 
         // Then
         assert(owner.lowercased() == "0xe7474D07fD2FA286e7e0aa23cd107F8379085037".lowercased())
+
         assert(ethOwner.lowercased() == "0x842f373409191Cff2988A6F19AB9f605308eE462".lowercased())
         TestHelpers.checkError(result: unregisteredResult, expectedError: ResolutionError.unregisteredDomain)
     }
