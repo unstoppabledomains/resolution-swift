@@ -103,24 +103,6 @@ internal class UNS: CommonNamingService, NamingService {
         return locations
     }
 
-    func tokensOwnedBy(address: String) throws -> [String] {
-        let results = try asyncResolver.resolve(
-            l1func: self.layer1.tokensOwnedBy(address: address),
-            l2func: self.layer2.tokensOwnedBy(address: address)
-        )
-        var tokens: [String] = []
-
-        try self.throwIfLayerHasError(results)
-
-        let l2Results = Utillities.getLayerResult(from: results, for: .layer2)
-        let l1Results = Utillities.getLayerResult(from: results, for: .layer1)
-
-        tokens += l2Results
-        tokens += l1Results
-
-        return tokens.uniqued()
-    }
-
     func batchOwners(domains: [String]) throws -> [String?] {
         let results = try asyncResolver.resolve(
             l1func: self.layer1.batchOwners(domains: domains),

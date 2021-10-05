@@ -101,10 +101,6 @@ internal class ENS: CommonNamingService, NamingService {
         throw ResolutionError.recordNotSupported
     }
 
-    func tokensOwnedBy(address: String) throws -> [String] {
-        throw ResolutionError.methodNotSupported
-    }
-
     func getTokenUri(tokenId: String) throws -> String {
         throw ResolutionError.methodNotSupported
     }
