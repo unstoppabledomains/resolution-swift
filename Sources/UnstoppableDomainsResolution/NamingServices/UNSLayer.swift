@@ -17,7 +17,7 @@ internal class UNSLayer: CommonNamingService, NamingService {
     static let existName = "exists"
 
     let network: String
-    let blockchain: String
+    let blockchain: String?
     var nsRegistries: [UNSContract]
     var proxyReaderContract: Contract?
 
@@ -25,7 +25,7 @@ internal class UNSLayer: CommonNamingService, NamingService {
         self.network = config.network.isEmpty
             ? try Self.getNetworkId(providerUrl: config.providerUrl, networking: config.networking)
             : config.network
-        self.blockchain = self.network == "polygon-mumbai" ? "MATIC" : "ETH"
+        self.blockchain = Self.networkToBlockchain[self.network]
         self.nsRegistries = []
 
         super.init(name: name, providerUrl: config.providerUrl, networking: config.networking)
