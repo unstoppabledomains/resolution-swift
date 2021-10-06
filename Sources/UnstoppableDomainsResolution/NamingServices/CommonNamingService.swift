@@ -102,6 +102,12 @@ extension CommonNamingService {
                              "rinkeby": "4",
                              "goerli": "5",
                              "polygon-mumbai": "80001"]
+    static let networkToBlockchain = [
+        "mainnet": "ETH",
+        "rinkeby": "ETH",
+        "polygon-mumbai": "MATIC",
+        "polygon-mainnet": "MATIC"
+    ]
 
     struct NewtorkConfigJson: Decodable {
         let version: String
