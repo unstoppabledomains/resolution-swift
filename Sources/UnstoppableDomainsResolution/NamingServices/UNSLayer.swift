@@ -17,16 +17,17 @@ internal class UNSLayer: CommonNamingService, NamingService {
     static let existName = "exists"
 
     let network: String
+    let layer: UNSLocation
     var nsRegistries: [UNSContract]
     var proxyReaderContract: Contract?
 
-    init(name: NamingServiceName, config: NamingServiceConfig, contracts: [UNSContract]) throws {
+    init(name: UNSLocation, config: NamingServiceConfig, contracts: [UNSContract]) throws {
         self.network = config.network.isEmpty
             ? try Self.getNetworkId(providerUrl: config.providerUrl, networking: config.networking)
             : config.network
         self.nsRegistries = []
-
-        super.init(name: name, providerUrl: config.providerUrl, networking: config.networking)
+        self.layer = name
+        super.init(name: .uns, providerUrl: config.providerUrl, networking: config.networking)
         contracts.forEach {
             if $0.name == "ProxyReader" {
                 proxyReaderContract = $0.contract
@@ -195,16 +196,16 @@ internal class UNSLayer: CommonNamingService, NamingService {
             }
         } catch {
             if error is ABICoderError {
-                throw ResolutionError.unspecifiedResolver
+                throw ResolutionError.unspecifiedResolver(self.layer.rawValue)
             }
             throw error
         }
         guard let rec = self.unfoldForMany(contractResult: res, key: Contract.resolversKey),
               rec.count > 0  else {
-            throw ResolutionError.unspecifiedResolver
+            throw ResolutionError.unspecifiedResolver(self.layer.rawValue)
         }
         guard Utillities.isNotEmpty(rec[0]) else {
-            throw ResolutionError.unspecifiedResolver
+            throw ResolutionError.unspecifiedResolver(self.layer.rawValue)
         }
         return rec[0]
     }
@@ -220,7 +221,7 @@ internal class UNSLayer: CommonNamingService, NamingService {
         let tokenId = super.namehash(domain: domain)
         let result = try recordFromTokenId(tokenId: tokenId, key: key)
         guard Utillities.isNotEmpty(result) else {
-            throw ResolutionError.recordNotFound
+            throw ResolutionError.recordNotFound(self.layer.rawValue)
         }
         return result
     }
@@ -231,12 +232,12 @@ internal class UNSLayer: CommonNamingService, NamingService {
             result = try self.getOwnerResolverRecord(tokenId: tokenId, key: key)
         } catch {
             if error is ABICoderError {
-                throw ResolutionError.unspecifiedResolver
+                throw ResolutionError.unspecifiedResolver(self.layer.rawValue)
             }
             throw error
         }
         guard Utillities.isNotEmpty(result.owner) else { throw ResolutionError.unregisteredDomain }
-        guard Utillities.isNotEmpty(result.resolver) else { throw ResolutionError.unspecifiedResolver }
+        guard Utillities.isNotEmpty(result.resolver) else { throw ResolutionError.unspecifiedResolver(self.layer.rawValue) }
 
         return result.record
     }
@@ -259,7 +260,7 @@ internal class UNSLayer: CommonNamingService, NamingService {
             }
             return returnValue
         }
-        throw ResolutionError.recordNotFound
+        throw ResolutionError.recordNotFound(self.layer.rawValue)
     }
 
     func getTokenUri(tokenId: String) throws -> String {
@@ -344,7 +345,7 @@ internal class UNSLayer: CommonNamingService, NamingService {
                 guard Utillities.isNotEmpty(resolvers[0]),
                       valuesArray.count > 0,
                       valuesArray[0].count > 0 else {
-                    throw ResolutionError.unspecifiedResolver
+                    throw ResolutionError.unspecifiedResolver(self.layer.rawValue)
                 }
 
                 let record = valuesArray[0][0]

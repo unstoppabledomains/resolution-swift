@@ -11,10 +11,10 @@ import Foundation
 public enum ResolutionError: Error {
     case unregisteredDomain
     case unsupportedDomain
-    case recordNotFound
+    case recordNotFound(String)
     case recordNotSupported
     case unsupportedNetwork
-    case unspecifiedResolver
+    case unspecifiedResolver(String)
     case unknownError(Error)
     case proxyReaderNonInitialized
     case registryAddressIsNotProvided

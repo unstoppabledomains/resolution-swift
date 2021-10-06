@@ -61,7 +61,7 @@ internal class ZNS: CommonNamingService, NamingService {
 
         guard
             let record = records[key] else {
-            throw ResolutionError.recordNotFound
+            throw ResolutionError.recordNotFound(self.name.rawValue)
         }
 
         return record
@@ -69,7 +69,7 @@ internal class ZNS: CommonNamingService, NamingService {
 
     func records(keys: [String], for domain: String) throws -> [String: String] {
         guard let records = try self.records(address: try resolver(domain: domain), keys: []) as? [String: String] else {
-            throw ResolutionError.recordNotFound
+            throw ResolutionError.recordNotFound(self.name.rawValue)
         }
         let filtered = records.filter { keys.contains($0.key) }
         return filtered
@@ -88,7 +88,7 @@ internal class ZNS: CommonNamingService, NamingService {
         let recordAddresses = try self.recordsAddresses(domain: domain)
         let (_, resolverAddress ) = recordAddresses
         guard Utillities.isNotEmpty(resolverAddress) else {
-            throw ResolutionError.unspecifiedResolver
+            throw ResolutionError.unspecifiedResolver(self.name.rawValue)
         }
 
         return resolverAddress
@@ -129,7 +129,7 @@ internal class ZNS: CommonNamingService, NamingService {
             keys: keys
         ) as? [String: Any]
         else {
-            throw ResolutionError.unspecifiedResolver
+            throw ResolutionError.unspecifiedResolver(self.name.rawValue)
         }
 
         return records
