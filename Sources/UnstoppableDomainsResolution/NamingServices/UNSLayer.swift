@@ -275,7 +275,7 @@ internal class UNSLayer: CommonNamingService, NamingService {
                 throw ResolutionError.unregisteredDomain
             }
             throw ResolutionError.proxyReaderNonInitialized
-        } catch APIError.decodingError {
+        } catch ResolutionError.executionReverted {
             throw ResolutionError.unregisteredDomain
         }
     }
@@ -298,7 +298,7 @@ internal class UNSLayer: CommonNamingService, NamingService {
                 return domainName
             }
             throw ResolutionError.unregisteredDomain
-        } catch APIError.decodingError {
+        } catch ResolutionError.executionReverted {
             throw ResolutionError.unregisteredDomain
         }
     }
@@ -377,7 +377,7 @@ internal class UNSLayer: CommonNamingService, NamingService {
                 throw ResolutionError.unregisteredDomain
             }
             throw ResolutionError.proxyReaderNonInitialized
-        } catch APIError.decodingError {
+        } catch ResolutionError.executionReverted {
             throw ResolutionError.unregisteredDomain
         }
     }

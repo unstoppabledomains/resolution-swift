@@ -21,6 +21,7 @@ public enum ResolutionError: Error {
     case inconsistenDomainArray
     case methodNotSupported
     case tooManyResponses
+    case executionReverted
     case badRequestOrResponse
     case unsupportedServiceName
     case invalidDomainName
@@ -29,15 +30,25 @@ public enum ResolutionError: Error {
     static let tooManyResponsesCode = -32005
     static let badRequestOrResponseCode = -32042
 
+    // sometimes providers returns executionReverted error with 2 different codes.
+    static let executionRevertedCode = 3
+    static let anotherExecutionRevertedCode = -32000
+
     static func parse (errorResponse: NetworkErrorResponse) -> ResolutionError? {
         let error = errorResponse.error
-        if error.code == tooManyResponsesCode {
+
+        switch error.code {
+        case anotherExecutionRevertedCode:
+            return .executionReverted
+        case executionRevertedCode:
+            return .executionReverted
+        case tooManyResponsesCode:
             return .tooManyResponses
-        }
-        if error.code == badRequestOrResponseCode {
+        case badRequestOrResponseCode:
             return .badRequestOrResponse
+        default:
+            return nil
         }
-        return nil
     }
 }
 
@@ -50,4 +61,5 @@ struct NetworkErrorResponse: Decodable {
 struct ErrorId: Codable {
     var code: Int
     var message: String
+    var data: String?
 }
