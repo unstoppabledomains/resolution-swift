@@ -93,7 +93,7 @@ class ResolutionTests: XCTestCase {
                         network: "rinkeby"
                     ),
                     layer2: NamingServiceConfig(
-                        providerUrl: "https://polygon-mumbai.infura.io/v3/e0c0cb9d12c440a29379df066de587e6",
+                        providerUrl: "https://matic-testnet-archive-rpc.bwarelabs.com",
                         network: "polygon-mumbai")
                 )
             )
@@ -147,7 +147,7 @@ class ResolutionTests: XCTestCase {
                             providerUrl: "https://rinkeby.infura.io/v3/3c25f57353234b1b853e9861050f4817",
                             network: "rinkeby"),
                 layer2: NamingServiceConfig(
-                            providerUrl: "https://polygon-mumbai.infura.io/v3/e0c0cb9d12c440a29379df066de587e6",
+                            providerUrl: "https://matic-testnet-archive-rpc.bwarelabs.com",
                             network: "polygon-mumbai")
             ),
             zns: NamingServiceConfig(
@@ -805,12 +805,20 @@ class ResolutionTests: XCTestCase {
 
     func testLocations() throws {
         let locationsReceived = expectation(description: "Locations for each domain should be received");
+        let unsuportedEnsReceived = expectation(description: "ENS is not supported");
+        let unsuportedZnsReceived = expectation(description: "ZNS is not supported");
+        
         let domains = [
             TestHelpers.getTestDomain(.DOMAIN),
             TestHelpers.getTestDomain(.LAYER2_DOMAIN),
             TestHelpers.getTestDomain(.COIN_DOMAIN),
             TestHelpers.getTestDomain(.UNREGISTERED_DOMAIN)
         ];
+        let ensDomain = TestHelpers.getTestDomain(.ETH_DOMAIN);
+        let znsDomain = TestHelpers.getTestDomain(.ZIL_DOMAIN);
+        
+        var EnsResult: Result<[String: Location], ResolutionError>!
+        var ZnsResult: Result<[String: Location], ResolutionError>!
         
         var locations: [String: Location] = [:];
         resolution.locations(domains: domains) { result in
@@ -821,6 +829,16 @@ class ResolutionTests: XCTestCase {
             case .failure(let error):
                 XCTFail("Expected locations, but got \(error)");
             }
+        }
+        
+        resolution.locations(domains: [ensDomain]) {
+            EnsResult = $0;
+            unsuportedEnsReceived.fulfill()
+        }
+        
+        resolution.locations(domains: [znsDomain]) {
+            ZnsResult = $0;
+            unsuportedZnsReceived.fulfill()
         }
         
         waitForExpectations(timeout: timeout, handler: nil);
@@ -865,6 +883,9 @@ class ResolutionTests: XCTestCase {
         domains.forEach { domain in
             assert(locations[domain] == answers[domain])
         }
+        
+        TestHelpers.checkError(result: EnsResult, expectedError: .methodNotSupported)
+        TestHelpers.checkError(result: ZnsResult, expectedError: .methodNotSupported)
     }
     
     
