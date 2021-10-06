@@ -35,7 +35,6 @@
 		3EE4DA1224E367720097540B /* ResolutionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EE4DA1124E367720097540B /* ResolutionTests.swift */; };
 		3EE4DA1424E367720097540B /* resolution.h in Headers */ = {isa = PBXBuildFile; fileRef = 3EE4DA0624E367720097540B /* resolution.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3EE4DA1E24E367D40097540B /* Resolution.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EE4DA1D24E367D40097540B /* Resolution.swift */; };
-		3EE8A93126FAA2D4005FD616 /* ResolutionUNSTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EE8A93026FAA2D4005FD616 /* ResolutionUNSTests.swift */; };
 		3EE8A93C26FACAC3005FD616 /* TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EE8A93B26FAC81A005FD616 /* TestHelpers.swift */; };
 		3EE8A94226FD44C3005FD616 /* UnsLayerL2Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EE8A94126FD44C3005FD616 /* UnsLayerL2Tests.swift */; };
 		3EE8A94526FD46A7005FD616 /* unsRegistry.json in Resources */ = {isa = PBXBuildFile; fileRef = 3E2AC93D24E4FC9F008EBC39 /* unsRegistry.json */; };
@@ -106,7 +105,6 @@
 		3EE4DA1124E367720097540B /* ResolutionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResolutionTests.swift; sourceTree = "<group>"; };
 		3EE4DA1324E367720097540B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3EE4DA1D24E367D40097540B /* Resolution.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Resolution.swift; sourceTree = "<group>"; };
-		3EE8A93026FAA2D4005FD616 /* ResolutionUNSTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ResolutionUNSTests.swift; path = Tests/ResolutionTests/ResolutionUNSTests.swift; sourceTree = SOURCE_ROOT; };
 		3EE8A93B26FAC81A005FD616 /* TestHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestHelpers.swift; sourceTree = "<group>"; };
 		3EE8A94126FD44C3005FD616 /* UnsLayerL2Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnsLayerL2Tests.swift; sourceTree = "<group>"; };
 		8402F707250935FD0007F01D /* ContractZNS.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContractZNS.swift; sourceTree = "<group>"; };
@@ -263,7 +261,6 @@
 		3EE4DA1024E367720097540B /* ResolutionTests */ = {
 			isa = PBXGroup;
 			children = (
-				3EE8A93026FAA2D4005FD616 /* ResolutionUNSTests.swift */,
 				3EE4DA1124E367720097540B /* ResolutionTests.swift */,
 				3EE4DA1324E367720097540B /* Info.plist */,
 				849E07D124F9499900A793D3 /* XCTestManifests.swift */,
@@ -585,7 +582,6 @@
 				3EE8A93C26FACAC3005FD616 /* TestHelpers.swift in Sources */,
 				3EE4DA1224E367720097540B /* ResolutionTests.swift in Sources */,
 				B6F2076125DBD8C800140CE3 /* EthereumABITests.swift in Sources */,
-				3EE8A93126FAA2D4005FD616 /* ResolutionUNSTests.swift in Sources */,
 				3EE8A94226FD44C3005FD616 /* UnsLayerL2Tests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

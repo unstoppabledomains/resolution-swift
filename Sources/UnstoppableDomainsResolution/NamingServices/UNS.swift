@@ -21,8 +21,8 @@ internal class UNS: CommonNamingService, NamingService {
         let layer1Contracts = try parseContractAddresses(config: config.layer1)
         let layer2Contracts = try parseContractAddresses(config: config.layer2)
 
-        self.layer1 = try UNSLayer(name: .uns, config: config.layer1, contracts: layer1Contracts)
-        self.layer2 = try UNSLayer(name: .uns, config: config.layer2, contracts: layer2Contracts)
+        self.layer1 = try UNSLayer(name: .layer1, config: config.layer1, contracts: layer1Contracts)
+        self.layer2 = try UNSLayer(name: .layer2, config: config.layer2, contracts: layer2Contracts)
 
         guard self.layer1 != nil, self.layer2 != nil else {
             throw ResolutionError.proxyReaderNonInitialized

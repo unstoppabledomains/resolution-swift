@@ -43,7 +43,7 @@ class UnsLayerL2Tests: XCTestCase {
               ),
               deploymentBlock: "0x01213f87"),
         ];
-        unsLayer = try! UNSLayer(name: .uns, config: config, contracts: contracts)
+        unsLayer = try! UNSLayer(name: .layer2, config: config, contracts: contracts)
     }
     
     func parseAbi(fromFile name: String) throws -> ABIContract? {
