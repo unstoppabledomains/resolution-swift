@@ -9,18 +9,18 @@
 import Foundation
 
 internal class ZNS: CommonNamingService, NamingService {
-    var network: String
+    var networkId: String
 
     let registryAddress: String
     let registryMap: [String: String] = [
-        "mainnet": "0x9611c53be6d1b32058b2747bdececed7e1216793",
-        "testnet": "0xB925adD1d5EaF13f40efD43451bF97A22aB3d727"
+        "1": "0x9611c53be6d1b32058b2747bdececed7e1216793",
+        "333": "0xB925adD1d5EaF13f40efD43451bF97A22aB3d727"
     ]
 
     init(_ config: NamingServiceConfig) throws {
-        self.network = config.network
+        self.networkId = Self.networkIds["zilliqa-" + config.network] ?? ""
 
-        var registryAddress: String? = registryMap[self.network]
+        var registryAddress: String? = registryMap[self.networkId]
         if config.registryAddresses != nil && !config.registryAddresses!.isEmpty {
             registryAddress = config.registryAddresses![0]
         }
