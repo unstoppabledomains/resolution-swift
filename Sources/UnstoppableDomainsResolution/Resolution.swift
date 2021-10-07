@@ -65,14 +65,6 @@ public class Resolution {
         self.services = try constructNetworkServices(configs)
     }
 
-    /// Returns a network that NamingService was configure with
-    public func getNetwork(from serviceName: String) throws -> String {
-        guard let service = services.first(where: {$0.name.rawValue == serviceName.lowercased() }) else {
-            throw ResolutionError.unsupportedServiceName
-        }
-        return service.network
-    }
-
     /// Checks if the domain name is valid according to naming service rules for valid domain names.
     ///
     /// **Example:** ENS doesn't allow domains that start from '-' symbol.
@@ -469,26 +461,7 @@ public class Resolution {
         throw ResolutionError.invalidDomainName
     }
 
-    /// Process the 'error'
-    private func catchError(_ error: Error, completion:@escaping DictionaryResultConsumer ) {
-        guard let catched = error as? ResolutionError else {
-            completion(.failure(.unknownError(error)))
-            return
-        }
-        completion(.failure(catched))
-    }
-
-    /// Process the 'error'
-    private func catchError(_ error: Error, completion:@escaping StringResultConsumer ) {
-        guard let catched = error as? ResolutionError else {
-            completion(.failure(.unknownError(error)))
-            return
-        }
-        completion(.failure(catched))
-    }
-
-    /// Process the 'error'
-    private func catchError(_ error: Error, completion:@escaping StringsArrayResultConsumer ) {
+    private func catchError<T>(_ error: Error, completion: @escaping (Result<T, ResolutionError>) -> Void) {
         guard let catched = error as? ResolutionError else {
             completion(.failure(.unknownError(error)))
             return
@@ -503,15 +476,6 @@ public class Resolution {
                 return
             }
             completion(.failure(catched))
-            return
-        }
-        completion(.failure(catched))
-    }
-
-    /// Process the 'error'
-    private func catchError(_ error: Error, completion:@escaping TokenUriMetadataResultConsumer ) {
-        guard let catched = error as? ResolutionError else {
-            completion(.failure(.unknownError(error)))
             return
         }
         completion(.failure(catched))

@@ -66,7 +66,7 @@ internal class ENS: CommonNamingService, NamingService {
               let dataAddress = dict["0"],
               let address = EthereumAddress(dataAddress),
               Utillities.isNotEmpty(address.address) else {
-                throw ResolutionError.recordNotFound
+            throw ResolutionError.recordNotFound(self.name.rawValue)
         }
         return address.address
     }
@@ -91,7 +91,7 @@ internal class ENS: CommonNamingService, NamingService {
         guard let dict = try resolverContract.callMethod(methodName: "text", args: [tokenId, ensKeyName]) as? [String: String],
               let result = dict["0"],
             Utillities.isNotEmpty(result) else {
-                throw ResolutionError.recordNotFound
+                throw ResolutionError.recordNotFound(self.name.rawValue)
         }
         return result
     }
@@ -100,7 +100,7 @@ internal class ENS: CommonNamingService, NamingService {
         // TODO: Add some batch request and collect all keys by few request
         throw ResolutionError.recordNotSupported
     }
-    
+
     func getTokenUri(tokenId: String) throws -> String {
         throw ResolutionError.methodNotSupported
     }
@@ -118,7 +118,7 @@ internal class ENS: CommonNamingService, NamingService {
     func resolver(tokenId: String) throws -> String {
         guard let resolverAddress = try askRegistryContract(for: "resolver", with: [tokenId]),
             Utillities.isNotEmpty(resolverAddress) else {
-                throw ResolutionError.unspecifiedResolver
+                throw ResolutionError.unspecifiedResolver(self.name.rawValue)
         }
         return resolverAddress
     }
@@ -162,14 +162,14 @@ internal class ENS: CommonNamingService, NamingService {
 
         let hash = try resolverContract.callMethod(methodName: "contenthash", args: [tokenId]) as? [String: Any]
         guard let data = hash?["0"] as? Data else {
-            throw ResolutionError.recordNotFound
+            throw ResolutionError.recordNotFound(self.name.rawValue)
         }
 
         let contentHash = [UInt8](data)
         guard let codec = Array(contentHash[0..<1]).last,
               codec == 0xE3 // 'ipfs-ns'
         else {
-            throw ResolutionError.recordNotFound
+            throw ResolutionError.recordNotFound(self.name.rawValue)
         }
 
         return Base58.base58Encode(Array(contentHash[4..<contentHash.count]))

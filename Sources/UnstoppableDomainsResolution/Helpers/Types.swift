@@ -20,4 +20,15 @@ public enum NamingServiceName: String {
     case ens
     case zns
 }
+
+public enum UNSLocation: String {
+    case layer1
+    case layer2
+}
+
+public struct UNSContract {
+    let name: String
+    let contract: Contract
+    let deploymentBlock: String
+}
 public let ethCoinIndex = 60

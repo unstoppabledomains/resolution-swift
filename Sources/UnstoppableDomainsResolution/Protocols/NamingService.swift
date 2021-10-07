@@ -10,7 +10,6 @@ import Foundation
 
 protocol NamingService {
     var name: NamingServiceName { get }
-    var network: String { get }
     var providerUrl: String { get }
     var networking: NetworkingLayer { get }
 

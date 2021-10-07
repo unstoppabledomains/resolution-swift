@@ -35,9 +35,13 @@ class CommonNamingService {
     }
 
     func buildContract(address: String, type: ContractType) throws -> Contract {
-        let jsonFileName: String
+        return try self.buildContract(address: address, type: type, providerUrl: self.providerUrl)
+    }
 
-        let nameLowCased = name.rawValue.lowercased()
+    func buildContract(address: String, type: ContractType, providerUrl: String) throws -> Contract {
+        let jsonFileName: String
+        let url = providerUrl
+        var nameLowCased = name.rawValue.lowercased()
         switch type {
         case .unsRegistry:
             jsonFileName = "\(nameLowCased)Registry"
@@ -52,7 +56,7 @@ class CommonNamingService {
         }
 
         let abi: ABIContract = try parseAbi(fromFile: jsonFileName)!
-        return Contract(providerUrl: self.providerUrl, address: address, abi: abi, networking: networking)
+        return Contract(providerUrl: url, address: address, abi: abi, networking: networking)
     }
 
     func parseAbi(fromFile name: String) throws -> ABIContract? {
@@ -96,7 +100,8 @@ extension CommonNamingService {
     static let networkIds = ["mainnet": "1",
                              "ropsten": "3",
                              "rinkeby": "4",
-                             "goerli": "5"]
+                             "goerli": "5",
+                             "polygon-mumbai": "80001"]
 
     struct NewtorkConfigJson: Decodable {
         let version: String
