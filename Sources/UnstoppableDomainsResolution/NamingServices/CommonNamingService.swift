@@ -128,19 +128,17 @@ extension CommonNamingService {
         let deploymentBlock: String
     }
 
-    static func parseContractAddresses(network: String) throws -> [String: ContractAddressEntry]? {
+    static func parseContractAddresses(networkId: String) throws -> [String: ContractAddressEntry]? {
         #if INSIDE_PM
         let bundler = Bundle.module
         #else
         let bundler = Bundle(for: self)
         #endif
 
-        guard let idString = networkIds[network] else { return nil }
-
         if let filePath = bundler.url(forResource: Self.networkConfigFileName, withExtension: "json") {
             guard let data = try? Data(contentsOf: filePath) else { return nil }
             guard let info = try? JSONDecoder().decode(NewtorkConfigJson.self, from: data) else { return nil }
-            guard let currentNetwork = info.networks[idString] else { return nil }
+            guard let currentNetwork = info.networks[networkId] else { return nil }
             return currentNetwork.contracts
         }
         return nil
