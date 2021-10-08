@@ -279,14 +279,3 @@ extension ABI.Element {
         }
     }
 }
-
-extension ABI.Element.Event {
-    public func decodeReturnedLogs(eventLogTopics: [Data], eventLogData: Data) -> [String: Any]? {
-        guard
-            let eventContent = ABIDecoder.decodeLog(event: self, eventLogTopics: eventLogTopics, eventLogData: eventLogData)
-        else {
-            return nil
-        }
-        return eventContent
-    }
-}

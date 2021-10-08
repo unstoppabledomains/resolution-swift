@@ -78,10 +78,6 @@ internal class ContractZNS {
                 dict[key] = self.map(array: array)
             case .dictionary(let dictionary):
                 dict[key] = self.reduce(dict: dictionary)
-            case .paramLogClass(let elem):
-                dict[key] = elem
-            case .paramLogResponse(let elem):
-                dict[key] = elem
             }
         }
     }
@@ -90,10 +86,6 @@ internal class ContractZNS {
         return array.map { (value) -> Any in
             switch value {
             case .paramClass(let elem):
-                return elem
-            case .paramLogClass(let elem):
-                return elem
-            case .paramLogResponse(let elem):
                 return elem
             case .string(let elem):
                 return elem
