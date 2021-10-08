@@ -1058,7 +1058,7 @@ class ResolutionTests: XCTestCase {
         
         waitForExpectations(timeout: timeout, handler: nil);
         
-        assert(layer1TokenUri == "https://metadata.staging.unstoppabledomains.com/metadata/udtestdev-265f8f.crypto");
+        assert(layer1TokenUri == "https://metadata.staging.unstoppabledomains.com/metadata/udtestdev-265f8f.crypto");et
         assert(layer2TokenUri == "https://metadata.staging.unstoppabledomains.com/metadata/udtestdev-johnnytest.wallet");
     }
     
