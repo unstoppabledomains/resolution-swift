@@ -281,26 +281,24 @@ internal class UNSLayer: CommonNamingService, NamingService {
     }
 
     func getDomainName(tokenId: String) throws -> String {
-        do {
-            let registryAddress = try self.getRegistryAddress(tokenId: tokenId)
-            let registryContract = try self.buildContract(address: registryAddress, type: .unsRegistry)
-            let result = try registryContract.callLogs(
-                fromBlock: "earliest",
-                signatureHash: Self.NewURIEventSignature,
-                for: tokenId,
-                isTransfer: false)
-
-            guard result.count > 0 else {
-                throw ResolutionError.unregisteredDomain
-            }
-
-            if let domainName = ABIDecoder.decodeSingleType(type: .string, data: Data(hex: result[0].data)).value as? String {
-                return domainName
-            }
-            throw ResolutionError.unregisteredDomain
-        } catch ResolutionError.executionReverted {
+        let tokenURI = try self.getTokenUri(tokenId: tokenId)
+        guard !tokenURI.isEmpty else {
             throw ResolutionError.unregisteredDomain
         }
+
+        let url = URL(string: tokenURI)
+        let semaphore = DispatchSemaphore(value: 0)
+
+        var tokenUriMetadataResult: Result<TokenUriMetadata, ResolutionError>!
+        self.networking.makeHttpGetRequest(url: url!,
+                                           completion: {
+                                            tokenUriMetadataResult = $0
+                                            semaphore.signal()
+                                           })
+        semaphore.wait()
+
+        let metadata = try tokenUriMetadataResult.get()
+        return metadata.name
     }
 
     // MARK: - Helper functions

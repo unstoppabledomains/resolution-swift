@@ -1059,8 +1059,7 @@ class ResolutionTests: XCTestCase {
         waitForExpectations(timeout: timeout, handler: nil);
         
         assert(layer1TokenUri == "https://metadata.staging.unstoppabledomains.com/metadata/udtestdev-265f8f.crypto");
-        // TODO uncomment once L2 contract starts to return the metadata url.
-//        assert(layer2TokenUri == "https://metadata.staging.unstoppabledomains.com/metadata/udtestdev-johnnytest.wallet");
+        assert(layer2TokenUri == "https://metadata.staging.unstoppabledomains.com/metadata/udtestdev-johnnytest.wallet");
     }
     
     func testUnhashMultiLayer() throws {
