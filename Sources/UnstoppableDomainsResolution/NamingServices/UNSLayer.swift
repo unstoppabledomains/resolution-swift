@@ -221,7 +221,10 @@ internal class UNSLayer: CommonNamingService, NamingService {
         semaphore.wait()
 
         let metadata = try tokenUriMetadataResult.get()
-        return metadata.name
+        guard metadata.name != nil else {
+            throw ResolutionError.unregisteredDomain
+        }
+        return metadata.name!
     }
 
     // MARK: - Helper functions

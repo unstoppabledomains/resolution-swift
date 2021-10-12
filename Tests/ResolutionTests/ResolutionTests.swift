@@ -27,7 +27,7 @@ class ResolutionTests: XCTestCase {
                                 providerUrl: "https://rinkeby.infura.io/v3/3c25f57353234b1b853e9861050f4817",
                                 network: "rinkeby"),
                     layer2: NamingServiceConfig(
-                                providerUrl: "https://matic-testnet-archive-rpc.bwarelabs.com",
+                                providerUrl: "https://polygon-mumbai.infura.io/v3/c4bb906ed6904c42b19c95825fe55f39",
                                 network: "polygon-mumbai")
                 ),
                 zns: NamingServiceConfig(
