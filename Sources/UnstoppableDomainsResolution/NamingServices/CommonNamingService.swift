@@ -145,10 +145,10 @@ extension CommonNamingService {
     }
 
     static func getNetworkName(providerUrl: String, networking: NetworkingLayer) throws -> String {
-        let networkId = try Self.getNetworkId(providerUrl: providerUrl, networking: networking);
-        return networkIds.key(forValue: networkId) ?? "";
+        let networkId = try Self.getNetworkId(providerUrl: providerUrl, networking: networking)
+        return networkIds.key(forValue: networkId) ?? ""
     }
-    
+
     static func getNetworkId(providerUrl: String, networking: NetworkingLayer) throws -> String {
         let url = URL(string: providerUrl)!
         let payload: JsonRpcPayload = JsonRpcPayload(jsonrpc: "2.0", id: "67", method: "net_version", params: [])

@@ -30,18 +30,14 @@ public enum ResolutionError: Error {
     static let tooManyResponsesCode = -32005
     static let badRequestOrResponseCode = -32042
 
-    // sometimes providers returns executionReverted error with 2 different codes.
-    static let executionRevertedCode = 3
-    static let anotherExecutionRevertedCode = -32000
-
     static func parse (errorResponse: NetworkErrorResponse) -> ResolutionError? {
         let error = errorResponse.error
 
+        if error.message.starts(with: "execution reverted") {
+            return .executionReverted
+        }
+
         switch error.code {
-        case anotherExecutionRevertedCode:
-            return .executionReverted
-        case executionRevertedCode:
-            return .executionReverted
         case tooManyResponsesCode:
             return .tooManyResponses
         case badRequestOrResponseCode:

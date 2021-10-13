@@ -106,83 +106,6 @@ internal class UNSLayer: CommonNamingService, NamingService {
         }
     }
 
-    private func parseContractForNewUri(
-        contract: Contract,
-        for address: String,
-        since origin: String
-    ) throws -> [String] {
-        do {
-            let transferLogs = try contract.callLogs(
-                fromBlock: origin,
-                signatureHash: Self.TransferEventSignature,
-                for: address.normalized32,
-                isTransfer: true
-            ).compactMap { $0.topics[3] }
-
-            let domainsData = try transferLogs.compactMap {
-                        try contract.callLogs(
-                                fromBlock: origin,
-                                signatureHash: Self.NewURIEventSignature,
-                                for: $0.normalized32,
-                                isTransfer: false
-                        )[0].data
-                    }
-
-            let possibleDomains = Array(Set(
-                    domainsData.compactMap {
-                        ABIDecoder.decodeSingleType(type: .string, data: Data(hex: $0)).value as? String
-                    }
-                )
-            )
-           return possibleDomains
-        } catch {
-            return []
-        }
-    }
-
-    func tokensOwnedBy(address: String) throws -> [String] {
-        let asyncGroup = DispatchGroup()
-        var possibleDomains: [String] = []
-        let queque = DispatchQueue(label: "possibleDomainsAppend")
-        self.nsRegistries.forEach { registry in
-            asyncGroup.enter()
-            DispatchQueue.global().async { [weak self] in
-                guard let self = self else { return }
-                do {
-                    let domainsFromLogs = try self.parseContractForNewUri(
-                        contract: registry.contract,
-                            for: address,
-                        since: registry.deploymentBlock
-                    )
-                    queque.sync {
-                        possibleDomains += domainsFromLogs
-                        asyncGroup.leave()
-                    }
-                } catch {
-                    asyncGroup.leave()
-                }
-            }
-        }
-
-        var domains: [String] = []
-        let semaphore = DispatchSemaphore(value: 0)
-        asyncGroup.notify(queue: .global()) { [weak self] in
-            guard let self = self else { return }
-            do {
-                let owners = try self.batchOwners(domains: possibleDomains)
-                for (ind, addr) in owners.enumerated() where addr?.lowercased() == address.lowercased() {
-                    domains.append(possibleDomains[ind])
-                }
-                semaphore.signal()
-            } catch {
-                domains = []
-                semaphore.signal()
-            }
-        }
-        semaphore.wait()
-        return domains
-    }
-
     func resolver(domain: String) throws -> String {
         let tokenId = super.namehash(domain: domain)
         return try self.resolverFromTokenId(tokenId: tokenId)
@@ -291,26 +214,27 @@ internal class UNSLayer: CommonNamingService, NamingService {
     }
 
     func getDomainName(tokenId: String) throws -> String {
-        do {
-            let registryAddress = try self.getRegistryAddress(tokenId: tokenId)
-            let registryContract = try self.buildContract(address: registryAddress, type: .unsRegistry)
-            let result = try registryContract.callLogs(
-                fromBlock: "earliest",
-                signatureHash: Self.NewURIEventSignature,
-                for: tokenId,
-                isTransfer: false)
-
-            guard result.count > 0 else {
-                throw ResolutionError.unregisteredDomain
-            }
-
-            if let domainName = ABIDecoder.decodeSingleType(type: .string, data: Data(hex: result[0].data)).value as? String {
-                return domainName
-            }
-            throw ResolutionError.unregisteredDomain
-        } catch ResolutionError.executionReverted {
+        let tokenURI = try self.getTokenUri(tokenId: tokenId)
+        guard !tokenURI.isEmpty else {
             throw ResolutionError.unregisteredDomain
         }
+
+        let url = URL(string: tokenURI)
+        let semaphore = DispatchSemaphore(value: 0)
+
+        var tokenUriMetadataResult: Result<TokenUriMetadata, ResolutionError>!
+        self.networking.makeHttpGetRequest(url: url!,
+                                           completion: {
+                                            tokenUriMetadataResult = $0
+                                            semaphore.signal()
+                                           })
+        semaphore.wait()
+
+        let metadata = try tokenUriMetadataResult.get()
+        guard metadata.name != nil else {
+            throw ResolutionError.unregisteredDomain
+        }
+        return metadata.name!
     }
 
     // MARK: - Helper functions

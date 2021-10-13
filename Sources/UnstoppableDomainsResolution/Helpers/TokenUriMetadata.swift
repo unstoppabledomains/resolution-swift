@@ -1,10 +1,10 @@
 import Foundation
 
 public struct TokenUriMetadata: Codable {
-    let name: String
-    let description: String
-    let externalUrl: String
-    let image: String
+    let name: String?
+    let description: String?
+    let externalUrl: String?
+    let image: String?
     let attributes: [TokenUriMetadataAttribute]
     var backgroundColor: String?
     var animationUrl: String?

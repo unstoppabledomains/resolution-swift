@@ -27,7 +27,7 @@ class ResolutionTests: XCTestCase {
                                 providerUrl: "https://rinkeby.infura.io/v3/3c25f57353234b1b853e9861050f4817",
                                 network: "rinkeby"),
                     layer2: NamingServiceConfig(
-                                providerUrl: "https://matic-testnet-archive-rpc.bwarelabs.com",
+                                providerUrl: "https://polygon-mumbai.infura.io/v3/c4bb906ed6904c42b19c95825fe55f39",
                                 network: "polygon-mumbai")
                 ),
                 zns: NamingServiceConfig(
@@ -43,7 +43,7 @@ class ResolutionTests: XCTestCase {
                 uns:UnsLocations(
                     layer1: NamingServiceConfig(providerUrl: "https://ropsten.infura.io/v3/3c25f57353234b1b853e9861050f4817"),
                     layer2: NamingServiceConfig(
-                                providerUrl: "https://polygon-mumbai.infura.io/v3/3c25f57353234b1b853e9861050f4817",
+                                providerUrl: "https://matic-testnet-archive-rpc.bwarelabs.com",
                                 network: "polygon-mumbai")
                 )
             ));
@@ -75,6 +75,13 @@ class ResolutionTests: XCTestCase {
     }
     
     func testForUnspecifiedResolver() throws {
+        resolution = try Resolution(configs: Configurations(
+                    uns: UnsLocations(
+                        layer1: NamingServiceConfig(providerUrl: "https://mainnet.infura.io/v3/3c25f57353234b1b853e9861050f4817",
+                                                    network: "mainnet"),
+                        layer2:NamingServiceConfig(providerUrl: "https://matic-testnet-archive-rpc.bwarelabs.com",
+                                                    network: "polygon-mumbai") )
+        ))
         let UnregirestedDomainExpectation = expectation(description: "Domain should not have a Resolver!")
         var NoRecordResult: Result<String, ResolutionError>!
         resolution.addr(domain: TestHelpers.getTestDomain(.UNSPECIFIED_RESOLVER_DOMAIN), ticker: "eth") {
@@ -101,6 +108,7 @@ class ResolutionTests: XCTestCase {
         let domainReceived = expectation(description: "Exist domain should be received")
         let ownerReceived = expectation(description: "Exist domain should be received")
         var ethAddress = ""
+        var owner = "";
         resolution.addr(domain: TestHelpers.getTestDomain(.RINKEBY_DOMAIN), ticker: "eth") { (result) in
             switch result {
             case .success(let returnValue):
@@ -113,14 +121,15 @@ class ResolutionTests: XCTestCase {
         resolution.owner(domain: TestHelpers.getTestDomain(.RINKEBY_DOMAIN)) { (result) in
             switch result {
             case .success(let returnValue):
-                print(returnValue)
+                owner = returnValue;
                 ownerReceived.fulfill()
             case .failure(let error):
                 XCTFail("Expected Eth Address, but got \(error)")
             }
         }
         waitForExpectations(timeout: timeout, handler: nil)
-        Swift.assert(ethAddress == "0x1C8b9B78e3085866521FE206fa4c1a67F49f153A")
+        assert(ethAddress == "0x1C8b9B78e3085866521FE206fa4c1a67F49f153A")
+        assert(owner == "0x6EC0DEeD30605Bcd19342f3c30201DB263291589")
     }
     
     func testZilliqaTestNet() throws {
@@ -874,13 +883,16 @@ class ResolutionTests: XCTestCase {
                 networkId: "80001",
                 blockchain: "MATIC",
                 owner: "0xe7474D07fD2FA286e7e0aa23cd107F8379085037",
-                providerURL: "https://matic-testnet-archive-rpc.bwarelabs.com"
+                providerURL: "https://polygon-mumbai.infura.io/v3/c4bb906ed6904c42b19c95825fe55f39"
             ),
         ];
         
         assert(!locations.isEmpty);
         assert(locations.count == domains.count);
         domains.forEach { domain in
+            print(locations[domain]);
+            print(answers[domain]);
+            
             assert(locations[domain] == answers[domain])
         }
         
@@ -1143,8 +1155,7 @@ class ResolutionTests: XCTestCase {
         waitForExpectations(timeout: timeout, handler: nil);
         
         assert(layer1TokenUri == "https://metadata.staging.unstoppabledomains.com/metadata/udtestdev-265f8f.crypto");
-        // TODO uncomment once L2 contract starts to return the metadata url.
-//        assert(layer2TokenUri == "https://metadata.staging.unstoppabledomains.com/metadata/udtestdev-johnnytest.wallet");
+        assert(layer2TokenUri == "https://metadata.staging.unstoppabledomains.com/metadata/47175376536410263098700840153319778926909723329866678110537362361339406517871");
     }
     
     func testUnhashMultiLayer() throws {

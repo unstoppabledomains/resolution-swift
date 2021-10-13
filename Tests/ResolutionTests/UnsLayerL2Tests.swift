@@ -65,8 +65,8 @@ class UnsLayerL2Tests: XCTestCase {
         return nil
     }
     
-    // All functions of Layer2 except tokensOwnedBy and batchOwner should throw UnregisteredDomain when domain does not exists
-    // functions batchOwner and tokensOwnedBy will return either array full of nil or empty [String]
+    // All functions of Layer2 except batchOwner should throw UnregisteredDomain when domain does not exists
+    // functions like batchOwner will return either array full of nil or empty [String]
     // It is expected to parse and combine the results of above functions with results from layer1
     func testUnregistered() throws {
         let domain = TestHelpers.getTestDomain(.UNREGISTERED_DOMAIN);
