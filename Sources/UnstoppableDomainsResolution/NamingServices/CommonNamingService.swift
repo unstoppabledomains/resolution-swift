@@ -101,16 +101,12 @@ extension CommonNamingService {
                              "ropsten": "3",
                              "rinkeby": "4",
                              "goerli": "5",
-                             "polygon-mumbai": "80001",
-                             "polygon-mainnet": "137",
-                             "zilliqa-mainnet": "1",
-                             "zilliqa-testnet": "333"
-    ]
-    static let networkIdToBlockchain = [
-        "1": "ETH",
-        "4": "ETH",
-        "80001": "MATIC",
-        "137": "MATIC"
+                             "polygon-mumbai": "80001"]
+    static let networkToBlockchain = [
+        "mainnet": "ETH",
+        "rinkeby": "ETH",
+        "polygon-mumbai": "MATIC",
+        "polygon-mainnet": "MATIC"
     ]
 
     struct NewtorkConfigJson: Decodable {
@@ -174,7 +170,7 @@ extension CommonNamingService {
         }
         switch resp?[0].result {
         case .string(let result):
-            return result
+            return networkIds.key(forValue: result) ?? ""
         default:
             return ""
         }

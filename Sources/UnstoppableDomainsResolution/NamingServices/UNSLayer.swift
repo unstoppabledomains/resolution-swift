@@ -16,17 +16,17 @@ internal class UNSLayer: CommonNamingService, NamingService {
     static let registryOfMethodName = "registryOf"
     static let existName = "exists"
 
-    let networkId: String
+    let network: String
     let blockchain: String?
     let layer: UNSLocation
     var nsRegistries: [UNSContract]
     var proxyReaderContract: Contract?
 
     init(name: UNSLocation, config: NamingServiceConfig, contracts: [UNSContract]) throws {
-        self.networkId = (config.network.isEmpty
-                            ? try Self.getNetworkId(providerUrl: config.providerUrl, networking: config.networking)
-                            : Self.networkIds[config.network]) ?? ""
-        self.blockchain = Self.networkIdToBlockchain[self.networkId]
+        self.network = config.network.isEmpty
+            ? try Self.getNetworkId(providerUrl: config.providerUrl, networking: config.networking)
+            : config.network
+        self.blockchain = Self.networkToBlockchain[self.network]
         self.nsRegistries = []
         self.layer = name
         super.init(name: .uns, providerUrl: config.providerUrl, networking: config.networking)
@@ -356,7 +356,7 @@ internal class UNSLayer: CommonNamingService, NamingService {
                 locations[domain] = Location(
                     registryAddress: registry,
                     resolverAddress: resolver,
-                    networkId: self.networkId,
+                    networkId: CommonNamingService.networkIds[self.network]!,
                     blockchain: self.blockchain,
                     owner: owner,
                     providerURL: self.providerUrl

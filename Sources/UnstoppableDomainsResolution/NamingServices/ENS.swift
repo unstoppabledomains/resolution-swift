@@ -9,22 +9,22 @@
 import Foundation
 
 internal class ENS: CommonNamingService, NamingService {
-    let networkId: String
+    let network: String
     let registryAddress: String
     let registryMap: [String: String] = [
-        "1": "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e",
-        "3": "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e",
-        "4": "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e",
-        "5": "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e"
+        "mainnet": "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e",
+        "ropsten": "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e",
+        "rinkeby": "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e",
+        "goerli": "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e"
     ]
 
     init(_ config: NamingServiceConfig) throws {
 
-        self.networkId = (config.network.isEmpty
-                            ? try Self.getNetworkId(providerUrl: config.providerUrl, networking: config.networking)
-                            : Self.networkIds[config.network]) ?? ""
+        self.network = config.network.isEmpty
+            ? try Self.getNetworkId(providerUrl: config.providerUrl, networking: config.networking)
+            : config.network
 
-        var registryAddress: String? = registryMap[self.networkId]
+        var registryAddress: String? = registryMap[self.network]
         if config.registryAddresses != nil && !config.registryAddresses!.isEmpty {
             registryAddress = config.registryAddresses![0]
         }
