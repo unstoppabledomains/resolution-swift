@@ -60,29 +60,6 @@ internal class Contract {
         }
     }
 
-    func callLogs(fromBlock: String, signatureHash: String, for userAddress: String, isTransfer: Bool ) throws  -> [JsonRpcLogResponse] {
-        let topics = isTransfer ? [signatureHash, nil, userAddress ] : [signatureHash, userAddress]
-        let params = ParamLogClass(fromBlock: fromBlock, address: self.address, topics: topics)
-        let body = JsonRpcPayload(params: params)
-
-        return try postRequestForLogArray(body) ?? []
-    }
-
-    private func postRequestForLogArray(_ body: JsonRpcPayload) throws -> [JsonRpcLogResponse]? {
-        let postResponse = try postRequest(body)
-        if case .array(let arrayOfElements) = postResponse {
-            return arrayOfElements.compactMap {
-                switch $0 {
-                case .paramLogResponse(let val):
-                    return val
-                case _:
-                    return nil
-                }
-            }
-        }
-        return []
-    }
-
     private func postRequestForString(_ body: JsonRpcPayload) throws -> String? {
         let postResponse = try postRequest(body)
         switch postResponse {
