@@ -24,7 +24,7 @@ internal class UNSLayer: CommonNamingService, NamingService {
 
     init(name: UNSLocation, config: NamingServiceConfig, contracts: [UNSContract]) throws {
         self.network = config.network.isEmpty
-            ? try Self.getNetworkId(providerUrl: config.providerUrl, networking: config.networking)
+            ? try Self.getNetworkName(providerUrl: config.providerUrl, networking: config.networking)
             : config.network
         self.blockchain = Self.networkToBlockchain[self.network]
         self.nsRegistries = []

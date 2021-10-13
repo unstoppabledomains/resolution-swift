@@ -21,7 +21,7 @@ internal class ENS: CommonNamingService, NamingService {
     init(_ config: NamingServiceConfig) throws {
 
         self.network = config.network.isEmpty
-            ? try Self.getNetworkId(providerUrl: config.providerUrl, networking: config.networking)
+            ? try Self.getNetworkName(providerUrl: config.providerUrl, networking: config.networking)
             : config.network
 
         var registryAddress: String? = registryMap[self.network]
