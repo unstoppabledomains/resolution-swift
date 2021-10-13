@@ -126,13 +126,12 @@ internal class UNS: CommonNamingService, NamingService {
         var proxyReaderContract: UNSContract?
         var unsContract: UNSContract?
         var cnsContract: UNSContract?
-        var networkId: String = Self.networkIds[config.network] ?? ""
 
-        if networkId.isEmpty {
-            networkId = try Self.getNetworkId(providerUrl: config.providerUrl, networking: config.networking)
-        }
+        let network = config.network.isEmpty
+            ? try Self.getNetworkId(providerUrl: config.providerUrl, networking: config.networking)
+            : config.network
 
-        if let contractsContainer = try Self.parseContractAddresses(networkId: networkId) {
+        if let contractsContainer = try Self.parseContractAddresses(network: network) {
             unsContract = try getUNSContract(contracts: contractsContainer, type: .unsRegistry, providerUrl: config.providerUrl)
             cnsContract = try getUNSContract(contracts: contractsContainer, type: .cnsRegistry, providerUrl: config.providerUrl)
             proxyReaderContract = try getUNSContract(contracts: contractsContainer, type: .proxyReader, providerUrl: config.providerUrl)
