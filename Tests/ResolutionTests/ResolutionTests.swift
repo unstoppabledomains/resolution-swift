@@ -149,21 +149,6 @@ class ResolutionTests: XCTestCase {
     }
 
     func testSupportedDomains() throws {
-        // Given // When // Then
-        resolution = try Resolution(configs: Configurations(
-            uns: UnsLocations(
-                layer1: NamingServiceConfig(
-                            providerUrl: "https://rinkeby.infura.io/v3/3c25f57353234b1b853e9861050f4817",
-                            network: "rinkeby"),
-                layer2: NamingServiceConfig(
-                            providerUrl: "https://matic-testnet-archive-rpc.bwarelabs.com",
-                            network: "polygon-mumbai")
-            ),
-            zns: NamingServiceConfig(
-                providerUrl: "https://dev-api.zilliqa.com",
-                network: "testnet"
-            )
-        ));
         
         struct TestCase {
             let domain: String
@@ -444,11 +429,11 @@ class ResolutionTests: XCTestCase {
         let domainCryptoReceived = expectation(description: "Existing Crypto domains' owners should be received")
         let particalResultReceived = expectation(description: "An existing domain and non-existing domain should result in mized response ")
 
-        var owners: [String?] = []
-        var partialResult: Result<[String?], ResolutionError>!
+        var owners: [String: String?] = [:]
+        var partialResult: Result<[String: String?], ResolutionError>!
 
         // When
-        resolution.batchOwners(domains: [TestHelpers.getTestDomain(.UNNORMALIZED_DOMAIN), TestHelpers.getTestDomain(.DOMAIN2)]) { (result) in
+        resolution.batchOwners(domains: [TestHelpers.getTestDomain(.DOMAIN), TestHelpers.getTestDomain(.DOMAIN2)]) { (result) in
             switch result {
             case .success(let returnValue):
                 owners = returnValue
@@ -467,11 +452,11 @@ class ResolutionTests: XCTestCase {
 
         // Then
         switch partialResult {
-        case .success(let array):
-            let lowercasedOwners = array.map( {$0?.lowercased()} )
-            assert( lowercasedOwners[0] == "0xe7474D07fD2FA286e7e0aa23cd107F8379085037".lowercased() )
-            assert( lowercasedOwners[1] == "0xe7474D07fD2FA286e7e0aa23cd107F8379085037".lowercased() )
-            assert( lowercasedOwners[2] == nil )
+        case .success(let dict):
+            let lowercasedDict = dict.mapValues { $0?.lowercased()};
+            assert( lowercasedDict[TestHelpers.getTestDomain(.DOMAIN)] == "0xe7474D07fD2FA286e7e0aa23cd107F8379085037".lowercased() )
+            assert( lowercasedDict[TestHelpers.getTestDomain(.LAYER2_DOMAIN)] == "0xe7474D07fD2FA286e7e0aa23cd107F8379085037".lowercased() )
+            XCTAssertNil(lowercasedDict[TestHelpers.getTestDomain(.UNREGISTERED_DOMAIN)]!);
 
         case .failure(let error):
             XCTFail("Expected owners, but got \(error)")
@@ -479,9 +464,9 @@ class ResolutionTests: XCTestCase {
             XCTFail("Expected owners, but got .none")
         }
         
-        let lowercasedOwners = owners.compactMap({$0}).map{$0.lowercased()}
-        assert( lowercasedOwners[0] == "0xe7474D07fD2FA286e7e0aa23cd107F8379085037".lowercased() )
-        assert( lowercasedOwners[1] == "0xe7474D07fD2FA286e7e0aa23cd107F8379085037".lowercased() )
+        let lowercasedOwners = owners.mapValues{$0?.lowercased()};
+        assert( lowercasedOwners[TestHelpers.getTestDomain(.DOMAIN)] == "0xe7474D07fD2FA286e7e0aa23cd107F8379085037".lowercased() )
+        assert( lowercasedOwners[TestHelpers.getTestDomain(.DOMAIN2)] == "0xe7474D07fD2FA286e7e0aa23cd107F8379085037".lowercased() )
     }
     
     func testGetResolver() throws {
@@ -740,19 +725,10 @@ class ResolutionTests: XCTestCase {
 
         // Then
         assert(tokenURIMetadata?.name == TestHelpers.getTestDomain(.DOMAIN3))
-        assert(tokenURIMetadata?.attributes.count == 8)
-        assert(self.checkAttributeArrayContains(array: tokenURIMetadata?.attributes ?? [], traitType: "ETH", value: "0x8aaD44321A86b170879d7A244c1e8d360c99DdA8"))
+        assert(tokenURIMetadata?.attributes.count == 5)
+        assert(tokenURIMetadata?.properties.records["crypto.ETH.address"] == "0x8aaD44321A86b170879d7A244c1e8d360c99DdA8");
 
         TestHelpers.checkError(result: unregisteredResult, expectedError: ResolutionError.unregisteredDomain)
-    }
-
-    func checkAttributeArrayContains(array: [TokenUriMetadataAttribute], traitType: String, value: String) -> Bool {
-        for attr in array {
-            if attr.traitType == traitType && attr.value.value == value {
-                return true
-            }
-        }
-        return false
     }
 
     func testUnhash() throws {
@@ -884,13 +860,13 @@ class ResolutionTests: XCTestCase {
         let layer2Domain: String = TestHelpers.getTestDomain(.LAYER2_DOMAIN);
         let layer1Domain: String = TestHelpers.getTestDomain(.DOMAIN);
         let unregisteredDomain: String = TestHelpers.getTestDomain(.UNREGISTERED_DOMAIN);
-        
+
         // Given
         let domainCryptoReceived = expectation(description: "Existing Crypto domains' owners should be received")
         let particalResultReceived = expectation(description: "An existing domain and non-existing domain should result in mized response ")
 
-        var owners: [String?] = []
-        var partialResult: Result<[String?], ResolutionError>!
+        var owners: [String: String?] = [:]
+        var partialResult: Result<[String: String?], ResolutionError>!
 
         // When
         resolution.batchOwners(domains: [layer2Domain, layer1Domain]) { (result) in
@@ -902,7 +878,7 @@ class ResolutionTests: XCTestCase {
                 XCTFail("Expected owners, but got \(error)")
             }
         }
-        
+
         resolution.batchOwners(domains: [layer2Domain, unregisteredDomain]) {
             partialResult = $0
             particalResultReceived.fulfill()
@@ -912,20 +888,20 @@ class ResolutionTests: XCTestCase {
 
         // Then
         switch partialResult {
-        case .success(let array):
-            let lowercasedOwners = array.map( {$0?.lowercased()} )
-            assert( lowercasedOwners[0] == "0xe7474D07fD2FA286e7e0aa23cd107F8379085037".lowercased() )
-            assert( lowercasedOwners[1] == nil )
+        case .success(let dict):
+            let lowercasedOwners = dict.mapValues( {$0?.lowercased()} )
+            assert( lowercasedOwners[layer2Domain] == "0xe7474D07fD2FA286e7e0aa23cd107F8379085037".lowercased() )
+            assert( lowercasedOwners[unregisteredDomain]! == nil )
 
         case .failure(let error):
             XCTFail("Expected owners, but got \(error)")
         case .none:
             XCTFail("Expected owners, but got .none")
         }
-        
-        let lowercasedOwners = owners.compactMap({$0}).map{$0.lowercased()}
-        assert( lowercasedOwners[0] == "0xe7474D07fD2FA286e7e0aa23cd107F8379085037".lowercased() )
-        assert( lowercasedOwners[1] == "0xe7474D07fD2FA286e7e0aa23cd107F8379085037".lowercased() )
+
+        let lowercasedOwners = owners.mapValues{ $0?.lowercased() }
+        assert( lowercasedOwners[layer2Domain] == "0xe7474D07fD2FA286e7e0aa23cd107F8379085037".lowercased() )
+        assert( lowercasedOwners[layer1Domain] == "0xe7474D07fD2FA286e7e0aa23cd107F8379085037".lowercased() )
     }
     
     func testAddrMultiLayer() throws {
@@ -1066,7 +1042,7 @@ class ResolutionTests: XCTestCase {
         waitForExpectations(timeout: timeout, handler: nil);
         
         assert(layer1TokenUri == "https://metadata.staging.unstoppabledomains.com/metadata/udtestdev-265f8f.crypto");
-        assert(layer2TokenUri == "https://metadata.staging.unstoppabledomains.com/metadata/udtestdev-johnnytest.wallet");
+        assert(layer2TokenUri == "https://metadata.staging.unstoppabledomains.com/metadata/47175376536410263098700840153319778926909723329866678110537362361339406517871");
     }
     
     func testUnhashMultiLayer() throws {

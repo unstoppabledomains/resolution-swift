@@ -13,10 +13,10 @@ import XCTest
 @testable import Resolution
 #endif
 
-class TestHelpers {
+public class TestHelpers {
     
     
-    enum DOMAINS {
+    public enum DOMAINS {
         case DOMAIN
         case WALLET_DOMAIN
         case UNNORMALIZED_DOMAIN
@@ -31,7 +31,7 @@ class TestHelpers {
         case LAYER2_DOMAIN
     }
 
-    static let TEST_DOMAINS: [DOMAINS: String] = [
+    public static let TEST_DOMAINS: [DOMAINS: String] = [
         .DOMAIN: "udtestdev-265f8f.crypto",
         .WALLET_DOMAIN: "udtestdev-johnnywallet.wallet",
         .UNNORMALIZED_DOMAIN: "    UDTESTDEV-265f8F.CRYPTO    ",
@@ -47,7 +47,7 @@ class TestHelpers {
             
     ]
     
-    static func getTestDomain(_ type: DOMAINS) -> String {
+    public static func getTestDomain(_ type: DOMAINS) -> String {
         return Self.TEST_DOMAINS[type]!;
     }
     
