@@ -261,6 +261,7 @@
 		3EE4DA1024E367720097540B /* ResolutionTests */ = {
 			isa = PBXGroup;
 			children = (
+				3EE8A93B26FAC81A005FD616 /* TestHelpers.swift */,
 				3EE4DA1124E367720097540B /* ResolutionTests.swift */,
 				3EE4DA1324E367720097540B /* Info.plist */,
 				849E07D124F9499900A793D3 /* XCTestManifests.swift */,
@@ -308,7 +309,6 @@
 				849E07CC24F946CA00A793D3 /* LinuxMain.swift */,
 				B6F2075E25DBD8C700140CE3 /* EthereumABITests */,
 				3EE4DA1024E367720097540B /* ResolutionTests */,
-				3EE8A93B26FAC81A005FD616 /* TestHelpers.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
