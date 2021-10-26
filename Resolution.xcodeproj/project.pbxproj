@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		30A69245251385A70079EC69 /* unsProxyReader.json in Resources */ = {isa = PBXBuildFile; fileRef = 30A69244251385A70079EC69 /* unsProxyReader.json */; };
+		3E08BE762727EB2F009BAD0B /* TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EE8A93B26FAC81A005FD616 /* TestHelpers.swift */; };
 		3E105520258C95D300652FC7 /* DnsType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E10551F258C95D300652FC7 /* DnsType.swift */; };
 		3E105524258CB73400652FC7 /* DnsUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E105523258CB73400652FC7 /* DnsUtils.swift */; };
 		3E10552E258CBD0900652FC7 /* DnsRecordsError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E10552D258CBD0900652FC7 /* DnsRecordsError.swift */; };
@@ -35,7 +36,6 @@
 		3EE4DA1224E367720097540B /* ResolutionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EE4DA1124E367720097540B /* ResolutionTests.swift */; };
 		3EE4DA1424E367720097540B /* resolution.h in Headers */ = {isa = PBXBuildFile; fileRef = 3EE4DA0624E367720097540B /* resolution.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3EE4DA1E24E367D40097540B /* Resolution.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EE4DA1D24E367D40097540B /* Resolution.swift */; };
-		3EE8A93C26FACAC3005FD616 /* TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EE8A93B26FAC81A005FD616 /* TestHelpers.swift */; };
 		3EE8A94226FD44C3005FD616 /* UnsLayerL2Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EE8A94126FD44C3005FD616 /* UnsLayerL2Tests.swift */; };
 		3EE8A94526FD46A7005FD616 /* unsRegistry.json in Resources */ = {isa = PBXBuildFile; fileRef = 3E2AC93D24E4FC9F008EBC39 /* unsRegistry.json */; };
 		3EE8A95C26FD47A8005FD616 /* unsProxyReader.json in Resources */ = {isa = PBXBuildFile; fileRef = 30A69244251385A70079EC69 /* unsProxyReader.json */; };
@@ -579,10 +579,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3EE8A93C26FACAC3005FD616 /* TestHelpers.swift in Sources */,
 				3EE4DA1224E367720097540B /* ResolutionTests.swift in Sources */,
 				B6F2076125DBD8C800140CE3 /* EthereumABITests.swift in Sources */,
 				3EE8A94226FD44C3005FD616 /* UnsLayerL2Tests.swift in Sources */,
+				3E08BE762727EB2F009BAD0B /* TestHelpers.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

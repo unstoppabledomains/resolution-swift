@@ -740,21 +740,11 @@ class ResolutionTests: XCTestCase {
 
         // Then
         assert(tokenURIMetadata?.name == TestHelpers.getTestDomain(.DOMAIN3))
-        assert(tokenURIMetadata?.attributes.count == 8)
-        assert(self.checkAttributeArrayContains(array: tokenURIMetadata?.attributes ?? [], traitType: "ETH", value: "0x8aaD44321A86b170879d7A244c1e8d360c99DdA8"))
-
+        assert(tokenURIMetadata?.attributes.count == 5)
+                assert(tokenURIMetadata?.properties.records["crypto.ETH.address"] == "0x8aaD44321A86b170879d7A244c1e8d360c99DdA8");
         TestHelpers.checkError(result: unregisteredResult, expectedError: ResolutionError.unregisteredDomain)
     }
-
-    func checkAttributeArrayContains(array: [TokenUriMetadataAttribute], traitType: String, value: String) -> Bool {
-        for attr in array {
-            if attr.traitType == traitType && attr.value.value == value {
-                return true
-            }
-        }
-        return false
-    }
-
+    
     func testUnhash() throws {
         // Given
         let domainReceived = expectation(description: "Existing domain should be received")
