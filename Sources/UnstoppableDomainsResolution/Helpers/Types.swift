@@ -11,6 +11,7 @@ import Foundation
 public typealias StringResultConsumer = (Result<String, ResolutionError>) -> Void
 public typealias StringsArrayResultConsumer = (Result<[String?], ResolutionError>) -> Void
 public typealias DictionaryResultConsumer = (Result<[String: String], ResolutionError>) -> Void
+public typealias DictionaryOptionalResultConsumer = (Result<[String: String?], ResolutionError>) -> Void
 public typealias DnsRecordsResultConsumer = (Result<[DnsRecord], Error>) -> Void
 public typealias TokenUriMetadataResultConsumer = (Result<TokenUriMetadata, ResolutionError>) -> Void
 public typealias BoolResultConsumer = (Result<Bool, Error>) -> Void
