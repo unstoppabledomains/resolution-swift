@@ -29,16 +29,20 @@ internal class AsyncResolver {
     ) throws -> [UNSLocation: ResultConsumer<T>] {
         var results: [UNSLocation: ResultConsumer<T>] = [:]
         let functions: [UNSLocation: GeneralFunction<T>] = [.layer2: l2func, .layer1: l1func]
-
+        let queue = DispatchQueue(label: "LayerQueque")
         functions.forEach { function in
             self.asyncGroup.enter()
             DispatchQueue.global().async { [weak self] in
                 guard let self = self else { return }
                 do {
                     let value = try function.value()
-                    results[function.key] = (value, nil)
+                    queue.sync {
+                        results[function.key] = (value, nil)
+                    }
                 } catch {
-                    results[function.key] = (nil, error)
+                    queue.sync {
+                        results[function.key] = (nil, error)
+                    }
                 }
                 self.asyncGroup.leave()
             }
