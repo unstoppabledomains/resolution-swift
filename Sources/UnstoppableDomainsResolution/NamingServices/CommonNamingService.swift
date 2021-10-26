@@ -101,7 +101,15 @@ extension CommonNamingService {
                              "ropsten": "3",
                              "rinkeby": "4",
                              "goerli": "5",
-                             "polygon-mumbai": "80001"]
+                             "polygon-mumbai": "80001",
+                             "polygon-mainnet": "137"
+    ]
+    static let networkToBlockchain = [
+        "mainnet": "ETH",
+        "rinkeby": "ETH",
+        "polygon-mumbai": "MATIC",
+        "polygon-mainnet": "MATIC"
+    ]
 
     struct NewtorkConfigJson: Decodable {
         let version: String
@@ -136,6 +144,11 @@ extension CommonNamingService {
         return nil
     }
 
+    static func getNetworkName(providerUrl: String, networking: NetworkingLayer) throws -> String {
+        let networkId = try Self.getNetworkId(providerUrl: providerUrl, networking: networking)
+        return networkIds.key(forValue: networkId) ?? ""
+    }
+
     static func getNetworkId(providerUrl: String, networking: NetworkingLayer) throws -> String {
         let url = URL(string: providerUrl)!
         let payload: JsonRpcPayload = JsonRpcPayload(jsonrpc: "2.0", id: "67", method: "net_version", params: [])
@@ -164,7 +177,7 @@ extension CommonNamingService {
         }
         switch resp?[0].result {
         case .string(let result):
-            return networkIds.key(forValue: result) ?? ""
+            return result
         default:
             return ""
         }

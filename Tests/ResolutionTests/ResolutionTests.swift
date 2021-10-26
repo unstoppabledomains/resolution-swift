@@ -812,6 +812,95 @@ class ResolutionTests: XCTestCase {
         assert(values["someweirdstuf"] == "")
     }
 
+    func testLocations() throws {
+        let locationsReceived = expectation(description: "Locations for each domain should be received");
+        let unsuportedEnsReceived = expectation(description: "ENS is not supported");
+        let unsuportedZnsReceived = expectation(description: "ZNS is not supported");
+        
+        let domains = [
+            TestHelpers.getTestDomain(.DOMAIN),
+            TestHelpers.getTestDomain(.LAYER2_DOMAIN),
+            TestHelpers.getTestDomain(.COIN_DOMAIN),
+            TestHelpers.getTestDomain(.UNREGISTERED_DOMAIN)
+        ];
+        let ensDomain = TestHelpers.getTestDomain(.ETH_DOMAIN);
+        let znsDomain = TestHelpers.getTestDomain(.ZIL_DOMAIN);
+        
+        var EnsResult: Result<[String: Location], ResolutionError>!
+        var ZnsResult: Result<[String: Location], ResolutionError>!
+        
+        var locations: [String: Location] = [:];
+        resolution.locations(domains: domains) { result in
+            switch result {
+            case .success(let returnValue):
+                locationsReceived.fulfill()
+                locations = returnValue;
+            case .failure(let error):
+                XCTFail("Expected locations, but got \(error)");
+            }
+        }
+        
+        resolution.locations(domains: [ensDomain]) {
+            EnsResult = $0;
+            unsuportedEnsReceived.fulfill()
+        }
+        
+        resolution.locations(domains: [znsDomain]) {
+            ZnsResult = $0;
+            unsuportedZnsReceived.fulfill()
+        }
+        
+        waitForExpectations(timeout: timeout, handler: nil);
+        
+        let answers: [String: Location] = [
+            TestHelpers.getTestDomain(.UNREGISTERED_DOMAIN): Location(
+                registryAddress: nil,
+                resolverAddress: nil,
+                networkId: nil,
+                blockchain: nil,
+                owner: nil,
+                providerURL: nil
+            ),
+            TestHelpers.getTestDomain(.DOMAIN): Location(
+                registryAddress: "0xaad76bea7cfec82927239415bb18d2e93518ecbb",
+                resolverAddress: "0x95AE1515367aa64C462c71e87157771165B1287A",
+                networkId: "4",
+                blockchain: "ETH",
+                owner: "0xe7474D07fD2FA286e7e0aa23cd107F8379085037",
+                providerURL: "https://rinkeby.infura.io/v3/3c25f57353234b1b853e9861050f4817"
+            ),
+            TestHelpers.getTestDomain(.COIN_DOMAIN):Location(
+                registryAddress: "0x7fb83000b8ed59d3ead22f0d584df3a85fbc0086",
+                resolverAddress: "0x7fb83000B8eD59D3eAD22f0D584Df3a85fBC0086",
+                networkId: "4",
+                blockchain: "ETH",
+                owner: "0xe7474D07fD2FA286e7e0aa23cd107F8379085037",
+                providerURL: "https://rinkeby.infura.io/v3/3c25f57353234b1b853e9861050f4817"
+            ),
+            TestHelpers.getTestDomain(.LAYER2_DOMAIN): Location(
+                registryAddress: "0x2a93c52e7b6e7054870758e15a1446e769edfb93",
+                resolverAddress: "0x2a93C52E7B6E7054870758e15A1446E769EdfB93",
+                networkId: "80001",
+                blockchain: "MATIC",
+                owner: "0xe7474D07fD2FA286e7e0aa23cd107F8379085037",
+                providerURL: "https://polygon-mumbai.infura.io/v3/c4bb906ed6904c42b19c95825fe55f39"
+            ),
+        ];
+        
+        assert(!locations.isEmpty);
+        assert(locations.count == domains.count);
+        domains.forEach { domain in
+            print(locations[domain]);
+            print(answers[domain]);
+            
+            assert(locations[domain] == answers[domain])
+        }
+        
+        TestHelpers.checkError(result: EnsResult, expectedError: .methodNotSupported)
+        TestHelpers.checkError(result: ZnsResult, expectedError: .methodNotSupported)
+    }
+    
+    
     func testCheckDomain() throws {
         // Given
         let validDomainName: String = "valid.domain-test-123.crypto"
@@ -1066,7 +1155,7 @@ class ResolutionTests: XCTestCase {
         waitForExpectations(timeout: timeout, handler: nil);
         
         assert(layer1TokenUri == "https://metadata.staging.unstoppabledomains.com/metadata/udtestdev-265f8f.crypto");
-        assert(layer2TokenUri == "https://metadata.staging.unstoppabledomains.com/metadata/udtestdev-johnnytest.wallet");
+        assert(layer2TokenUri == "https://metadata.staging.unstoppabledomains.com/metadata/47175376536410263098700840153319778926909723329866678110537362361339406517871");
     }
     
     func testUnhashMultiLayer() throws {

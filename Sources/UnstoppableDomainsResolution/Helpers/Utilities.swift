@@ -25,6 +25,15 @@ internal class Utillities {
     static func isNotEmpty(_ array: [Any]) -> Bool {
         return array.count > 0
     }
+
+    static func getLayerResultWrapper<T>(from results: [UNSLocation: AsyncConsumer<T>], for location: UNSLocation) -> AsyncConsumer<T> {
+        return results[location]!
+    }
+
+    static func getLayerResult<T>(from results: [UNSLocation: AsyncConsumer<T>], for location: UNSLocation) -> T {
+        let wrapper = Self.getLayerResultWrapper(from: results, for: location)
+        return wrapper.0!
+    }
 }
 
 extension String {

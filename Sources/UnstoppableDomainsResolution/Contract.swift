@@ -11,6 +11,11 @@ struct IdentifiableResult<T> {
     var result: T
 }
 
+struct MultiCallData {
+    let methodName: String
+    let args: [Any]
+}
+
 import Foundation
 internal class Contract {
     let batchIdOffset = 128
@@ -18,6 +23,7 @@ internal class Contract {
     static let ownersKey = "owners"
     static let resolversKey = "resolvers"
     static let valuesKey = "values"
+    static let multiCallMethodName = "multicall"
 
     let address: String
     let providerUrl: String
@@ -29,6 +35,19 @@ internal class Contract {
         self.providerUrl = providerUrl
         self.coder = ABICoder(abi)
         self.networking = networking
+    }
+
+    func multiCall(calls: [MultiCallData]) throws -> [Data] {
+        let encodedCalls = try calls.map { try self.coder.encode(method: $0.methodName, args: $0.args) }
+        let encodedMultiCall = try self.coder.encode(method: Self.multiCallMethodName, args: [encodedCalls])
+        let body = JsonRpcPayload(id: "1", data: encodedMultiCall, to: address)
+        let response = try postRequestForString(body)!
+        let decodedResponse = try self.coder.decode(response, from: Self.multiCallMethodName) as? [String: Any]
+        guard let decoded = decodedResponse,
+              let decodedResults = decoded["results"] as? [Data] else {
+            throw ABICoderError.couldNotDecode(method: Self.multiCallMethodName, value: response)
+        }
+        return decodedResults
     }
 
     func callMethod(methodName: String, args: [Any]) throws -> Any {
