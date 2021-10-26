@@ -8,7 +8,7 @@
 
 import Foundation
 
-internal class UNSLayer: CommonNamingService, NamingService {
+internal class UNSLayer: CommonNamingService {
     static let TransferEventSignature = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"
     static let NewURIEventSignature = "0xc5beef08f693b11c316c0c8394a377a0033c9cf701b8cd8afd79cecef60c3952"
     static let getDataForManyMethodName = "getDataForMany"

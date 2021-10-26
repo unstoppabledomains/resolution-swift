@@ -138,12 +138,12 @@ internal class UNS: CommonNamingService, NamingService {
         )
     }
 
-    func batchOwners(domains: [String]) throws -> [String?] {
+    func batchOwners(domains: [String]) throws -> [String: String?] {
         let results = try asyncResolver.resolve(
             l1func: self.layer1.batchOwners(domains: domains),
             l2func: self.layer2.batchOwners(domains: domains)
         )
-        var owners: [String?] = []
+        var owners: [String: String?] = [:]
         let l2Result = results[.layer2]!
         let l1Result = results[.layer1]!
 
@@ -155,9 +155,8 @@ internal class UNS: CommonNamingService, NamingService {
             throw l1Result.1!
         }
 
-        for (l2owner, l1owner) in zip(l2Result.0!, l1Result.0!) {
-            let ownerAddress = l2owner == nil ? l1owner : l2owner
-            owners.append(ownerAddress)
+        for (domain, (l2owner, l1owner)) in zip(domains, zip(l2Result.0!, l1Result.0!)) {
+            owners[domain] = l2owner == nil ? l1owner : l2owner
         }
         return owners
     }

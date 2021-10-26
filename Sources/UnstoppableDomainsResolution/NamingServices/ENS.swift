@@ -49,7 +49,7 @@ internal class ENS: CommonNamingService, NamingService {
         return ownerAddress
     }
 
-    func batchOwners(domains: [String]) throws -> [String?] {
+    func batchOwners(domains: [String]) throws -> [String: String?] {
         throw ResolutionError.methodNotSupported
     }
 
