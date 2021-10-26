@@ -12,9 +12,12 @@ public typealias StringResultConsumer = (Result<String, ResolutionError>) -> Voi
 public typealias StringsArrayResultConsumer = (Result<[String?], ResolutionError>) -> Void
 public typealias DictionaryResultConsumer = (Result<[String: String], ResolutionError>) -> Void
 public typealias DictionaryOptionalResultConsumer = (Result<[String: String?], ResolutionError>) -> Void
+public typealias DictionaryLocationResultConsumer = (Result<[String: Location], ResolutionError>) -> Void
 public typealias DnsRecordsResultConsumer = (Result<[DnsRecord], Error>) -> Void
 public typealias TokenUriMetadataResultConsumer = (Result<TokenUriMetadata, ResolutionError>) -> Void
 public typealias BoolResultConsumer = (Result<Bool, Error>) -> Void
+
+internal typealias AsyncConsumer<T> = (T?, Error?)
 
 public enum NamingServiceName: String {
     case uns
@@ -32,4 +35,14 @@ public struct UNSContract {
     let contract: Contract
     let deploymentBlock: String
 }
+
+public struct Location: Equatable {
+    var registryAddress: String?
+    var resolverAddress: String?
+    var networkId: String?
+    var blockchain: String?
+    var owner: String?
+    var providerURL: String?
+}
+
 public let ethCoinIndex = 60

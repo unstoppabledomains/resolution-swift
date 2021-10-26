@@ -29,6 +29,98 @@ internal class UNS: CommonNamingService, NamingService {
         }
     }
 
+    func isSupported(domain: String) -> Bool {
+        return layer2.isSupported(domain: domain)
+    }
+
+    func owner(domain: String) throws -> String {
+        return try asyncResolver.safeResolve(
+            l1func: self.layer1.owner(domain: domain),
+            l2func: self.layer2.owner(domain: domain)
+        )
+    }
+
+    func record(domain: String, key: String) throws -> String {
+        return try asyncResolver.safeResolve(
+            l1func: self.layer1.record(domain: domain, key: key),
+            l2func: self.layer2.record(domain: domain, key: key)
+        )
+    }
+
+    func records(keys: [String], for domain: String) throws -> [String: String] {
+        return try asyncResolver.safeResolve(
+            l1func: self.layer1.records(keys: keys, for: domain),
+            l2func: self.layer2.records(keys: keys, for: domain)
+        )
+    }
+
+    func getTokenUri(tokenId: String) throws -> String {
+        return try asyncResolver.safeResolve(
+            l1func: self.layer1.getTokenUri(tokenId: tokenId),
+            l2func: self.layer2.getTokenUri(tokenId: tokenId)
+        )
+    }
+
+    func getDomainName(tokenId: String) throws -> String {
+        return try asyncResolver.safeResolve(
+            l1func: self.layer1.getDomainName(tokenId: tokenId),
+            l2func: self.layer2.getDomainName(tokenId: tokenId)
+        )
+    }
+
+    func addr(domain: String, ticker: String) throws -> String {
+        return try asyncResolver.safeResolve(
+            l1func: self.layer1.addr(domain: domain, ticker: ticker),
+            l2func: self.layer2.addr(domain: domain, ticker: ticker)
+        )
+    }
+
+    func resolver(domain: String) throws -> String {
+        return try asyncResolver.safeResolve(
+            l1func: self.layer1.resolver(domain: domain),
+            l2func: self.layer2.resolver(domain: domain)
+        )
+    }
+
+    func locations(domains: [String]) throws -> [String: Location] {
+        let results = try asyncResolver.resolve(
+            l1func: self.layer1.locations(domains: domains),
+            l2func: self.layer2.locations(domains: domains)
+        )
+        try self.throwIfLayerHasError(results)
+
+        var locations: [String: Location] = [:]
+        let l2Response = Utillities.getLayerResult(from: results, for: .layer2)
+        let l1Response = Utillities.getLayerResult(from: results, for: .layer1)
+
+        domains.forEach {
+            let l2Loc = l2Response[$0]!
+            let l1Loc = l1Response[$0]!
+
+            locations[$0] = l2Loc.owner == nil ? l1Loc : l2Loc
+        }
+
+        return locations
+    }
+
+    func batchOwners(domains: [String]) throws -> [String: String?] {
+        let results = try asyncResolver.resolve(
+            l1func: self.layer1.batchOwners(domains: domains),
+            l2func: self.layer2.batchOwners(domains: domains)
+        )
+
+        var owners: [String: String?] = [:]
+        try self.throwIfLayerHasError(results)
+
+        let l2Result = Utillities.getLayerResult(from: results, for: .layer2)
+        let l1Result = Utillities.getLayerResult(from: results, for: .layer1)
+
+        for (domain, (l2owner, l1owner)) in zip(domains, zip(l2Result, l1Result)) {
+            owners[domain] = l2owner == nil ? l1owner : l2owner
+        }
+        return owners
+    }
+
     private func parseContractAddresses(config: NamingServiceConfig) throws -> [UNSContract] {
         var contracts: [UNSContract] = []
         var proxyReaderContract: UNSContract?
@@ -85,80 +177,18 @@ internal class UNS: CommonNamingService, NamingService {
         return nil
     }
 
-    func isSupported(domain: String) -> Bool {
-        return layer2.isSupported(domain: domain)
-    }
+    // This is used only when both layers should not throw any errors. Methods like batchOwners or locations require both layers.
+    private func throwIfLayerHasError<T>(_ results: [UNSLocation: AsyncConsumer<T>]) throws {
+        let l2Results = Utillities.getLayerResultWrapper(from: results, for: .layer2)
+        let l1Results = Utillities.getLayerResultWrapper(from: results, for: .layer1)
 
-    func owner(domain: String) throws -> String {
-        return try asyncResolver.safeResolve(
-            l1func: self.layer1.owner(domain: domain),
-            l2func: self.layer2.owner(domain: domain)
-        )
-    }
-
-    func record(domain: String, key: String) throws -> String {
-        return try asyncResolver.safeResolve(
-            l1func: self.layer1.record(domain: domain, key: key),
-            l2func: self.layer2.record(domain: domain, key: key)
-        )
-    }
-
-    func records(keys: [String], for domain: String) throws -> [String: String] {
-        return try asyncResolver.safeResolve(
-            l1func: self.layer1.records(keys: keys, for: domain),
-            l2func: self.layer2.records(keys: keys, for: domain)
-        )
-    }
-
-    func getTokenUri(tokenId: String) throws -> String {
-        return try asyncResolver.safeResolve(
-            l1func: self.layer1.getTokenUri(tokenId: tokenId),
-            l2func: self.layer2.getTokenUri(tokenId: tokenId)
-        )
-    }
-
-    func getDomainName(tokenId: String) throws -> String {
-        return try asyncResolver.safeResolve(
-            l1func: self.layer1.getDomainName(tokenId: tokenId),
-            l2func: self.layer2.getDomainName(tokenId: tokenId)
-        )
-    }
-
-    func addr(domain: String, ticker: String) throws -> String {
-        return try asyncResolver.safeResolve(
-            l1func: self.layer1.addr(domain: domain, ticker: ticker),
-            l2func: self.layer2.addr(domain: domain, ticker: ticker)
-        )
-    }
-
-    func resolver(domain: String) throws -> String {
-        return try asyncResolver.safeResolve(
-            l1func: self.layer1.resolver(domain: domain),
-            l2func: self.layer2.resolver(domain: domain)
-        )
-    }
-
-    func batchOwners(domains: [String]) throws -> [String: String?] {
-        let results = try asyncResolver.resolve(
-            l1func: self.layer1.batchOwners(domains: domains),
-            l2func: self.layer2.batchOwners(domains: domains)
-        )
-        var owners: [String: String?] = [:]
-        let l2Result = results[.layer2]!
-        let l1Result = results[.layer1]!
-
-        guard l2Result.1 == nil else {
-            throw l2Result.1!
+        guard l2Results.1 == nil else {
+            throw l2Results.1!
         }
 
-        guard l1Result.1 == nil else {
-            throw l1Result.1!
+        guard l1Results.1 == nil else {
+            throw l1Results.1!
         }
-
-        for (domain, (l2owner, l1owner)) in zip(domains, zip(l2Result.0!, l1Result.0!)) {
-            owners[domain] = l2owner == nil ? l1owner : l2owner
-        }
-        return owners
     }
 }
 

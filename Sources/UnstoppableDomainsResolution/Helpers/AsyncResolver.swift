@@ -10,7 +10,6 @@
 
 internal class AsyncResolver {
 
-    typealias ResultConsumer<T> = (T?, Error?)
     typealias GeneralFunction<T> = () throws -> T
 
     let asyncGroup = DispatchGroup()
@@ -26,8 +25,8 @@ internal class AsyncResolver {
     func resolve<T>(
         l1func: @escaping @autoclosure GeneralFunction<T>,
         l2func: @escaping @autoclosure GeneralFunction<T>
-    ) throws -> [UNSLocation: ResultConsumer<T>] {
-        var results: [UNSLocation: ResultConsumer<T>] = [:]
+    ) throws -> [UNSLocation: AsyncConsumer<T>] {
+        var results: [UNSLocation: AsyncConsumer<T>] = [:]
         let functions: [UNSLocation: GeneralFunction<T>] = [.layer2: l2func, .layer1: l1func]
         let queue = DispatchQueue(label: "LayerQueque")
         functions.forEach { function in
@@ -55,9 +54,9 @@ internal class AsyncResolver {
         return results
     }
 
-    private func parseResult<T>(_ results: [UNSLocation: ResultConsumer<T>] ) throws -> T {
-        let l2Result = results[.layer2]!
-        let l1Result = results[.layer1]!
+    private func parseResult<T>(_ results: [UNSLocation: AsyncConsumer<T>] ) throws -> T {
+        let l2Result = Utillities.getLayerResultWrapper(from: results, for: .layer2)
+        let l1Result = Utillities.getLayerResultWrapper(from: results, for: .layer1)
 
         if let l2error = l2Result.1 {
             if !isUnregisteredDomain(error: l2error) {

@@ -63,28 +63,8 @@ public class TestHelpers {
             XCTFail("Expected ResolutionError, but got different \(error)")
         }
     }
-
-    static func checkError(result: Result<String, ResolutionError>, expectedError: ResolutionError) {
-        switch result {
-        case .success:
-            XCTFail("Expected \(expectedError), but got none")
-        case .failure(let error):
-            assert(error == expectedError, "Expected \(expectedError), but got \(error)")
-            return
-        }
-    }
     
-    static func checkError(result: Result<[String?], ResolutionError>, expectedError: ResolutionError) {
-        switch result {
-        case .success:
-            XCTFail("Expected \(expectedError), but got none")
-        case .failure(let error):
-            assert(error == expectedError, "Expected \(expectedError), but got \(error)")
-            return
-        }
-    }
-
-    static func checkError(result: Result<TokenUriMetadata, ResolutionError>, expectedError: ResolutionError) {
+    static func checkError<T>(result: Result<T, ResolutionError>, expectedError: ResolutionError) {
         switch result {
         case .success:
             XCTFail("Expected \(expectedError), but got none")

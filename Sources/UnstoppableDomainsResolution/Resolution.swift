@@ -367,6 +367,19 @@ public class Resolution {
         }
     }
 
+    public func locations(domains: [String], completion: @escaping DictionaryLocationResultConsumer) {
+        DispatchQueue.global(qos: .utility).async { [weak self] in
+            do {
+                let preparedDomains = try domains.map({ (try self?.prepare(domain: $0))! })
+                if let result = try self?.getServiceOf(domains: preparedDomains).locations(domains: preparedDomains) {
+                    completion(.success(result))
+                }
+            } catch {
+                self?.catchError(error, completion: completion)
+            }
+        }
+    }
+
     // MARK: - Uttilities function
 
     /// this returns [NamingService] from the configurations
