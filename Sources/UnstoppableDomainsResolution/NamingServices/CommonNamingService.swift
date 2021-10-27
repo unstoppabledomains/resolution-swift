@@ -41,7 +41,7 @@ class CommonNamingService {
     func buildContract(address: String, type: ContractType, providerUrl: String) throws -> Contract {
         let jsonFileName: String
         let url = providerUrl
-        var nameLowCased = name.rawValue.lowercased()
+        let nameLowCased = name.rawValue.lowercased()
         switch type {
         case .unsRegistry:
             jsonFileName = "\(nameLowCased)Registry"

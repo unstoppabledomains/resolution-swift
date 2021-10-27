@@ -103,20 +103,20 @@ internal class UNS: CommonNamingService, NamingService {
         return locations
     }
 
-    func batchOwners(domains: [String]) throws -> [String?] {
+    func batchOwners(domains: [String]) throws -> [String: String?] {
         let results = try asyncResolver.resolve(
             l1func: self.layer1.batchOwners(domains: domains),
             l2func: self.layer2.batchOwners(domains: domains)
         )
+
+        var owners: [String: String?] = [:]
         try self.throwIfLayerHasError(results)
 
-        var owners: [String?] = []
         let l2Result = Utillities.getLayerResult(from: results, for: .layer2)
         let l1Result = Utillities.getLayerResult(from: results, for: .layer1)
 
-        for (l2owner, l1owner) in zip(l2Result, l1Result) {
-            let ownerAddress = l2owner == nil ? l1owner : l2owner
-            owners.append(ownerAddress)
+        for (domain, (l2owner, l1owner)) in zip(domains, zip(l2Result, l1Result)) {
+            owners[domain] = l2owner == nil ? l1owner : l2owner
         }
         return owners
     }

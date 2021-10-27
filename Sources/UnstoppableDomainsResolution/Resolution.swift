@@ -117,7 +117,7 @@ public class Resolution {
     /// - Parameter domains: - array of domain names, with nil value if the domain is not registered or
     ///     its resolver is null
     /// - Parameter completion: A callback that resolves `Result`  with an array of `owner address`'s or `Error`
-    public func batchOwners(domains: [String], completion: @escaping StringsArrayResultConsumer ) {
+    public func batchOwners(domains: [String], completion: @escaping DictionaryOptionalResultConsumer ) {
         DispatchQueue.global(qos: .utility).async { [weak self] in
             do {
                 let preparedDomains = try domains.map({ (try self?.prepare(domain: $0))! })
