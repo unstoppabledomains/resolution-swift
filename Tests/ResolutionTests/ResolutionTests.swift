@@ -1099,6 +1099,51 @@ class ResolutionTests: XCTestCase {
         assert(layer2Records["weirdrecord"] == "");
     }
     
+    func testAllRecords() throws {
+        let ensIsNotSupportedReceived = expectation(description: "ENS is not supported for this method");
+        var ensResult: Result<[String: String], ResolutionError>!;
+        
+        resolution.allRecords(domain: TestHelpers.getTestDomain(.ETH_DOMAIN)) { result in
+            ensIsNotSupportedReceived.fulfill();
+            ensResult = result;
+        }
+        waitForExpectations(timeout: timeout, handler: nil);
+        TestHelpers.checkError(result: ensResult, expectedError: .methodNotSupported)
+    }
+    
+    func testZilAllRecords() throws {
+        let recordsReceived = expectation(description: "Zilliqa records should be received");
+        let zilErrorReceived = expectation(description: "Should return unregistered domain");
+        
+        var zilRecords: [String: String] = [:]
+        var zilErrorResult: Result<[String: String], ResolutionError>!;
+        
+        resolution.allRecords(domain: TestHelpers.getTestDomain(.ZIL_DOMAIN)) { result in
+            switch result {
+            case .success(let returnValue):
+                zilRecords = returnValue;
+                recordsReceived.fulfill()
+            case .failure(let error):
+                XCTFail("Expected to get zilliqa records, but got \(error)");
+            }
+        }
+
+        resolution.allRecords(domain: "unregistered.zil") { result in
+            zilErrorReceived.fulfill();
+            zilErrorResult = result;
+        }
+        
+        waitForExpectations(timeout: timeout, handler: nil);
+        TestHelpers.checkError(result: zilErrorResult, expectedError: .unregisteredDomain);
+        
+        let expectedRecords: [String: String] = [
+            "ZIL": "zil1tcucw4w5uqgwz38y2na4249adzeg4rvl94kwhm",
+            "crypto.ETH.address": "0x084Ac37CDEfE1d3b68a63c08B203EFc3ccAB9742"
+        ];
+        assert(zilRecords == expectedRecords);
+    }
+    
+    
     func testTokenUriMultiLayer() throws {
         let tokenUriFromL2 = expectation(description: "TokenUri from layer2 domain should be receieved");
         let tokenUriFromL1 = expectation(description: "TokenUri from layer1 domain should be received");
