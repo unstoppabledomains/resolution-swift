@@ -151,6 +151,15 @@ internal class UNSLayer: CommonNamingService {
         return result
     }
 
+    func allRecords(domain: String) throws -> [String: String] {
+        let tokenId = super.namehash(domain: domain)
+        let tokenUriMetadata = try getTokenUriMetadata(tokenId: tokenId)
+        let metadataRecords = tokenUriMetadata.properties.records
+        let commonRecordsKeys = try Self.parseRecordKeys()
+        let mergedRecords = Array(Set(metadataRecords.keys + commonRecordsKeys!))
+        return try self.records(keys: mergedRecords, for: domain).filter { !$0.value.isEmpty }
+    }
+
     private func recordFromTokenId(tokenId: String, key: String) throws -> String {
         let result: OwnerResolverRecord
         do {
@@ -185,7 +194,8 @@ internal class UNSLayer: CommonNamingService {
             }
             return returnValue
         }
-        throw ResolutionError.recordNotFound(self.layer.rawValue)
+        // The line below will never get executed.
+        fatalError("Failed unwrapping the results")
     }
 
     func locations(domains: [String]) throws -> [String: Location] {
@@ -214,6 +224,15 @@ internal class UNSLayer: CommonNamingService {
     }
 
     func getDomainName(tokenId: String) throws -> String {
+        let metadata = try self.getTokenUriMetadata(tokenId: tokenId)
+        guard metadata.name != nil else {
+            throw ResolutionError.unregisteredDomain
+        }
+        return metadata.name!
+    }
+
+    // MARK: - Helper functions
+    private func getTokenUriMetadata(tokenId: String) throws -> TokenUriMetadata {
         let tokenURI = try self.getTokenUri(tokenId: tokenId)
         guard !tokenURI.isEmpty else {
             throw ResolutionError.unregisteredDomain
@@ -230,14 +249,16 @@ internal class UNSLayer: CommonNamingService {
                                            })
         semaphore.wait()
 
-        let metadata = try tokenUriMetadataResult.get()
-        guard metadata.name != nil else {
-            throw ResolutionError.unregisteredDomain
+        switch tokenUriMetadataResult {
+        case .success(let tokenUriMetadata):
+            return tokenUriMetadata
+        case .failure(let error):
+            throw error
+        case .none:
+            throw ResolutionError.badRequestOrResponse
         }
-        return metadata.name!
     }
 
-    // MARK: - Helper functions
     private func parseMultiCallForLocations(
         _ multiCallBytes: [Data],
         from calls: [MultiCallData],
