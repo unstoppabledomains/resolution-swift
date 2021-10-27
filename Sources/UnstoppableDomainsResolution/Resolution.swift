@@ -308,12 +308,28 @@ public class Resolution {
     /// Allows to get Many records from a `domain` in a single transaction
     /// - Parameter  domain: - domain name to be resolved
     /// - Parameter  keys: -  is an array of keys
-    /// - Parameter  completion: A callback that resolves `Result`  with an `map [key: value]` for a specific domain or `Error`
+    /// - Parameter  completion: A callback that resolves `Result`  with a `map [key: value]` for a specific domain or `Error`
     public func records(domain: String, keys: [String], completion:@escaping DictionaryResultConsumer ) {
         DispatchQueue.global(qos: .utility).async { [weak self] in
             do {
                 if let preparedDomain = try self?.prepare(domain: domain),
                     let result = try self?.getServiceOf(domain: preparedDomain).records(keys: keys, for: preparedDomain) {
+                    completion(.success(result))
+                }
+            } catch {
+                self?.catchError(error, completion: completion)
+            }
+        }
+    }
+
+    /// Resolves all the records from a domain
+    /// - Parameter domain: - domain name to be resolved
+    /// - Parameter completion: A callback that resolves `Result` with a `map [key: value]` for a specific domain or `Error`
+    public func allRecords(domain: String, completion: @escaping DictionaryResultConsumer) {
+        DispatchQueue.global(qos: .utility).async { [weak self] in
+            do {
+                if let preparedDomain = try self?.prepare(domain: domain),
+                   let result = try self?.getServiceOf(domain: preparedDomain).allRecords(domain: preparedDomain) {
                     completion(.success(result))
                 }
             } catch {

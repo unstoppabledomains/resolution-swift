@@ -24,6 +24,7 @@ protocol NamingService {
 
     func record(domain: String, key: String) throws -> String
     func records(keys: [String], for domain: String) throws -> [String: String]
+    func allRecords(domain: String) throws -> [String: String]
 
     func getTokenUri(tokenId: String) throws -> String
 
