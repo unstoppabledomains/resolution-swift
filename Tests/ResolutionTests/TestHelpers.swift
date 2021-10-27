@@ -24,6 +24,7 @@ class TestHelpers {
         case DOMAIN3
         case COIN_DOMAIN
         case UNREGISTERED_DOMAIN
+        case UNREGISTERED_ZIL
         case RINKEBY_DOMAIN
         case ETH_DOMAIN
         case UNSPECIFIED_RESOLVER_DOMAIN
@@ -39,6 +40,7 @@ class TestHelpers {
         .DOMAIN3: "brad.crypto",
         .COIN_DOMAIN: "udtestdev-johnnycoin.coin",
         .UNREGISTERED_DOMAIN: "unregistered.crypto",
+        .UNREGISTERED_ZIL: "unregistered.zil",
         .RINKEBY_DOMAIN: "udtestdev-creek.crypto",
         .ETH_DOMAIN: "monkybrain.eth",
         .UNSPECIFIED_RESOLVER_DOMAIN: "twistedmusic.crypto",
