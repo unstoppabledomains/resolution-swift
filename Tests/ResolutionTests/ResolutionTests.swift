@@ -1099,6 +1099,95 @@ class ResolutionTests: XCTestCase {
         assert(layer2Records["weirdrecord"] == "");
     }
     
+    func testAllRecordsErrors() throws {
+        let ensIsNotSupportedReceived = expectation(description: "ENS is not supported for this method");
+        let unregisteredUNSDomainReceived = expectation(description: "Unregistered UNS domain should be thrown");
+        let unregisteredZNSDomainReceived = expectation(description: "Unregistered UNS domain should be thrown");
+        
+        var ensResult: Result<[String: String], ResolutionError>!;
+        var unsResult: Result<[String: String], ResolutionError>!;
+        var znsResult: Result<[String: String], ResolutionError>!;
+        
+        resolution.allRecords(domain: TestHelpers.getTestDomain(.ETH_DOMAIN)) { result in
+            ensIsNotSupportedReceived.fulfill();
+            ensResult = result;
+        }
+        
+        resolution.allRecords(domain: TestHelpers.getTestDomain(.UNREGISTERED_DOMAIN)) { result in
+            unregisteredUNSDomainReceived.fulfill();
+            unsResult = result;
+        }
+        
+        resolution.allRecords(domain: TestHelpers.getTestDomain(.UNREGISTERED_ZIL)) { result in
+            unregisteredZNSDomainReceived.fulfill();
+            znsResult = result;
+        }
+        
+        waitForExpectations(timeout: timeout, handler: nil);
+        TestHelpers.checkError(result: ensResult, expectedError: .methodNotSupported);
+        TestHelpers.checkError(result: unsResult, expectedError: .unregisteredDomain);
+        TestHelpers.checkError(result: znsResult, expectedError: .unregisteredDomain);
+    }
+    
+    func testAllRecords() throws {
+        
+        let receievedAllRecordsFromUnsDomain = expectation(description: "Should receieve all records from uns domain");
+        var unsDomainRecords: [String: String]!;
+        
+        resolution.allRecords(domain: TestHelpers.getTestDomain(.DOMAIN)) { result in
+            switch result {
+            case .success(let returnValue):
+                unsDomainRecords = returnValue;
+                receievedAllRecordsFromUnsDomain.fulfill();
+            case .failure(let error):
+                XCTFail("Expected all records from uns domain, but got \(error)");
+            }
+        }
+        
+        
+        waitForExpectations(timeout: timeout, handler: nil);
+        let expectedRecords: [String: String] = [
+            "dns.ttl": "128",
+            "dns.A.ttl": "98",
+            "dns.A": "[\"10.0.0.1\", \"10.0.0.3\"]",
+            "crypto.USDT.version.OMNI.address": "19o6LvAdCPkjLi83VsjrCsmvQZUirT4KXJ",
+            "crypto.USDT.version.TRON.address": "TNemhXhpX7MwzZJa3oXvfCjo5pEeXrfN2h",
+            "custom.record": "custom.value",
+            "dweb.ipfs.hash": "QmdyBw5oTgCtTLQ18PbDvPL8iaLoEPhSyzD91q9XmgmAjb",
+            "crypto.ETH.address": "0x8aaD44321A86b170879d7A244c1e8d360c99DdA8",
+            "dns.AAAA": "[]",
+            "gundb.username.value": "0x8912623832e174f2eb1f59cc3b587444d619376ad5bf10070e937e0dc22b9ffb2e3ae059e6ebf729f87746b2f71e5d88ec99c1fb3c7c49b8617e2520d474c48e1c",
+            "crypto.USDT.version.ERC20.address": "0xe7474D07fD2FA286e7e0aa23cd107F8379085037",
+            "ipfs.html.value": "QmdyBw5oTgCtTLQ18PbDvPL8iaLoEPhSyzD91q9XmgmAjb",
+            "crypto.USDT.version.EOS.address": "letsminesome"
+        ];
+        assert(expectedRecords == unsDomainRecords);
+    }
+    
+    func testZilAllRecords() throws {
+        let recordsReceived = expectation(description: "Zilliqa records should be received");
+        var zilRecords: [String: String] = [:]
+        
+        resolution.allRecords(domain: TestHelpers.getTestDomain(.ZIL_DOMAIN)) { result in
+            switch result {
+            case .success(let returnValue):
+                zilRecords = returnValue;
+                recordsReceived.fulfill()
+            case .failure(let error):
+                XCTFail("Expected to get zilliqa records, but got \(error)");
+            }
+        }
+
+        waitForExpectations(timeout: timeout, handler: nil);
+
+        let expectedRecords: [String: String] = [
+            "ZIL": "zil1tcucw4w5uqgwz38y2na4249adzeg4rvl94kwhm",
+            "crypto.ETH.address": "0x084Ac37CDEfE1d3b68a63c08B203EFc3ccAB9742"
+        ];
+        assert(zilRecords == expectedRecords);
+    }
+    
+    
     func testTokenUriMultiLayer() throws {
         let tokenUriFromL2 = expectation(description: "TokenUri from layer2 domain should be receieved");
         let tokenUriFromL1 = expectation(description: "TokenUri from layer1 domain should be received");

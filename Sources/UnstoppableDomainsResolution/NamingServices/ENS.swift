@@ -97,8 +97,11 @@ internal class ENS: CommonNamingService, NamingService {
     }
 
     func records(keys: [String], for domain: String) throws -> [String: String] {
-        // TODO: Add some batch request and collect all keys by few request
-        throw ResolutionError.recordNotSupported
+        throw ResolutionError.methodNotSupported
+    }
+
+    func allRecords(domain: String) throws -> [String: String] {
+        throw ResolutionError.methodNotSupported
     }
 
     func getTokenUri(tokenId: String) throws -> String {

@@ -97,6 +97,7 @@ class CommonNamingService {
 
 extension CommonNamingService {
     static let networkConfigFileName = "uns-config"
+    static let recordKeysFileName = "resolver-keys"
     static let networkIds = ["mainnet": "1",
                              "ropsten": "3",
                              "rinkeby": "4",
@@ -114,6 +115,17 @@ extension CommonNamingService {
     struct NewtorkConfigJson: Decodable {
         let version: String
         let networks: [String: ContractsEntry]
+    }
+
+    struct ResolverKeysJson: Decodable {
+        let version: String
+        let keys: [String: RecordEntry]
+    }
+
+    struct RecordEntry: Decodable {
+        let deprecatedKeyName: String
+        let deprecated: Bool
+        let validationRegex: String?
     }
 
     struct ContractsEntry: Decodable {
@@ -140,6 +152,23 @@ extension CommonNamingService {
             guard let info = try? JSONDecoder().decode(NewtorkConfigJson.self, from: data) else { return nil }
             guard let currentNetwork = info.networks[idString] else { return nil }
             return currentNetwork.contracts
+        }
+        return nil
+    }
+
+    static func parseRecordKeys() throws -> [String]? {
+        #if INSIDE_PM
+        let bundler = Bundle.module
+        #else
+        let bundler = Bundle(for: self)
+        #endif
+
+        if let filePath = bundler.url(forResource: Self.recordKeysFileName, withExtension: "json") {
+            guard let data = try? Data(contentsOf: filePath) else { return nil }
+            guard let recordFile = try? JSONDecoder().decode(ResolverKeysJson.self, from: data) else { return nil }
+            let keyEntries = recordFile.keys
+            let keys = Array(keyEntries.keys)
+            return keys
         }
         return nil
     }

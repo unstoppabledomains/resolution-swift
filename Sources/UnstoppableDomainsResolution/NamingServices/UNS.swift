@@ -54,6 +54,13 @@ internal class UNS: CommonNamingService, NamingService {
         )
     }
 
+    func allRecords(domain: String) throws -> [String: String] {
+        return try asyncResolver.safeResolve(
+            l1func: self.layer1.allRecords(domain: domain),
+            l2func: self.layer2.allRecords(domain: domain)
+        )
+    }
+
     func getTokenUri(tokenId: String) throws -> String {
         return try asyncResolver.safeResolve(
             l1func: self.layer1.getTokenUri(tokenId: tokenId),

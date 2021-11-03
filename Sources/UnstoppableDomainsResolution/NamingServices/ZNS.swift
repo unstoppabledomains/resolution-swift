@@ -75,6 +75,13 @@ internal class ZNS: CommonNamingService, NamingService {
         return filtered
     }
 
+    func allRecords(domain: String) throws -> [String: String] {
+        guard let records = try self.records(address: try resolver(domain: domain), keys: []) as? [String: String] else {
+            throw ResolutionError.recordNotFound(self.name.rawValue)
+        }
+        return records
+    }
+
     func getTokenUri(tokenId: String) throws -> String {
         throw ResolutionError.methodNotSupported
     }
