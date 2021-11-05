@@ -54,8 +54,8 @@ public struct Configurations {
                 providerUrl: "https://mainnet.infura.io/v3/3c25f57353234b1b853e9861050f4817",
                 network: "mainnet"),
             layer2: NamingServiceConfig(
-                providerUrl: "https://polygon-mumbai.infura.io/v3/3c25f57353234b1b853e9861050f4817",
-                network: "polygon-mumbai")
+                providerUrl: "https://polygon-mainnet.infura.io/v3/3c25f57353234b1b853e9861050f4817",
+                network: "polygon-mainnet")
         ),
         ens: NamingServiceConfig = NamingServiceConfig(
             providerUrl: "https://mainnet.infura.io/v3/d423cf2499584d7fbe171e33b42cfbee",
