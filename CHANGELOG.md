@@ -1,5 +1,29 @@
 # Resolution-swift CHANGELOG
 
+## 3.0.0
+
+### Breaking changes
+- Library initialization has been changed. 
+   - Uns configurations now require setup for ETH network for L1 and poligon network for L2
+- `Resolution#getNetwork` has been removed. It is reduntant since anyone who is using the library will have the configurations built-in
+- `Resolution#batchOwners` has changed signature. It now returns a map [String: String?] of domain to owner addresses.
+- `Resolution#tokensOwnedBy` has been removed
+- Ens considered deprecated and will be removed in the future
+
+### New methods and features
+- 🎉 🎉 🎉 Add Polygon Layer 2 support!
+-  Introducing `Resolution#allRecords` method. It resolves a domain and returns all records the domain has been configured on the chain as a map [String: String] record to value
+-  Introducing `Resolution#locations` method which will help to determine domains location (blockhain, networkId) and useful metadata like owner, resolver, registry addresses, provider url if possible. 
+    `public struct Location: Equatable {
+        var registryAddress: String?
+        var resolverAddress: String?
+        var networkId: String?
+        var blockchain: String?
+        var owner: String?
+        var providerURL: String?
+    }`
+
+
 ## 2.0.1
 - Fix `Resolution#tokensOwnedBy` issue with lowercased addresses.
 
