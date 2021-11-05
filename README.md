@@ -32,14 +32,14 @@ Resoultion supports decentralized domains across three main zones:
 ## Cocoa Pods
 
 ```ruby
-pod 'UnstoppableDomainsResolution', '~> 2.0.1'
+pod 'UnstoppableDomainsResolution', '~> 3.0.0'
 ```
 
 ## Swift Package Manager
 
 ```swift
 package.dependencies.append(
-    .package(url: "https://github.com/unstoppabledomains/resolution-swift", from: "2.0.1")
+    .package(url: "https://github.com/unstoppabledomains/resolution-swift", from: "3.0.0")
 )
 ```
 
@@ -63,7 +63,21 @@ guard let resolution = try? Resolution() else {
 }
 
 // Or, if you want to use a specific providerUrl and network:
-guard let resolution = try? Resolution(providerUrl: "https://mainnet.infura.io/v3/<YOUR_PROJECT_ID_HERE>", network: "mainnet") else {
+guard let resolution = try? Resolution(
+    configs: Configurations(
+        uns: UnsLocations(
+            layer1: NamingServiceConfig(
+                        providerUrl: "https://rinkeby.infura.io/v3/3c25f57353234b1b853e9861050f4817",
+                        network: "rinkeby"),
+            layer2: NamingServiceConfig(
+                        providerUrl: "https://polygon-mumbai.infura.io/v3/c4bb906ed6904c42b19c95825fe55f39",
+                        network: "polygon-mumbai")
+        ),
+        zns: NamingServiceConfig(
+            providerUrl: "https://dev-api.zilliqa.com",
+            network: "testnet")
+    )
+) else {
   print ("Init of Resolution instance with custom parameters failed...")
   return
 }
@@ -146,9 +160,13 @@ You can update each naming service separately
 
 ```swift
 let resolution = try Resolution(configs: Configurations(
-        uns: NamingServiceConfig(
-            providerUrl: "https://rinkeby.infura.io/v3/3c25f57353234b1b853e9861050f4817",
-            network: "rinkeby"
+        uns: UnsLocations = UnsLocations(
+            layer1: NamingServiceConfig(
+                providerUrl: "https://mainnet.infura.io/v3/3c25f57353234b1b853e9861050f4817",
+                network: "mainnet"),
+            layer2: NamingServiceConfig(
+                providerUrl: "https://polygon-mainnet.infura.io/v3/3c25f57353234b1b853e9861050f4817",
+                network: "polygon-mainnet")
         )
     )
 );
@@ -191,7 +209,7 @@ As opposed to the single `owner(domain: _, completion: _)` method, this batch re
 resolution.batchOwners(domains: ["brad.crypto", "otherbrad.crypto"]) { result in
   switch result {
   case .success(let returnValue):
-    // returnValue: [String?] = <array of owners's addresses>
+    // returnValue: [String: String?] = <map of domains to owner address>
     let domainOwner = returnValue
   case .failure(let error):
     XCTFail("Expected owner, but got \(error)")
