@@ -5,10 +5,10 @@
 ### Breaking changes
 - Library initialization has been changed. 
    - Uns configurations now require setup for ETH network for L1 and poligon network for L2
-- `Resolution#getNetwork` has been removed. It is reduntant since anyone who is using the library will have the configurations built-in
+- `Resolution#getNetwork` has been removed. It is redundant since anyone who is using the library will have the configurations built-in
 - `Resolution#batchOwners` has changed signature. It now returns a map [String: String?] of domain to owner addresses.
 - `Resolution#tokensOwnedBy` has been removed
-- Ens considered deprecated and will be removed in the future
+- ENS considered deprecated and will be removed in the future
 
 ### New methods and features
 - 🎉 🎉 🎉 Add Polygon Layer 2 support!
