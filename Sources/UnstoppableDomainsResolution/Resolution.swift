@@ -65,14 +65,6 @@ public class Resolution {
         self.services = try constructNetworkServices(configs)
     }
 
-    /// Returns a network that NamingService was configure with
-    public func getNetwork(from serviceName: String) throws -> String {
-        guard let service = services.first(where: {$0.name.rawValue == serviceName.lowercased() }) else {
-            throw ResolutionError.unsupportedServiceName
-        }
-        return service.network
-    }
-
     /// Checks if the domain name is valid according to naming service rules for valid domain names.
     ///
     /// **Example:** ENS doesn't allow domains that start from '-' symbol.
@@ -125,7 +117,7 @@ public class Resolution {
     /// - Parameter domains: - array of domain names, with nil value if the domain is not registered or
     ///     its resolver is null
     /// - Parameter completion: A callback that resolves `Result`  with an array of `owner address`'s or `Error`
-    public func batchOwners(domains: [String], completion: @escaping StringsArrayResultConsumer ) {
+    public func batchOwners(domains: [String], completion: @escaping DictionaryOptionalResultConsumer ) {
         DispatchQueue.global(qos: .utility).async { [weak self] in
             do {
                 let preparedDomains = try domains.map({ (try self?.prepare(domain: $0))! })
@@ -149,26 +141,6 @@ public class Resolution {
                     let result = try self?.getServiceOf(domain: domain).addr(domain: preparedDomain, ticker: ticker) {
                     completion(.success(result))
                 }
-            } catch {
-                self?.catchError(error, completion: completion)
-            }
-        }
-    }
-
-    /// Returns domains owned by `address`
-    /// - Parameter address: - address of a user you want to get domains of
-    /// - Parameter service: - name of the service you want to check agains CNS or ZNS
-    /// - Parameter completion: - A callback taht resolves `Result` with an `array of domain names` or `Error`
-    public func tokensOwnedBy(address: String, service: String, completion: @escaping StringsArrayResultConsumer ) {
-        DispatchQueue.global(qos: .utility).async { [weak self] in
-            do {
-
-                guard let serviceName = NamingServiceName(rawValue: service),
-                    let namingService = self?.services.first(where: { $0.name == serviceName }) else {
-                    throw ResolutionError.unsupportedServiceName
-                }
-                let result = try namingService.tokensOwnedBy(address: address)
-                completion(.success(result))
             } catch {
                 self?.catchError(error, completion: completion)
             }
@@ -336,12 +308,28 @@ public class Resolution {
     /// Allows to get Many records from a `domain` in a single transaction
     /// - Parameter  domain: - domain name to be resolved
     /// - Parameter  keys: -  is an array of keys
-    /// - Parameter  completion: A callback that resolves `Result`  with an `map [key: value]` for a specific domain or `Error`
+    /// - Parameter  completion: A callback that resolves `Result`  with a `map [key: value]` for a specific domain or `Error`
     public func records(domain: String, keys: [String], completion:@escaping DictionaryResultConsumer ) {
         DispatchQueue.global(qos: .utility).async { [weak self] in
             do {
                 if let preparedDomain = try self?.prepare(domain: domain),
                     let result = try self?.getServiceOf(domain: preparedDomain).records(keys: keys, for: preparedDomain) {
+                    completion(.success(result))
+                }
+            } catch {
+                self?.catchError(error, completion: completion)
+            }
+        }
+    }
+
+    /// Resolves all the records from a domain
+    /// - Parameter domain: - domain name to be resolved
+    /// - Parameter completion: A callback that resolves `Result` with a `map [key: value]` for a specific domain or `Error`
+    public func allRecords(domain: String, completion: @escaping DictionaryResultConsumer) {
+        DispatchQueue.global(qos: .utility).async { [weak self] in
+            do {
+                if let preparedDomain = try self?.prepare(domain: domain),
+                   let result = try self?.getServiceOf(domain: preparedDomain).allRecords(domain: preparedDomain) {
                     completion(.success(result))
                 }
             } catch {
@@ -392,6 +380,19 @@ public class Resolution {
             completion(.success(domain))
         } catch {
             self.catchError(error, completion: completion)
+        }
+    }
+
+    public func locations(domains: [String], completion: @escaping DictionaryLocationResultConsumer) {
+        DispatchQueue.global(qos: .utility).async { [weak self] in
+            do {
+                let preparedDomains = try domains.map({ (try self?.prepare(domain: $0))! })
+                if let result = try self?.getServiceOf(domains: preparedDomains).locations(domains: preparedDomains) {
+                    completion(.success(result))
+                }
+            } catch {
+                self?.catchError(error, completion: completion)
+            }
         }
     }
 

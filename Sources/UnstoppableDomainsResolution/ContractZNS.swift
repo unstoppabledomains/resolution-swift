@@ -31,15 +31,21 @@ internal class ContractZNS {
                 ParamElement.array(keys.map { ParamElement.string($0) })
             ]
         )
-        let response = try postRequest(body)!
+        do {
+            let response = try postRequest(body)!
 
-        guard case let ParamElement.dictionary(dict) = response,
-            let results = self.reduce(dict: dict)[field] as? [String: Any] else {
-             print("Invalid response, can't process")
-             return response
+            guard case let ParamElement.dictionary(dict) = response,
+                let results = self.reduce(dict: dict)[field] as? [String: Any] else {
+                 print("Invalid response, can't process")
+                 return response
+            }
+
+            return results
+        // Zilliqa returns null if the domain is not registered,
+        // this causes our decoder to fail and throw APIError.decodingError
+        } catch APIError.decodingError {
+                throw ResolutionError.unregisteredDomain
         }
-
-        return results
     }
 
     private func postRequest(_ body: JsonRpcPayload) throws -> Any? {
@@ -78,10 +84,6 @@ internal class ContractZNS {
                 dict[key] = self.map(array: array)
             case .dictionary(let dictionary):
                 dict[key] = self.reduce(dict: dictionary)
-            case .paramLogClass(let elem):
-                dict[key] = elem
-            case .paramLogResponse(let elem):
-                dict[key] = elem
             }
         }
     }
@@ -90,10 +92,6 @@ internal class ContractZNS {
         return array.map { (value) -> Any in
             switch value {
             case .paramClass(let elem):
-                return elem
-            case .paramLogClass(let elem):
-                return elem
-            case .paramLogResponse(let elem):
                 return elem
             case .string(let elem):
                 return elem

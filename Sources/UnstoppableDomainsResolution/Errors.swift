@@ -11,32 +11,40 @@ import Foundation
 public enum ResolutionError: Error {
     case unregisteredDomain
     case unsupportedDomain
-    case recordNotFound
+    case recordNotFound(String)
     case recordNotSupported
     case unsupportedNetwork
-    case unspecifiedResolver
+    case unspecifiedResolver(String)
     case unknownError(Error)
     case proxyReaderNonInitialized
     case registryAddressIsNotProvided
     case inconsistenDomainArray
     case methodNotSupported
     case tooManyResponses
+    case executionReverted
     case badRequestOrResponse
     case unsupportedServiceName
     case invalidDomainName
+    case contractNotInitialized(String)
 
     static let tooManyResponsesCode = -32005
     static let badRequestOrResponseCode = -32042
 
     static func parse (errorResponse: NetworkErrorResponse) -> ResolutionError? {
         let error = errorResponse.error
-        if error.code == tooManyResponsesCode {
+
+        if error.message.starts(with: "execution reverted") {
+            return .executionReverted
+        }
+
+        switch error.code {
+        case tooManyResponsesCode:
             return .tooManyResponses
-        }
-        if error.code == badRequestOrResponseCode {
+        case badRequestOrResponseCode:
             return .badRequestOrResponse
+        default:
+            return nil
         }
-        return nil
     }
 }
 
@@ -49,4 +57,5 @@ struct NetworkErrorResponse: Decodable {
 struct ErrorId: Codable {
     var code: Int
     var message: String
+    var data: String?
 }

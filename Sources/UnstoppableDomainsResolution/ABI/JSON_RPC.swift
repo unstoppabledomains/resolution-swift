@@ -35,23 +35,10 @@ public struct JsonRpcPayload: Codable {
                     ParamElement.string("latest")
                   ])
     }
-
-    init (params: ParamLogClass) {
-        self.init(
-            jsonrpc: "2.0",
-              id: "1.0",
-              method: "eth_getLogs",
-              params: [
-                  ParamElement.paramLogClass(params)
-              ]
-        )
-    }
 }
 
 public enum ParamElement: Codable {
     case paramClass(ParamClass)
-    case paramLogClass(ParamLogClass)
-    case paramLogResponse(JsonRpcLogResponse)
     case string(String)
     case array([ParamElement])
     case dictionary([String: ParamElement])
@@ -64,14 +51,6 @@ public enum ParamElement: Codable {
         }
         if let elem = try? container.decode(ParamClass.self) {
             self = .paramClass(elem)
-            return
-        }
-        if let elem = try? container.decode(ParamLogClass.self) {
-            self = .paramLogClass(elem)
-            return
-        }
-        if let elem = try? container.decode(JsonRpcLogResponse.self) {
-            self = .paramLogResponse(elem)
             return
         }
         if let elem = try? container.decode(Array<ParamElement>.self) {
@@ -95,10 +74,6 @@ public enum ParamElement: Codable {
         switch self {
         case .paramClass(let elem):
             try container.encode(elem)
-        case .paramLogClass(let elem):
-            try container.encode(elem)
-        case .paramLogResponse(let elem):
-            try container.encode(elem)
         case .string(let elem):
             try container.encode(elem)
         case .array(let array):
@@ -112,24 +87,6 @@ public enum ParamElement: Codable {
 public struct ParamClass: Codable {
     let data: String
     let to: String
-}
-
-public struct ParamLogClass: Codable {
-    let fromBlock: String
-    let address: String
-    let topics: [String?]
-}
-
-public struct JsonRpcLogResponse: Codable {
-    let address: String
-    let blockHash: String
-    let blockNumber: String
-    let data: String
-    let logIndex: String
-    let removed: Bool
-    let topics: [String]
-    let transactionHash: String
-    let transactionIndex: String
 }
 
 public struct JsonRpcResponse: Decodable {

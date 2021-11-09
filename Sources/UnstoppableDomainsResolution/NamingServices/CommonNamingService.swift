@@ -35,8 +35,12 @@ class CommonNamingService {
     }
 
     func buildContract(address: String, type: ContractType) throws -> Contract {
-        let jsonFileName: String
+        return try self.buildContract(address: address, type: type, providerUrl: self.providerUrl)
+    }
 
+    func buildContract(address: String, type: ContractType, providerUrl: String) throws -> Contract {
+        let jsonFileName: String
+        let url = providerUrl
         let nameLowCased = name.rawValue.lowercased()
         switch type {
         case .unsRegistry:
@@ -52,7 +56,7 @@ class CommonNamingService {
         }
 
         let abi: ABIContract = try parseAbi(fromFile: jsonFileName)!
-        return Contract(providerUrl: self.providerUrl, address: address, abi: abi, networking: networking)
+        return Contract(providerUrl: url, address: address, abi: abi, networking: networking)
     }
 
     func parseAbi(fromFile name: String) throws -> ABIContract? {
@@ -93,14 +97,35 @@ class CommonNamingService {
 
 extension CommonNamingService {
     static let networkConfigFileName = "uns-config"
+    static let recordKeysFileName = "resolver-keys"
     static let networkIds = ["mainnet": "1",
                              "ropsten": "3",
                              "rinkeby": "4",
-                             "goerli": "5"]
+                             "goerli": "5",
+                             "polygon-mumbai": "80001",
+                             "polygon-mainnet": "137"
+    ]
+    static let networkToBlockchain = [
+        "mainnet": "ETH",
+        "rinkeby": "ETH",
+        "polygon-mumbai": "MATIC",
+        "polygon-mainnet": "MATIC"
+    ]
 
     struct NewtorkConfigJson: Decodable {
         let version: String
         let networks: [String: ContractsEntry]
+    }
+
+    struct ResolverKeysJson: Decodable {
+        let version: String
+        let keys: [String: RecordEntry]
+    }
+
+    struct RecordEntry: Decodable {
+        let deprecatedKeyName: String
+        let deprecated: Bool
+        let validationRegex: String?
     }
 
     struct ContractsEntry: Decodable {
@@ -131,6 +156,28 @@ extension CommonNamingService {
         return nil
     }
 
+    static func parseRecordKeys() throws -> [String]? {
+        #if INSIDE_PM
+        let bundler = Bundle.module
+        #else
+        let bundler = Bundle(for: self)
+        #endif
+
+        if let filePath = bundler.url(forResource: Self.recordKeysFileName, withExtension: "json") {
+            guard let data = try? Data(contentsOf: filePath) else { return nil }
+            guard let recordFile = try? JSONDecoder().decode(ResolverKeysJson.self, from: data) else { return nil }
+            let keyEntries = recordFile.keys
+            let keys = Array(keyEntries.keys)
+            return keys
+        }
+        return nil
+    }
+
+    static func getNetworkName(providerUrl: String, networking: NetworkingLayer) throws -> String {
+        let networkId = try Self.getNetworkId(providerUrl: providerUrl, networking: networking)
+        return networkIds.key(forValue: networkId) ?? ""
+    }
+
     static func getNetworkId(providerUrl: String, networking: NetworkingLayer) throws -> String {
         let url = URL(string: providerUrl)!
         let payload: JsonRpcPayload = JsonRpcPayload(jsonrpc: "2.0", id: "67", method: "net_version", params: [])
@@ -159,7 +206,7 @@ extension CommonNamingService {
         }
         switch resp?[0].result {
         case .string(let result):
-            return networkIds.key(forValue: result) ?? ""
+            return result
         default:
             return ""
         }
