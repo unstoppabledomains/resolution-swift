@@ -7,7 +7,7 @@ Resolution is a library for interacting with blockchain domain names. It can be 
 
 Resolution is primarily built and maintained by [Unstoppable Domains](https://unstoppabledomains.com/).
 
-Resoultion supports decentralized domains across three main zones:
+Resoultion supports decentralized domains across two main zones:
 
 - Crypto Name Service (uns)
   - `.crypto`
@@ -21,25 +21,20 @@ Resoultion supports decentralized domains across three main zones:
   - `.dao`
 - Zilliqa Name Service (zns)
   - `.zil`
-- Ethereum Name Service (ENS)
-  - `.eth`
-  - `.kred`
-  - `.xyz`
-  - `.luxe`
 
 # Installation into the project
 
 ## Cocoa Pods
 
 ```ruby
-pod 'UnstoppableDomainsResolution', '~> 3.0.0'
+pod 'UnstoppableDomainsResolution', '~> 4.0.0'
 ```
 
 ## Swift Package Manager
 
 ```swift
 package.dependencies.append(
-    .package(url: "https://github.com/unstoppabledomains/resolution-swift", from: "3.0.0")
+    .package(url: "https://github.com/unstoppabledomains/resolution-swift", from: "4.0.0")
 )
 ```
 
@@ -149,12 +144,10 @@ Version 0.3.0 introduced the `Configurations` struct that is used for configurin
 Library can offer three naming services at the moment:
 
 * `uns` resolves `.crypto` ,  `.coin`,  `.wallet`,  `.bitcoin`,  `.blockchain`, `.x`, `.888`, `.nft`, `.dao` domains,
-* `ens` resolves `.eth`, `.kred`, `.xyz`, `.luxe` domains
 * `zns` resolves `.zil` domains
 
 By default, each of them is using the mainnet network via infura provider. 
-Unstoppable domains are using the infura key with no restriction for UNS. 
-Unstoppable domains recommends setting up your own provider for ENS, as we don't guarantee ENS Infura key availability. 
+Unstoppable domains are using the infura key with no restriction for UNS.  
 
 You can update each naming service separately
 
@@ -168,9 +161,6 @@ let resolution = try Resolution(configs: Configurations(
                 providerUrl: "https://polygon-mainnet.infura.io/v3/3c25f57353234b1b853e9861050f4817",
                 network: "polygon-mainnet")
         ),
-        ens: NamingServiceConfig = NamingServiceConfig(
-            providerUrl: "https://mainnet.infura.io/v3/d423cf2499584d7fbe171e33b42cfbee",
-            network: "mainnet"),
         zns: NamingServiceConfig = NamingServiceConfig(
             providerUrl: "https://api.zilliqa.com",
             network: "mainnet")
@@ -184,19 +174,6 @@ resolution.addr(domain: "udtestdev-creek.crypto", ticker: "eth") { (result) in
     case .success(let returnValue):
         ethAddress = returnValue
         domainReceived.fulfill()
-    case .failure(let error):
-        XCTFail("Expected Eth Address, but got \(error)")
-    }
-}
-
-// naming services that hasn't been touched by Configrations struct are using default settings
-// the following will look up monkybrain.eth on the mainnet via infura provider
-
-resolution.addr(domain: "monkybrain.eth", ticker: "eth") { (result) in
-    switch result {
-    case .success(let returnValue):
-        ethENSAddress = returnValue
-        domainEthReceived.fulfill()
     case .failure(let error):
         XCTFail("Expected Eth Address, but got \(error)")
     }

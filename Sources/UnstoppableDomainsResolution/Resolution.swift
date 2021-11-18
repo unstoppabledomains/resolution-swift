@@ -16,11 +16,6 @@ import Foundation
 /// *zns*
 ///     .zil
 ///
-/// *ENS*
-///     .eth
-///     .kred
-///     .xyz
-///     .luxe
 ///
 /// ```swift
 /// let resolution = try Resolution();
@@ -67,8 +62,6 @@ public class Resolution {
 
     /// Checks if the domain name is valid according to naming service rules for valid domain names.
     ///
-    /// **Example:** ENS doesn't allow domains that start from '-' symbol.
-    ///
     /// - Parameter domain: domain name to be checked
     /// - Parameter completion: A callback that resolves `Result` with  a `Bool` value
     ///
@@ -89,7 +82,7 @@ public class Resolution {
     /// Resolves a hash  of the `domain` according to https://github.com/ethereum/EIPs/blob/master/EIPS/eip-137.md
     /// - Parameter domain: - domain name to be converted
     /// - Returns: Produces a namehash from supported naming service in hex format with 0x prefix.
-    /// Corresponds to ERC721 token id in case of Ethereum based naming service like ENS or UNS.
+    /// Corresponds to ERC721 token id in case of Ethereum based naming service like UNS.
     /// - Throws: ```ResolutionError.unsupportedDomain```  if domain extension is unknown
     ///
     public func namehash(domain: String) throws -> String {
@@ -172,8 +165,7 @@ public class Resolution {
         DispatchQueue.global(qos: .utility).async { [weak self] in
             do {
                 guard let preparedDomain = try self?.prepare(domain: domain),
-                    let service = try self?.getServiceOf(domain: preparedDomain),
-                    service.name != .ens else {
+                    let service = try self?.getServiceOf(domain: preparedDomain) else {
                     throw ResolutionError.methodNotSupported
                 }
                 let recordKey = "crypto.\(ticker.uppercased()).version.\(chain.uppercased()).address"
@@ -409,12 +401,6 @@ public class Resolution {
         }
 
         do {
-            networkServices.append(try ENS(configs.ens))
-        } catch {
-            errorService = error
-        }
-
-        do {
             networkServices.append(try ZNS(configs.zns))
         } catch {
             errorService = error
@@ -430,9 +416,6 @@ public class Resolution {
     private func getServiceOf(domain: String) throws -> NamingService {
         if domain.hasSuffix(".zil") {
             return try self.findService(name: .zns)
-        }
-        if domain ~= "^[^-]*[^-]*\\.(eth|luxe|xyz|kred|addr\\.reverse)$" {
-            return try self.findService(name: .ens)
         }
         return try self.findService(name: .uns)
     }

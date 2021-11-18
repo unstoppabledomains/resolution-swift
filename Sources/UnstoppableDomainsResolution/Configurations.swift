@@ -46,7 +46,6 @@ public struct UnsLocations {
 public struct Configurations {
     let uns: UnsLocations
     let zns: NamingServiceConfig
-    let ens: NamingServiceConfig
 
     public init(
         uns: UnsLocations = UnsLocations(
@@ -57,15 +56,11 @@ public struct Configurations {
                 providerUrl: "https://polygon-mainnet.infura.io/v3/3c25f57353234b1b853e9861050f4817",
                 network: "polygon-mainnet")
         ),
-        ens: NamingServiceConfig = NamingServiceConfig(
-            providerUrl: "https://mainnet.infura.io/v3/d423cf2499584d7fbe171e33b42cfbee",
-            network: "mainnet"),
         zns: NamingServiceConfig = NamingServiceConfig(
             providerUrl: "https://api.zilliqa.com",
             network: "mainnet")
     ) {
         self.uns = uns
-        self.ens = ens
         self.zns = zns
     }
 }

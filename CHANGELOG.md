@@ -1,5 +1,11 @@
 # Resolution-swift CHANGELOG
 
+## 4.0.0
+
+### Breaking changes
+- ENS support has been removed.
+    - Library configurations has been changed and all ens mentions have been removed.
+
 ## 3.0.0
 
 ### Breaking changes
