@@ -902,11 +902,13 @@ class ResolutionTests: XCTestCase {
         // Given
         let layer2OwnerReceived = expectation(description: "Domain should return owner address on layer2");
         let layer1OwnerReceived = expectation(description: "Domain should return owner address on layer1");
+        let unconfiguredOwnerReceived = expectation(description: "Unconfigured domain should be received");
         let unregisteredReceived = expectation(description: "Unregistered domain should be received");
         
 
         var layer2Owner = ""
         var layer1Owner = ""
+        var unconfiguredOwner = ""
         var unregisteredResult: Result<String, ResolutionError>!
 
         // When
@@ -930,6 +932,16 @@ class ResolutionTests: XCTestCase {
             }
         }
         
+        resolution.owner(domain: TestHelpers.getTestDomain(.UNSPECIFIED_RESOLVER_DOMAIN)) { (result) in
+            switch result {
+            case .success(let returnValue):
+                unconfiguredOwnerReceived.fulfill();
+                unconfiguredOwner = returnValue;
+            case .failure(let error):
+                XCTFail("Expected owner from unconfigured domain, but got \(error)")
+            }
+        }
+
         resolution.owner(domain: TestHelpers.getTestDomain(.UNREGISTERED_DOMAIN)) {
             unregisteredResult = $0
             unregisteredReceived.fulfill()
@@ -940,6 +952,7 @@ class ResolutionTests: XCTestCase {
         // Then
         assert(layer2Owner.lowercased() == "0xe7474D07fD2FA286e7e0aa23cd107F8379085037".lowercased())
         assert(layer1Owner.lowercased() == "0xe7474D07fD2FA286e7e0aa23cd107F8379085037".lowercased())
+        assert(unconfiguredOwner.lowercased() == "0x58ca45e932a88b2e7d0130712b3aa9fb7c5781e2".lowercased())
         TestHelpers.checkError(result: unregisteredResult, expectedError: ResolutionError.unregisteredDomain)
     }
     
