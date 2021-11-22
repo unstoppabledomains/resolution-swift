@@ -75,13 +75,6 @@ class ResolutionTests: XCTestCase {
     }
     
     func testForUnspecifiedResolver() throws {
-        resolution = try Resolution(configs: Configurations(
-                    uns: UnsLocations(
-                        layer1: NamingServiceConfig(providerUrl: "https://mainnet.infura.io/v3/3c25f57353234b1b853e9861050f4817",
-                                                    network: "mainnet"),
-                        layer2:NamingServiceConfig(providerUrl: "https://matic-testnet-archive-rpc.bwarelabs.com",
-                                                    network: "polygon-mumbai") )
-        ))
         let UnregirestedDomainExpectation = expectation(description: "Domain should not have a Resolver!")
         var NoRecordResult: Result<String, ResolutionError>!
         resolution.addr(domain: TestHelpers.getTestDomain(.UNSPECIFIED_RESOLVER_DOMAIN), ticker: "eth") {
