@@ -43,7 +43,7 @@ class TestHelpers {
         .UNREGISTERED_ZIL: "unregistered.zil",
         .RINKEBY_DOMAIN: "udtestdev-creek.crypto",
         .ETH_DOMAIN: "monkybrain.eth",
-        .UNSPECIFIED_RESOLVER_DOMAIN: "twistedmusic.crypto",
+        .UNSPECIFIED_RESOLVER_DOMAIN: "udtestdev-d0137c.crypto",
         .ZIL_DOMAIN: "test-udtesting-654.zil",
         .LAYER2_DOMAIN: "udtestdev-johnnytest.wallet"
             
