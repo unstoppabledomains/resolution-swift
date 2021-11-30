@@ -26,7 +26,6 @@ class TestHelpers {
         case UNREGISTERED_DOMAIN
         case UNREGISTERED_ZIL
         case RINKEBY_DOMAIN
-        case ETH_DOMAIN
         case UNSPECIFIED_RESOLVER_DOMAIN
         case ZIL_DOMAIN
         case LAYER2_DOMAIN
@@ -42,7 +41,6 @@ class TestHelpers {
         .UNREGISTERED_DOMAIN: "unregistered.crypto",
         .UNREGISTERED_ZIL: "unregistered.zil",
         .RINKEBY_DOMAIN: "udtestdev-creek.crypto",
-        .ETH_DOMAIN: "monkybrain.eth",
         .UNSPECIFIED_RESOLVER_DOMAIN: "udtestdev-d0137c.crypto",
         .ZIL_DOMAIN: "test-udtesting-654.zil",
         .LAYER2_DOMAIN: "udtestdev-johnnytest.wallet"
