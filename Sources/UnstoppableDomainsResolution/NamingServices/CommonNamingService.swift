@@ -108,6 +108,7 @@ extension CommonNamingService {
     static let networkToBlockchain = [
         "mainnet": "ETH",
         "rinkeby": "ETH",
+        "goerli": "ETH",
         "polygon-mumbai": "MATIC",
         "polygon-mainnet": "MATIC"
     ]
