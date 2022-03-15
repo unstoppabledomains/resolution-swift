@@ -45,97 +45,12 @@ package.dependencies.append(
 
 > NOTE: make sure an instance of the Resolution class is not deallocated until the asyncronous call brings in the result. Your code is the **only owner** of the instance so keep it as long as you need it.
 
-# Common examples
-
-> NOTE as of 26 November 2020: since the service at https://main-rpc.linkpool.io seems to be unstable it is highly recommended that you instantiate the Resolution instance with an Infura URL, like shown below.
-
 ```swift
 import UnstoppableDomainsResolution
 
 guard let resolution = try? Resolution() else {
   print ("Init of Resolution instance with default parameters failed...")
   return
-}
-
-// Or, if you want to use a specific providerUrl and network:
-guard let resolution = try? Resolution(
-    configs: Configurations(
-        uns: UnsLocations(
-            layer1: NamingServiceConfig(
-                        providerUrl: "https://rinkeby.infura.io/v3/3c25f57353234b1b853e9861050f4817",
-                        network: "rinkeby"),
-            layer2: NamingServiceConfig(
-                        providerUrl: "https://polygon-mumbai.infura.io/v3/3c25f57353234b1b853e9861050f4817",
-                        network: "polygon-mumbai")
-        ),
-        zns: NamingServiceConfig(
-            providerUrl: "https://dev-api.zilliqa.com",
-            network: "testnet")
-    )
-) else {
-  print ("Init of Resolution instance with custom parameters failed...")
-  return
-}
-
-resolution.addr(domain: "brad.crypto", ticker: "btc") { result in
-  switch result {
-  case .success(let returnValue):
-    // bc1q359khn0phg58xgezyqsuuaha28zkwx047c0c3y
-    let btcAddress = returnValue
-  case .failure(let error):
-    print("Expected btc Address, but got \(error)")
-}
-}
-
-resolution.addr(domain: "brad.crypto", ticker: "eth") { result in
-  switch result {
-  case .success(let returnValue):
-    // 0x8aaD44321A86b170879d7A244c1e8d360c99DdA8
-    let ethAddress = returnValue
-  case .failure(let error):
-    print("Expected eth Address, but got \(error)")
-  }
-}
-
-resolution.multiChainAddress(domain: "brad.crypto", ticker: "USDT", chain: "ERC20") { result in
-  switch result {
-  case .success(let returnValue):
-    // 0x8aaD44321A86b170879d7A244c1e8d360c99DdA8
-    let usdtErc20Address = returnValue
-  case .failure(let error):
-    print("Expected eth Address, but got \(error)")
-  }
-}
-
-resolution.multiChainAddress(domain: "brad.crypto", ticker: "USDT", chain: "OMNI") { result in
-  switch result {
-  case .success(let returnValue):
-    // 1FoWyxwPXuj4C6abqwhjDWdz6D4PZgYRjA
-    let usdtOmniAddress = returnValue
-  case .failure(let error):
-    print("Expected Omni Address, but got \(error)")
-  }
-}
-
-resolution.owner(domain: "brad.crypto") { result in
-  switch result {
-  case .success(let returnValue):
-    // 0x8aaD44321A86b170879d7A244c1e8d360c99DdA8
-    let domainOwner = returnValue
-  case .failure(let error):
-    XCTFail("Expected owner, but got \(error)")
-  }
-}
-
-// Lookup specific records
-resolution.record(domain: "ryan.crypto", record: "custom.record.value") { result in
-  switch result {
-  case .success(let returnValue):
-    // Example custom record value
-    let recordValue = returnValue
-  case .failure(let error):
-    print("Expected record value, but got \(error)")
-}
 }
 ```
 
@@ -146,7 +61,7 @@ Library can offer three naming services at the moment:
 * `uns` resolves `.crypto` ,  `.coin`,  `.wallet`,  `.bitcoin`,  `.blockchain`, `.x`, `.888`, `.nft`, `.dao` domains,
 * `zns` resolves `.zil` domains
 
-By default, each of them is using the mainnet network via infura provider. 
+By default, each of them is using the mainnet network via infura provider.
 Unstoppable domains are using the infura key with no restriction for UNS.  
 
 You can update each naming service separately
@@ -187,8 +102,8 @@ Version 0.1.3 introduced the `batchOwners(domains: _, completion: _ )` method wh
 > This method is only compatible with uns-based domains. Using this method with any other domain type will throw the error: `ResolutionError.methodNotSupported`.
 
 As opposed to the single `owner(domain: _, completion: _)` method, this batch request will return an array of owners `[String?]`. If the the domain is not registered or its value is `null`, the corresponding array element of the response will be `nil` without throwing an error.
- 
-```swift 
+
+```swift
 resolution.batchOwners(domains: ["brad.crypto", "otherbrad.crypto"]) { result in
   switch result {
   case .success(let returnValue):
