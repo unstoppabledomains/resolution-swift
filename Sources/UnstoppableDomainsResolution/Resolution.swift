@@ -435,7 +435,7 @@ public class Resolution {
 
         let service: NamingService? = try possibleServices.reduce(nil, {result, currNS in
             guard result != nil else { return currNS }
-            guard result!.name == currNS.name else { throw ResolutionError.inconsistenDomainArray }
+            guard result!.name == currNS.name else { throw ResolutionError.inconsistentDomainArray }
             return currNS
         })
         return service!
