@@ -18,7 +18,7 @@ public enum ResolutionError: Error {
     case unknownError(Error)
     case proxyReaderNonInitialized
     case registryAddressIsNotProvided
-    case inconsistenDomainArray
+    case inconsistentDomainArray
     case methodNotSupported
     case tooManyResponses
     case executionReverted

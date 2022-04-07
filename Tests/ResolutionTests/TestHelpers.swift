@@ -14,8 +14,8 @@ import XCTest
 #endif
 
 class TestHelpers {
-    
-    
+
+
     enum DOMAINS {
         case DOMAIN
         case WALLET_DOMAIN
@@ -44,13 +44,13 @@ class TestHelpers {
         .UNSPECIFIED_RESOLVER_DOMAIN: "udtestdev-d0137c.crypto",
         .ZIL_DOMAIN: "test-udtesting-654.zil",
         .LAYER2_DOMAIN: "udtestdev-johnnytest.wallet"
-            
+
     ]
-    
+
     static func getTestDomain(_ type: DOMAINS) -> String {
         return Self.TEST_DOMAINS[type]!;
     }
-    
+
     static func checkError(completion: @escaping() throws -> Void, expectedError: ResolutionError) {
         do {
             try completion()
@@ -63,7 +63,7 @@ class TestHelpers {
             XCTFail("Expected ResolutionError, but got different \(error)")
         }
     }
-    
+
     static func checkError<T>(result: Result<T, ResolutionError>, expectedError: ResolutionError) {
         switch result {
         case .success:
@@ -92,7 +92,7 @@ extension ResolutionError: Equatable {
             return true
         case (.proxyReaderNonInitialized, .proxyReaderNonInitialized):
             return true
-        case (.inconsistenDomainArray, .inconsistenDomainArray):
+        case (.inconsistentDomainArray, .inconsistentDomainArray):
             return true
         case (.methodNotSupported, .methodNotSupported):
             return true
@@ -106,7 +106,7 @@ extension ResolutionError: Equatable {
             return true
         case (.invalidDomainName, .invalidDomainName):
             return true
-            
+
         case (.unregisteredDomain, _),
              (.unsupportedDomain, _),
              (.recordNotFound, _),
@@ -114,7 +114,7 @@ extension ResolutionError: Equatable {
              (.unsupportedNetwork, _),
              (.unspecifiedResolver, _),
              (.unknownError, _ ),
-             (.inconsistenDomainArray, _),
+             (.inconsistentDomainArray, _),
              (.methodNotSupported, _),
              (.proxyReaderNonInitialized, _),
              (.tooManyResponses, _),
@@ -122,7 +122,7 @@ extension ResolutionError: Equatable {
              (.unsupportedServiceName, _),
              (.registryAddressIsNotProvided, _),
              (.invalidDomainName, _):
-            
+
             return false
         // Xcode with Version 12.4 (12D4e) can't compile this without default
         // throws error: The compiler is unable to check that this switch is exhaustive in a reasonable time
