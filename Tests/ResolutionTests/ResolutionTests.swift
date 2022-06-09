@@ -28,7 +28,11 @@ class ResolutionTests: XCTestCase {
                                 network: "rinkeby"),
                     layer2: NamingServiceConfig(
                                 providerUrl: "https://polygon-mumbai.infura.io/v3/c4bb906ed6904c42b19c95825fe55f39",
-                                network: "polygon-mumbai")
+                                network: "polygon-mumbai"),
+                    zlayer: NamingServiceConfig(
+                        providerUrl: "https://dev-api.zilliqa.com",
+                        network: "testnet"
+                    )
                 ),
                 zns: NamingServiceConfig(
                     providerUrl: "https://dev-api.zilliqa.com",
@@ -44,7 +48,11 @@ class ResolutionTests: XCTestCase {
                     layer1: NamingServiceConfig(providerUrl: "https://ropsten.infura.io/v3/3c25f57353234b1b853e9861050f4817"),
                     layer2: NamingServiceConfig(
                                 providerUrl: "https://matic-testnet-archive-rpc.bwarelabs.com",
-                                network: "polygon-mumbai")
+                                network: "polygon-mumbai"),
+                    zlayer: NamingServiceConfig(
+                                providerUrl: "https://dev-api.zilliqa.com",
+                                network: "testnet"
+                            )
                 )
             ));
         }, expectedError: .proxyReaderNonInitialized)
@@ -88,7 +96,11 @@ class ResolutionTests: XCTestCase {
                     ),
                     layer2: NamingServiceConfig(
                         providerUrl: "https://matic-testnet-archive-rpc.bwarelabs.com",
-                        network: "polygon-mumbai")
+                        network: "polygon-mumbai"),
+                    zlayer: NamingServiceConfig(
+                        providerUrl: "https://dev-api.zilliqa.com",
+                        network: "testnet"
+                    )
                 )
             )
         );

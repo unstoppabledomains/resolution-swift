@@ -41,73 +41,73 @@ internal class UNS: CommonNamingService, NamingService {
 
     func owner(domain: String) throws -> String {
         return try asyncResolver.safeResolve(
-            l1func: self.layer1.owner(domain: domain),
-            l2func: self.layer2.owner(domain: domain),
-            zfunc: self.zlayer.owner(domain: domain)
+            listOfFunc: [{try self.layer1.owner(domain: domain)},
+                         {try self.layer2.owner(domain: domain)},
+                         {try self.zlayer.owner(domain: domain)}]
         )
     }
 
     func record(domain: String, key: String) throws -> String {
         return try asyncResolver.safeResolve(
-            l1func: self.layer1.record(domain: domain, key: key),
-            l2func: self.layer2.record(domain: domain, key: key),
-            zfunc: self.zlayer.record(domain: domain, key: key)
+            listOfFunc: [{try self.layer1.record(domain: domain, key: key)},
+                         {try self.layer2.record(domain: domain, key: key)},
+                         {try self.zlayer.record(domain: domain, key: key)}]
         )
     }
 
     func records(keys: [String], for domain: String) throws -> [String: String] {
         return try asyncResolver.safeResolve(
-            l1func: self.layer1.records(keys: keys, for: domain),
-            l2func: self.layer2.records(keys: keys, for: domain),
-            zfunc: self.zlayer.records(keys: keys, for: domain)
+            listOfFunc: [{try self.layer1.records(keys: keys, for: domain)},
+                         {try self.layer2.records(keys: keys, for: domain)},
+                         {try self.zlayer.records(keys: keys, for: domain)}]
         )
     }
 
     func allRecords(domain: String) throws -> [String: String] {
         return try asyncResolver.safeResolve(
-            l1func: self.layer1.allRecords(domain: domain),
-            l2func: self.layer2.allRecords(domain: domain),
-            zfunc: self.zlayer.allRecords(domain: domain)
+            listOfFunc: [{try self.layer1.allRecords(domain: domain)},
+                         {try self.layer2.allRecords(domain: domain)},
+                         {try self.zlayer.allRecords(domain: domain)}]
         )
     }
 
     func getTokenUri(tokenId: String) throws -> String {
         return try asyncResolver.safeResolve(
-            l1func: self.layer1.getTokenUri(tokenId: tokenId),
-            l2func: self.layer2.getTokenUri(tokenId: tokenId),
-            zfunc: self.zlayer.getTokenUri(tokenId: tokenId)
+            listOfFunc: [{try self.layer1.getTokenUri(tokenId: tokenId)},
+                         {try self.layer2.getTokenUri(tokenId: tokenId)},
+                         {try self.zlayer.getTokenUri(tokenId: tokenId)}]
         )
     }
 
     func getDomainName(tokenId: String) throws -> String {
         return try asyncResolver.safeResolve(
-            l1func: self.layer1.getDomainName(tokenId: tokenId),
-            l2func: self.layer2.getDomainName(tokenId: tokenId),
-            zfunc: self.zlayer.getDomainName(tokenId: tokenId)
+            listOfFunc: [{try self.layer1.getDomainName(tokenId: tokenId)},
+                         {try self.layer2.getDomainName(tokenId: tokenId)},
+                         {try self.zlayer.getDomainName(tokenId: tokenId)}]
         )
     }
 
     func addr(domain: String, ticker: String) throws -> String {
         return try asyncResolver.safeResolve(
-            l1func: self.layer1.addr(domain: domain, ticker: ticker),
-            l2func: self.layer2.addr(domain: domain, ticker: ticker),
-            zfunc: self.zlayer.addr(domain: domain, ticker: ticker)
+            listOfFunc: [{try self.layer1.addr(domain: domain, ticker: ticker)},
+                         {try self.layer2.addr(domain: domain, ticker: ticker)},
+                         {try self.zlayer.addr(domain: domain, ticker: ticker)}]
         )
     }
 
     func resolver(domain: String) throws -> String {
         return try asyncResolver.safeResolve(
-            l1func: self.layer1.resolver(domain: domain),
-            l2func: self.layer2.resolver(domain: domain),
-            zfunc: self.zlayer.resolver(domain: domain)
+            listOfFunc: [{try self.layer1.resolver(domain: domain)},
+                         {try self.layer2.resolver(domain: domain)},
+                         {try self.zlayer.resolver(domain: domain)}]
         )
     }
 
     func locations(domains: [String]) throws -> [String: Location] {
         let results = try asyncResolver.resolve(
-            l1func: self.layer1.locations(domains: domains),
-            l2func: self.layer2.locations(domains: domains),
-            zfunc: self.zlayer.locations(domains: domains)
+            listOfFunc: [{try self.layer1.locations(domains: domains)},
+                         {try self.layer2.locations(domains: domains)},
+                         {try self.zlayer.locations(domains: domains)}]
         )
         
         try self.throwIfLayerHasError(results)
@@ -128,9 +128,9 @@ internal class UNS: CommonNamingService, NamingService {
 
     func batchOwners(domains: [String]) throws -> [String: String?] {
         let results = try asyncResolver.resolve(
-            l1func: self.layer1.batchOwners(domains: domains),
-            l2func: self.layer2.batchOwners(domains: domains),
-            zfunc: self.zlayer.batchOwners(domains: domains)
+            listOfFunc: [{try self.layer1.batchOwners(domains: domains)},
+                         {try self.layer2.batchOwners(domains: domains)},
+                         {try self.zlayer.batchOwners(domains: domains)}]
         )
 
         var owners: [String: String?] = [:]
@@ -139,9 +139,9 @@ internal class UNS: CommonNamingService, NamingService {
         let l2Result = Utillities.getLayerResult(from: results, for: .layer2)
         let l1Result = Utillities.getLayerResult(from: results, for: .layer1)
 
-        for (domain, (l2owner, l1owner)) in zip(domains, zip(l2Result, l1Result)) {
-            owners[domain] = l2owner == nil ? l1owner : l2owner
-        }
+//        for (domain, (l2owner, l1owner)) in zip(domains, zip(l2Result, l1Result)) {
+//            owners[domain] = l2owner == nil ? l1owner : l2owner
+//        }
         return owners
     }
 
