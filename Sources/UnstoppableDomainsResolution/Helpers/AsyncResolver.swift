@@ -16,9 +16,6 @@ internal class AsyncResolver {
 
     func safeResolve<T>(
         listOfFunc: Array<GeneralFunction<T>>
-//        l1func: @escaping @autoclosure GeneralFunction<T>,
-//        l2func: @escaping @autoclosure GeneralFunction<T>,
-//        zfunc: @escaping @autoclosure GeneralFunction<T>
     ) throws -> T {
         let results = try resolve(listOfFunc: [listOfFunc[0], listOfFunc[1], listOfFunc[2]])
         return try parseResult(results)
