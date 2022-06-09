@@ -16,18 +16,22 @@ internal class AsyncResolver {
 
     func safeResolve<T>(
         l1func: @escaping @autoclosure GeneralFunction<T>,
-        l2func: @escaping @autoclosure GeneralFunction<T>
+        l2func: @escaping @autoclosure GeneralFunction<T>,
+        zfunc: @escaping @autoclosure GeneralFunction<T>
     ) throws -> T {
-        let results = try resolve(l1func: l1func(), l2func: l2func())
+        let results = try resolve(l1func: l1func(), l2func: l2func(), zfunc: zfunc())
         return try parseResult(results)
     }
 
     func resolve<T>(
         l1func: @escaping @autoclosure GeneralFunction<T>,
-        l2func: @escaping @autoclosure GeneralFunction<T>
+        l2func: @escaping @autoclosure GeneralFunction<T>,
+        zfunc: @escaping @autoclosure GeneralFunction<T>
     ) throws -> [UNSLocation: AsyncConsumer<T>] {
         var results: [UNSLocation: AsyncConsumer<T>] = [:]
-        let functions: [UNSLocation: GeneralFunction<T>] = [.layer2: l2func, .layer1: l1func]
+        let functions: [UNSLocation: GeneralFunction<T>] = [
+            .layer2: l2func, .layer1: l1func, .zlayer: zfunc
+        ]
         let queue = DispatchQueue(label: "LayerQueque")
         functions.forEach { function in
             self.asyncGroup.enter()
@@ -57,6 +61,11 @@ internal class AsyncResolver {
     private func parseResult<T>(_ results: [UNSLocation: AsyncConsumer<T>] ) throws -> T {
         let l2Result = Utillities.getLayerResultWrapper(from: results, for: .layer2)
         let l1Result = Utillities.getLayerResultWrapper(from: results, for: .layer1)
+        let zResult = Utillities.getLayerResultWrapper(from: results, for: .zlayer)
+        
+        print("L2RESULT", l2Result)
+        print("L1RESULT", l1Result)
+        print("ZRESULT", zResult)
 
         if let l2error = l2Result.1 {
             if !isUnregisteredDomain(error: l2error) {
@@ -67,11 +76,22 @@ internal class AsyncResolver {
                 return l2answer
             }
         }
-
+        
         if let l1error = l1Result.1 {
-            throw l1error
+            if !isUnregisteredDomain(error: l1error) {
+                throw l1error
+            }
+        } else {
+            if let l1answer = l1Result.0 {
+                return l1answer
+            }
         }
-        return l1Result.0!
+
+        if let zerror = zResult.1 {
+            throw zerror
+        }
+
+        return zResult.0!
     }
 
     private func isUnregisteredDomain(error: Error?) -> Bool {

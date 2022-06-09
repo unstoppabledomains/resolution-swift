@@ -27,6 +27,7 @@ public enum NamingServiceName: String {
 public enum UNSLocation: String {
     case layer1
     case layer2
+    case zlayer
 }
 
 public struct UNSContract {

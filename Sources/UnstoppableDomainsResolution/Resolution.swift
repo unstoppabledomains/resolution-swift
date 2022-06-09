@@ -86,6 +86,7 @@ public class Resolution {
     /// - Throws: ```ResolutionError.unsupportedDomain```  if domain extension is unknown
     ///
     public func namehash(domain: String) throws -> String {
+        print("SELF", self)
         let preparedDomain = try prepare(domain: domain)
         return try getServiceOf(domain: preparedDomain).namehash(domain: preparedDomain)
     }
@@ -94,15 +95,23 @@ public class Resolution {
     /// - Parameter domain: - domain name
     /// - Parameter completion: A callback that resolves `Result`  with an `owner address` or `Error`
     public func owner(domain: String, completion: @escaping StringResultConsumer ) {
-        DispatchQueue.global(qos: .utility).async { [weak self] in
-            do {
-                if let preparedDomain = try self?.prepare(domain: domain),
-                    let result = try self?.getServiceOf(domain: preparedDomain).owner(domain: preparedDomain) {
-                    completion(.success(result))
-                }
-            } catch {
-                self?.catchError(error, completion: completion)
-            }
+//        DispatchQueue.global(qos: .utility).async { [weak self] in
+//            do {
+//                if let preparedDomain = try self?.prepare(domain: domain),
+//                    let result = try self?.getServiceOf(domain: preparedDomain).owner(domain: preparedDomain) {
+//                    completion(.success(result))
+//                }
+//            } catch {
+//                self?.catchError(error, completion: completion)
+//            }
+//        }
+        
+        do {
+            let preparedDomain = try self.prepare(domain: domain);
+            let result = try self.getServiceOf(domain: preparedDomain).owner(domain: preparedDomain)
+            completion(.success(result))
+        } catch {
+            self.catchError(error, completion: completion)
         }
     }
 
@@ -128,15 +137,14 @@ public class Resolution {
     /// - Parameter  ticker: - currency ticker like BTC, ETH, ZIL
     /// - Parameter  completion: A callback that resolves `Result`  with an `address` or `Error`
     public func addr(domain: String, ticker: String, completion: @escaping StringResultConsumer ) {
-        DispatchQueue.global(qos: .utility).async { [weak self] in
-            do {
-                if let preparedDomain = try self?.prepare(domain: domain),
-                    let result = try self?.getServiceOf(domain: domain).addr(domain: preparedDomain, ticker: ticker) {
-                    completion(.success(result))
-                }
-            } catch {
-                self?.catchError(error, completion: completion)
-            }
+        do {
+            print("ENTER QUEUE", domain, ticker, self)
+            let preparedDomain = try self.prepare(domain: domain)
+            let result = try self.getServiceOf(domain: domain).addr(domain: preparedDomain, ticker: ticker)
+            completion(.success(result))
+        } catch {
+            print("ERROR", error)
+            self.catchError(error, completion: completion)
         }
     }
 
@@ -395,7 +403,7 @@ public class Resolution {
         var networkServices: [NamingService] = []
         var errorService: Error?
         do {
-            networkServices.append(try UNS(configs.uns))
+            networkServices.append(try UNS(configs))
         } catch {
             errorService = error
         }
@@ -414,9 +422,10 @@ public class Resolution {
 
     /// This returns the correct naming service based on the `domain` asked for
     private func getServiceOf(domain: String) throws -> NamingService {
-        if domain.hasSuffix(".zil") {
-            return try self.findService(name: .zns)
-        }
+        print("DOMAIN", domain)
+//        if domain.hasSuffix(".zil") {
+//            return try self.findService(name: .zns)
+//        }
         return try self.findService(name: .uns)
     }
 
@@ -468,6 +477,7 @@ public class Resolution {
     private func prepare(domain: String) throws -> String {
         let normalizedDomain = domain.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
         if domainRegex.firstMatch(in: normalizedDomain, options: [], range: NSRange(location: 0, length: normalizedDomain.count)) != nil {
+            print ("NORMALIZED", normalizedDomain)
             return normalizedDomain
         }
         throw ResolutionError.invalidDomainName
