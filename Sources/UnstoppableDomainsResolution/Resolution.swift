@@ -405,12 +405,6 @@ public class Resolution {
             errorService = error
         }
 
-        do {
-            networkServices.append(try ZNS(configs.zns))
-        } catch {
-            errorService = error
-        }
-
         if let error = errorService {
             throw error
         }

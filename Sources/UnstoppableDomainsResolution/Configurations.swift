@@ -14,7 +14,7 @@ public struct NamingServiceConfig {
     let networking: NetworkingLayer
     let proxyReader: String?
     let registryAddresses: [String]?
-
+    
     public init(
         providerUrl: String,
         network: String = "",
@@ -34,7 +34,7 @@ public struct UnsLocations {
     let layer1: NamingServiceConfig
     let layer2: NamingServiceConfig
     let zlayer: NamingServiceConfig
-
+    
     public init(
         layer1: NamingServiceConfig,
         layer2: NamingServiceConfig,
@@ -48,25 +48,20 @@ public struct UnsLocations {
 
 public struct Configurations {
     let uns: UnsLocations
-    let zns: NamingServiceConfig
-
+    
     public init(
         uns: UnsLocations = UnsLocations(
             layer1: NamingServiceConfig(
-                providerUrl: "https://mainnet.infura.io/v3/3c25f57353234b1b853e9861050f4817",
+                providerUrl: "https://eth-mainnet.alchemyapi.io/v2/_BDuTLPgioYxULIE5cGq3wivWAJborcM",
                 network: "mainnet"),
             layer2: NamingServiceConfig(
-                providerUrl: "https://polygon-mainnet.infura.io/v3/3c25f57353234b1b853e9861050f4817",
+                providerUrl: "https://polygon-mainnet.g.alchemy.com/v2/bKmEKAC4HJUEDNlnoYITvXYuhrIshFsa",
                 network: "polygon-mainnet"),
             zlayer: NamingServiceConfig(
                 providerUrl: "https://api.zilliqa.com",
                 network: "mainnet")
-        ),
-        zns: NamingServiceConfig = NamingServiceConfig(
-            providerUrl: "https://api.zilliqa.com",
-            network: "mainnet")
+        )
     ) {
         self.uns = uns
-        self.zns = zns
     }
 }

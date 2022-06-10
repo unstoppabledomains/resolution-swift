@@ -28,7 +28,7 @@ internal class UNS: CommonNamingService, NamingService {
 
         self.layer1 = try UNSLayer(name: .layer1, config: config.uns.layer1, contracts: layer1Contracts)
         self.layer2 = try UNSLayer(name: .layer2, config: config.uns.layer2, contracts: layer2Contracts)
-        self.zlayer = try ZNS(config.zns)
+        self.zlayer = try ZNS(config.uns.zlayer)
         
         guard self.layer1 != nil, self.layer2 != nil, self.zlayer != nil else {
             throw ResolutionError.proxyReaderNonInitialized
