@@ -36,7 +36,7 @@ import Foundation
 /// let resolution = try Resolution(
 ///   configs: Configurations(
 ///     uns: NamingServiceConfig(
-///       providerUrl: "https://rinkeby.infura.io/v3/3c25f57353234b1b853e9861050f4817",
+///       providerUrl: "https://eth-goerli.alchemyapi.io/v2/pfMuqmMqfgpI-dqdfmxmpnHVZPq6pyH-",
 ///       network: "rinkeby"
 ///    )
 ///   )

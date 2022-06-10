@@ -24,19 +24,16 @@ class ResolutionTests: XCTestCase {
             configs: Configurations(
                 uns: UnsLocations(
                     layer1: NamingServiceConfig(
-                                providerUrl: "https://rinkeby.infura.io/v3/3c25f57353234b1b853e9861050f4817",
-                                network: "rinkeby"),
+                                providerUrl: "https://eth-goerli.alchemyapi.io/v2/pfMuqmMqfgpI-dqdfmxmpnHVZPq6pyH-",
+                                network: "goerli"),
                     layer2: NamingServiceConfig(
-                                providerUrl: "https://polygon-mumbai.infura.io/v3/c4bb906ed6904c42b19c95825fe55f39",
+                                providerUrl: "https://polygon-mumbai.g.alchemy.com/v2/4tGcL8ItPpF1UgOUuNqtcawNDJ3lEz8w",
                                 network: "polygon-mumbai"),
                     zlayer: NamingServiceConfig(
                         providerUrl: "https://dev-api.zilliqa.com",
                         network: "testnet"
                     )
-                ),
-                zns: NamingServiceConfig(
-                    providerUrl: "https://dev-api.zilliqa.com",
-                    network: "testnet")
+                )
             )
         );
     }
@@ -45,7 +42,7 @@ class ResolutionTests: XCTestCase {
         TestHelpers.checkError(completion: {
             _ = try Resolution(configs: Configurations(
                 uns:UnsLocations(
-                    layer1: NamingServiceConfig(providerUrl: "https://ropsten.infura.io/v3/3c25f57353234b1b853e9861050f4817"),
+                    layer1: NamingServiceConfig(providerUrl: "https://ropsten.someservice.io/v3/3c25f57353234b1b853e9861050f4817"),
                     layer2: NamingServiceConfig(
                                 providerUrl: "https://matic-testnet-archive-rpc.bwarelabs.com",
                                 network: "polygon-mumbai"),
@@ -56,12 +53,6 @@ class ResolutionTests: XCTestCase {
                 )
             ));
         }, expectedError: .proxyReaderNonInitialized)
-        
-        TestHelpers.checkError(completion: {
-            _ = try Resolution(configs: Configurations(
-                zns: NamingServiceConfig(providerUrl: "https://kovan.infura.io/v3/d423cf2499584d7fbe171e33b42cfbee")
-            ));
-        }, expectedError: .registryAddressIsNotProvided)
     }
 
     
@@ -91,7 +82,7 @@ class ResolutionTests: XCTestCase {
         resolution = try Resolution(configs: Configurations(
                 uns: UnsLocations(
                     layer1: NamingServiceConfig(
-                        providerUrl: "https://rinkeby.infura.io/v3/3c25f57353234b1b853e9861050f4817",
+                        providerUrl: "https://eth-rinkeby.alchemyapi.io/v2/ZDERxOLIj120dh2-Io2Q9RTh9RfWEssT",
                         network: "rinkeby"
                     ),
                     layer2: NamingServiceConfig(
@@ -780,7 +771,7 @@ class ResolutionTests: XCTestCase {
                 networkId: "4",
                 blockchain: "ETH",
                 owner: "0xe7474D07fD2FA286e7e0aa23cd107F8379085037",
-                providerURL: "https://rinkeby.infura.io/v3/3c25f57353234b1b853e9861050f4817"
+                providerURL: "https://eth-rinkeby.alchemyapi.io/v2/ZDERxOLIj120dh2-Io2Q9RTh9RfWEssT"
             ),
             TestHelpers.getTestDomain(.COIN_DOMAIN):Location(
                 registryAddress: "0x7fb83000b8ed59d3ead22f0d584df3a85fbc0086",
@@ -788,7 +779,7 @@ class ResolutionTests: XCTestCase {
                 networkId: "4",
                 blockchain: "ETH",
                 owner: "0xe7474D07fD2FA286e7e0aa23cd107F8379085037",
-                providerURL: "https://rinkeby.infura.io/v3/3c25f57353234b1b853e9861050f4817"
+                providerURL: "https://eth-rinkeby.alchemyapi.io/v2/ZDERxOLIj120dh2-Io2Q9RTh9RfWEssT"
             ),
             TestHelpers.getTestDomain(.LAYER2_DOMAIN): Location(
                 registryAddress: "0x2a93c52e7b6e7054870758e15a1446e769edfb93",
@@ -796,7 +787,7 @@ class ResolutionTests: XCTestCase {
                 networkId: "80001",
                 blockchain: "MATIC",
                 owner: "0xe7474D07fD2FA286e7e0aa23cd107F8379085037",
-                providerURL: "https://polygon-mumbai.infura.io/v3/c4bb906ed6904c42b19c95825fe55f39"
+                providerURL: "https://eth-rinkeby.alchemyapi.io/v2/ZDERxOLIj120dh2-Io2Q9RTh9RfWEssT"
             ),
         ];
         
@@ -959,7 +950,13 @@ class ResolutionTests: XCTestCase {
         assert(owner == "0xc2cC046e7F4f7A3e9715A853Fc54907c12364b6B");
         assert(resolver == "0xa9a6A3626993D487d2Dbda3173cf58cA1a9D9e9f");
         assert(loc == Location(
-        registryAddress: "0xa9a6a3626993d487d2dbda3173cf58ca1a9d9e9f", resolverAddress: "0xa9a6A3626993D487d2Dbda3173cf58cA1a9D9e9f", networkId: "137", blockchain: "MATIC", owner: "0xc2cC046e7F4f7A3e9715A853Fc54907c12364b6B", providerURL: "https://polygon-mainnet.infura.io/v3/3c25f57353234b1b853e9861050f4817"))
+            registryAddress: "0xa9a6a3626993d487d2dbda3173cf58ca1a9d9e9f", 
+            resolverAddress: "0xa9a6A3626993D487d2Dbda3173cf58cA1a9D9e9f", 
+            networkId: "137", 
+            blockchain: "MATIC", 
+            owner: "0xc2cC046e7F4f7A3e9715A853Fc54907c12364b6B", 
+            providerURL: "https://polygon-mainnet.g.alchemy.com/v2/bKmEKAC4HJUEDNlnoYITvXYuhrIshFsa"
+        ))
         TestHelpers.checkError(result: recordNotFoundResult, expectedError: ResolutionError.recordNotFound("layer 2"))
     }
     
