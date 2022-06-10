@@ -1,5 +1,12 @@
 # Resolution-swift CHANGELOG
 
+## 4.1.0
+
+- Ability to resolve `.zil` domains from Polygon and Ethereum networks
+### Breaking changes
+- ZNS support moved under UNS nameserice
+- Remove separate ZNS config
+
 ## 4.0.0
 
 ### Breaking changes
