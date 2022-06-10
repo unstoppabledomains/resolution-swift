@@ -22,7 +22,7 @@ Resoultion supports decentralized domains across two main zones:
 - Zilliqa Name Service (zns)
   - `.zil`
 
-# Installation into the project
+# Installing the library
 
 ## Cocoa Pods
 
@@ -35,6 +35,22 @@ pod 'UnstoppableDomainsResolution', '~> 4.0.0'
 ```swift
 package.dependencies.append(
     .package(url: "https://github.com/unstoppabledomains/resolution-swift", from: "4.0.0")
+)
+```
+
+# Updating the library
+
+## Cocoa Pods
+
+```ruby
+pod update UnstoppableDomainsResolution
+```
+
+## Swift Package Manager
+
+```swift
+package.dependencies.append(
+    .package(url: "https://github.com/unstoppabledomains/resolution-swift", from: "<latest version number>")
 )
 ```
 
@@ -163,4 +179,4 @@ Once your app has a working Unstoppable Domains integration, [register it here](
 Also, every week we select a newly-integrated app to feature in the Unstoppable Update newsletter. This newsletter is delivered to straight into the inbox of ~100,000 crypto fanatics — all of whom could be new customers to grow your business.
 
 # Get help
-[Join our discord community](https://discord.com/invite/b6ZVxSZ9Hn) and ask questions.  
+[Join our discord community](https://discord.com/invite/b6ZVxSZ9Hn) and ask questions.
