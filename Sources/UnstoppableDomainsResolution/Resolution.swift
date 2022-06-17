@@ -94,23 +94,15 @@ public class Resolution {
     /// - Parameter domain: - domain name
     /// - Parameter completion: A callback that resolves `Result`  with an `owner address` or `Error`
     public func owner(domain: String, completion: @escaping StringResultConsumer ) {
-//        DispatchQueue.global(qos: .utility).async { [weak self] in
-//            do {
-//                if let preparedDomain = try self?.prepare(domain: domain),
-//                    let result = try self?.getServiceOf(domain: preparedDomain).owner(domain: preparedDomain) {
-//                    completion(.success(result))
-//                }
-//            } catch {
-//                self?.catchError(error, completion: completion)
-//            }
-//        }
-        
-        do {
-            let preparedDomain = try self.prepare(domain: domain);
-            let result = try self.getServiceOf(domain: preparedDomain).owner(domain: preparedDomain)
-            completion(.success(result))
-        } catch {
-            self.catchError(error, completion: completion)
+        DispatchQueue.global(qos: .utility).async { [weak self] in
+            do {
+                if let preparedDomain = try self?.prepare(domain: domain),
+                    let result = try self?.getServiceOf(domain: preparedDomain).owner(domain: preparedDomain) {
+                    completion(.success(result))
+                }
+            } catch {
+                self?.catchError(error, completion: completion)
+            }
         }
     }
 

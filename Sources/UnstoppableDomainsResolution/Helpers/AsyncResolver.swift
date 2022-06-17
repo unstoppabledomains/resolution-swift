@@ -59,10 +59,6 @@ internal class AsyncResolver {
         let l2Result = Utillities.getLayerResultWrapper(from: results, for: .layer2)
         let l1Result = Utillities.getLayerResultWrapper(from: results, for: .layer1)
         let zResult = Utillities.getLayerResultWrapper(from: results, for: .zlayer)
-        
-        print("L2RESULT", l2Result)
-        print("L1RESULT", l1Result)
-        print("ZRESULT", zResult)
 
         if let l2error = l2Result.1 {
             if !isUnregisteredDomain(error: l2error) {
