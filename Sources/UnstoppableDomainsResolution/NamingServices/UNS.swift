@@ -15,6 +15,8 @@ internal class UNS: CommonNamingService, NamingService {
     let asyncResolver: AsyncResolver
 
     static let name: NamingServiceName = .uns
+    
+    typealias GeneralFunction<T> = () throws -> T
 
     init(_ config: Configurations) throws {
         self.asyncResolver = AsyncResolver()
@@ -38,12 +40,17 @@ internal class UNS: CommonNamingService, NamingService {
     func isSupported(domain: String) -> Bool {
         return layer2.isSupported(domain: domain)
     }
-
+        
     func owner(domain: String) throws -> String {
         return try asyncResolver.safeResolve(
             listOfFunc: [{try self.layer1.owner(domain: domain)},
                          {try self.layer2.owner(domain: domain)},
-                         {try self.zlayer.owner(domain: domain)}]
+                         {
+                             if self.zlayer.isSupported(domain: domain) {
+                                 return try self.zlayer.owner(domain: domain)
+                             }
+                             throw ResolutionError.unregisteredDomain
+                         }]
         )
     }
 
@@ -51,7 +58,12 @@ internal class UNS: CommonNamingService, NamingService {
         return try asyncResolver.safeResolve(
             listOfFunc: [{try self.layer1.record(domain: domain, key: key)},
                          {try self.layer2.record(domain: domain, key: key)},
-                         {try self.zlayer.record(domain: domain, key: key)}]
+                         {
+                             if self.zlayer.isSupported(domain: domain) {
+                                 return try self.zlayer.record(domain: domain, key: key)
+                             }
+                             throw ResolutionError.unregisteredDomain
+                         }]
         )
     }
 
@@ -59,7 +71,12 @@ internal class UNS: CommonNamingService, NamingService {
         return try asyncResolver.safeResolve(
             listOfFunc: [{try self.layer1.records(keys: keys, for: domain)},
                          {try self.layer2.records(keys: keys, for: domain)},
-                         {try self.zlayer.records(keys: keys, for: domain)}]
+                         {
+                             if self.zlayer.isSupported(domain: domain) {
+                                 return try self.zlayer.records(keys: keys, for: domain)
+                             }
+                             throw ResolutionError.unregisteredDomain
+                         }]
         )
     }
 
@@ -67,7 +84,12 @@ internal class UNS: CommonNamingService, NamingService {
         return try asyncResolver.safeResolve(
             listOfFunc: [{try self.layer1.allRecords(domain: domain)},
                          {try self.layer2.allRecords(domain: domain)},
-                         {try self.zlayer.allRecords(domain: domain)}]
+                         {
+                             if self.zlayer.isSupported(domain: domain) {
+                                 return try self.zlayer.allRecords(domain: domain)
+                             }
+                             throw ResolutionError.unregisteredDomain
+                         }]
         )
     }
 
@@ -91,7 +113,12 @@ internal class UNS: CommonNamingService, NamingService {
         return try asyncResolver.safeResolve(
             listOfFunc: [{try self.layer1.addr(domain: domain, ticker: ticker)},
                          {try self.layer2.addr(domain: domain, ticker: ticker)},
-                         {try self.zlayer.addr(domain: domain, ticker: ticker)}]
+                         {
+                             if self.zlayer.isSupported(domain: domain) {
+                                 return try self.zlayer.addr(domain: domain, ticker: ticker)
+                             }
+                             throw ResolutionError.unregisteredDomain
+                         }]
         )
     }
 
@@ -99,15 +126,19 @@ internal class UNS: CommonNamingService, NamingService {
         return try asyncResolver.safeResolve(
             listOfFunc: [{try self.layer1.resolver(domain: domain)},
                          {try self.layer2.resolver(domain: domain)},
-                         {try self.zlayer.resolver(domain: domain)}]
+                         {
+                             if self.zlayer.isSupported(domain: domain) {
+                                 return try self.zlayer.resolver(domain: domain)
+                             }
+                             throw ResolutionError.unregisteredDomain
+                         }]
         )
     }
 
     func locations(domains: [String]) throws -> [String: Location] {
         let results = try asyncResolver.resolve(
             listOfFunc: [{try self.layer1.locations(domains: domains)},
-                         {try self.layer2.locations(domains: domains)},
-                         {try self.zlayer.locations(domains: domains)}]
+                         {try self.layer2.locations(domains: domains)}]
         )
         
         try self.throwIfLayerHasError(results)
@@ -129,19 +160,19 @@ internal class UNS: CommonNamingService, NamingService {
     func batchOwners(domains: [String]) throws -> [String: String?] {
         let results = try asyncResolver.resolve(
             listOfFunc: [{try self.layer1.batchOwners(domains: domains)},
-                         {try self.layer2.batchOwners(domains: domains)},
-                         {try self.zlayer.batchOwners(domains: domains)}]
+                         {try self.layer2.batchOwners(domains: domains)}]
         )
-
+        
         var owners: [String: String?] = [:]
         try self.throwIfLayerHasError(results)
-
+        
         let l2Result = Utillities.getLayerResult(from: results, for: .layer2)
         let l1Result = Utillities.getLayerResult(from: results, for: .layer1)
-
-//        for (domain, (l2owner, l1owner)) in zip(domains, zip(l2Result, l1Result)) {
-//            owners[domain] = l2owner == nil ? l1owner : l2owner
-//        }
+        
+        for (domain, (l2owner, l1owner)) in zip(domains, zip(l2Result, l1Result)) {
+            owners[domain] = l2owner == nil ? l1owner : l2owner
+        }
+        
         return owners
     }
 
@@ -201,7 +232,7 @@ internal class UNS: CommonNamingService, NamingService {
         return nil
     }
 
-    // This is used only when both layers should not throw any errors. Methods like batchOwners or locations require both layers.
+    // This is used only when all layers should not throw any errors. Methods like batchOwners or locations require both layers.
     private func throwIfLayerHasError<T>(_ results: [UNSLocation: AsyncConsumer<T>]) throws {
         let l2Results = Utillities.getLayerResultWrapper(from: results, for: .layer2)
         let l1Results = Utillities.getLayerResultWrapper(from: results, for: .layer1)

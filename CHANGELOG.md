@@ -1,6 +1,6 @@
 # Resolution-swift CHANGELOG
 
-## 4.1.0
+## 5.0.0
 
 - Ability to resolve `.zil` domains from Polygon and Ethereum networks
 - Change default blockchain provider from Infura to Alchemy

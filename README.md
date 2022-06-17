@@ -57,7 +57,7 @@ guard let resolution = try? Resolution() else {
 
 ## Customizing naming services
 Version 0.3.0 introduced the `Configurations` struct that is used for configuring each connected naming service.
-Library support three networks at the moment Ethereum, Polygon and Zilliqa. You can update each network separately.
+Library supports three networks at the moment Ethereum, Polygon and Zilliqa. You can update each network separately.
 
 ```swift
 let resolution = try Resolution(configs: Configurations(

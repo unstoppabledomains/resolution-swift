@@ -411,11 +411,8 @@ public class Resolution {
         return networkServices
     }
 
-    /// This returns the correct naming service based on the `domain` asked for
+    /// This returns the naming service
     private func getServiceOf(domain: String) throws -> NamingService {
-//        if domain.hasSuffix(".zil") {
-//            return try self.findService(name: .zns)
-//        }
         return try self.findService(name: .uns)
     }
 
