@@ -22,11 +22,8 @@ class TestHelpers {
         case UNNORMALIZED_DOMAIN
         case DOMAIN2
         case DOMAIN3
-        case COIN_DOMAIN
         case UNREGISTERED_DOMAIN
         case UNREGISTERED_ZIL
-        case RINKEBY_DOMAIN
-        case UNSPECIFIED_RESOLVER_DOMAIN
         case ZIL_DOMAIN
         case LAYER2_DOMAIN
     }
@@ -35,15 +32,12 @@ class TestHelpers {
         .DOMAIN: "reseller-test-udtesting-459239285.crypto",
         .WALLET_DOMAIN: "uns-devtest-265f8f.wallet",
         .UNNORMALIZED_DOMAIN: "    uns-dEVtest-265f8f.wallet    ",
-        .DOMAIN2: "johnnytestdev6357.crypto",
+        .DOMAIN2: "cryptoalpaca9798.blockchain",
         .DOMAIN3: "uns-devtest-a39e44.coin",
-        .COIN_DOMAIN: "udtestdev-johnnycoin.coin",
         .UNREGISTERED_DOMAIN: "unregistered.crypto",
         .UNREGISTERED_ZIL: "unregistered.zil",
-        .RINKEBY_DOMAIN: "udtestdev-creek.crypto",
-        .UNSPECIFIED_RESOLVER_DOMAIN: "udtestdev-d0137c.crypto",
         .ZIL_DOMAIN: "test-udtesting-654.zil",
-        .LAYER2_DOMAIN: "udtestdev-johnnytest.wallet"
+        .LAYER2_DOMAIN: "udtestdev-test-l2-domain-784391.wallet"
 
     ]
 
@@ -105,6 +99,8 @@ extension ResolutionError: Equatable {
         case (.registryAddressIsNotProvided, .registryAddressIsNotProvided):
             return true
         case (.invalidDomainName, .invalidDomainName):
+            return true
+        case (.reverseResolutionNotSpecified, .reverseResolutionNotSpecified):
             return true
 
         case (.unregisteredDomain, _),
