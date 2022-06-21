@@ -66,7 +66,7 @@ internal class AsyncResolver {
         let zResult = results[.zlayer]!
 
         if let l2error = l2Result.1 {
-            if !isUnregisteredDomain(error: l2error) {
+            if !Utillities.isUnregisteredDomain(error: l2error) {
                 throw l2error
             }
         } else {
@@ -90,14 +90,5 @@ internal class AsyncResolver {
         }
 
         return zResult.0!
-    }
-
-    private func isUnregisteredDomain(error: Error?) -> Bool {
-        if let error = error as? ResolutionError {
-            if case ResolutionError.unregisteredDomain = error {
-                return true
-            }
-        }
-        return false
     }
 }

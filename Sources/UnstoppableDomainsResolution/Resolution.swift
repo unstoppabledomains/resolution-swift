@@ -385,6 +385,40 @@ public class Resolution {
         }
     }
 
+    /// Gets reverse resolution token id of `address`
+    /// - Parameter address: - address for which to find reverse resolution
+    /// - Parameter options: - if specified, will check for reverse resolution at that network. Otherwise both L1 and L2 will be checked.
+    /// - Parameter completion: A callback that resolves `Result`  with a `tokenId` or `Error`
+    public func reverseTokenId(address: String, location: UNSLocation? = nil, completion: @escaping StringResultConsumer ) {
+        DispatchQueue.global(qos: .utility).async { [weak self] in
+            do {
+                let service = try self?.findService(name: .uns) as? UNS
+                if let result = try service?.reverseTokenId(address: address, location: location) {
+                    completion(.success(result))
+                }
+            } catch {
+                self?.catchError(error, completion: completion)
+            }
+        }
+    }
+    
+    /// Gets reverse resolution domain name of `address`
+    /// - Parameter address: - address for which to find reverse resolution
+    /// - Parameter options: - if specified, will check for reverse resolution at that network. Otherwise both L1 and L2 will be checked.
+    /// - Parameter completion: A callback that resolves `Result`  with a `domainName` or `Error`
+    public func reverse(address: String, location: UNSLocation? = nil, completion: @escaping StringResultConsumer ) {
+        DispatchQueue.global(qos: .utility).async { [weak self] in
+            do {
+                let service = try self?.findService(name: .uns) as? UNS
+                if let result = try service?.reverseTokenId(address: address, location: location) {
+                    self?.unhash(hash: result, serviceName: .uns, completion: completion)
+                }
+            } catch {
+                self?.catchError(error, completion: completion)
+            }
+        }
+    }
+
     // MARK: - Uttilities function
 
     /// this returns [NamingService] from the configurations

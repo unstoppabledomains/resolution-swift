@@ -7,11 +7,13 @@
 //
 
 import Foundation
+import BigInt
 
 internal class UNSLayer: CommonNamingService {
     static let TransferEventSignature = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"
     static let NewURIEventSignature = "0xc5beef08f693b11c316c0c8394a377a0033c9cf701b8cd8afd79cecef60c3952"
     static let getDataForManyMethodName = "getDataForMany"
+    static let reverseOfMethodName = "reverseOf"
     static let tokenURIMethodName = "tokenURI"
     static let registryOfMethodName = "registryOf"
     static let existName = "exists"
@@ -213,7 +215,9 @@ internal class UNSLayer: CommonNamingService {
                                                 args: [tokenId]) {
                 let dict = result as? [String: Any]
                 if let val = dict?["0"] as? String {
-                    return val
+                    if (!val.isEmpty) {
+                        return val
+                    }
                 }
                 throw ResolutionError.unregisteredDomain
             }
@@ -229,6 +233,19 @@ internal class UNSLayer: CommonNamingService {
             throw ResolutionError.unregisteredDomain
         }
         return metadata.name!
+    }
+    
+    func reverseTokenId(address: String) throws -> String {
+        let res = try self.getReverseResolution(address: address)
+        let dict = res as? [String: Any]
+        if let data = dict?["0"] as? BigUInt {
+            let val = String(data, radix: 16)
+            guard Utillities.isNotEmpty(val) else {
+                throw ResolutionError.reverseResolutionNotSpecified
+            }
+            return "0x" + String(repeating: "0", count: max(0, 64 - val.count)) + val
+        }
+        throw ResolutionError.reverseResolutionNotSpecified
     }
 
     // MARK: - Helper functions
@@ -364,6 +381,15 @@ internal class UNSLayer: CommonNamingService {
         throw ResolutionError.unregisteredDomain
     }
 
+    private func getReverseResolution(address: String) throws -> Any {
+        if let result = try proxyReaderContract?
+                                .callMethod(methodName: Self.reverseOfMethodName,
+                                            args: [address]) {
+            return result
+        }
+        throw ResolutionError.proxyReaderNonInitialized
+    }
+    
     private func getDataForMany(keys: [String], for tokenIds: [String]) throws -> Any {
         if let result = try proxyReaderContract?
                                 .callMethod(methodName: Self.getDataForManyMethodName,

@@ -176,6 +176,38 @@ internal class UNS: CommonNamingService, NamingService {
         
         return owners
     }
+    
+    func reverseTokenId(address: String, location: UNSLocation?) throws -> String {
+        let results = try asyncResolver.resolve(
+            l1func: self.layer1.reverseTokenId(address: address),
+            l2func: self.layer2.reverseTokenId(address: address)
+        )
+        
+        if location != nil {
+            let result = Utillities.getLayerResultWrapper(from: results, for: location!)
+            if let err = result.1 {
+                throw err
+            }
+            return result.0!
+        }
+        
+        let l1Result = Utillities.getLayerResultWrapper(from: results, for: .layer1)
+
+        if let l1error = l1Result.1 {
+            if !Utillities.isResolutionError(expected: .reverseResolutionNotSpecified, error: l1error) {
+                throw l1error
+            }
+        } else if let l1Value = l1Result.0 {
+            return l1Value
+        }
+        
+        let l2Result = Utillities.getLayerResultWrapper(from: results, for: .layer2)
+        
+        if let l2error = l2Result.1 {
+            throw l2error
+        }
+        return l2Result.0!
+    }
 
     private func parseContractAddresses(config: NamingServiceConfig) throws -> [UNSContract] {
         var contracts: [UNSContract] = []
