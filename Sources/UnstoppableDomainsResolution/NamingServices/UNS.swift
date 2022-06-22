@@ -160,7 +160,8 @@ internal class UNS: CommonNamingService, NamingService {
     func batchOwners(domains: [String]) throws -> [String: String?] {
         let results = try asyncResolver.resolve(
             listOfFunc: [{try self.layer1.batchOwners(domains: domains)},
-                         {try self.layer2.batchOwners(domains: domains)}]
+                         {try self.layer2.batchOwners(domains: domains)},
+                        ]
         )
         
         var owners: [String: String?] = [:]

@@ -32,11 +32,11 @@ class TestHelpers {
     }
 
     static let TEST_DOMAINS: [DOMAINS: String] = [
-        .DOMAIN: "udtestdev-265f8f.crypto",
-        .WALLET_DOMAIN: "udtestdev-johnnywallet.wallet",
-        .UNNORMALIZED_DOMAIN: "    UDTESTDEV-265f8F.CRYPTO    ",
+        .DOMAIN: "reseller-test-udtesting-459239285.crypto",
+        .WALLET_DOMAIN: "uns-devtest-265f8f.wallet",
+        .UNNORMALIZED_DOMAIN: "    uns-dEVtest-265f8f.wallet    ",
         .DOMAIN2: "johnnytestdev6357.crypto",
-        .DOMAIN3: "brad.crypto",
+        .DOMAIN3: "uns-devtest-a39e44.coin",
         .COIN_DOMAIN: "udtestdev-johnnycoin.coin",
         .UNREGISTERED_DOMAIN: "unregistered.crypto",
         .UNREGISTERED_ZIL: "unregistered.zil",

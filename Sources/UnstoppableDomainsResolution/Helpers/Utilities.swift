@@ -27,7 +27,7 @@ internal class Utillities {
     }
 
     static func getLayerResultWrapper<T>(from results: [UNSLocation: AsyncConsumer<T>], for location: UNSLocation) -> AsyncConsumer<T> {
-        return results[location]!
+        return results[location] ?? (nil, nil)
     }
 
     static func getLayerResult<T>(from results: [UNSLocation: AsyncConsumer<T>], for location: UNSLocation) -> T {

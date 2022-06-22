@@ -25,9 +25,14 @@ internal class AsyncResolver {
             listOfFunc: Array<GeneralFunction<T>>
         ) throws -> [UNSLocation: AsyncConsumer<T>] {
             var results: [UNSLocation: AsyncConsumer<T>] = [:]
-            let functions: [UNSLocation: GeneralFunction<T>] = [
-                .layer2: listOfFunc[1], .layer1: listOfFunc[0], .zlayer: listOfFunc[2]
+            var functions: [UNSLocation: GeneralFunction<T>] = [
+                .layer2: listOfFunc[1], .layer1: listOfFunc[0]
             ]
+            
+            if (listOfFunc.count > 2) {
+                functions[.zlayer] = listOfFunc[2]
+            }
+            
             let queue = DispatchQueue(label: "LayerQueque")
             functions.forEach { function in
                 self.asyncGroup.enter()
@@ -56,9 +61,9 @@ internal class AsyncResolver {
 
 
     private func parseResult<T>(_ results: [UNSLocation: AsyncConsumer<T>] ) throws -> T {
-        let l2Result = Utillities.getLayerResultWrapper(from: results, for: .layer2)
-        let l1Result = Utillities.getLayerResultWrapper(from: results, for: .layer1)
-        let zResult = Utillities.getLayerResultWrapper(from: results, for: .zlayer)
+        let l2Result = results[.layer2]!
+        let l1Result = results[.layer1]!
+        let zResult = results[.zlayer]!
 
         if let l2error = l2Result.1 {
             if !isUnregisteredDomain(error: l2error) {
