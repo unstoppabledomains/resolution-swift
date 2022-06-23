@@ -31,13 +31,13 @@ import Foundation
 /// ```
 /// You can configure namingServices by providing NamingServiceConfig struct to the constructor for the interested service
 /// If you ommit network we are making a "net_version" JSON RPC call to the provider to determine the chainID
-/// for example lets configure crypto naming service to use rinkeby while left etherium naming service with default configurations:
+/// for example lets configure crypto naming service to use goerli while left etherium naming service with default configurations:
 /// ```swift
 /// let resolution = try Resolution(
 ///   configs: Configurations(
 ///     uns: NamingServiceConfig(
-///       providerUrl: "https://rinkeby.infura.io/v3/3c25f57353234b1b853e9861050f4817",
-///       network: "rinkeby"
+///       providerUrl: "https://eth-goerli.alchemyapi.io/v2/pfMuqmMqfgpI-dqdfmxmpnHVZPq6pyH-",
+///       network: "goerli"
 ///    )
 ///   )
 /// );
@@ -128,15 +128,12 @@ public class Resolution {
     /// - Parameter  ticker: - currency ticker like BTC, ETH, ZIL
     /// - Parameter  completion: A callback that resolves `Result`  with an `address` or `Error`
     public func addr(domain: String, ticker: String, completion: @escaping StringResultConsumer ) {
-        DispatchQueue.global(qos: .utility).async { [weak self] in
-            do {
-                if let preparedDomain = try self?.prepare(domain: domain),
-                    let result = try self?.getServiceOf(domain: domain).addr(domain: preparedDomain, ticker: ticker) {
-                    completion(.success(result))
-                }
-            } catch {
-                self?.catchError(error, completion: completion)
-            }
+        do {
+            let preparedDomain = try self.prepare(domain: domain)
+            let result = try self.getServiceOf(domain: domain).addr(domain: preparedDomain, ticker: ticker)
+            completion(.success(result))
+        } catch {
+            self.catchError(error, completion: completion)
         }
     }
 
@@ -395,13 +392,7 @@ public class Resolution {
         var networkServices: [NamingService] = []
         var errorService: Error?
         do {
-            networkServices.append(try UNS(configs.uns))
-        } catch {
-            errorService = error
-        }
-
-        do {
-            networkServices.append(try ZNS(configs.zns))
+            networkServices.append(try UNS(configs))
         } catch {
             errorService = error
         }
@@ -412,11 +403,8 @@ public class Resolution {
         return networkServices
     }
 
-    /// This returns the correct naming service based on the `domain` asked for
+    /// This returns the naming service
     private func getServiceOf(domain: String) throws -> NamingService {
-        if domain.hasSuffix(".zil") {
-            return try self.findService(name: .zns)
-        }
         return try self.findService(name: .uns)
     }
 

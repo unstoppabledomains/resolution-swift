@@ -3,38 +3,23 @@
 [![Get help on Discord](https://img.shields.io/badge/Get%20help%20on-Discord-blueviolet)](https://discord.gg/b6ZVxSZ9Hn)
 [![Unstoppable Domains Documentation](https://img.shields.io/badge/Documentation-unstoppabledomains.com-blue)](https://docs.unstoppabledomains.com/)
 
-Resolution is a library for interacting with blockchain domain names. It can be used to retrieve [payment addresses](https://unstoppabledomains.com/features#Add-Crypto-Addresses), IPFS hashes for [decentralized websites](https://unstoppabledomains.com/features#Build-Website), and GunDB usernames for [decentralized chat](https://unstoppabledomains.com/chat).
+Resolution is a library for interacting with blockchain domain names. It can be used to retrieve payment addresses and IPFS hashes for decentralized websites.
 
 Resolution is primarily built and maintained by [Unstoppable Domains](https://unstoppabledomains.com/).
-
-Resoultion supports decentralized domains across two main zones:
-
-- Crypto Name Service (uns)
-  - `.crypto`
-  - `.coin`
-  - `.wallet`
-  - `.bitcoin`
-  - `.blockchain`
-  - `.x`
-  - `.888`
-  - `.nft`
-  - `.dao`
-- Zilliqa Name Service (zns)
-  - `.zil`
 
 # Installing the library
 
 ## Cocoa Pods
 
 ```ruby
-pod 'UnstoppableDomainsResolution', '~> 4.0.0'
+pod 'UnstoppableDomainsResolution', '~> 5.0.0'
 ```
 
 ## Swift Package Manager
 
 ```swift
 package.dependencies.append(
-    .package(url: "https://github.com/unstoppabledomains/resolution-swift", from: "4.0.0")
+    .package(url: "https://github.com/unstoppabledomains/resolution-swift", from: "5.0.0")
 )
 ```
 
@@ -72,33 +57,22 @@ guard let resolution = try? Resolution() else {
 
 ## Customizing naming services
 Version 0.3.0 introduced the `Configurations` struct that is used for configuring each connected naming service.
-Library can offer three naming services at the moment:
-
-* `uns` resolves `.crypto` ,  `.coin`,  `.wallet`,  `.bitcoin`,  `.blockchain`, `.x`, `.888`, `.nft`, `.dao` domains,
-* `zns` resolves `.zil` domains
-
-By default, each of them is using the mainnet network via infura provider.
-Unstoppable domains are using the infura key with no restriction for UNS.  
-
-You can update each naming service separately
+Library supports three networks at the moment Ethereum, Polygon and Zilliqa. You can update each network separately.
 
 ```swift
 let resolution = try Resolution(configs: Configurations(
         uns: UnsLocations = UnsLocations(
             layer1: NamingServiceConfig(
-                providerUrl: "https://mainnet.infura.io/v3/3c25f57353234b1b853e9861050f4817",
+                providerUrl: "https://eth-mainnet.alchemyapi.io/v2/_BDuTLPgioYxULIE5cGq3wivWAJborcM",
                 network: "mainnet"),
             layer2: NamingServiceConfig(
-                providerUrl: "https://polygon-mainnet.infura.io/v3/3c25f57353234b1b853e9861050f4817",
-                network: "polygon-mainnet")
-        ),
-        zns: NamingServiceConfig = NamingServiceConfig(
-            providerUrl: "https://api.zilliqa.com",
-            network: "mainnet")
-    )
+                providerUrl: "https://polygon-mainnet.g.alchemy.com/v2/bKmEKAC4HJUEDNlnoYITvXYuhrIshFsa",
+                network: "polygon-mainnet"),
+            zlayer: NamingServiceConfig(
+                providerUrl: "https://api.zilliqa.com",
+                network: "mainnet")
+        )
 );
-
-// domain udtestdev-creek.crypto exists only on the rinkeby network.
 
 resolution.addr(domain: "udtestdev-creek.crypto", ticker: "eth") { (result) in
     switch result {
