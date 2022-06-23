@@ -38,24 +38,6 @@ class ResolutionTests: XCTestCase {
         );
     }
     
-//    func testUnsupportedNetwork() throws {
-//        TestHelpers.checkError(completion: {
-//            _ = try Resolution(configs: Configurations(
-//                uns:UnsLocations(
-//                    layer1: NamingServiceConfig(providerUrl: "https://ropsten.someservice.io/v3/3c25f57353234b1b853e9861050f4817"),
-//                    layer2: NamingServiceConfig(
-//                                providerUrl: "https://matic-testnet-archive-rpc.bwarelabs.com",
-//                                network: "polygon-mumbai"),
-//                    zlayer: NamingServiceConfig(
-//                                providerUrl: "https://dev-api.zilliqa.com",
-//                                network: "testnet"
-//                            )
-//                )
-//            ));
-//        }, expectedError: .proxyReaderNonInitialized)
-//    }
-
-    
     func testForUnregisteredDomain() throws {
         let UnregirestedDomainExpectation = expectation(description: "Domain should not be registered!")
         var NoRecordResult: Result<String, ResolutionError>!
@@ -78,50 +60,6 @@ class ResolutionTests: XCTestCase {
         TestHelpers.checkError(result: NoRecordResult, expectedError: ResolutionError.unregisteredDomain)
     }
     
-//    func testRinkeby() throws {
-//        resolution = try Resolution(configs: Configurations(
-//                uns: UnsLocations(
-//                    layer1: NamingServiceConfig(
-//                        providerUrl: "https://eth-rinkeby.alchemyapi.io/v2/ZDERxOLIj120dh2-Io2Q9RTh9RfWEssT",
-//                        network: "rinkeby"
-//                    ),
-//                    layer2: NamingServiceConfig(
-//                        providerUrl: "https://matic-testnet-archive-rpc.bwarelabs.com",
-//                        network: "polygon-mumbai"),
-//                    zlayer: NamingServiceConfig(
-//                        providerUrl: "https://dev-api.zilliqa.com",
-//                        network: "testnet"
-//                    )
-//                )
-//            )
-//        );
-//        let domainReceived = expectation(description: "Exist domain should be received")
-//        let ownerReceived = expectation(description: "Exist domain should be received")
-//        var ethAddress = ""
-//        var owner = "";
-//        resolution.addr(domain: TestHelpers.getTestDomain(.RINKEBY_DOMAIN), ticker: "eth") { (result) in
-//            switch result {
-//            case .success(let returnValue):
-//                ethAddress = returnValue
-//                domainReceived.fulfill()
-//            case .failure(let error):
-//                XCTFail("Expected Eth Address, but got \(error)")
-//            }
-//        }
-//        resolution.owner(domain: TestHelpers.getTestDomain(.RINKEBY_DOMAIN)) { (result) in
-//            switch result {
-//            case .success(let returnValue):
-//                owner = returnValue;
-//                ownerReceived.fulfill()
-//            case .failure(let error):
-//                XCTFail("Expected Eth Address, but got \(error)")
-//            }
-//        }
-//        waitForExpectations(timeout: timeout, handler: nil)
-//        assert(ethAddress == "0x1C8b9B78e3085866521FE206fa4c1a67F49f153A")
-//        assert(owner == "0x6EC0DEeD30605Bcd19342f3c30201DB263291589")
-//    }
-    
     func testZilliqaTestNet() throws {
         let domainReceived = expectation(description: "Exist domain should be received")
         var zilOwner = ""
@@ -139,7 +77,6 @@ class ResolutionTests: XCTestCase {
     }
 
     func testSupportedDomains() throws {
-        
         struct TestCase {
             let domain: String
             let expectation: XCTestExpectation
@@ -149,7 +86,7 @@ class ResolutionTests: XCTestCase {
         
         let domains: [String] = [
             "supported.crypto",
-            "supported.zil",
+            "brad.zil",
             "supported.nft",
             "supported.888",
             "supported.coin",
@@ -193,9 +130,9 @@ class ResolutionTests: XCTestCase {
         
         waitForExpectations(timeout: timeout, handler: nil)
         
-//        for i in 0..<cases.count {
-//            assert(cases[i].result == cases[i].expectedResult)
-//        }
+        for i in 0..<cases.count {
+            assert(cases[i].result == cases[i].expectedResult)
+        }
     }
     
     func testNamehash() throws {
@@ -462,7 +399,6 @@ class ResolutionTests: XCTestCase {
         TestHelpers.checkError(result: unregisteredResult, expectedError: ResolutionError.unregisteredDomain)
     }
 
-    //TODO Add zilliqa testnet domain
     func testAddr() throws {
         // Given
         let domainReceived = expectation(description: "Exist UNS domain should be received")
@@ -484,7 +420,6 @@ class ResolutionTests: XCTestCase {
             }
         }
 
-// Todo replace brad.zil with a testnet domain
         resolution.addr(domain: "uns-devtest-testdomain303030.zil", ticker: "eth") { (result) in
             switch result {
             case .success(let returnValue):
@@ -509,12 +444,12 @@ class ResolutionTests: XCTestCase {
     }
 
     func testChatID() throws {
+        
         // Given
         let chatReceived = expectation(description: "Exist chat ID should be received")
         var chatID = ""
 
         // When
-
         resolution.chatId(domain: TestHelpers.getTestDomain(.DOMAIN3))  { (result) in
             switch result {
             case .success(let returnValue):
@@ -526,6 +461,7 @@ class ResolutionTests: XCTestCase {
         }
 
         waitForExpectations(timeout: timeout, handler: nil)
+        
         // Then
         assert(chatID == "0x8912623832e174f2eb1f59cc3b587444d619376ad5bf10070e937e0dc22b9ffb2e3ae059e6ebf729f87746b2f71e5d88ec99c1fb3c7c49b8617e2520d474c48e1c")
     }
@@ -595,10 +531,8 @@ class ResolutionTests: XCTestCase {
     func testTokenUri() throws {
         // Given
         let domainReceived = expectation(description: "Exist domain should be received")
-        let unregisteredReceived = expectation(description: "Unregistered domain should be received")
 
         var tokenURI = ""
-        var unregisteredResult: Result<String, ResolutionError>!
         
         // When
         resolution.tokenURI(domain: TestHelpers.getTestDomain(.DOMAIN3)) { (result) in
@@ -610,55 +544,42 @@ class ResolutionTests: XCTestCase {
                 XCTFail("Expected tokenURI, but got \(error)")
             }
         }
-        resolution.tokenURI(domain: TestHelpers.getTestDomain(.UNREGISTERED_DOMAIN)) {
-            unregisteredResult = $0
-            unregisteredReceived.fulfill()
-        }
+        
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         assert(tokenURI == "https://metadata.staging.unstoppabledomains.com/metadata/111460558784539807539273449185240350035556143706362817639587804640239403371718")
-//        TestHelpers.checkError(result: unregisteredResult, expectedError: ResolutionError.unregisteredDomain)
     }
 
-//    func testTokenUriMetadata() throws {
-//        // Given
-//        let domainReceived = expectation(description: "Exist domain should be received")
-//        let unregisteredReceived = expectation(description: "Unregistered domain should be received")
-//
-//        var tokenURIMetadata: TokenUriMetadata? = nil
-//        var unregisteredResult: Result<TokenUriMetadata, ResolutionError>!
-//
-//        // When
-//        resolution.tokenURIMetadata(domain: TestHelpers.getTestDomain(.WALLET_DOMAIN)) { (result) in
-//            switch result {
-//            case .success(let returnValue):
-//                domainReceived.fulfill()
-//                tokenURIMetadata = returnValue
-//            case .failure(let error):
-//                XCTFail("Expected tokenURIMetadata, but got \(error)")
-//            }
-//        }
-//        resolution.tokenURIMetadata(domain: TestHelpers.getTestDomain(.UNREGISTERED_DOMAIN)) {
-//            unregisteredResult = $0
-//            unregisteredReceived.fulfill()
-//        }
-//        waitForExpectations(timeout: timeout, handler: nil)
-//
-//        // Then
-//        assert(tokenURIMetadata?.name == TestHelpers.getTestDomain(.WALLET_DOMAIN))
-//        assert(tokenURIMetadata?.attributes.count == 5)
-//        assert(tokenURIMetadata?.properties.records["crypto.ETH.address"] == "0x8aaD44321A86b170879d7A244c1e8d360c99DdA8");
-//        TestHelpers.checkError(result: unregisteredResult, expectedError: ResolutionError.unregisteredDomain)
-//    }
+    func testTokenUriMetadata() throws {
+        // Given
+        let domainReceived = expectation(description: "Exist domain should be received")
+        var tokenURIMetadata: TokenUriMetadata? = nil
+
+        // When
+        resolution.tokenURIMetadata(domain: TestHelpers.getTestDomain(.WALLET_DOMAIN)) { (result) in
+            switch result {
+            case .success(let returnValue):
+                tokenURIMetadata = returnValue
+                domainReceived.fulfill()
+            case .failure(let error):
+                XCTFail("Expected tokenURIMetadata, but got \(error)")
+            }
+        }
+        
+
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        assert(tokenURIMetadata?.name == TestHelpers.getTestDomain(.WALLET_DOMAIN))
+        assert(tokenURIMetadata?.attributes.count == 5)
+        assert(tokenURIMetadata?.properties.records["crypto.ETH.address"] == "0x8aaD44321A86b170879d7A244c1e8d360c99DdA8");
+    }
 
     func testUnhash() throws {
         // Given
         let domainReceived = expectation(description: "Existing domain should be received")
-        let unregisteredReceived = expectation(description: "Unregistered domain should be received")
-
         var domainName: String = ""
-        var unregisteredResult: Result<String, ResolutionError>!
 
         // When
         resolution.unhash(hash: "0x684c51201935fdd42fbaebe43b1986f13984b94569c4c4827beda913232d066f", serviceName: .uns) { (result) in
@@ -670,15 +591,11 @@ class ResolutionTests: XCTestCase {
                 XCTFail("Expected domainName, but got \(error)")
             }
         }
-        resolution.unhash(hash: "0xdeaddeaddead", serviceName: .uns) {
-            unregisteredResult = $0
-            unregisteredReceived.fulfill()
-        }
+
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         assert(domainName == "udtestdev-johnnytest.wallet")
-//        TestHelpers.checkError(result: unregisteredResult, expectedError: ResolutionError.unregisteredDomain)
     }
 
     func testGetMany() throws {
@@ -710,15 +627,12 @@ class ResolutionTests: XCTestCase {
 
     func testLocations() throws {
         let locationsReceived = expectation(description: "Locations for each domain should be received");
-        let unsuportedZnsReceived = expectation(description: "ZNS is not supported");
         
         let domains = [
             TestHelpers.getTestDomain(.DOMAIN),
             TestHelpers.getTestDomain(.LAYER2_DOMAIN),
             TestHelpers.getTestDomain(.UNREGISTERED_DOMAIN)
         ];
-        let znsDomain = TestHelpers.getTestDomain(.ZIL_DOMAIN);
-        var ZnsResult: Result<[String: Location], ResolutionError>!
         
         var locations: [String: Location] = [:];
         resolution.locations(domains: domains) { result in
@@ -729,11 +643,6 @@ class ResolutionTests: XCTestCase {
             case .failure(let error):
                 XCTFail("Expected locations, but got \(error)");
             }
-        }
-
-        resolution.locations(domains: [znsDomain]) {
-            ZnsResult = $0;
-            unsuportedZnsReceived.fulfill()
         }
         
         waitForExpectations(timeout: timeout, handler: nil);
@@ -770,8 +679,6 @@ class ResolutionTests: XCTestCase {
         domains.forEach { domain in
             assert(locations[domain] == answers[domain])
         }
-        
-//        TestHelpers.checkError(result: ZnsResult, expectedError: .methodNotSupported)
     }
     
     
@@ -852,8 +759,8 @@ class ResolutionTests: XCTestCase {
         var recordNotFoundResult: Result<String, ResolutionError>!
         
         var addr = "";
-        var owner = "";
         var resolver = "";
+        var owner = "";
         var loc = Location();
         
         resolution = try Resolution();
@@ -1163,7 +1070,7 @@ class ResolutionTests: XCTestCase {
             }
         }
         
-        resolution.tokenURI(domain: TestHelpers.getTestDomain(.DOMAIN)) { result in
+        resolution.tokenURI(domain: TestHelpers.getTestDomain(.DOMAIN2)) { result in
             switch result {
             case .success(let returnValue):
                 layer1TokenUri = returnValue;
@@ -1175,7 +1082,7 @@ class ResolutionTests: XCTestCase {
         
         waitForExpectations(timeout: timeout, handler: nil);
         
-//        assert(layer1TokenUri == "https://metadata.staging.unstoppabledomains.com/metadata/udtestdev-265f8f.crypto");
+        assert(layer1TokenUri == "");
         assert(layer2TokenUri == "https://metadata.staging.unstoppabledomains.com/metadata/47175376536410263098700840153319778926909723329866678110537362361339406517871");
     }
     

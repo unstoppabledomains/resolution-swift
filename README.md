@@ -74,8 +74,6 @@ let resolution = try Resolution(configs: Configurations(
         )
 );
 
-// domain udtestdev-creek.crypto exists only on the rinkeby network.
-
 resolution.addr(domain: "udtestdev-creek.crypto", ticker: "eth") { (result) in
     switch result {
     case .success(let returnValue):
