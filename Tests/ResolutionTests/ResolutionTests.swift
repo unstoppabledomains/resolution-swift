@@ -674,7 +674,7 @@ class ResolutionTests: XCTestCase {
                 networkId: "80001",
                 blockchain: "MATIC",
                 owner: "0xD92d2A749424a5181AD7d45f786a9FFE46c10A7C",
-                providerURL: "https://polygon-mumbai.g.alchemy.com/v2/ymbY17ik_HyGfXnPWxBAGhuZE7MwtErX"
+                providerURL: "https://polygon-mumbai.g.alchemy.com/v2/4tGcL8ItPpF1UgOUuNqtcawNDJ3lEz8w"
             ),
             TestHelpers.getTestDomain(.LAYER2_DOMAIN): Location(
                 registryAddress: "0x2a93c52e7b6e7054870758e15a1446e769edfb93",
@@ -1093,7 +1093,7 @@ class ResolutionTests: XCTestCase {
             }
         }
         
-        resolution.tokenURI(domain: TestHelpers.getTestDomain(.DOMAIN2)) { result in
+        resolution.tokenURI(domain: TestHelpers.getTestDomain(.DOMAIN)) { result in
             switch result {
             case .success(let returnValue):
                 layer1TokenUri = returnValue;

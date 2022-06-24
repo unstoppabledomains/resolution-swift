@@ -17,7 +17,7 @@ internal class AsyncResolver {
     func safeResolve<T>(
         listOfFunc: Array<GeneralFunction<T>>
     ) throws -> T {
-        let results = try resolve(listOfFunc: [listOfFunc[0], listOfFunc[1], listOfFunc[2]])
+        let results = try resolve(listOfFunc: listOfFunc)
         return try parseResult(results)
     }
 
@@ -61,34 +61,27 @@ internal class AsyncResolver {
 
 
     private func parseResult<T>(_ results: [UNSLocation: AsyncConsumer<T>] ) throws -> T {
-        let l2Result = results[.layer2]!
-        let l1Result = results[.layer1]!
-        let zResult = results[.zlayer]!
-
-        if let l2error = l2Result.1 {
-            if !Utillities.isUnregisteredDomain(error: l2error) {
-                throw l2error
-            }
-        } else {
-            if let l2answer = l2Result.0 {
-                return l2answer
+        // filter out results that were not provided (in case some methods are not supported by some providers)
+        let resultsOrder = [UNSLocation.layer2, UNSLocation.layer1, UNSLocation.zlayer].filter { v in results.keys.contains(v) }
+        
+        // Omit the last result since we would have to return it regardless
+        for resultKey in resultsOrder.dropLast() {
+            let result = results[resultKey]!
+            
+            if let error = result.1 {
+                if !Utillities.isUnregisteredDomain(error: error) {
+                    throw error
+                }
+            } else if let answer = result.0 {
+                return answer
             }
         }
         
-        if let l1error = l1Result.1 {
-            if !isUnregisteredDomain(error: l1error) {
-                throw l1error
-            }
-        } else {
-            if let l1answer = l1Result.0 {
-                return l1answer
-            }
+        let result = results[resultsOrder.last!]!
+        
+        if let error = result.1 {
+            throw error
         }
-
-        if let zerror = zResult.1 {
-            throw zerror
-        }
-
-        return zResult.0!
+        return result.0!
     }
 }

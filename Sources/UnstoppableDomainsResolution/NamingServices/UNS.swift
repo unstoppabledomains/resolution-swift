@@ -96,16 +96,14 @@ internal class UNS: CommonNamingService, NamingService {
     func getTokenUri(tokenId: String) throws -> String {
         return try asyncResolver.safeResolve(
             listOfFunc: [{try self.layer1.getTokenUri(tokenId: tokenId)},
-                         {try self.layer2.getTokenUri(tokenId: tokenId)},
-                         {try self.zlayer.getTokenUri(tokenId: tokenId)}]
+                         {try self.layer2.getTokenUri(tokenId: tokenId)}]
         )
     }
 
     func getDomainName(tokenId: String) throws -> String {
         return try asyncResolver.safeResolve(
             listOfFunc: [{try self.layer1.getDomainName(tokenId: tokenId)},
-                         {try self.layer2.getDomainName(tokenId: tokenId)},
-                         {try self.zlayer.getDomainName(tokenId: tokenId)}]
+                         {try self.layer2.getDomainName(tokenId: tokenId)}]
         )
     }
 
@@ -179,8 +177,9 @@ internal class UNS: CommonNamingService, NamingService {
     
     func reverseTokenId(address: String, location: UNSLocation?) throws -> String {
         let results = try asyncResolver.resolve(
-            l1func: self.layer1.reverseTokenId(address: address),
-            l2func: self.layer2.reverseTokenId(address: address)
+            listOfFunc: [{try self.layer1.reverseTokenId(address: address)},
+                         {try self.layer2.reverseTokenId(address: address)},
+                        ]
         )
         
         if location != nil {
