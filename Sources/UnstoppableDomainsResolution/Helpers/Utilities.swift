@@ -16,6 +16,7 @@ internal class Utillities {
 
     static func isNotEmpty(_ value: String) -> Bool {
         let nullValues = [
+        "0",
         "0x0000000000000000000000000000000000000000",
         "0x0000000000000000000000000000000000000000000000000000000000000000"
         ]
@@ -33,6 +34,19 @@ internal class Utillities {
     static func getLayerResult<T>(from results: [UNSLocation: AsyncConsumer<T>], for location: UNSLocation) -> T {
         let wrapper = Self.getLayerResultWrapper(from: results, for: location)
         return wrapper.0!
+    }
+    
+    static func isUnregisteredDomain(error: Error?) -> Bool {
+        return isResolutionError(expected: ResolutionError.unregisteredDomain, error: error)
+    }
+    
+    static func isResolutionError(expected: ResolutionError, error: Error?) -> Bool {
+        if let error = error as? ResolutionError {
+            if expected._code == error._code {
+                return true
+            }
+        }
+        return false
     }
 }
 
