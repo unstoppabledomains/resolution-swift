@@ -74,7 +74,7 @@ let resolution = try Resolution(configs: Configurations(
         )
 );
 
-resolution.addr(domain: "udtestdev-creek.crypto", ticker: "eth") { (result) in
+resolution.addr(domain: "brad.crypto", ticker: "eth") { (result) in
     switch result {
     case .success(let returnValue):
         ethAddress = returnValue
@@ -94,11 +94,21 @@ Version 0.1.3 introduced the `batchOwners(domains: _, completion: _ )` method wh
 As opposed to the single `owner(domain: _, completion: _)` method, this batch request will return an array of owners `[String?]`. If the the domain is not registered or its value is `null`, the corresponding array element of the response will be `nil` without throwing an error.
 
 ```swift
-resolution.batchOwners(domains: ["brad.crypto", "otherbrad.crypto"]) { result in
+resolution.batchOwners(domains: ["brad.crypto", "homecakes.crypto"]) { result in
   switch result {
   case .success(let returnValue):
     // returnValue: [String: String?] = <map of domains to owner address>
     let domainOwner = returnValue
+  case .failure(let error):
+    XCTFail("Expected owner, but got \(error)")
+  }
+}
+
+resolution.locations(domains: ["brad.crypto", "homecakes.crypto"]) { result in
+  switch result {
+  case .success(let returnValue):
+    // returnValue: [String: String?] = <map of domains to domain locations>
+    let locations = returnValue
   case .failure(let error):
     XCTFail("Expected owner, but got \(error)")
   }
@@ -128,16 +138,24 @@ If the domain you are attempting to resolve is not registered or doesn't contain
 
 ```swift
 enum ResolutionError: Error {
-  case unregisteredDomain
-  case unsupportedDomain
-  case recordNotFound
-  case recordNotSupported
-  case unsupportedNetwork
-  case unspecifiedResolver
-  case unknownError(Error)
-  case proxyReaderNonInitialized
-  case inconsistentDomainArray
-  case methodNotSupported
+    case unregisteredDomain
+    case unsupportedDomain
+    case recordNotFound
+    case recordNotSupported
+    case unsupportedNetwork
+    case unspecifiedResolver
+    case unknownError
+    case proxyReaderNonInitialized
+    case registryAddressIsNotProvided
+    case inconsistentDomainArray
+    case methodNotSupported
+    case tooManyResponses
+    case executionReverted
+    case badRequestOrResponse
+    case unsupportedServiceName
+    case invalidDomainName
+    case contractNotInitialized
+    case reverseResolutionNotSpecified
 }
 ```
 
