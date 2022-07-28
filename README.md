@@ -126,7 +126,7 @@ guard let resolution = try? Resolution(networking: MyNetworkingApi) else {
 
 If the domain you are attempting to resolve is not registered or doesn't contain the information you are requesting, this framework will return a `ResolutionError` with the possible causes below. We advise creating customized errors in your app based on the return value of the error.
 
-```
+```swift
 enum ResolutionError: Error {
   case unregisteredDomain
   case unsupportedDomain
@@ -140,6 +140,8 @@ enum ResolutionError: Error {
   case methodNotSupported
 }
 ```
+
+Please see the [Resolution-Swift Error Codes](https://docs.unstoppabledomains.com/developer-toolkit/resolution-integration-methods/resolution-libraries/resolution-swift/#error-codes) page for details of the specific error codes.
 
 # Contributions
 
