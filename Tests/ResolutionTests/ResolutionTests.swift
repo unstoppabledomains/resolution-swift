@@ -78,7 +78,6 @@ class ResolutionTests: XCTestCase {
             "brad.zil",
             "supported.nft",
             "supported.888",
-            "supported.coin",
             "supported.blockchain",
             "supported.dao",
             "supported.bitcoin",
@@ -93,7 +92,8 @@ class ResolutionTests: XCTestCase {
             "-notsupported.eth",
             "notsupported.kred",
             "notsupported.addr.reverse",
-            "notsupported.definetelynotright"
+            "notsupported.definetelynotright",
+            "notsupported.coin"
         ]
         
         var cases = domains.compactMap {
@@ -132,7 +132,6 @@ class ResolutionTests: XCTestCase {
         let zilHashTest = try resolution.namehash(domain: "hello.zil")
         let eightsHashTest = try resolution.namehash(domain: "supported.888")
         let nftHashTest = try resolution.namehash(domain: "supported.nft")
-        let coinHashTest = try resolution.namehash(domain: "supported.coin")
         let walletHashTest = try resolution.namehash(domain: "supported.wallet")
         let blockchainHashTest = try resolution.namehash(domain: "supported.blockchain")
         let daoHashTest = try resolution.namehash(domain: "supported.dao")
@@ -145,7 +144,6 @@ class ResolutionTests: XCTestCase {
         assert(zilHashTest == "0xf76369aa1547bd507201e497b75dc66961224ce61cf64b84b5cef81f340706d8")
         assert(eightsHashTest == "0x991e7b420923938d448ac29878db96ce7176b6e76b661f9053989c3dc55c5ddf")
         assert(nftHashTest == "0x775c9305094df44261aae2a00c26829cf1af9b3b1aff867e3b22442a97dcc3a4")
-        assert(coinHashTest == "0xa3dc422211db6cf55297e60de7b3c4e60e9b14365e159731fc10102dd90e394e")
         assert(walletHashTest == "0x2ee016c6cd8a5de80ec6a944b0d553ea0b86401ca87a515afb38d1553a85e197")
         assert(blockchainHashTest == "0x08b9bf8e0e42054ae8770a5cb8980c891f0b3842207692c375ea225a85962562")
         assert(daoHashTest == "0x5220cb2715d1d8df103752df7fbfc64b2ee51ede0c5cb57c534a984893e349c4")

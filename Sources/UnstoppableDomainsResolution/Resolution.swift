@@ -489,10 +489,13 @@ public class Resolution {
     /// Preproccess the `domain`
     private func prepare(domain: String) throws -> String {
         let normalizedDomain = domain.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
-        if domainRegex.firstMatch(in: normalizedDomain, options: [], range: NSRange(location: 0, length: normalizedDomain.count)) != nil {
-            return normalizedDomain
+        if domainRegex.firstMatch(in: normalizedDomain, options: [], range: NSRange(location: 0, length: normalizedDomain.count)) == nil {
+            throw ResolutionError.invalidDomainName
         }
-        throw ResolutionError.invalidDomainName
+        if normalizedDomain.hasSuffix(".coin") {
+            throw ResolutionError.unsupportedDomain
+        }
+        return normalizedDomain
     }
 
     private func catchError<T>(_ error: Error, completion: @escaping (Result<T, ResolutionError>) -> Void) {

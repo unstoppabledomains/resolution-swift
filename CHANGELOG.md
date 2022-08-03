@@ -1,4 +1,6 @@
 # Resolution-swift CHANGELOG
+## 5.1.0
+ - Disabled `.coin` resolution due to registry conflicts
 
 ## 5.0.0
 
