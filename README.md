@@ -14,14 +14,14 @@ Resolution is primarily built and maintained by [Unstoppable Domains](https://un
 ## Cocoa Pods
 
 ```ruby
-pod 'UnstoppableDomainsResolution', '~> 5.0.0'
+pod 'UnstoppableDomainsResolution', '~> 5.1.0'
 ```
 
 ## Swift Package Manager
 
 ```swift
 package.dependencies.append(
-    .package(url: "https://github.com/unstoppabledomains/resolution-swift", from: "5.0.0")
+    .package(url: "https://github.com/unstoppabledomains/resolution-swift", from: "5.1.0")
 )
 ```
 
