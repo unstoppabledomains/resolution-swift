@@ -3,6 +3,8 @@
 [![Get help on Discord](https://img.shields.io/badge/Get%20help%20on-Discord-blueviolet)](https://discord.gg/b6ZVxSZ9Hn)
 [![Unstoppable Domains Documentation](https://img.shields.io/badge/Documentation-unstoppabledomains.com-blue)](https://docs.unstoppabledomains.com/)
 
+> ⚠️ We are no longer offering .coin support. Please check our [blog post](url) for more details.
+
 Resolution is a library for interacting with blockchain domain names. It can be used to retrieve payment addresses and IPFS hashes for decentralized websites.
 
 Resolution is primarily built and maintained by [Unstoppable Domains](https://unstoppabledomains.com/).
