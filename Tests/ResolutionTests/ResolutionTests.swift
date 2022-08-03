@@ -390,10 +390,12 @@ class ResolutionTests: XCTestCase {
         let domainReceived = expectation(description: "Exist UNS domain should be received")
         let domainZilReceived = expectation(description: "Exist ZNS domain should be received")
         let unregisteredReceived = expectation(description: "Unregistered domain should be received")
+        let unsupportedReceived = expectation(description: "Unsupported domain should be received")
 
         var ethAddress = ""
         var zilUNSAddress = ""
         var unregisteredResult: Result<String, ResolutionError>!
+        var unsupportedResult: Result<String, ResolutionError>!
 
         // When
         resolution.addr(domain: TestHelpers.getTestDomain(.DOMAIN), ticker: "eth") { (result) in
@@ -420,6 +422,11 @@ class ResolutionTests: XCTestCase {
             unregisteredResult = $0
             unregisteredReceived.fulfill()
         }
+        
+        resolution.addr(domain: "unsupported.coin", ticker: "unknown") {
+            unsupportedResult = $0
+            unsupportedReceived.fulfill()
+        }
 
         waitForExpectations(timeout: timeout, handler: nil)
         
@@ -427,6 +434,7 @@ class ResolutionTests: XCTestCase {
         assert(ethAddress == "0x084Ac37CDEfE1d3b68a63c08B203EFc3ccAB9742")
         assert(zilUNSAddress == "0x45b31e01AA6f42F0549aD482BE81635ED3149abb")
         TestHelpers.checkError(result: unregisteredResult, expectedError: ResolutionError.recordNotFound("layer1"))
+        TestHelpers.checkError(result: unsupportedResult, expectedError: ResolutionError.unsupportedDomain)
     }
 
     func testChatID() throws {
