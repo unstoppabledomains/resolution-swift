@@ -33,18 +33,23 @@ import Foundation
 /// If you ommit network we are making a "net_version" JSON RPC call to the provider to determine the chainID
 /// for example lets configure crypto naming service to use goerli while left etherium naming service with default configurations:
 /// ```swift
-/// let resolution = try Resolution(
-///   configs: Configurations(
-///     uns: NamingServiceConfig(
-///       providerUrl: "https://eth-goerli.alchemyapi.io/v2/pfMuqmMqfgpI-dqdfmxmpnHVZPq6pyH-",
-///       network: "goerli"
-///    )
-///   )
+/// let resolution = try Resolution(configs: Configurations(
+///         uns: UnsLocations = UnsLocations(
+///             layer1: NamingServiceConfig(
+///                 providerUrl: "https://eth-mainnet.alchemyapi.io/v2/_BDuTLPgioYxULIE5cGq3wivWAJborcM",
+///                 network: "mainnet"),
+///             layer2: NamingServiceConfig(
+///                 providerUrl: "https://polygon-mainnet.g.alchemy.com/v2/bKmEKAC4HJUEDNlnoYITvXYuhrIshFsa",
+///                 network: "polygon-mainnet"),
+///             zlayer: NamingServiceConfig(
+///                 providerUrl: "https://api.zilliqa.com",
+///                 network: "mainnet")
+///         )
 /// );
-/// resolution.addr(domain: "udtestdev-creek.crypto", ticker: "eth") { (result) in
+/// resolution.addr(domain: "homecakes.crypto", ticker: "eth") { (result) in
 ///     switch result {
 ///     case .success(let returnValue):
-///           // 0x1C8b9B78e3085866521FE206fa4c1a67F49f153A
+///           // 0xe7474D07fD2FA286e7e0aa23cd107F8379085037
 ///         let ethAddress = returnValue
 ///     case .failure(let error):
 ///         print("Expected eth Address, but got \(error)")
