@@ -33,7 +33,7 @@ class TestHelpers {
         .WALLET_DOMAIN: "uns-devtest-265f8f.wallet",
         .UNNORMALIZED_DOMAIN: "    uns-dEVtest-265f8f.wallet    ",
         .DOMAIN2: "cryptoalpaca9798.blockchain",
-        .DOMAIN3: "uns-devtest-a39e44.coin",
+        .DOMAIN3: "uns-devtest-3b1663.x",
         .UNREGISTERED_DOMAIN: "unregistered.crypto",
         .UNREGISTERED_ZIL: "unregistered.zil",
         .ZIL_DOMAIN: "test-udtesting-654.zil",
