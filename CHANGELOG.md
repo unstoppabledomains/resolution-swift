@@ -1,5 +1,8 @@
 # Resolution-swift CHANGELOG
 
+## 5.2.2
+ - Update `uns-config.json` and `resolver-keys.json`
+
 ## 5.2.1
 - Updated README with Infura key rate limit information about our key vs their own
 
