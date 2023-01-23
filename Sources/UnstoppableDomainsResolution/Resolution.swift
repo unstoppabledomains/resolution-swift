@@ -319,6 +319,7 @@ public class Resolution {
     /// Resolves all the records from a domain
     /// - Parameter domain: - domain name to be resolved
     /// - Parameter completion: A callback that resolves `Result` with a `map [key: value]` for a specific domain or `Error`
+    @available(*, deprecated, message: "allRecords method is deprecated")
     public func allRecords(domain: String, completion: @escaping DictionaryResultConsumer) {
         DispatchQueue.global(qos: .utility).async { [weak self] in
             do {

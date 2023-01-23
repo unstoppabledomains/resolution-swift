@@ -1,5 +1,8 @@
 # Resolution-swift CHANGELOG
 
+## 5.1.0
+- Deprecate `allRecords` method
+
 ## 5.0.0
 
 - Ability to resolve `.zil` domains from Polygon and Ethereum networks

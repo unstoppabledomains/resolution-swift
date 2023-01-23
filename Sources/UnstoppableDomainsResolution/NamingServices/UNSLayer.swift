@@ -155,10 +155,8 @@ internal class UNSLayer: CommonNamingService {
 
     func allRecords(domain: String) throws -> [String: String] {
         let tokenId = super.namehash(domain: domain)
-        let tokenUriMetadata = try getTokenUriMetadata(tokenId: tokenId)
-        let metadataRecords = tokenUriMetadata.properties.records
         let commonRecordsKeys = try Self.parseRecordKeys()
-        let mergedRecords = Array(Set(metadataRecords.keys + commonRecordsKeys!))
+        let mergedRecords = Array(Set(commonRecordsKeys!))
         return try self.records(keys: mergedRecords, for: domain).filter { !$0.value.isEmpty }
     }
 
