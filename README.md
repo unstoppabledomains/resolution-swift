@@ -12,7 +12,7 @@ Resolution is primarily built and maintained by [Unstoppable Domains](https://un
 ## Cocoa Pods
 
 ```ruby
-pod 'UnstoppableDomainsResolution', '~> 5.1.0'
+pod 'UnstoppableDomainsResolution', '~> 5.2.0'
 ```
 
 ## Swift Package Manager
