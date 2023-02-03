@@ -52,10 +52,10 @@ public struct Configurations {
     public init(
         uns: UnsLocations = UnsLocations(
             layer1: NamingServiceConfig(
-                providerUrl: "https://mainnet.infura.io/v3/e0c0cb9d12c440a29379df066de587e6",
+                providerUrl: "https://mainnet.infura.io/v3/3c25f57353234b1b853e9861050f4817",
                 network: "mainnet"),
             layer2: NamingServiceConfig(
-                providerUrl: "https://polygon-mainnet.infura.io/v3/e0c0cb9d12c440a29379df066de587e6",
+                providerUrl: "https://polygon-mainnet.infura.io/v3/3c25f57353234b1b853e9861050f4817",
                 network: "polygon-mainnet"),
             zlayer: NamingServiceConfig(
                 providerUrl: "https://api.zilliqa.com",
