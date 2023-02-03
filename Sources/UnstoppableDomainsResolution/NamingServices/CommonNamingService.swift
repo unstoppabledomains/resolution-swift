@@ -100,14 +100,12 @@ extension CommonNamingService {
     static let recordKeysFileName = "resolver-keys"
     static let networkIds = ["mainnet": "1",
                              "ropsten": "3",
-                             "rinkeby": "4",
                              "goerli": "5",
                              "polygon-mumbai": "80001",
                              "polygon-mainnet": "137"
     ]
     static let networkToBlockchain = [
         "mainnet": "ETH",
-        "rinkeby": "ETH",
         "goerli": "ETH",
         "polygon-mumbai": "MATIC",
         "polygon-mainnet": "MATIC"

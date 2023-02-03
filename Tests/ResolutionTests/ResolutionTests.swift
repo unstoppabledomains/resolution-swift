@@ -24,10 +24,10 @@ class ResolutionTests: XCTestCase {
             configs: Configurations(
                 uns: UnsLocations(
                     layer1: NamingServiceConfig(
-                                providerUrl: "https://eth-goerli.alchemyapi.io/v2/pfMuqmMqfgpI-dqdfmxmpnHVZPq6pyH-",
+                                providerUrl: "https://goerli.infura.io/v3/3c25f57353234b1b853e9861050f4817",
                                 network: "goerli"),
                     layer2: NamingServiceConfig(
-                                providerUrl: "https://polygon-mumbai.g.alchemy.com/v2/4tGcL8ItPpF1UgOUuNqtcawNDJ3lEz8w",
+                                providerUrl: "https://polygon-mumbai.infura.io/v3/3c25f57353234b1b853e9861050f4817",
                                 network: "polygon-mumbai"),
                     zlayer: NamingServiceConfig(
                         providerUrl: "https://dev-api.zilliqa.com",
@@ -401,7 +401,7 @@ class ResolutionTests: XCTestCase {
                 ethAddress = returnValue
                 domainReceived.fulfill()
             case .failure(let error):
-                XCTFail("Expected Eth Address, but got \(error)")
+                XCTFail("Expected Eth Address, but got \(error.localizedDescription)")
             }
         }
 
@@ -423,6 +423,8 @@ class ResolutionTests: XCTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
+        print("Eth Address: ")
+        print(ethAddress)
         assert(ethAddress == "0x084Ac37CDEfE1d3b68a63c08B203EFc3ccAB9742")
         assert(zilUNSAddress == "0x45b31e01AA6f42F0549aD482BE81635ED3149abb")
         TestHelpers.checkError(result: unregisteredResult, expectedError: ResolutionError.recordNotFound("layer1"))
@@ -663,7 +665,7 @@ class ResolutionTests: XCTestCase {
                 networkId: "5",
                 blockchain: "ETH",
                 owner: "0xe586d5Bf4d7779498648DF67b73c88a712E4359d",
-                providerURL: "https://eth-goerli.alchemyapi.io/v2/pfMuqmMqfgpI-dqdfmxmpnHVZPq6pyH-"
+                providerURL: "https://goerli.infura.io/v3/3c25f57353234b1b853e9861050f4817"
             ),
             TestHelpers.getTestDomain(.WALLET_DOMAIN):Location(
                 registryAddress: "0x2a93c52e7b6e7054870758e15a1446e769edfb93",
@@ -671,7 +673,7 @@ class ResolutionTests: XCTestCase {
                 networkId: "80001",
                 blockchain: "MATIC",
                 owner: "0xD92d2A749424a5181AD7d45f786a9FFE46c10A7C",
-                providerURL: "https://polygon-mumbai.g.alchemy.com/v2/4tGcL8ItPpF1UgOUuNqtcawNDJ3lEz8w"
+                providerURL: "https://polygon-mumbai.infura.io/v3/3c25f57353234b1b853e9861050f4817"
             ),
             TestHelpers.getTestDomain(.LAYER2_DOMAIN): Location(
                 registryAddress: "0x2a93c52e7b6e7054870758e15a1446e769edfb93",
@@ -679,7 +681,7 @@ class ResolutionTests: XCTestCase {
                 networkId: "80001",
                 blockchain: "MATIC",
                 owner: "0x499dD6D875787869670900a2130223D85d4F6Aa7",
-                providerURL: "https://polygon-mumbai.g.alchemy.com/v2/4tGcL8ItPpF1UgOUuNqtcawNDJ3lEz8w"
+                providerURL: "https://polygon-mumbai.infura.io/v3/3c25f57353234b1b853e9861050f4817"
             ),
         ];
 
@@ -831,7 +833,7 @@ class ResolutionTests: XCTestCase {
             networkId: "137",
             blockchain: "MATIC",
             owner: "0xc2cC046e7F4f7A3e9715A853Fc54907c12364b6B",
-            providerURL: "https://polygon-mainnet.g.alchemy.com/v2/bKmEKAC4HJUEDNlnoYITvXYuhrIshFsa"))
+            providerURL: "https://polygon-mainnet.infura.io/v3/e0c0cb9d12c440a29379df066de587e6"))
         TestHelpers.checkError(result: recordNotFoundResult, expectedError: ResolutionError.recordNotFound("layer 2"))
     }
 
