@@ -36,10 +36,10 @@ import Foundation
 /// let resolution = try Resolution(configs: Configurations(
 ///         uns: UnsLocations = UnsLocations(
 ///             layer1: NamingServiceConfig(
-///                 providerUrl: "https://eth-mainnet.alchemyapi.io/v2/_BDuTLPgioYxULIE5cGq3wivWAJborcM",
+///                 providerUrl: "https://mainnet.infura.io/v3/3c25f57353234b1b853e9861050f4817",
 ///                 network: "mainnet"),
 ///             layer2: NamingServiceConfig(
-///                 providerUrl: "https://polygon-mainnet.g.alchemy.com/v2/bKmEKAC4HJUEDNlnoYITvXYuhrIshFsa",
+///                 providerUrl: "https://polygon-mainnet.infura.io/v3/3c25f57353234b1b853e9861050f4817",
 ///                 network: "polygon-mainnet"),
 ///             zlayer: NamingServiceConfig(
 ///                 providerUrl: "https://api.zilliqa.com",

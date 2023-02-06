@@ -12,7 +12,7 @@ Resolution is primarily built and maintained by [Unstoppable Domains](https://un
 ## Cocoa Pods
 
 ```ruby
-pod 'UnstoppableDomainsResolution', '~> 5.1.0'
+pod 'UnstoppableDomainsResolution', '~> 5.2.0'
 ```
 
 ## Swift Package Manager
@@ -63,10 +63,10 @@ Library supports three networks at the moment Ethereum, Polygon and Zilliqa. You
 let resolution = try Resolution(configs: Configurations(
         uns: UnsLocations = UnsLocations(
             layer1: NamingServiceConfig(
-                providerUrl: "https://eth-mainnet.alchemyapi.io/v2/_BDuTLPgioYxULIE5cGq3wivWAJborcM",
+                providerUrl: "https://mainnet.infura.io/v3/3c25f57353234b1b853e9861050f4817",
                 network: "mainnet"),
             layer2: NamingServiceConfig(
-                providerUrl: "https://polygon-mainnet.g.alchemy.com/v2/bKmEKAC4HJUEDNlnoYITvXYuhrIshFsa",
+                providerUrl: "https://polygon-mainnet.infura.io/v3/3c25f57353234b1b853e9861050f4817",
                 network: "polygon-mainnet"),
             zlayer: NamingServiceConfig(
                 providerUrl: "https://api.zilliqa.com",
