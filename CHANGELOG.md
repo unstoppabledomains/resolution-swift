@@ -1,7 +1,11 @@
 # Resolution-swift CHANGELOG
 
+## 5.2.1
+- Updated README with Infura key rate limit information about our key vs their own
+
 ## 5.2.0
 - Change default blockchain provider to Infura, from Alchemy
+
 ## 5.1.0
 - Deprecate `allRecords` method
 

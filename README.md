@@ -12,7 +12,7 @@ Resolution is primarily built and maintained by [Unstoppable Domains](https://un
 ## Cocoa Pods
 
 ```ruby
-pod 'UnstoppableDomainsResolution', '~> 5.2.0'
+pod 'UnstoppableDomainsResolution', '~> 5.2.1'
 ```
 
 ## Swift Package Manager
@@ -56,6 +56,9 @@ guard let resolution = try? Resolution() else {
 ```
 
 ## Customizing naming services
+
+> NOTE: The default Infura key provided is rate limited and should only be used for testing.  For production applications, please bring your own Infura or Alchemy RPC URL to prevent downtime.
+
 Version 0.3.0 introduced the `Configurations` struct that is used for configuring each connected naming service.
 Library supports three networks at the moment Ethereum, Polygon and Zilliqa. You can update each network separately.
 
