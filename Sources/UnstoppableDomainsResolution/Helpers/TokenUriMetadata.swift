@@ -2,10 +2,11 @@ import Foundation
 
 public struct TokenUriMetadata: Codable {
     let name: String?
+    let tokenId: String?
+    let namehash: String?
     let description: String?
     let externalUrl: String?
     let image: String?
-    let properties: TokenUriMetadataProperties
     let attributes: [TokenUriMetadataAttribute]
     var backgroundColor: String?
     var animationUrl: String?
@@ -15,10 +16,11 @@ public struct TokenUriMetadata: Codable {
 
     enum CodingKeys: String, CodingKey {
         case name
+        case tokenId
+        case namehash
         case description
         case externalUrl = "external_url"
         case image
-        case properties
         case attributes
         case backgroundColor = "background_color"
         case animationUrl = "animation_url"
@@ -39,10 +41,6 @@ public struct TokenUriMetadataAttribute: Codable {
         case traitType = "trait_type"
         case value
     }
-}
-
-public struct TokenUriMetadataProperties: Codable {
-    let records: [String: String]
 }
 
 struct TokenUriMetadataValue: Codable {

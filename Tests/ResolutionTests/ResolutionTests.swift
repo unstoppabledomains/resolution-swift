@@ -542,7 +542,7 @@ class ResolutionTests: XCTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        assert(tokenURI == "https://metadata.staging.unstoppabledomains.com/metadata/6304531997610998161237844647282663196661123000121147597890468333969432655810")
+        assert(tokenURI == "https://metadata.ud-staging.com/metadata/6304531997610998161237844647282663196661123000121147597890468333969432655810")
         TestHelpers.checkError(result: unregisteredResult, expectedError: ResolutionError.unregisteredDomain)
     }
 
@@ -572,10 +572,11 @@ class ResolutionTests: XCTestCase {
 
         waitForExpectations(timeout: timeout, handler: nil)
 
+        let domainNamehash = try resolution.namehash(domain: TestHelpers.getTestDomain(.WALLET_DOMAIN))
         // Then
         assert(tokenURIMetadata?.name == TestHelpers.getTestDomain(.WALLET_DOMAIN))
         assert(tokenURIMetadata?.attributes.count == 5)
-        assert(tokenURIMetadata?.properties.records["crypto.ETH.address"] == "0x8aaD44321A86b170879d7A244c1e8d360c99DdA8");
+        assert(tokenURIMetadata?.namehash == domainNamehash)
         TestHelpers.checkError(result: unregisteredResult, expectedError: ResolutionError.unregisteredDomain)
     }
 
@@ -833,7 +834,7 @@ class ResolutionTests: XCTestCase {
             networkId: "137",
             blockchain: "MATIC",
             owner: "0xc2cC046e7F4f7A3e9715A853Fc54907c12364b6B",
-            providerURL: "https://polygon-mumbai.infura.io/v3/3c25f57353234b1b853e9861050f4817"))
+            providerURL: "https://polygon-mainnet.infura.io/v3/3c25f57353234b1b853e9861050f4817"))
         TestHelpers.checkError(result: recordNotFoundResult, expectedError: ResolutionError.recordNotFound("layer 2"))
     }
 
@@ -1022,8 +1023,8 @@ class ResolutionTests: XCTestCase {
 
         waitForExpectations(timeout: timeout, handler: nil);
 
-        assert(layer1TokenUri == "https://metadata.staging.unstoppabledomains.com/metadata/reseller-test-udtesting-459239285.crypto");
-        assert(layer2TokenUri == "https://metadata.staging.unstoppabledomains.com/metadata/29206072489201256414040015626327292653094949751666860355749665089956336890808");
+        assert(layer1TokenUri == "https://metadata.ud-staging.com/metadata/reseller-test-udtesting-459239285.crypto");
+        assert(layer2TokenUri == "https://metadata.ud-staging.com/metadata/29206072489201256414040015626327292653094949751666860355749665089956336890808");
     }
 
     func testUnhashMultiLayer() throws {

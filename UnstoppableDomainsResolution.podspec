@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
   spec.name         = "UnstoppableDomainsResolution"
-  spec.version      = "5.2.1"
+  spec.version      = "5.2.2"
   spec.summary      = "Swift framework for resolving Unstoppable domains."
 
   spec.description  = <<-DESC
