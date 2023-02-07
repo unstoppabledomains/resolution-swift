@@ -834,7 +834,7 @@ class ResolutionTests: XCTestCase {
             networkId: "137",
             blockchain: "MATIC",
             owner: "0xc2cC046e7F4f7A3e9715A853Fc54907c12364b6B",
-            providerURL: "https://polygon-mumbai.infura.io/v3/3c25f57353234b1b853e9861050f4817"))
+            providerURL: "https://polygon-mainnet.infura.io/v3/3c25f57353234b1b853e9861050f4817"))
         TestHelpers.checkError(result: recordNotFoundResult, expectedError: ResolutionError.recordNotFound("layer 2"))
     }
 
