@@ -572,9 +572,11 @@ class ResolutionTests: XCTestCase {
 
         waitForExpectations(timeout: timeout, handler: nil)
 
+        let domainNamehash = try resolution.namehash(domain: TestHelpers.getTestDomain(.WALLET_DOMAIN))
         // Then
         assert(tokenURIMetadata?.name == TestHelpers.getTestDomain(.WALLET_DOMAIN))
         assert(tokenURIMetadata?.attributes.count == 5)
+        assert(tokenURIMetadata?.namehash == domainNamehash)
         TestHelpers.checkError(result: unregisteredResult, expectedError: ResolutionError.unregisteredDomain)
     }
 

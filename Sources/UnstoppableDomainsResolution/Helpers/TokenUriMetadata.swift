@@ -2,6 +2,8 @@ import Foundation
 
 public struct TokenUriMetadata: Codable {
     let name: String?
+    let tokenId: String?
+    let namehash: String?
     let description: String?
     let externalUrl: String?
     let image: String?
@@ -14,6 +16,8 @@ public struct TokenUriMetadata: Codable {
 
     enum CodingKeys: String, CodingKey {
         case name
+        case tokenId
+        case namehash
         case description
         case externalUrl = "external_url"
         case image
