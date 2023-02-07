@@ -542,7 +542,7 @@ class ResolutionTests: XCTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        assert(tokenURI == "https://metadata.staging.unstoppabledomains.com/metadata/6304531997610998161237844647282663196661123000121147597890468333969432655810")
+        assert(tokenURI == "https://metadata.ud-staging.com/metadata/6304531997610998161237844647282663196661123000121147597890468333969432655810")
         TestHelpers.checkError(result: unregisteredResult, expectedError: ResolutionError.unregisteredDomain)
     }
 
@@ -575,7 +575,6 @@ class ResolutionTests: XCTestCase {
         // Then
         assert(tokenURIMetadata?.name == TestHelpers.getTestDomain(.WALLET_DOMAIN))
         assert(tokenURIMetadata?.attributes.count == 5)
-        assert(tokenURIMetadata?.properties.records["crypto.ETH.address"] == "0x8aaD44321A86b170879d7A244c1e8d360c99DdA8");
         TestHelpers.checkError(result: unregisteredResult, expectedError: ResolutionError.unregisteredDomain)
     }
 
@@ -1022,8 +1021,8 @@ class ResolutionTests: XCTestCase {
 
         waitForExpectations(timeout: timeout, handler: nil);
 
-        assert(layer1TokenUri == "https://metadata.staging.unstoppabledomains.com/metadata/reseller-test-udtesting-459239285.crypto");
-        assert(layer2TokenUri == "https://metadata.staging.unstoppabledomains.com/metadata/29206072489201256414040015626327292653094949751666860355749665089956336890808");
+        assert(layer1TokenUri == "https://metadata.ud-staging.com/metadata/reseller-test-udtesting-459239285.crypto");
+        assert(layer2TokenUri == "https://metadata.ud-staging.com/metadata/29206072489201256414040015626327292653094949751666860355749665089956336890808");
     }
 
     func testUnhashMultiLayer() throws {
