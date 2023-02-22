@@ -19,7 +19,7 @@ class UnsLayerL2Tests: XCTestCase {
     
     
     override func setUp() {
-        let providerUrl = "https://matic-testnet-archive-rpc.bwarelabs.com";
+        let providerUrl = "https://polygon-mumbai.infura.io/v3/3c25f57353234b1b853e9861050f4817";
         let config = NamingServiceConfig(
             providerUrl: providerUrl,
             network: "polygon-mumbai");
@@ -37,7 +37,7 @@ class UnsLayerL2Tests: XCTestCase {
               name: "ProxyReader",
               contract: Contract(
                   providerUrl: providerUrl,
-                  address: "0x332A8191905fA8E6eeA7350B5799F225B8ed30a9",
+                  address: "0xBD4674F11d512120dFc8BAe5f84963d7419A5db2",
                   abi: try! parseAbi(fromFile: "unsProxyReader")!,
                   networking: DefaultNetworkingLayer()
               ),
