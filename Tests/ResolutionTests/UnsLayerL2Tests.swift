@@ -19,15 +19,16 @@ class UnsLayerL2Tests: XCTestCase {
     
     
     override func setUp() {
-        let providerUrl = ResolutionTests.getL2TestNetRpcUrl();
+        let providerUrl = try? ResolutionTests.getL2TestNetRpcUrl();
+        
         let config = NamingServiceConfig(
-            providerUrl: providerUrl,
+            providerUrl: providerUrl ?? "",
             network: "polygon-mumbai");
         let contracts: [UNSContract] = [
           UNSContract(
             name: "UNSRegistry",
             contract: Contract(
-                providerUrl: providerUrl,
+                providerUrl: providerUrl ?? "",
                 address: "0x2a93C52E7B6E7054870758e15A1446E769EdfB93",
                 abi: try! parseAbi(fromFile: "unsRegistry")!,
                 networking: DefaultNetworkingLayer()
@@ -36,7 +37,7 @@ class UnsLayerL2Tests: XCTestCase {
             UNSContract(
               name: "ProxyReader",
               contract: Contract(
-                  providerUrl: providerUrl,
+                  providerUrl: providerUrl ?? "",
                   address: "0xBD4674F11d512120dFc8BAe5f84963d7419A5db2",
                   abi: try! parseAbi(fromFile: "unsProxyReader")!,
                   networking: DefaultNetworkingLayer()
