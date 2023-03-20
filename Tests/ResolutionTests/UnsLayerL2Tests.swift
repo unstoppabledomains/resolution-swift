@@ -19,7 +19,7 @@ class UnsLayerL2Tests: XCTestCase {
     
     
     override func setUp() {
-        let providerUrl = "https://polygon-mumbai.infura.io/v3/3c25f57353234b1b853e9861050f4817";
+        let providerUrl = ResolutionTests.getL2TestNetRpcUrl();
         let config = NamingServiceConfig(
             providerUrl: providerUrl,
             network: "polygon-mumbai");
