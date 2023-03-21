@@ -17,6 +17,14 @@ var resolution: Resolution!
 
 class ResolutionTests: XCTestCase {
 
+    static func getL1TestNetRpcUrl() -> String {
+        return ProcessInfo.processInfo.environment["L1_TEST_NET_RPC_URL"] ?? "https://goerli.infura.io/v3/3c25f57353234b1b853e9861050f4817";
+    }
+
+    static func getL2TestNetRpcUrl() -> String {
+        return ProcessInfo.processInfo.environment["L2_TEST_NET_RPC_URL"] ?? "https://polygon-mumbai.infura.io/v3/3c25f57353234b1b853e9861050f4817";
+    }
+
     let timeout: TimeInterval = 30
     override func setUp() {
         super.setUp()
@@ -24,10 +32,10 @@ class ResolutionTests: XCTestCase {
             configs: Configurations(
                 uns: UnsLocations(
                     layer1: NamingServiceConfig(
-                                providerUrl: "https://goerli.infura.io/v3/3c25f57353234b1b853e9861050f4817",
+                                providerUrl: ResolutionTests.getL1TestNetRpcUrl(),
                                 network: "goerli"),
                     layer2: NamingServiceConfig(
-                                providerUrl: "https://polygon-mumbai.infura.io/v3/3c25f57353234b1b853e9861050f4817",
+                                providerUrl: ResolutionTests.getL2TestNetRpcUrl(),
                                 network: "polygon-mumbai"),
                     zlayer: NamingServiceConfig(
                         providerUrl: "https://dev-api.zilliqa.com",
@@ -666,7 +674,7 @@ class ResolutionTests: XCTestCase {
                 networkId: "5",
                 blockchain: "ETH",
                 owner: "0xe586d5Bf4d7779498648DF67b73c88a712E4359d",
-                providerURL: "https://goerli.infura.io/v3/3c25f57353234b1b853e9861050f4817"
+                providerURL: ResolutionTests.getL1TestNetRpcUrl()
             ),
             TestHelpers.getTestDomain(.WALLET_DOMAIN):Location(
                 registryAddress: "0x2a93c52e7b6e7054870758e15a1446e769edfb93",
@@ -674,7 +682,7 @@ class ResolutionTests: XCTestCase {
                 networkId: "80001",
                 blockchain: "MATIC",
                 owner: "0xD92d2A749424a5181AD7d45f786a9FFE46c10A7C",
-                providerURL: "https://polygon-mumbai.infura.io/v3/3c25f57353234b1b853e9861050f4817"
+                providerURL: ResolutionTests.getL2TestNetRpcUrl()
             ),
             TestHelpers.getTestDomain(.LAYER2_DOMAIN): Location(
                 registryAddress: "0x2a93c52e7b6e7054870758e15a1446e769edfb93",
@@ -682,7 +690,7 @@ class ResolutionTests: XCTestCase {
                 networkId: "80001",
                 blockchain: "MATIC",
                 owner: "0x499dD6D875787869670900a2130223D85d4F6Aa7",
-                providerURL: "https://polygon-mumbai.infura.io/v3/3c25f57353234b1b853e9861050f4817"
+                providerURL: ResolutionTests.getL2TestNetRpcUrl()
             ),
         ];
 
@@ -824,7 +832,8 @@ class ResolutionTests: XCTestCase {
             }
         }
 
-        waitForExpectations(timeout: timeout, handler: nil);
+        waitForExpectations(timeout: 200, handler: nil);
+
         assert(addr == "0xc2cc046e7f4f7a3e9715a853fc54907c12364b6b");
         assert(resolver == "0xa9a6A3626993D487d2Dbda3173cf58cA1a9D9e9f");
         assert(owner == "0xc2cC046e7F4f7A3e9715A853Fc54907c12364b6B");
@@ -837,7 +846,6 @@ class ResolutionTests: XCTestCase {
             providerURL: "https://polygon-mainnet.infura.io/v3/3c25f57353234b1b853e9861050f4817"))
         TestHelpers.checkError(result: recordNotFoundResult, expectedError: ResolutionError.recordNotFound("layer 2"))
     }
-
 
     func testGetBatchOwnerMultiLayer() throws {
         let layer2Domain: String = TestHelpers.getTestDomain(.LAYER2_DOMAIN);
@@ -1157,6 +1165,4 @@ class ResolutionTests: XCTestCase {
         assert(reverseL2Result == "uns-devtest-265f8f.wallet")
         TestHelpers.checkError(result: reverseDoesntExistResult, expectedError: ResolutionError.reverseResolutionNotSpecified)
     }
-
-
 }

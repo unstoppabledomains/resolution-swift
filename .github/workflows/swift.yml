@@ -10,6 +10,12 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Build
+      env:
+        L1_TEST_NET_RPC_URL: ${{ secrets.L1_TEST_NET_RPC_URL }}
+        L2_TEST_NET_RPC_URL: ${{ secrets.L2_TEST_NET_RPC_URL }}
       run: swift build -v
     - name: Run tests
+      env:
+        L1_TEST_NET_RPC_URL: ${{ secrets.L1_TEST_NET_RPC_URL }}
+        L2_TEST_NET_RPC_URL: ${{ secrets.L2_TEST_NET_RPC_URL }}
       run: swift test -v
