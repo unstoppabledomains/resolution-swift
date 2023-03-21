@@ -11,7 +11,7 @@ import Foundation
 public struct NamingServiceConfig {
     let network: String
     let providerUrl: String
-    let networking: NetworkingLayer
+    var networking: NetworkingLayer
     let proxyReader: String?
     let registryAddresses: [String]?
     
@@ -46,8 +46,13 @@ public struct UnsLocations {
     }
 }
 
+let UD_RPC_PROXY_BASE_URL = "https://api.unstoppabledomains.com/resolve"
+let DEFAULT_ETH_RPC_URL = "https://mainnet.infura.io/v3/3c25f57353234b1b853e9861050f4817"
+let DEFAULT_MATIC_RPC_URL = "https://polygon-mainnet.infura.io/v3/3c25f57353234b1b853e9861050f4817"
+
 public struct Configurations {
     let uns: UnsLocations
+    let apiKey: String? = nil
     
     public init(
         uns: UnsLocations = UnsLocations(
@@ -63,5 +68,27 @@ public struct Configurations {
         )
     ) {
         self.uns = uns
+    }
+
+    public init(apiKey: String) {
+        var layer1NamingService = NamingServiceConfig(
+                providerUrl: "\(UD_RPC_PROXY_BASE_URL)/chains/eth/rpc",
+                network: "mainnet")
+
+        layer1NamingService.networking.addHeader(header: "Authorization", value: "Bearer \(apiKey)")
+
+        var layer2NamingService = NamingServiceConfig(
+            providerUrl: "\(UD_RPC_PROXY_BASE_URL)/chains/matic/rpc",
+            network: "polygon-mainnet")
+
+        layer2NamingService.networking.addHeader(header: "Authorization", value: "Bearer \(apiKey)")
+
+        self.uns = UnsLocations(
+            layer1: layer1NamingService,
+            layer2: layer2NamingService,
+            zlayer:  NamingServiceConfig(
+                providerUrl: "https://api.zilliqa.com",
+                network: "mainnet")
+        )
     }
 }

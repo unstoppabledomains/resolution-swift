@@ -23,6 +23,8 @@ public protocol NetworkingLayer {
                               httpBody: Data,
                               completion: @escaping(Result<JsonRpcResponseArray, Error>) -> Void)
     func makeHttpGetRequest(url: URL, completion: @escaping TokenUriMetadataResultConsumer )
+
+    mutating func addHeader(header: String, value: String)
 }
 
 struct APIRequest {
@@ -56,6 +58,8 @@ struct APIRequest {
 }
 
 public struct DefaultNetworkingLayer: NetworkingLayer {
+    var headers: [String: String] = [String: String]()
+
     public init() { }
 
     public func makeHttpPostRequest(url: URL,
@@ -66,6 +70,13 @@ public struct DefaultNetworkingLayer: NetworkingLayer {
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = httpMethod
         urlRequest.addValue(httpHeaderContentType, forHTTPHeaderField: "Content-Type")
+
+        if (!self.headers.isEmpty) {
+            for (_, keyValue) in self.headers.enumerated() {
+                urlRequest.addValue(keyValue.value, forHTTPHeaderField: keyValue.key)
+            }
+        }
+
         urlRequest.httpBody = httpBody
 
         let dataTask = URLSession.shared.dataTask(with: urlRequest) { data, response, _ in
@@ -117,5 +128,9 @@ public struct DefaultNetworkingLayer: NetworkingLayer {
             }
         }
         dataTask.resume()
+    }
+
+    public mutating func addHeader(header: String, value: String) {
+        self.headers[header] = value
     }
 }
