@@ -57,7 +57,7 @@ class ResolutionTests: XCTestCase {
     func testInitWithApiKeyAndZns() throws {
         let resolution = try? Resolution(
             apiKey: "some key",
-            znsLayer: NamingServiceConfig(providerUrl: "https://someurl", network: "mainnet")
+            znsLayer: NamingServiceConfig(providerUrl: "https://dev-api.zilliqa.com", network: "mainnet")
         );
 
         assert(resolution != nil);

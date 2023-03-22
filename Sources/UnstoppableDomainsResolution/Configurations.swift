@@ -64,22 +64,28 @@ public struct Configurations {
             providerUrl: "https://api.zilliqa.com",
             network: "mainnet")
     ) {
-        var layer1NamingService = NamingServiceConfig(
+        var networking = DefaultNetworkingLayer();
+        networking.addHeader(header: "Authorization", value: "Bearer \(apiKey)")
+        networking.addHeader(header: "X-Lib-Client", value: Configurations.getLibVersion())
+
+        let layer1NamingService = NamingServiceConfig(
                 providerUrl: "\(UD_RPC_PROXY_BASE_URL)/chains/eth/rpc",
-                network: "mainnet")
+                network: "mainnet",
+                networking: networking)
 
-        layer1NamingService.networking.addHeader(header: "Authorization", value: "Bearer \(apiKey)")
-
-        var layer2NamingService = NamingServiceConfig(
+        let layer2NamingService = NamingServiceConfig(
             providerUrl: "\(UD_RPC_PROXY_BASE_URL)/chains/matic/rpc",
-            network: "polygon-mainnet")
-
-        layer2NamingService.networking.addHeader(header: "Authorization", value: "Bearer \(apiKey)")
+            network: "polygon-mainnet",
+            networking: networking)
 
         self.uns = UnsLocations(
             layer1: layer1NamingService,
             layer2: layer2NamingService,
             zlayer: znsLayer
         )
+    }
+
+    static public func getLibVersion() -> String {
+        return "UnstoppableDomains/resolution-swift/6.0.0"
     }
 }
