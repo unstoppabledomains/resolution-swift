@@ -82,7 +82,20 @@ public struct DefaultNetworkingLayer: NetworkingLayer {
         let dataTask = URLSession.shared.dataTask(with: urlRequest) { data, response, _ in
             guard let httpResponse = response as? HTTPURLResponse,
                   httpResponse.statusCode == 200,
-                  let jsonData = data else {
+                  let jsonData = data
+            else {
+                let statusCode = (response as? HTTPURLResponse)?.statusCode
+
+                if (statusCode == 401 || statusCode == 403) {
+                    completion(.failure(ResolutionError.unauthenticatedRequest))
+                    return
+                }
+
+                if (statusCode == 429) {
+                    completion(.failure(ResolutionError.requestBeingRateLimited))
+                    return
+                }
+
                 completion(.failure(APIError.responseError))
                 return
             }

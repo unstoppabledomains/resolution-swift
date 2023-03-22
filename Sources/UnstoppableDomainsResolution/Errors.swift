@@ -27,6 +27,9 @@ public enum ResolutionError: Error {
     case invalidDomainName
     case contractNotInitialized(String)
     case reverseResolutionNotSpecified
+    case unauthenticatedRequest
+    case requestBeingRateLimited
+
 
     static let tooManyResponsesCode = -32005
     static let badRequestOrResponseCode = -32042

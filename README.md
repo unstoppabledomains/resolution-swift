@@ -208,6 +208,8 @@ enum ResolutionError: Error {
     case invalidDomainName
     case contractNotInitialized
     case reverseResolutionNotSpecified
+    case unauthenticatedRequest
+    case requestBeingRateLimited
 }
 ```
 

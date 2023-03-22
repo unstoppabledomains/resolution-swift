@@ -66,7 +66,7 @@ public struct Configurations {
     ) {
         var networking = DefaultNetworkingLayer();
         networking.addHeader(header: "Authorization", value: "Bearer \(apiKey)")
-        networking.addHeader(header: "X-Lib-Client", value: Configurations.getLibVersion())
+        networking.addHeader(header: "X-Lib-Agent", value: Configurations.getLibVersion())
 
         let layer1NamingService = NamingServiceConfig(
                 providerUrl: "\(UD_RPC_PROXY_BASE_URL)/chains/eth/rpc",
