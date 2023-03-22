@@ -7,19 +7,24 @@ Resolution is a library for interacting with blockchain domain names. It can be 
 
 Resolution is primarily built and maintained by [Unstoppable Domains](https://unstoppabledomains.com/).
 
-# Installing the library
+- [Installing Resolution](#installing-resolution-swift)
+- [Using Resolution](#using-resolution)
+- [Contributions](#contributions)
+- [Free advertising for integrated apps](#free-advertising-for-integrated-apps)
+
+# Installing resolution-swift
 
 ## Cocoa Pods
 
 ```ruby
-pod 'UnstoppableDomainsResolution', '~> 5.2.1'
+pod 'UnstoppableDomainsResolution', '~> 6.0.0'
 ```
 
 ## Swift Package Manager
 
 ```swift
 package.dependencies.append(
-    .package(url: "https://github.com/unstoppabledomains/resolution-swift", from: "5.0.0")
+    .package(url: "https://github.com/unstoppabledomains/resolution-swift", from: "6.0.0")
 )
 ```
 
@@ -39,37 +44,58 @@ package.dependencies.append(
 )
 ```
 
-# Usage
+# Using Resolution
 
  - Create an instance of the Resolution class
  - Call any method of the Resolution class asyncronously
 
 > NOTE: make sure an instance of the Resolution class is not deallocated until the asyncronous call brings in the result. Your code is the **only owner** of the instance so keep it as long as you need it.
 
+## Initialize with Unstoppable Domains' Proxy Provider
+
 ```swift
 import UnstoppableDomainsResolution
 
-guard let resolution = try? Resolution() else {
+// obtain a key from https://unstoppabledomains.com/partner-api-dashboard if you are a partner
+guard let resolution = try? Resolution(apiKey: "<api_key>") else {
+  print ("Init of Resolution instance failed...")
+  return
+}
+```
+
+> NOTE: The `apiKey` is only used resolve domains from UNS. Behind the scene, it still uses the default ZNS (Zilliqa) RPC url. For additional control, please specify your ZNS configuration.
+
+```swift
+import UnstoppableDomainsResolution
+
+// obtain a key from https://unstoppabledomains.com/partner-api-dashboard if you are a partner
+guard let resolution = try? Resolution(
+  apiKey: "<api_key>",
+  znsLayer: NamingServiceConfig(
+    providerUrl: "https://api.zilliqa.com",
+    network: "mainnet")
+) else {
   print ("Init of Resolution instance with default parameters failed...")
   return
 }
 ```
 
-## Customizing naming services
+## Initialize with Custom Ethereum Configuration
 
-> NOTE: The default Infura key provided is rate limited and should only be used for testing.  For production applications, please bring your own Infura or Alchemy RPC URL to prevent downtime.
-
-Version 0.3.0 introduced the `Configurations` struct that is used for configuring each connected naming service.
+The `Configurations` struct that is used for configuring each connected naming service.
 Library supports three networks at the moment Ethereum, Polygon and Zilliqa. You can update each network separately.
 
 ```swift
+import UnstoppableDomainsResolution
+
+// obtain a key from https://www.infura.io
 let resolution = try Resolution(configs: Configurations(
         uns: UnsLocations = UnsLocations(
             layer1: NamingServiceConfig(
-                providerUrl: "https://mainnet.infura.io/v3/3c25f57353234b1b853e9861050f4817",
+                providerUrl: "https://mainnet.infura.io/v3/<infura_api_key>",
                 network: "mainnet"),
             layer2: NamingServiceConfig(
-                providerUrl: "https://polygon-mainnet.infura.io/v3/3c25f57353234b1b853e9861050f4817",
+                providerUrl: "https://polygon-mainnet.infura.io/v3/<infura_api_key>",
                 network: "polygon-mainnet"),
             zlayer: NamingServiceConfig(
                 providerUrl: "https://api.zilliqa.com",
@@ -77,6 +103,12 @@ let resolution = try Resolution(configs: Configurations(
         )
 );
 
+```
+
+## Examples
+
+### Getting a domain's crypto address
+```swift
 resolution.addr(domain: "brad.crypto", ticker: "eth") { (result) in
     switch result {
     case .success(let returnValue):
@@ -88,9 +120,9 @@ resolution.addr(domain: "brad.crypto", ticker: "eth") { (result) in
 }
 ```
 
-## Batch requesting of owners
+### Batch requesting of owners
 
-Version 0.1.3 introduced the `batchOwners(domains: _, completion: _ )` method which adds additional convenience when making multiple domain owner queries.
+the `batchOwners(domains: _, completion: _ )` method adds additional convenience when making multiple domain owner queries.
 
 > This method is only compatible with uns-based domains. Using this method with any other domain type will throw the error: `ResolutionError.methodNotSupported`.
 
@@ -118,24 +150,41 @@ resolution.locations(domains: ["brad.crypto", "homecakes.crypto"]) { result in
 }
 ```
 
-# Networking
+## Networking
 
 > Make sure your app has AppTransportSecurity settings to allow HTTP access to the `https://main-rpc.linkpool.io` domain.
 
-## Custom Networking Layer
+### Custom Networking Layer
 
-By default, this library uses the native iOS networking API to connect to the internet. If you want the library to use your own networking layer instead, you must conform your networking layer to the `NetworkingLayer` protocol. This protocol requires only one method to be implemented: `makeHttpPostRequest(url:, httpMethod:, httpHeaderContentType:, httpBody:, completion:)`. Using this method will bypass the default behavior and delegate the request to your own networking code.
+By default, this library uses the native iOS networking API to connect to the internet. If you want the library to use your own networking layer instead, you must conform your networking layer to the `NetworkingLayer` protocol. This protocol requires three methods to be implemented: 
+* `func makeHttpPostRequest(url:, httpMethod:, httpHeaderContentType:, httpBody:, completion:)`
+* `func makeHttpGetRequest(url: URL, completion:)`
+* `mutating func addHeader(header: String, value: String)`
+
+Using these methods will bypass the default behavior and delegate the request to your own networking code.
 
 For example, construct the Resolution instance like so:
 
 ```swift
-guard let resolution = try? Resolution(networking: MyNetworkingApi) else {
-  print ("Init of Resolution instance failed...")
-  return
-}
+let customNetworking = MyNetworkingApi()
+let resolution = try Resolution(configs: Configurations(
+        uns: UnsLocations = UnsLocations(
+            layer1: NamingServiceConfig(
+                providerUrl: "https://mainnet.infura.io/v3/<infura_api_key>",
+                network: "mainnet",
+                networking: customNetworking),
+            layer2: NamingServiceConfig(
+                providerUrl: "https://polygon-mainnet.infura.io/v3/<infura_api_key>",
+                network: "polygon-mainnet",
+                networking: customNetworking),
+            zlayer: NamingServiceConfig(
+                providerUrl: "https://api.zilliqa.com",
+                network: "mainnet")
+        )
+);
 ```
 
-# Possible Errors:
+## Possible Errors:
 
 If the domain you are attempting to resolve is not registered or doesn't contain the information you are requesting, this framework will return a `ResolutionError` with the possible causes below. We advise creating customized errors in your app based on the return value of the error.
 
@@ -168,6 +217,14 @@ Please see the [Resolution-Swift Error Codes](https://docs.unstoppabledomains.co
 
 Contributions to this library are more than welcome. The easiest way to contribute is through GitHub issues and pull requests.
 
+## Build & test
+
+Resolution library relies on environment variables to load TestNet RPC Urls. This way, our keys don't expose directly to the code. These environment variables are:
+
+* L1_TEST_NET_RPC_URL
+* L2_TEST_NET_RPC_URL
+
+Use `swift build` to build, and `swift test -v` to run the tests
 
 # Free advertising for integrated apps
 

@@ -47,25 +47,13 @@ public struct UnsLocations {
 }
 
 let UD_RPC_PROXY_BASE_URL = "https://api.unstoppabledomains.com/resolve"
-let DEFAULT_ETH_RPC_URL = "https://mainnet.infura.io/v3/3c25f57353234b1b853e9861050f4817"
-let DEFAULT_MATIC_RPC_URL = "https://polygon-mainnet.infura.io/v3/3c25f57353234b1b853e9861050f4817"
 
 public struct Configurations {
     let uns: UnsLocations
     let apiKey: String? = nil
     
     public init(
-        uns: UnsLocations = UnsLocations(
-            layer1: NamingServiceConfig(
-                providerUrl: "https://mainnet.infura.io/v3/3c25f57353234b1b853e9861050f4817",
-                network: "mainnet"),
-            layer2: NamingServiceConfig(
-                providerUrl: "https://polygon-mainnet.infura.io/v3/3c25f57353234b1b853e9861050f4817",
-                network: "polygon-mainnet"),
-            zlayer: NamingServiceConfig(
-                providerUrl: "https://api.zilliqa.com",
-                network: "mainnet")
-        )
+        uns: UnsLocations
     ) {
         self.uns = uns
     }
