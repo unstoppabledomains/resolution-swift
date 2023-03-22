@@ -70,7 +70,12 @@ public struct Configurations {
         self.uns = uns
     }
 
-    public init(apiKey: String) {
+    public init(
+        apiKey: String,
+        znsLayer: NamingServiceConfig = NamingServiceConfig(
+            providerUrl: "https://api.zilliqa.com",
+            network: "mainnet")
+    ) {
         var layer1NamingService = NamingServiceConfig(
                 providerUrl: "\(UD_RPC_PROXY_BASE_URL)/chains/eth/rpc",
                 network: "mainnet")
@@ -86,9 +91,7 @@ public struct Configurations {
         self.uns = UnsLocations(
             layer1: layer1NamingService,
             layer2: layer2NamingService,
-            zlayer:  NamingServiceConfig(
-                providerUrl: "https://api.zilliqa.com",
-                network: "mainnet")
+            zlayer: znsLayer
         )
     }
 }

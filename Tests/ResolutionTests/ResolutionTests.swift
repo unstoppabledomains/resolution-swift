@@ -46,6 +46,23 @@ class ResolutionTests: XCTestCase {
         );
     }
 
+    func testInitWithApiKey() throws {
+        let resolution = try? Resolution(
+            apiKey: "some key"
+        );
+
+        assert(resolution != nil);
+    }
+
+    func testInitWithApiKeyAndZns() throws {
+        let resolution = try? Resolution(
+            apiKey: "some key",
+            znsLayer: NamingServiceConfig(providerUrl: "https://someurl", network: "mainnet")
+        );
+
+        assert(resolution != nil);
+    }
+
     func testForUnregisteredDomain() throws {
         let UnregirestedDomainExpectation = expectation(description: "Domain should not be registered!")
         var NoRecordResult: Result<String, ResolutionError>!

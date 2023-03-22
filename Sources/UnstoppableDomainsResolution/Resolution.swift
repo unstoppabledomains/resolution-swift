@@ -69,6 +69,10 @@ public class Resolution {
         self.services = try constructNetworkServices(Configurations(apiKey: apiKey))
     }
 
+    public init(apiKey: String, znsLayer: NamingServiceConfig) throws {
+        self.services = try constructNetworkServices(Configurations(apiKey: apiKey, znsLayer: znsLayer))
+    }
+
     /// Checks if the domain name is valid according to naming service rules for valid domain names.
     ///
     /// - Parameter domain: domain name to be checked
