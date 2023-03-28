@@ -11,7 +11,7 @@ import Foundation
 public struct NamingServiceConfig {
     let network: String
     let providerUrl: String
-    let networking: NetworkingLayer
+    var networking: NetworkingLayer
     let proxyReader: String?
     let registryAddresses: [String]?
     
@@ -33,35 +33,59 @@ public struct NamingServiceConfig {
 public struct UnsLocations {
     let layer1: NamingServiceConfig
     let layer2: NamingServiceConfig
-    let zlayer: NamingServiceConfig
+    let znsLayer: NamingServiceConfig
     
     public init(
         layer1: NamingServiceConfig,
         layer2: NamingServiceConfig,
-        zlayer: NamingServiceConfig
+        znsLayer: NamingServiceConfig
     ) {
         self.layer1 = layer1
         self.layer2 = layer2
-        self.zlayer = zlayer
+        self.znsLayer = znsLayer
     }
 }
 
+let UD_RPC_PROXY_BASE_URL = "https://api.unstoppabledomains.com/resolve"
+
 public struct Configurations {
     let uns: UnsLocations
+    let apiKey: String? = nil
     
     public init(
-        uns: UnsLocations = UnsLocations(
-            layer1: NamingServiceConfig(
-                providerUrl: "https://mainnet.infura.io/v3/3c25f57353234b1b853e9861050f4817",
-                network: "mainnet"),
-            layer2: NamingServiceConfig(
-                providerUrl: "https://polygon-mainnet.infura.io/v3/3c25f57353234b1b853e9861050f4817",
-                network: "polygon-mainnet"),
-            zlayer: NamingServiceConfig(
-                providerUrl: "https://api.zilliqa.com",
-                network: "mainnet")
-        )
+        uns: UnsLocations
     ) {
         self.uns = uns
+    }
+
+    public init(
+        apiKey: String,
+        znsLayer: NamingServiceConfig = NamingServiceConfig(
+            providerUrl: "https://api.zilliqa.com",
+            network: "mainnet")
+    ) {
+        var networking = DefaultNetworkingLayer();
+        networking.addHeader(header: "Authorization", value: "Bearer \(apiKey)")
+        networking.addHeader(header: "X-Lib-Agent", value: Configurations.getLibVersion())
+
+        let layer1NamingService = NamingServiceConfig(
+                providerUrl: "\(UD_RPC_PROXY_BASE_URL)/chains/eth/rpc",
+                network: "mainnet",
+                networking: networking)
+
+        let layer2NamingService = NamingServiceConfig(
+            providerUrl: "\(UD_RPC_PROXY_BASE_URL)/chains/matic/rpc",
+            network: "polygon-mainnet",
+            networking: networking)
+
+        self.uns = UnsLocations(
+            layer1: layer1NamingService,
+            layer2: layer2NamingService,
+            znsLayer: znsLayer
+        )
+    }
+
+    static public func getLibVersion() -> String {
+        return "UnstoppableDomains/resolution-swift/6.0.0"
     }
 }

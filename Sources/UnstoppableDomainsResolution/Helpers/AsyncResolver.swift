@@ -30,7 +30,7 @@ internal class AsyncResolver {
             ]
             
             if (listOfFunc.count > 2) {
-                functions[.zlayer] = listOfFunc[2]
+                functions[.znsLayer] = listOfFunc[2]
             }
             
             let queue = DispatchQueue(label: "LayerQueque")
@@ -62,7 +62,7 @@ internal class AsyncResolver {
 
     private func parseResult<T>(_ results: [UNSLocation: AsyncConsumer<T>] ) throws -> T {
         // filter out results that were not provided (in case some methods are not supported by some providers)
-        let resultsOrder = [UNSLocation.layer2, UNSLocation.layer1, UNSLocation.zlayer].filter { v in results.keys.contains(v) }
+        let resultsOrder = [UNSLocation.layer2, UNSLocation.layer1, UNSLocation.znsLayer].filter { v in results.keys.contains(v) }
         
         // Omit the last result since we would have to return it regardless
         for resultKey in resultsOrder.dropLast() {
