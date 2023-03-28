@@ -97,7 +97,7 @@ let resolution = try Resolution(configs: Configurations(
             layer2: NamingServiceConfig(
                 providerUrl: "https://polygon-mainnet.infura.io/v3/<infura_api_key>",
                 network: "polygon-mainnet"),
-            zlayer: NamingServiceConfig(
+            znsLayer: NamingServiceConfig(
                 providerUrl: "https://api.zilliqa.com",
                 network: "mainnet")
         )
@@ -177,7 +177,7 @@ let resolution = try Resolution(configs: Configurations(
                 providerUrl: "https://polygon-mainnet.infura.io/v3/<infura_api_key>",
                 network: "polygon-mainnet",
                 networking: customNetworking),
-            zlayer: NamingServiceConfig(
+            znsLayer: NamingServiceConfig(
                 providerUrl: "https://api.zilliqa.com",
                 network: "mainnet")
         )

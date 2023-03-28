@@ -33,16 +33,16 @@ public struct NamingServiceConfig {
 public struct UnsLocations {
     let layer1: NamingServiceConfig
     let layer2: NamingServiceConfig
-    let zlayer: NamingServiceConfig
+    let znsLayer: NamingServiceConfig
     
     public init(
         layer1: NamingServiceConfig,
         layer2: NamingServiceConfig,
-        zlayer: NamingServiceConfig
+        znsLayer: NamingServiceConfig
     ) {
         self.layer1 = layer1
         self.layer2 = layer2
-        self.zlayer = zlayer
+        self.znsLayer = znsLayer
     }
 }
 
@@ -81,7 +81,7 @@ public struct Configurations {
         self.uns = UnsLocations(
             layer1: layer1NamingService,
             layer2: layer2NamingService,
-            zlayer: znsLayer
+            znsLayer: znsLayer
         )
     }
 

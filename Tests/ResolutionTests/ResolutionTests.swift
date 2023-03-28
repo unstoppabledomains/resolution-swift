@@ -37,7 +37,7 @@ class ResolutionTests: XCTestCase {
                     layer2: NamingServiceConfig(
                                 providerUrl: ResolutionTests.getL2TestNetRpcUrl(),
                                 network: "polygon-mumbai"),
-                    zlayer: NamingServiceConfig(
+                    znsLayer: NamingServiceConfig(
                         providerUrl: "https://dev-api.zilliqa.com",
                         network: "testnet"
                     )
