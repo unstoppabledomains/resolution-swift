@@ -814,7 +814,7 @@
 			repositoryURL = "https://github.com/attaswift/BigInt.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 5.2.1;
+				minimumVersion = 6.0.0;
 			};
 		};
 		B6F2076B25DBD93900140CE3 /* XCRemoteSwiftPackageReference "CryptoSwift" */ = {

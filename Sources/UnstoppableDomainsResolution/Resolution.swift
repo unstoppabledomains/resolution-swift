@@ -18,7 +18,7 @@ import Foundation
 ///
 ///
 /// ```swift
-/// let resolution = try Resolution();
+/// let resolution = try Resolution(apiKey: "<api_key>");
 /// resolution.addr(domain: "brad.crypto", ticker: "btc") { (result) in
 ///   switch result {
 ///   case .success(let returnValue):
@@ -36,12 +36,12 @@ import Foundation
 /// let resolution = try Resolution(configs: Configurations(
 ///         uns: UnsLocations = UnsLocations(
 ///             layer1: NamingServiceConfig(
-///                 providerUrl: "https://mainnet.infura.io/v3/3c25f57353234b1b853e9861050f4817",
+///                 providerUrl: "https://mainnet.infura.io/v3/<infura_api_key>",
 ///                 network: "mainnet"),
 ///             layer2: NamingServiceConfig(
-///                 providerUrl: "https://polygon-mainnet.infura.io/v3/3c25f57353234b1b853e9861050f4817",
+///                 providerUrl: "https://polygon-mainnet.infura.io/v3/<infura_api_key>",
 ///                 network: "polygon-mainnet"),
-///             zlayer: NamingServiceConfig(
+///             znsLayer: NamingServiceConfig(
 ///                 providerUrl: "https://api.zilliqa.com",
 ///                 network: "mainnet")
 ///         )
@@ -61,8 +61,16 @@ public class Resolution {
     // swiftlint:disable:next force_try
     private var domainRegex = try! NSRegularExpression(pattern: "^[.a-z\\d-]+$")
 
-    public init(configs: Configurations = Configurations() ) throws {
+    public init(configs: Configurations) throws {
         self.services = try constructNetworkServices(configs)
+    }
+
+    public init(apiKey: String) throws {
+        self.services = try constructNetworkServices(Configurations(apiKey: apiKey))
+    }
+
+    public init(apiKey: String, znsLayer: NamingServiceConfig) throws {
+        self.services = try constructNetworkServices(Configurations(apiKey: apiKey, znsLayer: znsLayer))
     }
 
     /// Checks if the domain name is valid according to naming service rules for valid domain names.

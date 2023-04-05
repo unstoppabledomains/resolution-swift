@@ -11,7 +11,7 @@ import Foundation
 internal class UNS: CommonNamingService, NamingService {
     var layer1: UNSLayer!
     var layer2: UNSLayer!
-    var zlayer: ZNS!
+    var znsLayer: ZNS!
     let asyncResolver: AsyncResolver
 
     static let name: NamingServiceName = .uns
@@ -30,9 +30,9 @@ internal class UNS: CommonNamingService, NamingService {
 
         self.layer1 = try UNSLayer(name: .layer1, config: config.uns.layer1, contracts: layer1Contracts)
         self.layer2 = try UNSLayer(name: .layer2, config: config.uns.layer2, contracts: layer2Contracts)
-        self.zlayer = try ZNS(config.uns.zlayer)
+        self.znsLayer = try ZNS(config.uns.znsLayer)
         
-        guard self.layer1 != nil, self.layer2 != nil, self.zlayer != nil else {
+        guard self.layer1 != nil, self.layer2 != nil, self.znsLayer != nil else {
             throw ResolutionError.proxyReaderNonInitialized
         }
     }
@@ -46,8 +46,8 @@ internal class UNS: CommonNamingService, NamingService {
             listOfFunc: [{try self.layer1.owner(domain: domain)},
                          {try self.layer2.owner(domain: domain)},
                          {
-                             if self.zlayer.isSupported(domain: domain) {
-                                 return try self.zlayer.owner(domain: domain)
+                             if self.znsLayer.isSupported(domain: domain) {
+                                 return try self.znsLayer.owner(domain: domain)
                              }
                              throw ResolutionError.unregisteredDomain
                          }]
@@ -59,8 +59,8 @@ internal class UNS: CommonNamingService, NamingService {
             listOfFunc: [{try self.layer1.record(domain: domain, key: key)},
                          {try self.layer2.record(domain: domain, key: key)},
                          {
-                             if self.zlayer.isSupported(domain: domain) {
-                                 return try self.zlayer.record(domain: domain, key: key)
+                             if self.znsLayer.isSupported(domain: domain) {
+                                 return try self.znsLayer.record(domain: domain, key: key)
                              }
                              throw ResolutionError.unregisteredDomain
                          }]
@@ -72,8 +72,8 @@ internal class UNS: CommonNamingService, NamingService {
             listOfFunc: [{try self.layer1.records(keys: keys, for: domain)},
                          {try self.layer2.records(keys: keys, for: domain)},
                          {
-                             if self.zlayer.isSupported(domain: domain) {
-                                 return try self.zlayer.records(keys: keys, for: domain)
+                             if self.znsLayer.isSupported(domain: domain) {
+                                 return try self.znsLayer.records(keys: keys, for: domain)
                              }
                              throw ResolutionError.unregisteredDomain
                          }]
@@ -85,8 +85,8 @@ internal class UNS: CommonNamingService, NamingService {
             listOfFunc: [{try self.layer1.allRecords(domain: domain)},
                          {try self.layer2.allRecords(domain: domain)},
                          {
-                             if self.zlayer.isSupported(domain: domain) {
-                                 return try self.zlayer.allRecords(domain: domain)
+                             if self.znsLayer.isSupported(domain: domain) {
+                                 return try self.znsLayer.allRecords(domain: domain)
                              }
                              throw ResolutionError.unregisteredDomain
                          }]
@@ -112,8 +112,8 @@ internal class UNS: CommonNamingService, NamingService {
             listOfFunc: [{try self.layer1.addr(domain: domain, ticker: ticker)},
                          {try self.layer2.addr(domain: domain, ticker: ticker)},
                          {
-                             if self.zlayer.isSupported(domain: domain) {
-                                 return try self.zlayer.addr(domain: domain, ticker: ticker)
+                             if self.znsLayer.isSupported(domain: domain) {
+                                 return try self.znsLayer.addr(domain: domain, ticker: ticker)
                              }
                              throw ResolutionError.unregisteredDomain
                          }]
@@ -125,8 +125,8 @@ internal class UNS: CommonNamingService, NamingService {
             listOfFunc: [{try self.layer1.resolver(domain: domain)},
                          {try self.layer2.resolver(domain: domain)},
                          {
-                             if self.zlayer.isSupported(domain: domain) {
-                                 return try self.zlayer.resolver(domain: domain)
+                             if self.znsLayer.isSupported(domain: domain) {
+                                 return try self.znsLayer.resolver(domain: domain)
                              }
                              throw ResolutionError.unregisteredDomain
                          }]
@@ -268,7 +268,7 @@ internal class UNS: CommonNamingService, NamingService {
     private func throwIfLayerHasError<T>(_ results: [UNSLocation: AsyncConsumer<T>]) throws {
         let l2Results = Utillities.getLayerResultWrapper(from: results, for: .layer2)
         let l1Results = Utillities.getLayerResultWrapper(from: results, for: .layer1)
-        let zResults = Utillities.getLayerResultWrapper(from: results, for: .zlayer)
+        let zResults = Utillities.getLayerResultWrapper(from: results, for: .znsLayer)
 
         guard l2Results.1 == nil else {
             throw l2Results.1!
