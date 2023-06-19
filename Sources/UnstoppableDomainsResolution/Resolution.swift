@@ -146,6 +146,22 @@ public class Resolution {
             let result = try self.getServiceOf(domain: domain).addr(domain: preparedDomain, ticker: ticker)
             completion(.success(result))
         } catch {
+            print(error, "errorsssssssss")
+            self.catchError(error, completion: completion)
+        }
+    }
+
+    /// Resolves give `domain` name to a specific `currency address` if exists
+    /// - Parameter  domain: - domain name to be resolved
+    /// - Parameter  network: - blockchain network the token is created on
+    /// - Parameter  ticker: - currency ticker USDT, MATIC
+    /// - Parameter  completion: A callback that resolves `Result`  with an `address` or `Error`
+    public func addr(domain: String, network: String, token: String, completion: @escaping StringResultConsumer ) {
+        do {
+            let preparedDomain = try self.prepare(domain: domain)
+            let result = try self.getServiceOf(domain: domain).addr(domain: preparedDomain,  network: network, token: token)
+            completion(.success(result))
+        } catch {
             self.catchError(error, completion: completion)
         }
     }

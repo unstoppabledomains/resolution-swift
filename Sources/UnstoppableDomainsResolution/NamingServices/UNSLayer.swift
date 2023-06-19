@@ -14,6 +14,7 @@ internal class UNSLayer: CommonNamingService {
     static let NewURIEventSignature = "0xc5beef08f693b11c316c0c8394a377a0033c9cf701b8cd8afd79cecef60c3952"
     static let getDataForManyMethodName = "getDataForMany"
     static let reverseOfMethodName = "reverseOf"
+    static let getAddressMethodName: String = "getAddress"
     static let tokenURIMethodName = "tokenURI"
     static let registryOfMethodName = "registryOf"
     static let existName = "exists"
@@ -141,6 +142,26 @@ internal class UNSLayer: CommonNamingService {
         let key = "crypto.\(ticker.uppercased()).address"
         let result = try record(domain: domain, key: key)
         return result
+    }
+
+    func addr(domain: String, network: String, token: String) throws -> String {
+        let result = try getAddress(domain: domain, network: network, token: token) as? String
+
+        if (result != nil) {
+            return result!
+        }
+        return ""
+    }
+
+    func getAddress(domain: String, network: String, token: String) throws -> Any {
+        let tokenId = super.namehash(domain: domain)
+
+         if let result = try proxyReaderContract?
+                                .callMethod(methodName: Self.getAddressMethodName,
+                                            args: [network, token, tokenId]) {
+            return result
+        }
+        throw ResolutionError.proxyReaderNonInitialized
     }
 
     // MARK: - Get Record

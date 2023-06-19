@@ -120,6 +120,19 @@ internal class UNS: CommonNamingService, NamingService {
         )
     }
 
+    func addr(domain: String, network: String, token: String) throws -> String {
+        return try asyncResolver.safeResolve(
+            listOfFunc: [{try self.layer1.addr(domain: domain, network: network, token: token)},
+                         {try self.layer2.addr(domain: domain, network: network, token: token)},
+                         {
+                             if self.znsLayer.isSupported(domain: domain) {
+                                 return try self.znsLayer.addr(domain: domain, network: network, token: token)
+                             }
+                             throw ResolutionError.unregisteredDomain
+                         }]
+        )
+    }
+
     func resolver(domain: String) throws -> String {
         return try asyncResolver.safeResolve(
             listOfFunc: [{try self.layer1.resolver(domain: domain)},
