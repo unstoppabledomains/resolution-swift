@@ -146,7 +146,6 @@ public class Resolution {
             let result = try self.getServiceOf(domain: domain).addr(domain: preparedDomain, ticker: ticker)
             completion(.success(result))
         } catch {
-            print(error, "errorsssssssss")
             self.catchError(error, completion: completion)
         }
     }
