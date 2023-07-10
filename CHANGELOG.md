@@ -1,5 +1,9 @@
 # Resolution-swift CHANGELOG
 
+## 6.1.0 - 2023-07-10
+
+Add new addr override
+
 ## 6.0.0 - 2023-04-05
 
 Remove default RPC urls, Allow initialized with UD partner key
@@ -38,6 +42,7 @@ Remove default RPC urls, Allow initialized with UD partner key
 - ENS support has been removed.
 - - Library configurations has been changed and all ens mentions have been removed.
 - 
+- 
 
 ## 3.0.0
 
@@ -45,6 +50,7 @@ Remove default RPC urls, Allow initialized with UD partner key
 
 - Library initialization has been changed.
 - - Uns configurations now require setup for ETH network for L1 and poligon network for L2
+- 
 - 
 - `Resolution#getNetwork` has been removed. It is redundant since anyone who is using the library will have the configurations built-in
 - `Resolution#batchOwners` has changed signature. It now returns a map [String: String?] of domain to owner addresses.
@@ -69,6 +75,7 @@ Remove default RPC urls, Allow initialized with UD partner key
 - `Resolution#isSupported` is now making an async call. Method signature was changed.
 - `Configurations` class accepts `uns` configs instead of  `cns`.
 - - For example: `let resolution = try Resolution(configs: Configurations(uns: NamingServiceConfig(...uns config)));`
+- 
 - 
 
 ### New methods and features
@@ -97,21 +104,30 @@ Remove default RPC urls, Allow initialized with UD partner key
 ## 0.3.5
 
 - Introduce DomainResolution#getMultiChainAddress general method to fetch a ticker address from specific chain
+- 
 - Deprecate DomainResolution#getUsdt method in favor of DomainResolution#getMultiChainAddress
-
+- 
 - General multichain support ([#33](https://github.com/unstoppabledomains/resolution-swift/pull/33)) via [@JohnnyJumper](https://github.com/JohnnyJumper)
+- 
 - Auto network ([#32](https://github.com/unstoppabledomains/resolution-swift/pull/32)) via [@JohnnyJumper](https://github.com/JohnnyJumper)
+- 
 - Move Base58 lib from dependencies to internal sources.
+- 
 
 ## 0.3.0
 
 - [Customizing naming services](https://github.com/unstoppabledomains/resolution-swift#customizing-naming-services)
+- 
 - Version 0.3.0 introduced the `Configurations` struct that is used for configuring each connected naming service.
+- 
 - Library can offer three naming services at the moment:
-
+- 
 - `cns` resolves `.crypto` domains,
+- 
 - `ens` resolves `.eth` domains,
+- 
 - `zns` resolves `.zil` domains
+- 
 
 *By default, each of them is using the mainnet network via infura provider.
 Unstoppable domains are using the infura key with no restriction for CNS.
