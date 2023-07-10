@@ -13,6 +13,51 @@
     "type": "event"
   },
   {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "previousOwner",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "OwnershipTransferred",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "tokenKey",
+        "type": "string"
+      }
+    ],
+    "name": "SetLegacyRecords",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "network",
+        "type": "string"
+      }
+    ],
+    "name": "SetNetworkFamily",
+    "type": "event"
+  },
+  {
     "inputs": [],
     "name": "NAME",
     "outputs": [
@@ -36,6 +81,60 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string[]",
+        "name": "networks",
+        "type": "string[]"
+      },
+      {
+        "internalType": "string[]",
+        "name": "families",
+        "type": "string[]"
+      }
+    ],
+    "name": "addBlockchainNetworks",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string[]",
+        "name": "networks",
+        "type": "string[]"
+      },
+      {
+        "internalType": "string",
+        "name": "family",
+        "type": "string"
+      }
+    ],
+    "name": "addBlockchainNetworks",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string[]",
+        "name": "keys",
+        "type": "string[]"
+      },
+      {
+        "internalType": "string[][]",
+        "name": "legacyKeys",
+        "type": "string[][]"
+      }
+    ],
+    "name": "addLegacyRecords",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -95,6 +194,88 @@
         "internalType": "string",
         "name": "value",
         "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "network",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "token",
+        "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getAddress",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "addr",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "network",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "token",
+        "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getAddressKey",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "key",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "network",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "token",
+        "type": "string"
+      }
+    ],
+    "name": "getAddressKeys",
+    "outputs": [
+      {
+        "internalType": "string[]",
+        "name": "keys",
+        "type": "string[]"
       }
     ],
     "stateMutability": "view",
@@ -452,6 +633,19 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "owner",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "uint256",
@@ -509,6 +703,13 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "renounceOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "uint256",
@@ -535,6 +736,25 @@
         "type": "address"
       }
     ],
+    "name": "reverseNameOf",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "addr",
+        "type": "address"
+      }
+    ],
     "name": "reverseOf",
     "outputs": [
       {
@@ -544,6 +764,19 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "addr",
+        "type": "address"
+      }
+    ],
+    "name": "setOwner",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -582,6 +815,19 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "transferOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   }
 ]

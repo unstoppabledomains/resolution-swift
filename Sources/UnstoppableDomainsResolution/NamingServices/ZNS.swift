@@ -56,6 +56,10 @@ internal class ZNS: CommonNamingService, NamingService {
         return result
     }
 
+    func addr(domain: String, network: String, token: String) throws -> String {
+        throw ResolutionError.methodNotSupported
+    }
+
     func record(domain: String, key: String) throws -> String {
         let records = try self.records(keys: [key], for: domain)
 

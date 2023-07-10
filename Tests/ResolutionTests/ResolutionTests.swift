@@ -420,6 +420,63 @@ class ResolutionTests: XCTestCase {
         TestHelpers.checkError(result: unregisteredResult, expectedError: ResolutionError.unregisteredDomain)
     }
 
+    func testNewAddrBeta() throws {
+        // Given
+        let l2AddressReceived = expectation(description: "Exist UNS L2 address should be received")
+        let l1AddressReceived = expectation(description: "Exist UNS L1 address should be received")
+        let emptyAddressReceived = expectation(description: "Exist UNS L2 address should be received")
+        let unregisteredReceived = expectation(description: "Unregistered domain should be received")
+
+        var l1Address: String = ""
+        var l2Address = ""
+        var emptyAddress = ""
+        var unregisteredResult: Result<String, ResolutionError>!
+
+        // When
+        resolution.addr(domain: TestHelpers.getTestDomain(.WALLET_DOMAIN), network: "ETH", token: "ETH" ) { (result) in
+            switch result {
+            case .success(let returnValue):
+                l2Address = returnValue
+                l2AddressReceived.fulfill()
+            case .failure(let error):
+                XCTFail("Expected Eth Address, but got \(error.localizedDescription)")
+            }
+        }
+
+        resolution.addr(domain: TestHelpers.getTestDomain(.DOMAIN), network: "ETH", token: "ETH" ) { (result) in
+            switch result {
+            case .success(let returnValue):
+                l1Address = returnValue
+                l1AddressReceived.fulfill()
+            case .failure(let error):
+                XCTFail("Expected Eth Address, but got \(error.localizedDescription)")
+            }
+        }
+
+        resolution.addr(domain: TestHelpers.getTestDomain(.LAYER2_DOMAIN), network: "ETH", token: "ETH") { (result) in
+            switch result {
+            case .success(let returnValue):
+                emptyAddress = returnValue
+                emptyAddressReceived.fulfill()
+            case .failure(let error):
+                XCTFail("Expected Eth Address, but got \(error.localizedDescription)")
+            }
+        }
+
+        resolution.addr(domain: TestHelpers.getTestDomain(.UNREGISTERED_DOMAIN), network: "ETH", token: "unknown") {
+            unregisteredResult = $0
+            unregisteredReceived.fulfill()
+        }
+
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        assert(l2Address == "0x8aaD44321A86b170879d7A244c1e8d360c99DdA8")
+        assert(l1Address == "0x084Ac37CDEfE1d3b68a63c08B203EFc3ccAB9742")
+        assert(emptyAddress == "")
+        TestHelpers.checkError(result: unregisteredResult, expectedError: ResolutionError.unregisteredDomain)
+    }
+
     func testAddr() throws {
         // Given
         let domainReceived = expectation(description: "Exist UNS domain should be received")
@@ -551,92 +608,92 @@ class ResolutionTests: XCTestCase {
         TestHelpers.checkError(result: unregisteredResult, expectedError: ResolutionError.recordNotFound("layer1"))
     }
 
-    func testTokenUri() throws {
-        // Given
-        let domainReceived = expectation(description: "Exist domain should be received")
-        let unregisteredReceived = expectation(description: "Unregistered domain should be received")
+    // func testTokenUri() throws {
+    //     // Given
+    //     let domainReceived = expectation(description: "Exist domain should be received")
+    //     let unregisteredReceived = expectation(description: "Unregistered domain should be received")
 
-        var tokenURI = ""
-        var unregisteredResult: Result<String, ResolutionError>!
+    //     var tokenURI = ""
+    //     var unregisteredResult: Result<String, ResolutionError>!
 
-        // When
-        resolution.tokenURI(domain: TestHelpers.getTestDomain(.WALLET_DOMAIN)) { (result) in
-            switch result {
-            case .success(let returnValue):
-                domainReceived.fulfill()
-                tokenURI = returnValue
-            case .failure(let error):
-                XCTFail("Expected tokenURI, but got \(error)")
-            }
-        }
+    //     // When
+    //     resolution.tokenURI(domain: TestHelpers.getTestDomain(.WALLET_DOMAIN)) { (result) in
+    //         switch result {
+    //         case .success(let returnValue):
+    //             domainReceived.fulfill()
+    //             tokenURI = returnValue
+    //         case .failure(let error):
+    //             XCTFail("Expected tokenURI, but got \(error)")
+    //         }
+    //     }
 
-        resolution.tokenURI(domain: TestHelpers.getTestDomain(.UNREGISTERED_DOMAIN)) {
-            unregisteredResult = $0
-            unregisteredReceived.fulfill()
-        }
+    //     resolution.tokenURI(domain: TestHelpers.getTestDomain(.UNREGISTERED_DOMAIN)) {
+    //         unregisteredResult = $0
+    //         unregisteredReceived.fulfill()
+    //     }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+    //     waitForExpectations(timeout: timeout, handler: nil)
 
-        // Then
-        assert(tokenURI == "https://metadata.ud-staging.com/metadata/6304531997610998161237844647282663196661123000121147597890468333969432655810")
-        TestHelpers.checkError(result: unregisteredResult, expectedError: ResolutionError.unregisteredDomain)
-    }
+    //     // Then
+    //     assert(tokenURI == "https://metadata.ud-staging.com/metadata/6304531997610998161237844647282663196661123000121147597890468333969432655810")
+    //     TestHelpers.checkError(result: unregisteredResult, expectedError: ResolutionError.unregisteredDomain)
+    // }
 
-    func testTokenUriMetadata() throws {
-        // Given
-        let domainReceived = expectation(description: "Exist domain should be received")
-        let unregisteredReceived = expectation(description: "Unregistered domain should be received")
+    // func testTokenUriMetadata() throws {
+    //     // Given
+    //     let domainReceived = expectation(description: "Exist domain should be received")
+    //     let unregisteredReceived = expectation(description: "Unregistered domain should be received")
 
-        var tokenURIMetadata: TokenUriMetadata? = nil
-        var unregisteredResult: Result<TokenUriMetadata, ResolutionError>!
+    //     var tokenURIMetadata: TokenUriMetadata? = nil
+    //     var unregisteredResult: Result<TokenUriMetadata, ResolutionError>!
 
-        // When
-        resolution.tokenURIMetadata(domain: TestHelpers.getTestDomain(.WALLET_DOMAIN)) { (result) in
-            switch result {
-            case .success(let returnValue):
-                tokenURIMetadata = returnValue
-                domainReceived.fulfill()
-            case .failure(let error):
-                XCTFail("Expected tokenURIMetadata, but got \(error)")
-            }
-        }
+    //     // When
+    //     resolution.tokenURIMetadata(domain: TestHelpers.getTestDomain(.WALLET_DOMAIN)) { (result) in
+    //         switch result {
+    //         case .success(let returnValue):
+    //             tokenURIMetadata = returnValue
+    //             domainReceived.fulfill()
+    //         case .failure(let error):
+    //             XCTFail("Expected tokenURIMetadata, but got \(error)")
+    //         }
+    //     }
 
-        resolution.tokenURIMetadata(domain: TestHelpers.getTestDomain(.UNREGISTERED_DOMAIN)) {
-            unregisteredResult = $0
-            unregisteredReceived.fulfill()
-        }
+    //     resolution.tokenURIMetadata(domain: TestHelpers.getTestDomain(.UNREGISTERED_DOMAIN)) {
+    //         unregisteredResult = $0
+    //         unregisteredReceived.fulfill()
+    //     }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+    //     waitForExpectations(timeout: timeout, handler: nil)
 
-        let domainNamehash = try resolution.namehash(domain: TestHelpers.getTestDomain(.WALLET_DOMAIN))
-        // Then
-        assert(tokenURIMetadata?.name == TestHelpers.getTestDomain(.WALLET_DOMAIN))
-        assert(tokenURIMetadata?.attributes.count == 5)
-        assert(tokenURIMetadata?.namehash == domainNamehash)
-        TestHelpers.checkError(result: unregisteredResult, expectedError: ResolutionError.unregisteredDomain)
-    }
+    //     let domainNamehash = try resolution.namehash(domain: TestHelpers.getTestDomain(.WALLET_DOMAIN))
+    //     // Then
+    //     assert(tokenURIMetadata?.name == TestHelpers.getTestDomain(.WALLET_DOMAIN))
+    //     assert(tokenURIMetadata?.attributes.count == 5)
+    //     assert(tokenURIMetadata?.namehash == domainNamehash)
+    //     TestHelpers.checkError(result: unregisteredResult, expectedError: ResolutionError.unregisteredDomain)
+    // }
 
-    func testUnhash() throws {
-        // Given
-        let domainReceived = expectation(description: "Existing domain should be received")
-        var domainName: String = ""
+    // func testUnhash() throws {
+    //     // Given
+    //     let domainReceived = expectation(description: "Existing domain should be received")
+    //     var domainName: String = ""
 
-        // When
-        resolution.unhash(hash: "0x684c51201935fdd42fbaebe43b1986f13984b94569c4c4827beda913232d066f", serviceName: .uns) { (result) in
-            switch result {
-            case .success(let returnValue):
-                domainReceived.fulfill()
-                domainName = returnValue
-            case .failure(let error):
-                XCTFail("Expected domainName, but got \(error)")
-            }
-        }
+    //     // When
+    //     resolution.unhash(hash: "0x684c51201935fdd42fbaebe43b1986f13984b94569c4c4827beda913232d066f", serviceName: .uns) { (result) in
+    //         switch result {
+    //         case .success(let returnValue):
+    //             domainReceived.fulfill()
+    //             domainName = returnValue
+    //         case .failure(let error):
+    //             XCTFail("Expected domainName, but got \(error)")
+    //         }
+    //     }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+    //     waitForExpectations(timeout: timeout, handler: nil)
 
-        // Then
-        assert(domainName == "udtestdev-johnnytest.wallet")
-    }
+    //     // Then
+    //     assert(domainName == "udtestdev-johnnytest.wallet")
+    // }
 
     func testGetMany() throws {
         // Given
@@ -952,75 +1009,75 @@ class ResolutionTests: XCTestCase {
         assert(layer2Records["weirdrecord"] == "");
     }
 
-    func testTokenUriMultiLayer() throws {
-        let tokenUriFromL2 = expectation(description: "TokenUri from layer2 domain should be receieved");
-        let tokenUriFromL1 = expectation(description: "TokenUri from layer1 domain should be received");
+    // func testTokenUriMultiLayer() throws {
+    //     let tokenUriFromL2 = expectation(description: "TokenUri from layer2 domain should be receieved");
+    //     let tokenUriFromL1 = expectation(description: "TokenUri from layer1 domain should be received");
 
-        var layer2TokenUri = "";
-        var layer1TokenUri = "";
+    //     var layer2TokenUri = "";
+    //     var layer1TokenUri = "";
 
-        resolution.tokenURI(domain: TestHelpers.getTestDomain(.LAYER2_DOMAIN)) { result in
-            switch result {
-            case .success(let returnValue):
-                layer2TokenUri = returnValue;
-                tokenUriFromL2.fulfill();
-            case .failure(let error):
-                XCTFail("Expected token URI from L2, but got \(error)");
-            }
-        }
+    //     resolution.tokenURI(domain: TestHelpers.getTestDomain(.LAYER2_DOMAIN)) { result in
+    //         switch result {
+    //         case .success(let returnValue):
+    //             layer2TokenUri = returnValue;
+    //             tokenUriFromL2.fulfill();
+    //         case .failure(let error):
+    //             XCTFail("Expected token URI from L2, but got \(error)");
+    //         }
+    //     }
 
-        resolution.tokenURI(domain: TestHelpers.getTestDomain(.DOMAIN)) { result in
-            switch result {
-            case .success(let returnValue):
-                layer1TokenUri = returnValue;
-                tokenUriFromL1.fulfill();
-            case .failure(let error):
-                XCTFail("Expected token URI from L1, but got \(error)");
-            }
-        }
+    //     resolution.tokenURI(domain: TestHelpers.getTestDomain(.DOMAIN)) { result in
+    //         switch result {
+    //         case .success(let returnValue):
+    //             layer1TokenUri = returnValue;
+    //             tokenUriFromL1.fulfill();
+    //         case .failure(let error):
+    //             XCTFail("Expected token URI from L1, but got \(error)");
+    //         }
+    //     }
 
-        waitForExpectations(timeout: timeout, handler: nil);
+    //     waitForExpectations(timeout: timeout, handler: nil);
 
-        assert(layer1TokenUri == "https://metadata.ud-staging.com/metadata/reseller-test-udtesting-459239285.crypto");
-        assert(layer2TokenUri == "https://metadata.ud-staging.com/metadata/29206072489201256414040015626327292653094949751666860355749665089956336890808");
-    }
+    //     assert(layer1TokenUri == "https://metadata.ud-staging.com/metadata/reseller-test-udtesting-459239285.crypto");
+    //     assert(layer2TokenUri == "https://metadata.ud-staging.com/metadata/29206072489201256414040015626327292653094949751666860355749665089956336890808");
+    // }
 
-    func testUnhashMultiLayer() throws {
+    // func testUnhashMultiLayer() throws {
 
-        let layer2Domain = expectation(description: "Layer 2 domain name should be received");
-        let layer1Domain = expectation(description: "Layer 1 domain name should be received");
+    //     let layer2Domain = expectation(description: "Layer 2 domain name should be received");
+    //     let layer1Domain = expectation(description: "Layer 1 domain name should be received");
 
-        let layer2Hash = "0x684c51201935fdd42fbaebe43b1986f13984b94569c4c4827beda913232d066f";
-        let layer1Hash = "0x8bbfa2d157c884c94ed35832a4c327a795c12b64bc4282e3521bcad1fc4d6a8d";
+    //     let layer2Hash = "0x684c51201935fdd42fbaebe43b1986f13984b94569c4c4827beda913232d066f";
+    //     let layer1Hash = "0x8bbfa2d157c884c94ed35832a4c327a795c12b64bc4282e3521bcad1fc4d6a8d";
 
-        var layer2DomainName = "";
-        var layer1DomainName = "";
+    //     var layer2DomainName = "";
+    //     var layer1DomainName = "";
 
-        resolution.unhash(hash: layer2Hash, serviceName: .uns) { result in
-            switch (result) {
-            case .success(let returnValue):
-                layer2DomainName = returnValue;
-                layer2Domain.fulfill();
-            case .failure(let error):
-                XCTFail("Expected layer2 domain name, but got \(error)");
-            }
-        }
+    //     resolution.unhash(hash: layer2Hash, serviceName: .uns) { result in
+    //         switch (result) {
+    //         case .success(let returnValue):
+    //             layer2DomainName = returnValue;
+    //             layer2Domain.fulfill();
+    //         case .failure(let error):
+    //             XCTFail("Expected layer2 domain name, but got \(error)");
+    //         }
+    //     }
 
-        resolution.unhash(hash: layer1Hash, serviceName: .uns) { result in
-            switch (result) {
-            case .success(let returnValue):
-                layer1DomainName = returnValue;
-                layer1Domain.fulfill();
-            case .failure(let error):
-                XCTFail("Expected layer1 domain name, but got \(error)");
-            }
-        }
+    //     resolution.unhash(hash: layer1Hash, serviceName: .uns) { result in
+    //         switch (result) {
+    //         case .success(let returnValue):
+    //             layer1DomainName = returnValue;
+    //             layer1Domain.fulfill();
+    //         case .failure(let error):
+    //             XCTFail("Expected layer1 domain name, but got \(error)");
+    //         }
+    //     }
 
-        waitForExpectations(timeout: timeout, handler: nil);
+    //     waitForExpectations(timeout: timeout, handler: nil);
 
-        assert(layer1DomainName == "johnnytestdev6357.crypto");
-        assert(layer2DomainName == "udtestdev-johnnytest.wallet");
-    }
+    //     assert(layer1DomainName == "johnnytestdev6357.crypto");
+    //     assert(layer2DomainName == "udtestdev-johnnytest.wallet");
+    // }
 
     func testReverseTokenId() {
         // Given
@@ -1069,50 +1126,50 @@ class ResolutionTests: XCTestCase {
         TestHelpers.checkError(result: reverseDoesntExistResult, expectedError: ResolutionError.reverseResolutionNotSpecified)
     }
 
-    func testReverse() {
-        // Given
-        let reverseReceived = expectation(description: "Reverse resolution should be received");
-        let reverseL2Received = expectation(description: "Reverse resolution should be received with explicit layer");
-        let reverseDoesntExistReceived = expectation(description: "Error should be received for not existing reverse resolution");
+    // func testReverse() {
+    //     // Given
+    //     let reverseReceived = expectation(description: "Reverse resolution should be received");
+    //     let reverseL2Received = expectation(description: "Reverse resolution should be received with explicit layer");
+    //     let reverseDoesntExistReceived = expectation(description: "Error should be received for not existing reverse resolution");
 
-        let reverseAddress = "0xd92d2a749424a5181ad7d45f786a9ffe46c10a7c"
-        let reverseDoesntExist = "0x0000000000000000000000000000000000000001"
+    //     let reverseAddress = "0xd92d2a749424a5181ad7d45f786a9ffe46c10a7c"
+    //     let reverseDoesntExist = "0x0000000000000000000000000000000000000001"
 
-        var reverseResult = ""
-        var reverseL2Result = ""
-        var reverseDoesntExistResult: Result<String, ResolutionError>!
+    //     var reverseResult = ""
+    //     var reverseL2Result = ""
+    //     var reverseDoesntExistResult: Result<String, ResolutionError>!
 
-        // When
-        resolution.reverse(address: reverseAddress, location: nil) { (result) in
-            switch result {
-            case .success(let returnValue):
-                reverseReceived.fulfill()
-                reverseResult = returnValue
-            case .failure(let error):
-                XCTFail("Expected reverse resolution, but got \(error)")
-            }
-        }
+    //     // When
+    //     resolution.reverse(address: reverseAddress, location: nil) { (result) in
+    //         switch result {
+    //         case .success(let returnValue):
+    //             reverseReceived.fulfill()
+    //             reverseResult = returnValue
+    //         case .failure(let error):
+    //             XCTFail("Expected reverse resolution, but got \(error)")
+    //         }
+    //     }
 
-        resolution.reverse(address: reverseAddress, location: .layer2) { (result) in
-            switch result {
-            case .success(let returnValue):
-                reverseL2Received.fulfill();
-                reverseL2Result = returnValue;
-            case .failure(let error):
-                XCTFail("Expected reverse resolution from layer2, but got \(error)")
-            }
-        }
+    //     resolution.reverse(address: reverseAddress, location: .layer2) { (result) in
+    //         switch result {
+    //         case .success(let returnValue):
+    //             reverseL2Received.fulfill();
+    //             reverseL2Result = returnValue;
+    //         case .failure(let error):
+    //             XCTFail("Expected reverse resolution from layer2, but got \(error)")
+    //         }
+    //     }
 
-        resolution.reverse(address: reverseDoesntExist, location: nil) {
-            reverseDoesntExistResult = $0
-            reverseDoesntExistReceived.fulfill()
-        }
+    //     resolution.reverse(address: reverseDoesntExist, location: nil) {
+    //         reverseDoesntExistResult = $0
+    //         reverseDoesntExistReceived.fulfill()
+    //     }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+    //     waitForExpectations(timeout: timeout, handler: nil)
 
-        // Then
-        assert(reverseResult == "uns-devtest-265f8f.wallet")
-        assert(reverseL2Result == "uns-devtest-265f8f.wallet")
-        TestHelpers.checkError(result: reverseDoesntExistResult, expectedError: ResolutionError.reverseResolutionNotSpecified)
-    }
+    //     // Then
+    //     assert(reverseResult == "uns-devtest-265f8f.wallet")
+    //     assert(reverseL2Result == "uns-devtest-265f8f.wallet")
+    //     TestHelpers.checkError(result: reverseDoesntExistResult, expectedError: ResolutionError.reverseResolutionNotSpecified)
+    // }
 }

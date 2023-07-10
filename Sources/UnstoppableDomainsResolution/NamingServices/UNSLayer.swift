@@ -14,6 +14,7 @@ internal class UNSLayer: CommonNamingService {
     static let NewURIEventSignature = "0xc5beef08f693b11c316c0c8394a377a0033c9cf701b8cd8afd79cecef60c3952"
     static let getDataForManyMethodName = "getDataForMany"
     static let reverseOfMethodName = "reverseOf"
+    static let getAddressMethodName: String = "getAddress"
     static let tokenURIMethodName = "tokenURI"
     static let registryOfMethodName = "registryOf"
     static let existName = "exists"
@@ -143,6 +144,41 @@ internal class UNSLayer: CommonNamingService {
         return result
     }
 
+    func addr(domain: String, network: String, token: String) throws -> String {
+        let tokenId = super.namehash(domain: domain)
+        let ownerRes: Any
+        do {
+            ownerRes = try self.getDataForMany(keys: [Contract.resolversKey, Contract.ownersKey], for: [tokenId])
+            guard let owners = self.unfoldForMany(contractResult: ownerRes, key: Contract.ownersKey),
+                  Utillities.isNotEmpty(owners[0]) else {
+                throw ResolutionError.unregisteredDomain
+            }
+        } catch {
+            if error is ABICoderError {
+                throw ResolutionError.unspecifiedResolver(self.layer.rawValue)
+            }
+            throw error
+        }
+        let res = try getAddress(domain: domain, network: network, token: token) as? [String: Any]
+
+        if let val = res?["0"] as? String {
+            if (!val.isEmpty) {
+                return val
+            }
+        }
+        return ""
+    }
+
+    func getAddress(domain: String, network: String, token: String) throws -> Any {
+        let tokenId = super.namehash(domain: domain)
+        if let result = try proxyReaderContract?
+                                .callMethod(methodName: Self.getAddressMethodName,
+                                            args: [network, token, tokenId]) {
+            return result
+        }
+        throw ResolutionError.proxyReaderNonInitialized
+    }
+
     // MARK: - Get Record
     func record(domain: String, key: String) throws -> String {
         let tokenId = super.namehash(domain: domain)
@@ -154,7 +190,6 @@ internal class UNSLayer: CommonNamingService {
     }
 
     func allRecords(domain: String) throws -> [String: String] {
-        let tokenId = super.namehash(domain: domain)
         let commonRecordsKeys = try Self.parseRecordKeys()
         let mergedRecords = Array(Set(commonRecordsKeys!))
         return try self.records(keys: mergedRecords, for: domain).filter { !$0.value.isEmpty }

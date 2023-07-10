@@ -17,14 +17,14 @@ Resolution is primarily built and maintained by [Unstoppable Domains](https://un
 ## Cocoa Pods
 
 ```ruby
-pod 'UnstoppableDomainsResolution', '~> 6.0.0'
+pod 'UnstoppableDomainsResolution', '~> 6.1.0'
 ```
 
 ## Swift Package Manager
 
 ```swift
 package.dependencies.append(
-    .package(url: "https://github.com/unstoppabledomains/resolution-swift", from: "6.0.0")
+    .package(url: "https://github.com/unstoppabledomains/resolution-swift", from: "6.1.0")
 )
 ```
 
@@ -46,8 +46,8 @@ package.dependencies.append(
 
 # Using Resolution
 
- - Create an instance of the Resolution class
- - Call any method of the Resolution class asyncronously
+- Create an instance of the Resolution class
+- Call any method of the Resolution class asyncronously
 
 > NOTE: make sure an instance of the Resolution class is not deallocated until the asyncronous call brings in the result. Your code is the **only owner** of the instance so keep it as long as you need it.
 
@@ -56,7 +56,7 @@ package.dependencies.append(
 ```swift
 import UnstoppableDomainsResolution
 
-// obtain a key from https://unstoppabledomains.com/partner-api-dashboard if you are a partner
+// obtain a key by following this document https://docs.unstoppabledomains.com/domain-distribution-and-management/quickstart/retrieve-an-api-key/#api-key
 guard let resolution = try? Resolution(apiKey: "<api_key>") else {
   print ("Init of Resolution instance failed...")
   return
@@ -68,7 +68,7 @@ guard let resolution = try? Resolution(apiKey: "<api_key>") else {
 ```swift
 import UnstoppableDomainsResolution
 
-// obtain a key from https://unstoppabledomains.com/partner-api-dashboard if you are a partner
+// obtain a key by following this document https://docs.unstoppabledomains.com/domain-distribution-and-management/quickstart/retrieve-an-api-key/#api-key
 guard let resolution = try? Resolution(
   apiKey: "<api_key>",
   znsLayer: NamingServiceConfig(
@@ -108,6 +108,15 @@ let resolution = try Resolution(configs: Configurations(
 ## Examples
 
 ### Getting a domain's crypto address
+
+**`addr(domain: String, ticker: String)`**
+
+This API is used to retrieve wallet address for single address record. (See
+[Cryptocurrency payment](https://docs.unstoppabledomains.com/resolution/guides/records-reference/#cryptocurrency-payments)
+section for the record format)
+
+With `brad.crypto` has `crypto.ETH.address` on-chain:
+
 ```swift
 resolution.addr(domain: "brad.crypto", ticker: "eth") { (result) in
     switch result {
@@ -118,6 +127,164 @@ resolution.addr(domain: "brad.crypto", ticker: "eth") { (result) in
         XCTFail("Expected Eth Address, but got \(error)")
     }
 }
+```
+
+**`multiChainAddress(domain: String, ticker: String, chain: String)`**
+
+This API is used to retrieve wallet address for multi-chain address records.
+(See
+[multi-chain currency](https://docs.unstoppabledomains.com/resolution/guides/records-reference/#multi-chain-currencies))
+
+With `brad.crypto` has `crypto.USDT.version.ERC20.address` and `crypto.USDT.version.OMNI.address` on-chain:
+
+```swift
+resolution.multiChainAddress(domain: "brad.crypto", ticker: "USDT", chain: "ERC20") { (result) in
+    switch result {
+    case .success(let returnValue):
+        ethAddress = returnValue
+        domainReceived.fulfill()
+    case .failure(let error):
+        XCTFail("Expected Eth Address, but got \(error)")
+    }
+}
+```
+
+**`addr(domain: String, network: String, token: String)`**
+
+This (Beta) API can be used to retrieve wallet address for single chain and multi-chain address records.
+
+With `brad.crypto` has `crypto.ETH.address` and `crypto.USDT.version.ERC20.address` on-chain:
+
+```swift
+// single chain address
+resolution.addr(domain: "brad.crypto", network: "eth", token: "eth") { (result) in
+    switch result {
+    case .success(let returnValue):
+        ethAddress = returnValue
+        domainReceived.fulfill()
+    case .failure(let error):
+        XCTFail("Expected Eth Address, but got \(error)")
+    }
+}
+
+// multi-chain address
+resolution.multiChainAddress(domain: "brad.crypto", ticker: "ETH", chain: "USDT") { (result) in
+    switch result {
+    case .success(let returnValue):
+        usdtAddress = returnValue
+        domainReceived.fulfill()
+    case .failure(let error):
+        XCTFail("Expected USDT Address, but got \(error)")
+    }
+}
+```
+
+> **Note** that the API will infer `ERC20` standard as `ETH` network.
+
+The API can also be used by crypto exchanges to infer wallet addresses. In
+centralized exchanges, users have same wallet addresses on different networks
+with same wallet family.
+
+With `brad.crypto` only has `token.EVM.address` record on-chain.
+The API resolves to same wallet address for tokens live on EVM compatible networks.
+
+```swift
+// infer USDT on ETH network
+resolution.multiChainAddress(domain: "brad.crypto", network: "ETH", token: "USDT") { (result) in
+    switch result {
+    case .success(let returnValue):
+        usdtOnEthAddress = returnValue
+        domainReceived.fulfill()
+    case .failure(let error):
+        XCTFail("Expected USDT Address, but got \(error)")
+    }
+}
+
+// infer ETH token on ETH network
+resolution.multiChainAddress(domain: "brad.crypto", network: "ETH", token: "ETH") { (result) in
+    switch result {
+    case .success(let returnValue):
+        ethTokenOnEthAddress = returnValue
+        domainReceived.fulfill()
+    case .failure(let error):
+        XCTFail("Expected Eth Address, but got \(error)")
+    }
+}
+
+// infer USDT token on ETH network
+resolution.multiChainAddress(domain: "brad.crypto", network: "AVAX", token: "USDT") { (result) in
+    switch result {
+    case .success(let returnValue):
+        usdtOnAvaxAddress = returnValue
+        domainReceived.fulfill()
+    case .failure(let error):
+        XCTFail("Expected USDT Address, but got \(error)")
+    }
+}
+
+```
+
+With `brad.crypto` only has `token.EVM.ETH.address`
+record on chain. The API resolves to the same wallet address for tokens
+specifically on Ethereum network.
+
+```swift
+// infer USDT on ETH network
+resolution.multiChainAddress(domain: "brad.crypto", network: "ETH", token: "USDT") { (result) in
+    switch result {
+    case .success(let returnValue):
+        usdtOnEthAddress = returnValue
+        domainReceived.fulfill()
+    case .failure(let error):
+        XCTFail("Expected USDT Address, but got \(error)")
+    }
+}
+
+// infer ETH token on ETH network
+resolution.multiChainAddress(domain: "brad.crypto", network: "ETH", token: "ETH") { (result) in
+    switch result {
+    case .success(let returnValue):
+        ethTokenOnEthAddress = returnValue
+        domainReceived.fulfill()
+    case .failure(let error):
+        XCTFail("Expected Eth Address, but got \(error)")
+    }
+}
+
+// the API try to derive address for Avalanche network
+resolution.multiChainAddress(domain: "brad.crypto", network: "AVAX", token: "USDT") { (result) in
+    switch result {
+    case .success(let returnValue):
+        usdtOnAvaxAddress = returnValue
+        domainReceived.fulfill()
+    case .failure(let error):
+        XCTFail("Expected USDT Address, but got \(error)")
+    }
+}
+
+```
+
+The API is compatible with other address formats. If a domain has multiple
+address formats set, it will follow the algorithm described as follow:
+
+if a domain has following records set:
+
+```
+token.EVM.address
+crypto.USDC.version.ERC20.address
+token.EVM.ETH.USDC.address
+crypto.USDC.address
+token.EVM.ETH.address
+```
+
+`getAddress(domain, 'ETH', 'USDC')` will lookup records in the following order:
+
+```
+1. token.EVM.ETH.USDC.address
+2. crypto.USDC.address
+3. crypto.USDC.version.ERC20.address
+4. token.EVM.ETH.address
+5. token.EVM.address
 ```
 
 ### Batch requesting of owners
@@ -156,10 +323,11 @@ resolution.locations(domains: ["brad.crypto", "homecakes.crypto"]) { result in
 
 ### Custom Networking Layer
 
-By default, this library uses the native iOS networking API to connect to the internet. If you want the library to use your own networking layer instead, you must conform your networking layer to the `NetworkingLayer` protocol. This protocol requires three methods to be implemented: 
-* `func makeHttpPostRequest(url:, httpMethod:, httpHeaderContentType:, httpBody:, completion:)`
-* `func makeHttpGetRequest(url: URL, completion:)`
-* `mutating func addHeader(header: String, value: String)`
+By default, this library uses the native iOS networking API to connect to the internet. If you want the library to use your own networking layer instead, you must conform your networking layer to the `NetworkingLayer` protocol. This protocol requires three methods to be implemented:
+
+- `func makeHttpPostRequest(url:, httpMethod:, httpHeaderContentType:, httpBody:, completion:)`
+- `func makeHttpGetRequest(url: URL, completion:)`
+- `mutating func addHeader(header: String, value: String)`
 
 Using these methods will bypass the default behavior and delegate the request to your own networking code.
 
@@ -223,8 +391,8 @@ Contributions to this library are more than welcome. The easiest way to contribu
 
 Resolution library relies on environment variables to load TestNet RPC Urls. This way, our keys don't expose directly to the code. These environment variables are:
 
-* L1_TEST_NET_RPC_URL
-* L2_TEST_NET_RPC_URL
+- L1_TEST_NET_RPC_URL
+- L2_TEST_NET_RPC_URL
 
 Use `swift build` to build, and `swift test -v` to run the tests
 
@@ -235,6 +403,7 @@ Once your app has a working Unstoppable Domains integration, [register it here](
 Also, every week we select a newly-integrated app to feature in the Unstoppable Update newsletter. This newsletter is delivered to straight into the inbox of ~100,000 crypto fanatics — all of whom could be new customers to grow your business.
 
 # Get help
+
 [Join our discord community](https://discord.gg/unstoppabledomains) and ask questions.
 
 # Help us improve
