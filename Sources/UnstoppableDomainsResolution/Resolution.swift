@@ -143,7 +143,8 @@ public class Resolution {
     public func addr(domain: String, ticker: String, completion: @escaping StringResultConsumer ) {
         do {
             let preparedDomain = try self.prepare(domain: domain)
-            let result = try self.getServiceOf(domain: domain).addr(domain: preparedDomain, ticker: ticker)
+            let service = try self.getServiceOf(domain: domain)
+            let result = try service.addr(domain: preparedDomain, ticker: ticker)
             completion(.success(result))
         } catch {
             self.catchError(error, completion: completion)
@@ -454,20 +455,32 @@ public class Resolution {
     private func constructNetworkServices(_ configs: Configurations) throws -> [NamingService] {
         var networkServices: [NamingService] = []
         var errorService: Error?
+        
         do {
             networkServices.append(try UNS(configs))
         } catch {
             errorService = error
         }
-
+        
+        do {
+            networkServices.append(try ENS(configs.ens))
+        } catch {
+            errorService = error
+        }
+        
         if let error = errorService {
             throw error
         }
+        
         return networkServices
     }
 
     /// This returns the naming service
     private func getServiceOf(domain: String) throws -> NamingService {
+        if domain ~= "^[^-]*[^-]*\\.(eth|luxe|xyz|kred|addr\\.reverse)$" {
+            return try self.findService(name: .ens)
+        }
+        
         return try self.findService(name: .uns)
     }
 

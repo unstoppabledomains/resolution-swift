@@ -21,6 +21,7 @@ internal typealias AsyncConsumer<T> = (T?, Error?)
 
 public enum NamingServiceName: String {
     case uns
+    case ens
     case zns
 }
 
